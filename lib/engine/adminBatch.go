@@ -3,13 +3,9 @@ package engine
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"log"
 	"log/slog"
 	"os"
-	"time"
 
-	"github.com/globalsign/mgo/bson"
 	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
@@ -35,6 +31,7 @@ func ImportBatch(
 	parsers []marshal.Parser,
 	skipFilter bool,
 	sinkFactory SinkFactory,
+	eventSink ReportSink,
 ) error {
 
 	logger := slog.With("batch", batch.ID.Key)
@@ -50,8 +47,10 @@ func ImportBatch(
 		return errors.New("veuillez inclure un filtre")
 	}
 
-	startDate := time.Now()
-	reportUnsupportedFiletypes(batch)
+	unsupported := checkUnsupportedFiletypes(batch)
+	for _, file := range unsupported {
+		logger.Warn("Type de fichier non reconnu", "file", file)
+	}
 
 	var g errgroup.Group
 
@@ -67,8 +66,7 @@ func ImportBatch(
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
 				func() error {
-					RelayEvents(eventChannel, "ImportBatch", startDate)
-					return nil
+					return eventSink.Process(eventChannel)
 				},
 			)
 
@@ -113,34 +111,38 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 
 }
 
-// CheckBatch checks batch
-func CheckBatch(batch base.AdminBatch, parsers []marshal.Parser) (reports []string, err error) {
+// CheckBatch checks batch, discard all data but logs events
+func CheckBatch(
+	batch base.AdminBatch,
+	parsers []marshal.Parser,
+	eventSink ReportSink,
+) error {
 	if err := CheckBatchPaths(&batch); err != nil {
-		return nil, err
+		return err
 	}
 	var cache = marshal.NewCache()
-	startDate := time.Now()
 	for _, parser := range parsers {
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+		logger := slog.With("batch", batch.ID.Key, "parser", parser.Type())
+		outputChannel, eventChannel := marshal.ParseFilesFromBatch(cache, &batch, parser)
+
 		DiscardTuple(outputChannel)
-		parserReports := RelayEvents(eventChannel, "CheckBatch", startDate)
-		reports = append(reports, parserReports...)
-	}
-
-	return reports, nil
-}
-
-func reportUnsupportedFiletypes(batch base.AdminBatch) {
-	for fileType := range batch.Files {
-		if !parsing.IsSupportedParser(fileType) {
-			msg := fmt.Sprintf("Type de fichier non reconnu: %v", fileType)
-			log.Println(msg) // notification dans la sortie d'erreurs
-			event := marshal.CreateReportEvent(fileType, bson.M{
-				"batchKey": batch.ID.Key,
-				"summary":  msg,
-			})
-			event.ReportType = "ImportBatch_error"
-			mainMessageChannel <- event
+		for report := range eventChannel {
+			if report.LinesRejected > 0 {
+				logger.Error(report.Summary)
+			} else {
+				logger.Info(report.Summary)
+			}
 		}
 	}
+	return nil
+}
+
+func checkUnsupportedFiletypes(batch base.AdminBatch) []string {
+	var errFileTypes []string
+	for fileType := range batch.Files {
+		if !parsing.IsSupportedParser(fileType) {
+			errFileTypes = append(errFileTypes, fileType)
+		}
+	}
+	return errFileTypes
 }

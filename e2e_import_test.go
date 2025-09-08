@@ -4,7 +4,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
@@ -15,31 +14,21 @@ import (
 	"testing"
 	"time"
 
-	"github.com/globalsign/mgo"
-	"github.com/globalsign/mgo/bson"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestImportEndToEnd(t *testing.T) {
 
-	mongodb, err := mgo.Dial(suite.MongoURI)
-	assert.NoError(t, err)
-	defer mongodb.Close()
-
-	db := mongodb.DB(mongoDatabase)
-
-	t.Run("Insert test data and run import", func(t *testing.T) {
-		cleanDatabase(t, db)
-
+	t.Run("Create batch and run import", func(t *testing.T) {
 		createImportTestBatch(t)
 
 		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter")
 		assert.Equal(t, 0, exitCode, "sfdata import should succeed")
 	})
 
-	t.Run("Verify Journal reports", func(t *testing.T) {
-		verifyJournalReports(t, db)
+	t.Run("Verify exported Postgres reports", func(t *testing.T) {
+		verifyReports(t)
 	})
 
 	t.Run("Verify exported CSV files", func(t *testing.T) {
@@ -83,45 +72,20 @@ func createImportTestBatch(t *testing.T) {
 	writeBatchConfig(t, batch)
 }
 
-func verifyJournalReports(t *testing.T, db *mgo.Database) {
-	t.Log("💎 Verifying Journal reports...")
+func verifyReports(t *testing.T) {
+	t.Log("💎 Verifying exported reports...")
 
-	var journalEntries []bson.M
-	err := db.C("Journal").Find(nil).Sort("reportType", "parserCode").All(&journalEntries)
-	assert.NoError(t, err)
-
-	var transformedEntries []map[string]any
-	for _, doc := range journalEntries {
-		transformed := make(map[string]any)
-
-		if event, hasEvent := doc["event"]; hasEvent {
-			eventMap := event.(bson.M)
-			transformed["event"] = map[string]any{
-				"headRejected": eventMap["headRejected"],
-				"headFatal":    eventMap["headFatal"],
-				"linesSkipped": eventMap["linesSkipped"],
-				"summary":      eventMap["summary"],
-				"batchKey":     eventMap["batchKey"],
-			}
-		}
-
-		transformed["reportType"] = doc["reportType"]
-		transformed["parserCode"] = doc["parserCode"]
-		transformed["hasCommitHash"] = doc["commitHash"] != nil
-		transformed["hasDate"] = doc["date"] != nil
-		transformed["hasStartDate"] = doc["startDate"] != nil
-
-		transformedEntries = append(transformedEntries, transformed)
+	conn, err := pgxpool.New(context.Background(), suite.PostgresURI)
+	if err != nil {
+		t.Errorf("Unable to connect to test database: %s", err)
 	}
 
-	// Convert to string for comparison
-	output, err := json.MarshalIndent(transformedEntries, "", "  ")
-	assert.NoError(t, err)
-
-	goldenFilePath := "test-import.journal.golden.txt"
-	tmpOutputPath := "test-import.journal.output.txt"
-
-	compareWithGoldenFileOrUpdate(t, goldenFilePath, string(output), tmpOutputPath)
+	table := engine.ReportTable
+	query := fmt.Sprintf("SELECT * FROM %s ORDER BY parser", table)
+	output := getTableContents(t, conn, query)
+	goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
+	tmpOutputFile := fmt.Sprintf("test-import.sql.%s.output.txt", table)
+	compareWithGoldenFileOrUpdate(t, goldenFile, output, tmpOutputFile)
 }
 
 func verifyExportedCSVFiles(t *testing.T) {
@@ -175,23 +139,30 @@ func verifyPostgresExport(t *testing.T) {
 	tables := getAllTables(t, conn)
 
 	hasMigrationTable := false
+	hasEventTable := false
+
 	for _, table := range tables {
 		if table == engine.VersionTable {
 			hasMigrationTable = true
 			continue
 		}
-		output := getTableContents(t, conn, table)
+
+		if table == engine.ReportTable {
+			hasEventTable = true
+			continue
+		}
+
+		query := fmt.Sprintf("SELECT * FROM %s", table)
+		output := getTableContents(t, conn, query)
 		goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
 		tmpOutputFile := fmt.Sprintf("test-import.sql.%s.output.txt", table)
 		compareWithGoldenFileOrUpdate(t, goldenFile, output, tmpOutputFile)
 	}
-	if !hasMigrationTable {
-		t.Errorf("Expecting the migration table to be present")
-	}
+	assert.True(t, hasMigrationTable, "Expecting the migration table to be present")
+	assert.True(t, hasEventTable, "Expecting the event table to be present")
 }
 
-func getTableContents(t *testing.T, conn *pgxpool.Pool, tableName string) string {
-	query := fmt.Sprintf("SELECT * FROM %s", tableName)
+func getTableContents(t *testing.T, conn *pgxpool.Pool, query string) string {
 
 	rows, err := conn.Query(context.Background(), query)
 	if err != nil {
@@ -205,8 +176,15 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, tableName string) string
 	fieldDescriptions := rows.FieldDescriptions()
 
 	var headers []string
+
+	// timestamp columns should be skipped for reproducible output
+	var includeColumn []bool
 	for _, fd := range fieldDescriptions {
-		headers = append(headers, fmt.Sprintf("%-20s", fd.Name)[:20])
+		isTimestamp := fd.Name == "start_date"
+		includeColumn = append(includeColumn, !isTimestamp)
+		if !isTimestamp {
+			headers = append(headers, fmt.Sprintf("%-20s", fd.Name)[:20])
+		}
 	}
 	result.WriteString(strings.Join(headers, "\t") + "\n")
 
@@ -217,11 +195,16 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, tableName string) string
 		}
 
 		var strValues []string
-		for _, v := range values {
+		for i, v := range values {
+			if !includeColumn[i] {
+				continue
+			}
+
 			if v == nil {
 				strValues = append(strValues, fmt.Sprintf("%-20s", "NULL"))
 			} else {
-				strValues = append(strValues, fmt.Sprintf("%-20v", v)[:20])
+				formatted := fmt.Sprintf("%-20s", fmt.Sprintf("%v", v))[:20]
+				strValues = append(strValues, formatted)
 			}
 		}
 

@@ -12,7 +12,7 @@ Contact: [contact@signaux-faibles.beta.gouv.fr](mailto:contact@signaux-faibles.b
 ## Architecture
 
 - Golang
-- MongoDB 4.2
+- PostgreSQL 17
 
 ## Installation
 

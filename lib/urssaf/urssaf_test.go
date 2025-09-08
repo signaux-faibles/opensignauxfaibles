@@ -155,10 +155,10 @@ func TestCotisation(t *testing.T) {
 		cache.Set("filter", marshal.SirenFilter{allowedSiren: true})
 		// test
 		output := marshal.RunParser(ParserCotisation, cache, testData)
-		reportData, _ := output.Events[0].ParseReport()
-		assert.Equal(t, false, reportData["isFatal"], "aucune erreur fatale ne doit être rapportée")
-		assert.Equal(t, []interface{}{}, reportData["headRejected"], "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, map[string]interface{}{"$numberLong": 1.0}, reportData["linesValid"], "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
+		reportData := output.Reports[0]
+		assert.Equal(t, false, reportData.IsFatal, "aucune erreur fatale ne doit être rapportée")
+		assert.Equal(t, []string{}, reportData.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
+		assert.Equal(t, int64(1.0), reportData.LinesValid, "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
 	})
 
 	t.Run("toute ligne de cotisation d'un établissement non inclus dans les comptes urssaf doit être sautée silencieusement", func(t *testing.T) {
@@ -172,10 +172,10 @@ func TestCotisation(t *testing.T) {
 		))
 		// test
 		output := marshal.RunParser(ParserCotisation, cache, testData)
-		reportData, _ := output.Events[0].ParseReport()
-		assert.Equal(t, false, reportData["isFatal"], "aucune erreur fatale ne doit être rapportée")
-		assert.Equal(t, []interface{}{}, reportData["headRejected"], "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, map[string]interface{}{"$numberLong": 1.0}, reportData["linesSkipped"], "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
+		report := output.Reports[0]
+		assert.Equal(t, false, report.IsFatal, "aucune erreur fatale ne doit être rapportée")
+		assert.Equal(t, []string{}, report.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
+		assert.Equal(t, int64(1.0), report.LinesSkipped, "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
 	})
 }
 
@@ -196,7 +196,7 @@ func TestProcol(t *testing.T) {
 
 	t.Run("est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
 		output := marshal.RunParserInline(t, ParserProcol, []string{"dT_eFfeT;lIb_aCtx_stDx;sIret"})
-		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+		assert.Len(t, marshal.GetFatalErrors(output.Reports[0]), 0)
 	})
 }
 
@@ -229,7 +229,7 @@ func TestEffectif(t *testing.T) {
 
 	t.Run("Effectif est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
 		output := marshal.RunParserInline(t, ParserEffectif, []string{"CoMpTe;SiReT"})
-		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+		assert.Len(t, marshal.GetFatalErrors(output.Reports[0]), 0)
 	})
 }
 
@@ -249,6 +249,6 @@ func TestEffectifEnt(t *testing.T) {
 
 	t.Run("EffectifEnt est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
 		output := marshal.RunParserInline(t, ParserEffectifEnt, []string{"SiReN"})
-		assert.Len(t, marshal.GetFatalErrors(output.Events[0]), 0)
+		assert.Len(t, marshal.GetFatalErrors(output.Reports[0]), 0)
 	})
 }

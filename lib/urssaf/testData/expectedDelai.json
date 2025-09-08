@@ -40,24 +40,20 @@
       "action": "pyo as"
     }
   ],
-  "events": [
+  "reports": [
     {
-      "date": "0001-01-01T00:00:00Z",
-      "startDate": "0001-01-01T00:00:00Z",
-      "event": {
-        "batchKey": "",
-        "headFatal": [],
-        "headRejected": [],
-        "isFatal": false,
-        "linesParsed": 3,
-        "linesRejected": 0,
-        "linesSkipped": 0,
-        "linesValid": 3,
-        "summary": "testData/delaiTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
-      },
-      "priority": "info",
-      "parserCode": "delai",
-      "report_type": ""
+      "commit": "",
+      "start_date": "0001-01-01T00:00:00Z",
+      "parser": "delai",
+      "batch_key": "",
+      "head_fatal": [],
+      "head_rejected": [],
+      "is_fatal": false,
+      "lines_parsed": 3,
+      "lines_rejected": 0,
+      "lines_skipped": 0,
+      "lines_valid": 3,
+      "summary": "testData/delaiTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
     }
   ]
 }

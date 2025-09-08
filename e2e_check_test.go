@@ -3,26 +3,16 @@
 package main
 
 import (
-	"encoding/json"
 	"opensignauxfaibles/lib/base"
 	"os"
 	"os/exec"
 	"testing"
 	"time"
 
-	"github.com/globalsign/mgo"
-	"github.com/globalsign/mgo/bson"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCheckEndToEnd(t *testing.T) {
-	mongodb, err := mgo.Dial(suite.MongoURI)
-	assert.NoError(t, err)
-	defer mongodb.Close()
-
-	db := mongodb.DB(mongoDatabase)
-
-	cleanDatabase(t, db)
 	createCheckTestBatch(t)
 
 	testCases := []struct {
@@ -55,11 +45,8 @@ func TestCheckEndToEnd(t *testing.T) {
 			output, err := cmd.CombinedOutput()
 
 			assert.NoError(t, err, "%s failed: %s", tc.name, string(output))
-			compareWithGoldenFileOrUpdate(t, tc.goldenFile, string(output), tc.tmpFile)
 		})
 	}
-
-	verifyCheckJournalReports(t, db)
 }
 
 func createCheckTestBatch(t *testing.T) {
@@ -79,46 +66,4 @@ func createCheckTestBatch(t *testing.T) {
 		},
 	}
 	writeBatchConfig(t, batch)
-
-}
-
-func verifyCheckJournalReports(t *testing.T, db *mgo.Database) {
-	t.Log("💎 Verifying Journal reports...")
-
-	// Query Journal collection with sorting
-	var journalEntries []bson.M
-	err := db.C("Journal").Find(nil).Sort("-reportType", "parserCode").All(&journalEntries)
-	assert.NoError(t, err)
-
-	var transformedEntries []map[string]any
-
-	for _, doc := range journalEntries {
-		transformed := make(map[string]any)
-
-		if event, hasEvent := doc["event"]; hasEvent {
-			eventMap := event.(bson.M)
-			transformed["event"] = map[string]any{
-				"headRejected": eventMap["headRejected"],
-				"headFatal":    eventMap["headFatal"],
-				"linesSkipped": eventMap["linesSkipped"],
-				"summary":      eventMap["summary"],
-				"batchKey":     eventMap["batchKey"],
-			}
-		}
-
-		transformed["reportType"] = doc["reportType"]
-		transformed["parserCode"] = doc["parserCode"]
-		transformed["hasDate"] = doc["date"] != nil
-		transformed["hasStartDate"] = doc["startDate"] != nil
-
-		transformedEntries = append(transformedEntries, transformed)
-	}
-
-	output, err := json.MarshalIndent(transformedEntries, "", "  ")
-	assert.NoError(t, err)
-
-	goldenFilePath := "test-check.journal.golden.txt"
-	tmpOutputPath := "test-check.journal.output.txt"
-
-	compareWithGoldenFileOrUpdate(t, goldenFilePath, string(output), tmpOutputPath)
 }

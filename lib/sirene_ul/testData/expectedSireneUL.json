@@ -29,24 +29,20 @@
       "date_creation": "1967-01-01T00:00:00Z"
     }
   ],
-  "events": [
+  "reports": [
     {
-      "date": "0001-01-01T00:00:00Z",
-      "startDate": "0001-01-01T00:00:00Z",
-      "event": {
-        "batchKey": "",
-        "headFatal": [],
-        "headRejected": [],
-        "isFatal": false,
-        "linesParsed": 4,
-        "linesRejected": 0,
-        "linesSkipped": 0,
-        "linesValid": 4,
-        "summary": "testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
-      },
-      "priority": "info",
-      "parserCode": "sirene_ul",
-      "report_type": ""
+      "commit": "",
+      "start_date": "0001-01-01T00:00:00Z",
+      "parser": "sirene_ul",
+      "batch_key": "",
+      "head_fatal": [],
+      "head_rejected": [],
+      "is_fatal": false,
+      "lines_parsed": 4,
+      "lines_rejected": 0,
+      "lines_skipped": 0,
+      "lines_valid": 4,
+      "summary": "testData/sireneULTestData.csv: intégration terminée, 4 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
     }
   ]
 }

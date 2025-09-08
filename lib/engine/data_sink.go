@@ -99,3 +99,14 @@ func (s *DiscardDataSink) ProcessOutput(ch chan marshal.Tuple) error {
 	}
 	return nil
 }
+
+type DiscardReportSink struct {
+	counter int
+}
+
+func (s DiscardReportSink) Process(ch chan marshal.Report) error {
+	for range ch {
+		s.counter++
+	}
+	return nil
+}

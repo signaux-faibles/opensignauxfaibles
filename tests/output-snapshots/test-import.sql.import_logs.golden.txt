@@ -1,0 +1,13 @@
+parser              	batch_key           	head_fatal          	head_rejected       	is_fatal            	lines_parsed        	lines_rejected      	lines_skipped       	lines_valid         	summary             
+admin_urssaf        	1910                	[]                  	[Line 2: Pas de sire	false               	3                   	1                   	0                   	2                   	./lib/urssaf/testDat
+apconso             	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/apconso/testDa
+apdemande           	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/apdemande/test
+ccsf                	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/urssaf/testDat
+cotisation          	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/urssaf/testDat
+debit               	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/urssaf/testDat
+delai               	1910                	[]                  	[]                  	false               	3                   	0                   	1                   	2                   	./lib/urssaf/testDat
+effectif            	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/urssaf/testDat
+effectif_ent        	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/urssaf/testDat
+procol              	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	./lib/urssaf/testDat
+sirene              	1910                	[]                  	[Line 5: strconv.Par	false               	5                   	1                   	0                   	4                   	./lib/sirene/testDat
+sirene_ul           	1910                	[]                  	[]                  	false               	4                   	0                   	0                   	4                   	./lib/sirene_ul/test

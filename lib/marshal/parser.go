@@ -56,22 +56,24 @@ type Tuple interface {
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
-func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Event) {
+func ParseFilesFromBatch(cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Report) {
 	outputChannel := make(chan Tuple)
-	eventChannel := make(chan Event)
+	reportChannel := make(chan Report)
 	fileType := parser.Type()
+
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			eventChannel <- ParseFile(path, parser, batch, cache, outputChannel)
+			reportChannel <- ParseFile(path, parser, batch, cache, outputChannel)
 		}
 		close(outputChannel)
-		close(eventChannel)
+		close(reportChannel)
 	}()
-	return outputChannel, eventChannel
+	return outputChannel, reportChannel
 }
 
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
-func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, outputChannel chan Tuple) Event {
+func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch,
+	cache Cache, outputChannel chan Tuple) Report {
 	logger := slog.With("batch", batch.ID.Key, "parser", parser.Type(), "filename", path.RelativePath())
 	logger.Debug("parsing file")
 
@@ -85,7 +87,7 @@ func ParseFile(path base.BatchFile, parser Parser, batch *base.AdminBatch, cache
 
 	logger.Debug("end of file parsing")
 
-	return CreateReportEvent(fileType, tracker.Report(batch.ID.Key, path.RelativePath())) // abstract
+	return tracker.Report(fileType, batch.ID.Key, path.RelativePath())
 }
 
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.

@@ -15,7 +15,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/globalsign/mgo"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,18 +22,10 @@ import (
 type TestSuite struct {
 	TmpDir         string
 	GoldenFilesDir string
-	MongoURI       string
 	PostgresURI    string
 }
 
 var suite *TestSuite
-
-const (
-	mongoImage     = "mongo:4.2@sha256:1c2243a5e21884ffa532ca9d20c221b170d7b40774c235619f98e2f6eaec520a"
-	mongoContainer = "sf-mongodb"
-	mongoPort      = 27016
-	mongoDatabase  = "signauxfaibles"
-)
 
 const (
 	pgImage     = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
@@ -64,14 +55,6 @@ func TestMain(m *testing.M) {
 func setupSuite() (*TestSuite, error) {
 	log.Println("Setting up e2e tests...")
 
-	log.Println("  Setting up MongoDB")
-
-	exec.Command("docker", "stop", mongoContainer).Run()
-	exec.Command("docker", "rm", mongoContainer).Run()
-
-	startMongoContainer()
-	mongoURI := fmt.Sprintf("mongodb://localhost:%v", mongoPort)
-
 	log.Println("  Setting up Postgresql")
 	startPostgresContainer()
 
@@ -89,8 +72,6 @@ func setupSuite() (*TestSuite, error) {
 
 	// When running the command with cmd.Exec, the viper config is lost, so we
 	// use environment variables instead
-	os.Setenv("DB_DIAL", mongoURI)
-	os.Setenv("DB", mongoDatabase)
 	os.Setenv("APP_DATA", ".")
 	os.Setenv("BATCH_CONFIG_FILE", path.Join(tmpDir, "batch.json"))
 	os.Setenv("EXPORT_PATH", tmpDir)
@@ -121,7 +102,6 @@ func setupSuite() (*TestSuite, error) {
 	time.Sleep(3 * time.Second)
 	return &TestSuite{
 		TmpDir:         tmpDir,
-		MongoURI:       mongoURI,
 		PostgresURI:    postgresURI,
 		GoldenFilesDir: filepath.Join("tests", "output-snapshots"),
 	}, nil
@@ -129,7 +109,6 @@ func setupSuite() (*TestSuite, error) {
 
 func teardownSuite() {
 	log.Println("Teardown db containers and temporary directory...")
-	stopMongoContainer()
 	stopPostgresContainer()
 	deleteTempFolder()
 }
@@ -192,17 +171,6 @@ func updateGoldenFile(goldenPath, actualOutput string) error {
 	return os.WriteFile(goldenPath, []byte(actualOutput), 0644)
 }
 
-func startMongoContainer() {
-	exec.Command("docker", "stop", mongoContainer).Run()
-	exec.Command("docker", "rm", mongoContainer).Run()
-	portMapping := fmt.Sprintf("%v:27017", mongoPort)
-	startMongoCommand := exec.Command("docker", "run", "--rm", "-d", "-p", portMapping, "--name", mongoContainer, mongoImage)
-	err := startMongoCommand.Run()
-	if err != nil {
-		panic(err)
-	}
-}
-
 func startPostgresContainer() {
 	exec.Command("docker", "stop", pgContainer).Run()
 	exec.Command("docker", "rm", pgContainer).Run()
@@ -228,25 +196,6 @@ func startPostgresContainer() {
 	err := startPgCommand.Run()
 	if err != nil {
 		panic(err)
-	}
-}
-
-func cleanDatabase(t *testing.T, db *mgo.Database) {
-	t.Log("🧹 Cleaning database...")
-
-	// Drop all collections
-	collections := []string{"Admin", "Journal"}
-	for _, collection := range collections {
-		err := db.C(collection).DropCollection()
-		if err != nil && err.Error() != "ns not found" {
-			t.Logf("Warning: could not drop collection %s: %v", collection, err)
-		}
-	}
-}
-
-func stopMongoContainer() {
-	if err := exec.Command("docker", "stop", mongoContainer).Run(); err != nil {
-		log.Println(err) // affichage à titre informatif
 	}
 }
 
