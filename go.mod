@@ -6,7 +6,7 @@ toolchain go1.24.3
 
 require (
 	github.com/cosiner/flag v0.5.2
-	github.com/jackc/pgx/v5 v5.7.5
+	github.com/jackc/pgx/v5 v5.7.6
 	github.com/jackc/tern/v2 v2.3.3
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
