@@ -7,7 +7,7 @@
 CREATE MATERIALIZED VIEW IF NOT EXISTS sfdata_stg_apdemande_by_period AS
     SELECT
         d.siret,
-        DATE_TRUNC('month', period_series.period) as periode,
+        DATE_TRUNC('month', period_series.period)::date as periode,
         CASE
             WHEN d.heures IS NOT NULL THEN d.heures / 151.67 -- moyenne heures mensuelles
             ELSE 0
@@ -41,7 +41,7 @@ CREATE INDEX IF NOT EXISTS idx_stg_apdemande_by_period_siren ON sfdata_stg_apdem
 CREATE OR  REPLACE VIEW sfdata_stg_apconso_by_period AS
 SELECT
     c.siret,
-    periode,
+    periode::date,
     0 as ETP_autorise,
     CASE
         WHEN c.heures IS NOT NULL THEN c.heures / 151.67
