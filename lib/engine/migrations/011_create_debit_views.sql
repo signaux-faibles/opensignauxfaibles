@@ -1,6 +1,6 @@
 
-CREATE OR REPLACE VIEW sfdata_clean_debit AS SELECT * FROM sfdata_stg_debit;
+CREATE OR REPLACE VIEW clean_debit AS SELECT * FROM stg_debit;
 
 ---- create above / drop below ----
 
-DROP VIEW sfdata_clean_debit;
+DROP VIEW clean_debit;

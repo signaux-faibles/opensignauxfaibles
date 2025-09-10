@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sfdata_stg_debit (
+CREATE TABLE IF NOT EXISTS stg_debit (
     siret                           VARCHAR(14),
     numero_compte                   TEXT,
     numero_ecart_negatif            VARCHAR(50),
@@ -15,10 +15,10 @@ CREATE TABLE IF NOT EXISTS sfdata_stg_debit (
     recours_en_cours                BOOLEAN
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_debit_siret ON sfdata_stg_debit(siret);
-CREATE INDEX IF NOT EXISTS idx_stg_debit_date_traitement ON sfdata_stg_debit(date_traitement);
-CREATE INDEX IF NOT EXISTS idx_stg_debit_periode_debut ON sfdata_stg_debit(periode_debut);
+CREATE INDEX IF NOT EXISTS idx_stg_debit_siret ON stg_debit(siret);
+CREATE INDEX IF NOT EXISTS idx_stg_debit_date_traitement ON stg_debit(date_traitement);
+CREATE INDEX IF NOT EXISTS idx_stg_debit_periode_debut ON stg_debit(periode_debut);
 
 ---- create above / drop below ----
 
-DROP TABLE sfdata_stg_debit;
+DROP TABLE stg_debit;
