@@ -108,7 +108,7 @@ func parseApDemandeLine(idxRow marshal.IndexedRow, parsedLine *marshal.ParsedLin
 	parsedLine.AddRegularError(err)
 	apdemande.PeriodeDebut, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_DEB"))
 	parsedLine.AddRegularError(err)
-	apdemande.PeriodeFin, err = time.Parse("2006-01-02 00:00:00", idxRow.GetVal("DATE_FIN"))
+	apdemande.PeriodeFin, err = time.Parse("2006-01-02", idxRow.GetVal("DATE_FIN"))
 	parsedLine.AddRegularError(err)
 	apdemande.HTA, err = idxRow.GetFloat64("HTA")
 	parsedLine.AddRegularError(err)
