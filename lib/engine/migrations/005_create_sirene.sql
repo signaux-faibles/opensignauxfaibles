@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sfdata_stg_sirene (
+CREATE TABLE IF NOT EXISTS stg_sirene (
     siren                   VARCHAR(9),
     siret                   VARCHAR(14),
     siege                   BOOLEAN,
@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS sfdata_stg_sirene (
     latitude                FLOAT
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_sirene_siren ON sfdata_stg_sirene(siren);
-CREATE INDEX IF NOT EXISTS idx_stg_sirene_siret ON sfdata_stg_sirene(siret);
+CREATE INDEX IF NOT EXISTS idx_stg_sirene_siren ON stg_sirene(siren);
+CREATE INDEX IF NOT EXISTS idx_stg_sirene_siret ON stg_sirene(siret);
 
 ---- create above / drop below ----
 
-DROP TABLE sfdata_stg_sirene;
+DROP TABLE stg_sirene;

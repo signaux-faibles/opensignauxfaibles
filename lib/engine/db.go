@@ -19,7 +19,7 @@ var migrationFS embed.FS
 var MigrationFS, _ = fs.Sub(migrationFS, "migrations")
 
 // VersionTable is the name of the table to track migrations
-const VersionTable = "sfdata_migrations"
+const VersionTable = "migrations"
 
 // DB type centralisant les accès à une base de données
 type DB struct {

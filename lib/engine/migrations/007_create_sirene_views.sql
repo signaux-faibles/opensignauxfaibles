@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW sfdata_clean_sirene AS
+CREATE OR REPLACE VIEW clean_sirene AS
   SELECT
     siren,
     siret,
@@ -25,17 +25,17 @@ CREATE OR REPLACE VIEW sfdata_clean_sirene AS
     date_creation,
     longitude,
     latitude
-FROM sfdata_stg_sirene;
+FROM stg_sirene;
 
-CREATE OR REPLACE VIEW sfdata_clean_sirene_ul AS
+CREATE OR REPLACE VIEW clean_sirene_ul AS
   SELECT
     siren,
     raison_sociale,
     statut_juridique,
     creation
-  FROM sfdata_stg_sirene_ul;
+  FROM stg_sirene_ul;
 
 ---- create above / drop below ----
 
-DROP VIEW IF EXISTS sfdata_clean_sirene;
-DROP VIEW IF EXISTS sfdata_clean_sirene_ul;
+DROP VIEW IF EXISTS clean_sirene;
+DROP VIEW IF EXISTS clean_sirene_ul;

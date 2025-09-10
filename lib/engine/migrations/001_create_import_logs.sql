@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS sfdata_import_logs (
+CREATE TABLE IF NOT EXISTS import_logs (
   start_date     TIMESTAMP,
   parser         TEXT,
   batch_key      TEXT,
@@ -13,4 +13,4 @@ CREATE TABLE IF NOT EXISTS sfdata_import_logs (
 )
 ---- create above / drop below ----
 
-DROP TABLE sfdata_import_logs;
+DROP TABLE import_logs;
