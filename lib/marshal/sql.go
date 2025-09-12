@@ -19,7 +19,7 @@ func ExtractTableRow(tuple Tuple) (row []any) {
 func deref(val reflect.Value) reflect.Value {
 	for val.Kind() == reflect.Ptr {
 		if val.IsNil() {
-			return reflect.Zero(val.Type().Elem()) // return zero value if nil
+			return val
 		}
 		val = val.Elem()
 	}
