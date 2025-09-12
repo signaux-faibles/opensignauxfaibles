@@ -161,3 +161,14 @@ func CreateTempFileWithContent(t *testing.T, content []byte) *os.File {
 	}
 	return tmpfile
 }
+
+type TestTuple struct {
+	Test1 string `csv:"test1" sql:"test1"`
+	Test2 *int   `csv:"test2" sql:"test2"`
+	Test3 string
+	Test4 *time.Time `csv:"test4" sql:"test3"`
+}
+
+func (TestTuple) Key() string   { return "" }
+func (TestTuple) Scope() string { return "" }
+func (TestTuple) Type() string  { return "" }

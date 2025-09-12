@@ -7,31 +7,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type TestSQLTuple struct {
-	Test1 string `sql:"test1"`
-	Test2 *int   `sql:"test2"`
-	Test3 string
-	Test4 *time.Time `sql:"test4"`
-}
-
-func (TestSQLTuple) Key() string   { return "" }
-func (TestSQLTuple) Scope() string { return "" }
-func (TestSQLTuple) Type() string  { return "" }
-
 func TestExtractValues(t *testing.T) {
 	anInt := 1
 	testCases := []struct {
-		tuple          TestSQLTuple
+		tuple          TestTuple
 		expectedLen    int
 		expectedValues []any
 	}{
 		{
-			TestSQLTuple{},
+			TestTuple{},
 			3,
 			[]any{"", (*int)(nil), (*time.Time)(nil)},
 		},
 		{
-			TestSQLTuple{"abc", &anInt, "def", &time.Time{}},
+			TestTuple{"abc", &anInt, "def", &time.Time{}},
 			3,
 			[]any{"abc", anInt, time.Time{}},
 		},
