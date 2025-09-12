@@ -12,7 +12,7 @@ import (
 )
 
 // BatchSize controls the max number of rows inserted at a time
-const BatchSize = 1000
+const BatchSize = 5
 
 type PostgresSinkFactory struct {
 	conn *pgxpool.Pool
@@ -91,7 +91,15 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple)
 		if len(currentBatch) >= BatchSize {
 
 			if err = insertTuples(currentBatch, s.conn, s.table, headers); err != nil {
-				return fmt.Errorf("failed to execute batch insert: %w", err)
+				// TMP
+				values := make([][]any, 0, len(currentBatch))
+
+				for _, tuple := range currentBatch {
+					row := marshal.ExtractTableRow(tuple)
+					values = append(values, row)
+				}
+				return fmt.Errorf("failed to execute batch insert: %w, with batch %v, extracted as %v", err, currentBatch, values)
+				// end TMP
 			}
 
 			nInserted += len(currentBatch)

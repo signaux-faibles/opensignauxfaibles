@@ -2,7 +2,9 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"opensignauxfaibles/lib/marshal"
+	"reflect"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -68,8 +70,8 @@ func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple
 
 	// Creates a new context for the ability to cancel all sinks if any sink
 	// fails. For the moment this is an intended and acceptable behavior.
-	subctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	subctx, cancel := context.WithCancelCause(context.Background())
+	defer cancel(nil)
 
 	var outChannels []chan marshal.Tuple
 
@@ -104,7 +106,8 @@ func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple
 				err := sink.ProcessOutput(subctx, outChannels[i])
 
 				if err != nil {
-					cancel() // cancels all sinks
+					err = fmt.Errorf("sink %s failed: %v ; cancelling data processing for all sinks", getType(sink), err)
+					cancel(err)
 				}
 
 				return err
@@ -137,4 +140,9 @@ func (s DiscardReportSink) Process(ch chan marshal.Report) error {
 		s.counter++
 	}
 	return nil
+}
+
+// getType return the name of the type of the input
+func getType(myvar any) string {
+	return reflect.TypeOf(myvar).String()
 }

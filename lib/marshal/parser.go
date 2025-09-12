@@ -139,7 +139,7 @@ func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filte
 		} else {
 			select {
 			case <-ctx.Done():
-				return fmt.Errorf("Parser interrupted by cancelled context")
+				return fmt.Errorf("Parser interrupted by cancelled context with following cause: %v", context.Cause(ctx))
 			case outputChannel <- tuple:
 			}
 		}

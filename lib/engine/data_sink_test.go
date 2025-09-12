@@ -85,4 +85,6 @@ func TestCompositeSink_FailingSink(t *testing.T) {
 	err := compSink.ProcessOutput(ctx, ch)
 
 	assert.Error(t, err)
+	t.Log(err.Error())
+	assert.Contains(t, err.Error(), "this sink always fails")
 }
