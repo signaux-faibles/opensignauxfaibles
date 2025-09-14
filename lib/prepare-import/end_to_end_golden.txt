@@ -3,10 +3,6 @@
     "key": "1802",
     "type": "batch"
   },
-  "complete_types": [
-    "effectif",
-    "sirene_ul"
-  ],
   "files": {
     "debit": [
       "/1802/sigfaibles_debits.csv"

@@ -1,7 +1,6 @@
 package prepareimport
 
 import (
-	"fmt"
 	"opensignauxfaibles/lib/base"
 	"strconv"
 	"strings"
@@ -10,10 +9,9 @@ import (
 
 // AdminBatch represents a document going to be stored in the Admin db collection.
 type AdminBatch struct {
-	ID            base.AdminID                    `json:"id,omitempty"`
-	CompleteTypes []base.ValidFileType            `json:"complete_types,omitempty"`
-	Files         map[base.ValidFileType][]string `json:"files,omitempty"`
-	Param         ParamProperty                   `json:"param,omitempty"`
+	ID    base.AdminID                    `json:"id,omitempty"`
+	Files map[base.ValidFileType][]string `json:"files,omitempty"`
+	Param ParamProperty                   `json:"param,omitempty"`
 }
 
 // ParamProperty represents the "param" property of an Admin object.
@@ -40,28 +38,6 @@ func populateParamProperty(batchKey BatchKey, dateFinEffectif DateFinEffectif) P
 		DateFin:         time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC),
 		DateFinEffectif: dateFinEffectif.Date(),
 	}
-}
-
-func populateCompleteTypesProperty(filesProperty FilesProperty) []base.ValidFileType {
-	completeTypes := []base.ValidFileType{}
-	for _, typeName := range defaultCompleteTypes {
-		if _, ok := filesProperty[typeName]; ok {
-			completeTypes = append(completeTypes, typeName)
-		}
-	}
-	for typeName, thresholdInBytes := range thresholdPerGzippedFileType {
-		if files, ok := filesProperty[typeName]; ok {
-			if len(files) != 1 {
-				panic(fmt.Errorf("'complete' file detection can only work if there is only 1 file per type, found %v for type %v", len(files), typeName))
-			}
-			file := files[0]
-			if file.GetGzippedSize() >= thresholdInBytes {
-				println(fmt.Sprintf("Info: file \"%v\" was marked as \"complete\" because it's a gzipped file which size reached the threshold of %v bytes", file.Name(), thresholdInBytes))
-				completeTypes = append(completeTypes, typeName)
-			}
-		}
-	}
-	return completeTypes
 }
 
 func populateFilesPaths(filesProperty FilesProperty) map[base.ValidFileType][]string {

@@ -33,7 +33,6 @@ func main() {
 		panic(err)
 	}
 	saveAdminObject(adminObject, *configFile)
-	println("Caution: please make sure that files listed in complete_types were correctly recognized as complete.")
 }
 
 func prepare(path, batchKey, dateFinEffectif string) (prepareimport.AdminBatch, error) {

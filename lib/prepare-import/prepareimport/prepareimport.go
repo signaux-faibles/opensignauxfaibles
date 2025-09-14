@@ -110,10 +110,9 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 	}
 
 	return AdminBatch{
-		ID:            base.AdminID{string(batchKey), "batch"},
-		Files:         populateFilesPaths(filesProperty),
-		CompleteTypes: populateCompleteTypesProperty(filesProperty),
-		Param:         populateParamProperty(batchKey, NewDateFinEffectif(dateFinEffectif)),
+		ID:    base.AdminID{string(batchKey), "batch"},
+		Files: populateFilesPaths(filesProperty),
+		Param: populateParamProperty(batchKey, NewDateFinEffectif(dateFinEffectif)),
 	}, err
 }
 
