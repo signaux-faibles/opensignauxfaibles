@@ -9,9 +9,9 @@ import (
 
 // AdminBatch represents a document going to be stored in the Admin db collection.
 type AdminBatch struct {
-	ID    base.AdminID                    `json:"id,omitempty"`
+	ID    base.AdminID                    `json:"id"`
 	Files map[base.ValidFileType][]string `json:"files,omitempty"`
-	Param ParamProperty                   `json:"param,omitempty"`
+	Param ParamProperty                   `json:"param"`
 }
 
 // ParamProperty represents the "param" property of an Admin object.

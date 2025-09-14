@@ -12,11 +12,10 @@ import (
 
 // AdminBatch metadata Batch
 type AdminBatch struct {
-	ID       AdminID          `json:"id"`
-	Files    BatchFiles       `json:"files"`
-	Name     string           `json:"name"`
-	Readonly bool             `json:"readonly"`
-	Params   AdminBatchParams `json:"params"`
+	ID     AdminID          `json:"id"`
+	Files  BatchFiles       `json:"files"`
+	Name   string           `json:"name"`
+	Params AdminBatchParams `json:"params"`
 }
 
 type AdminBatchParams struct {
