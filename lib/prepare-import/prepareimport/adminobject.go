@@ -2,6 +2,7 @@ package prepareimport
 
 import (
 	"fmt"
+	"opensignauxfaibles/lib/base"
 	"strconv"
 	"strings"
 	"time"
@@ -9,16 +10,10 @@ import (
 
 // AdminBatch represents a document going to be stored in the Admin db collection.
 type AdminBatch struct {
-	ID            IDProperty                 `json:"id,omitempty"`
+	ID            base.AdminID               `json:"id,omitempty"`
 	CompleteTypes []ValidFileType            `json:"complete_types,omitempty"`
 	Files         map[ValidFileType][]string `json:"files,omitempty"`
 	Param         ParamProperty              `json:"param,omitempty"`
-}
-
-// IDProperty represents the "_id" property of an Admin object.
-type IDProperty struct {
-	Key  BatchKey `json:"key,omitempty"`
-	Type string   `json:"type,omitempty"`
 }
 
 // ParamProperty represents the "param" property of an Admin object.

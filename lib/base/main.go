@@ -38,7 +38,7 @@ func IsBatchID(batchID string) bool {
 	return err == nil
 }
 
-// AdminID Collection key
+// AdminID represents the "id" property of an AdminBatch object.
 type AdminID struct {
 	Key  string `json:"key"`
 	Type string `json:"type"`

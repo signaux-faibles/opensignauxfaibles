@@ -8,6 +8,7 @@ import (
 	"path"
 	"time"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/prepare-import/createfilter"
 )
 
@@ -109,7 +110,7 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 	}
 
 	return AdminBatch{
-		ID:            IDProperty{batchKey, "batch"},
+		ID:            base.AdminID{string(batchKey), "batch"},
 		Files:         populateFilesPaths(filesProperty),
 		CompleteTypes: populateCompleteTypesProperty(filesProperty),
 		Param:         populateParamProperty(batchKey, NewDateFinEffectif(dateFinEffectif)),
