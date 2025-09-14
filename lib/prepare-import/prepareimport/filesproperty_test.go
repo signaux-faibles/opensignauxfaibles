@@ -1,6 +1,7 @@
 package prepareimport
 
 import (
+	"opensignauxfaibles/lib/base"
 	"os"
 	"path/filepath"
 	"testing"
@@ -18,13 +19,15 @@ func TestPopulateFilesProperty(t *testing.T) {
 	t.Run("PopulateFilesProperty should contain effectif file in \"effectif\" property", func(t *testing.T) {
 		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"sigfaibles_effectif_siret.csv", ""}}, dummyBatchKey)
 		if assert.Len(t, unsupportedFiles, 0) {
-			assert.Equal(t, []BatchFile{dummyBatchFile("sigfaibles_effectif_siret.csv")}, filesProperty[effectif])
+			assert.Equal(t,
+				[]BatchFile{dummyBatchFile("sigfaibles_effectif_siret.csv")},
+				filesProperty[base.Effectif])
 		}
 	})
 
 	t.Run("PopulateFilesProperty should contain one debit file in \"debit\" property", func(t *testing.T) {
 		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"sigfaibles_debits.csv", ""}}, dummyBatchKey)
-		expected := FilesProperty{debit: {dummyBatchFile("sigfaibles_debits.csv")}}
+		expected := FilesProperty{base.Debit: {dummyBatchFile("sigfaibles_debits.csv")}}
 		assert.Len(t, unsupportedFiles, 0)
 		assert.Equal(t, expected, filesProperty)
 	})
@@ -32,13 +35,14 @@ func TestPopulateFilesProperty(t *testing.T) {
 	t.Run("PopulateFilesProperty should contain both debits files in \"debit\" property", func(t *testing.T) {
 		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"sigfaibles_debits.csv", ""}, SimpleDataFile{"sigfaibles_debits2.csv", ""}}, dummyBatchKey)
 		if assert.Len(t, unsupportedFiles, 0) {
-			assert.Equal(t, []BatchFile{dummyBatchFile("sigfaibles_debits.csv"), dummyBatchFile("sigfaibles_debits2.csv")}, filesProperty[debit])
+			assert.Equal(t, []BatchFile{dummyBatchFile("sigfaibles_debits.csv"),
+				dummyBatchFile("sigfaibles_debits2.csv")}, filesProperty[base.Debit])
 		}
 	})
 
 	t.Run("Should support multiple types of csv files", func(t *testing.T) {
 		type File struct {
-			Type     ValidFileType
+			Type     base.ValidFileType
 			Filename string
 		}
 		files := []File{

@@ -10,10 +10,10 @@ import (
 
 // AdminBatch represents a document going to be stored in the Admin db collection.
 type AdminBatch struct {
-	ID            base.AdminID               `json:"id,omitempty"`
-	CompleteTypes []ValidFileType            `json:"complete_types,omitempty"`
-	Files         map[ValidFileType][]string `json:"files,omitempty"`
-	Param         ParamProperty              `json:"param,omitempty"`
+	ID            base.AdminID                    `json:"id,omitempty"`
+	CompleteTypes []base.ValidFileType            `json:"complete_types,omitempty"`
+	Files         map[base.ValidFileType][]string `json:"files,omitempty"`
+	Param         ParamProperty                   `json:"param,omitempty"`
 }
 
 // ParamProperty represents the "param" property of an Admin object.
@@ -42,8 +42,8 @@ func populateParamProperty(batchKey BatchKey, dateFinEffectif DateFinEffectif) P
 	}
 }
 
-func populateCompleteTypesProperty(filesProperty FilesProperty) []ValidFileType {
-	completeTypes := []ValidFileType{}
+func populateCompleteTypesProperty(filesProperty FilesProperty) []base.ValidFileType {
+	completeTypes := []base.ValidFileType{}
 	for _, typeName := range defaultCompleteTypes {
 		if _, ok := filesProperty[typeName]; ok {
 			completeTypes = append(completeTypes, typeName)
@@ -64,8 +64,8 @@ func populateCompleteTypesProperty(filesProperty FilesProperty) []ValidFileType 
 	return completeTypes
 }
 
-func populateFilesPaths(filesProperty FilesProperty) map[ValidFileType][]string {
-	r := make(map[ValidFileType][]string)
+func populateFilesPaths(filesProperty FilesProperty) map[base.ValidFileType][]string {
+	r := make(map[base.ValidFileType][]string)
 	for k, v := range filesProperty {
 
 		var paths []string
@@ -79,19 +79,19 @@ func populateFilesPaths(filesProperty FilesProperty) map[ValidFileType][]string 
 }
 
 // types of files that are always provided as "complete"
-var defaultCompleteTypes = []ValidFileType{
-	apconso,
-	apdemande,
-	effectif,
-	effectifEnt,
-	sirene,
-	sireneUl,
+var defaultCompleteTypes = []base.ValidFileType{
+	base.Apconso,
+	base.Apdemande,
+	base.Effectif,
+	base.EffectifEnt,
+	base.Sirene,
+	base.SireneUl,
 }
 
 // types of files that will be considered as "complete" if their gzipped size reach a certain threshold (in bytes)
-var thresholdPerGzippedFileType = map[ValidFileType]uint64{
-	cotisation: 143813078,
-	delai:      1666199,
-	procol:     1646193,
-	debit:      254781489,
+var thresholdPerGzippedFileType = map[base.ValidFileType]uint64{
+	base.Cotisation: 143813078,
+	base.Delai:      1666199,
+	base.Procol:     1646193,
+	base.Debit:      254781489,
 }

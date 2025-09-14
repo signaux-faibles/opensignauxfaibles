@@ -69,7 +69,7 @@ func TestPrepareImport(t *testing.T) {
 		res, err := PrepareImport(dir, dummyBatchKey, dummyDateFinEffectif)
 		//expected := FilesProperty{filter: {dummyBatchFile("filter_2002.csv")}}
 		//expected := make(map[string][]string)
-		expected := map[ValidFileType][]string{filter: {"/1802/filter_2002.csv"}}
+		expected := map[base.ValidFileType][]string{base.Filter: {"/1802/filter_2002.csv"}}
 		if assert.NoError(t, err) {
 			assert.Equal(t, expected, res.Files)
 		}
@@ -82,7 +82,7 @@ func TestPrepareImport(t *testing.T) {
 		filterFile := newBatchFile(subBatch, "filter_siren_1803.csv")
 		parentFilterFile := newBatchFile(parentBatch, "filter_siren_1803.csv")
 		//expectedFilesProp := FilesProperty{filter: {filterFile}}
-		expectedFilesProp := map[ValidFileType][]string{filter: {filterFile.Path()}}
+		expectedFilesProp := map[base.ValidFileType][]string{base.Filter: {filterFile.Path()}}
 		// Setup test environment
 		parentDir := CreateTempFiles(t, parentBatch, []string{parentFilterFile.Name()})
 		subBatchDir := filepath.Join(parentDir, parentBatch.String(), subBatch.String())
@@ -144,10 +144,10 @@ func TestPrepareImport(t *testing.T) {
 		//id       string
 		filename string
 		goupPath string
-		filetype ValidFileType
+		filetype base.ValidFileType
 	}{
-		{"sigfaible_debits.csv", "urssaf", debit},
-		{"StockEtablissement_utf8_geo.csv", "random", sirene},
+		{"sigfaible_debits.csv", "urssaf", base.Debit},
+		{"StockEtablissement_utf8_geo.csv", "random", base.Sirene},
 	}
 
 	for _, testCase := range cases {
@@ -176,7 +176,7 @@ func TestPrepareImport(t *testing.T) {
 		// setup expectations
 		filterFileName := "filter_siren_" + dummyBatchKey.String() + ".csv"
 		sireneULFileName := "sireneUL.csv"
-		expected := map[ValidFileType][]string{
+		expected := map[base.ValidFileType][]string{
 			"effectif":  {dummyBatchFile("sigfaible_effectif_siret.csv").Path()},
 			"filter":    {dummyBatchFile(filterFileName).Path()},
 			"sirene_ul": {dummyBatchFile(sireneULFileName).Path()},
@@ -209,7 +209,7 @@ func TestPrepareImport(t *testing.T) {
 			filename:    "sigfaible_effectif_siret.csv.gz",
 			gzippedSize: uint64(compressedEffectifData.Len()),
 		}
-		expectedFiles := map[ValidFileType][]string{
+		expectedFiles := map[base.ValidFileType][]string{
 			"effectif":  {expectedEffectifFile.Path()},
 			"filter":    {dummyBatchFile(filterFileName).Path()},
 			"sirene_ul": {dummyBatchFile("sireneUL.csv").Path()},

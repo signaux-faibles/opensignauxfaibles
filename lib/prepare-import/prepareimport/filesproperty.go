@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"opensignauxfaibles/lib/base"
 	"os"
 	"path"
 	"strings"
@@ -62,7 +63,7 @@ func ReadFilenames(path string) ([]string, error) {
 }
 
 // FilesProperty represents the "files" property of an Admin object.
-type FilesProperty map[ValidFileType][]BatchFile
+type FilesProperty map[base.ValidFileType][]BatchFile
 
 // GetFilterFile returns the filter file.
 func (fp FilesProperty) GetFilterFile() (BatchFile, error) {
@@ -73,10 +74,10 @@ func (fp FilesProperty) GetFilterFile() (BatchFile, error) {
 }
 
 func (fp FilesProperty) GetSireneULFile() (BatchFile, error) {
-	if fp[sireneUl] == nil || len(fp[sireneUl]) != 1 {
-		return nil, fmt.Errorf("batch requires just 1 sireneUL filter file, found %s", fp[sireneUl])
+	if fp[base.SireneUl] == nil || len(fp[base.SireneUl]) != 1 {
+		return nil, fmt.Errorf("batch requires just 1 sireneUL filter file, found %s", fp[base.SireneUl])
 	}
-	return fp[sireneUl][0], nil
+	return fp[base.SireneUl][0], nil
 }
 
 // GetEffectifFile returns the effectif file.

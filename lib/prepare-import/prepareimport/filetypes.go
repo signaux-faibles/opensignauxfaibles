@@ -1,74 +1,50 @@
 package prepareimport
 
 import (
+	"opensignauxfaibles/lib/base"
 	"regexp"
 )
 
 // ExtractFileTypeFromFilename returns a file type from filename, or empty string for unsupported file names
-func ExtractFileTypeFromFilename(filename string) ValidFileType {
+func ExtractFileTypeFromFilename(filename string) base.ValidFileType {
 	possiblyGzFilename := regexp.MustCompile(`^(.*)\.gz$`).ReplaceAllString(filename, `$1`)
 	switch {
 	case filename == "consommation_ap.csv":
-		return apconso
+		return base.Apconso
 	case filename == "demande_ap.csv":
-		return apdemande
+		return base.Apdemande
 	case possiblyGzFilename == "sigfaible_etablissement_utf8.csv":
-		return adminUrssaf
+		return base.AdminUrssaf
 	case possiblyGzFilename == "sigfaible_effectif_siren.csv":
-		return effectifEnt
+		return base.EffectifEnt
 	case possiblyGzFilename == "sigfaible_pcoll.csv":
-		return procol
+		return base.Procol
 	case possiblyGzFilename == "sigfaible_cotisdues.csv":
-		return cotisation
+		return base.Cotisation
 	case possiblyGzFilename == "sigfaible_delais.csv":
-		return delai
+		return base.Delai
 	case possiblyGzFilename == "sigfaible_ccsf.csv":
-		return ccsf
+		return base.Ccsf
 	case filename == "sireneUL.csv":
-		return sireneUl
+		return base.SireneUl
 	case filename == "StockEtablissement_utf8_geo.csv":
-		return sirene
+		return base.Sirene
 	case mentionsDebits.MatchString(filename):
-		return debit
+		return base.Debit
 	case hasDianePrefix.MatchString(filename):
-		return diane
+		return base.Diane
 	case mentionsEffectif.MatchString(filename):
-		return effectif
+		return base.Effectif
 	case hasFilterPrefix.MatchString(filename):
-		return filter
+		return base.Filter
 	case isRetroPaydex.MatchString(filename):
-		return paydex
+		return base.Paydex
 	case isEllisphere.MatchString(filename):
-		return ellisphere
+		return base.Ellisphere
 	default:
 		return ""
 	}
 }
-
-// These constants represent types supported by our data integration process.
-// See https://documentation/blob/master/processus-traitement-donnees.md#sp%C3%A9cificit%C3%A9s-de-limport
-const (
-	adminUrssaf ValidFileType = "admin_urssaf"
-	apconso     ValidFileType = "apconso"
-	apdemande   ValidFileType = "apdemande"
-	bdf         ValidFileType = "bdf"
-	ccsf        ValidFileType = "ccsf"
-	cotisation  ValidFileType = "cotisation"
-	debit       ValidFileType = "debit"
-	delai       ValidFileType = "delai"
-	diane       ValidFileType = "diane"
-	effectif    ValidFileType = "effectif"
-	effectifEnt ValidFileType = "effectif_ent"
-	filter      ValidFileType = "filter"
-	procol      ValidFileType = "procol"
-	sirene      ValidFileType = "sirene"
-	sireneUl    ValidFileType = "sirene_ul"
-	paydex      ValidFileType = "paydex"
-	ellisphere  ValidFileType = "ellisphere"
-)
-
-// ValidFileType is the type used by all constants like ADMIN_URSSAF, APCONSO, etc...
-type ValidFileType string
 
 var hasDianePrefix = regexp.MustCompile(`^[Dd]iane`)
 var mentionsEffectif = regexp.MustCompile(`effectif_`)

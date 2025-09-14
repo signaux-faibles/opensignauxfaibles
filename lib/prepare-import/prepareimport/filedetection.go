@@ -2,15 +2,16 @@ package prepareimport
 
 import (
 	"log"
+	"opensignauxfaibles/lib/base"
 	"os"
 )
 
 // DataFile represents a Data File to be imported, and allows to determine its type and name.
 type DataFile interface {
-	GetFilename() string           // the name as it will be stored in Admin
-	GetOriginalFilename() string   // the original name of the file
-	DetectFileType() ValidFileType // returns the type of that file (e.g. DEBIT)
-	GetSize() *uint64              // returns the size of that file, in bytes
+	GetFilename() string                // the name as it will be stored in Admin
+	GetOriginalFilename() string        // the original name of the file
+	DetectFileType() base.ValidFileType // returns the type of that file (e.g. DEBIT)
+	GetSize() *uint64                   // returns the size of that file, in bytes
 }
 
 // NewDataFile returns a SimpleDataFile
@@ -25,7 +26,7 @@ type SimpleDataFile struct {
 }
 
 // DetectFileType returns the type of that file (e.g. DEBIT).
-func (dataFile SimpleDataFile) DetectFileType() ValidFileType {
+func (dataFile SimpleDataFile) DetectFileType() base.ValidFileType {
 	return ExtractFileTypeFromFilename(dataFile.filename)
 }
 
