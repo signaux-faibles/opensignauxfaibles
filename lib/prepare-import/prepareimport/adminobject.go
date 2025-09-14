@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// AdminObject represents a document going to be stored in the Admin db collection.
-type AdminObject struct {
+// AdminBatch represents a document going to be stored in the Admin db collection.
+type AdminBatch struct {
 	ID            IDProperty                 `json:"id,omitempty"`
 	CompleteTypes []ValidFileType            `json:"complete_types,omitempty"`
 	Files         map[ValidFileType][]string `json:"files,omitempty"`

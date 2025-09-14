@@ -36,21 +36,21 @@ func main() {
 	println("Caution: please make sure that files listed in complete_types were correctly recognized as complete.")
 }
 
-func prepare(path, batchKey, dateFinEffectif string) (prepareimport.AdminObject, error) {
+func prepare(path, batchKey, dateFinEffectif string) (prepareimport.AdminBatch, error) {
 	validBatchKey, err := prepareimport.NewBatchKey(batchKey)
 	if err != nil {
-		return prepareimport.AdminObject{}, errors.Wrap(err, "erreur lors de la création de la clé de batch")
+		return prepareimport.AdminBatch{}, errors.Wrap(err, "erreur lors de la création de la clé de batch")
 	}
 	adminObject, err := prepareimport.PrepareImport(path, validBatchKey, dateFinEffectif)
 	if _, ok := err.(prepareimport.UnsupportedFilesError); ok {
 		return adminObject, err
 	} else if err != nil {
-		return prepareimport.AdminObject{}, errors.Wrap(err, "erreur inattendue pendant la préparation de l'import : ")
+		return prepareimport.AdminBatch{}, errors.Wrap(err, "erreur inattendue pendant la préparation de l'import : ")
 	}
 	return adminObject, nil
 }
 
-func saveAdminObject(toSave prepareimport.AdminObject, configFile string) {
+func saveAdminObject(toSave prepareimport.AdminBatch, configFile string) {
 	err := prepareimport.SaveToFile(toSave, configFile)
 
 	if err != nil {

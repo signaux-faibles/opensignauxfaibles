@@ -12,7 +12,7 @@ import (
 )
 
 var goldenAdminObject = createfilter.ReadGoldenFile("end_to_end_golden.txt")
-var emptyAsString, _ = json.MarshalIndent(prepareimport.AdminObject{}, "", "  ")
+var emptyAsString, _ = json.MarshalIndent(prepareimport.AdminBatch{}, "", "  ")
 
 func Test_prepare(t *testing.T) {
 	effectifData, err := os.ReadFile("./createfilter/test_data.csv")

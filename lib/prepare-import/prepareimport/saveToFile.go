@@ -6,7 +6,7 @@ import (
 )
 
 // SaveToFile saves the AdminObject as a JSON object at filePath
-func SaveToFile(toSave AdminObject, filePath string) error {
+func SaveToFile(toSave AdminBatch, filePath string) error {
 	jsonData, err := json.Marshal(toSave)
 	if err != nil {
 		return err
