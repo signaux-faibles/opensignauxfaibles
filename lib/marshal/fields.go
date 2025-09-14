@@ -155,15 +155,15 @@ func LowercaseFields(headerFields []string) []string {
 
 // ExtractInputHeaders extrait les en-têtes des fichiers d'entrée via le tag "input"
 func ExtractInputHeaders(object any) []string {
-	return ExtractFieldsByTags(object, "input")
+	return extractFieldsByTags(object, "input")
 }
 
-// ExtractFieldsByTags extrait les noms de colonnes depuis les valeurs du tag
+// extractFieldsByTags extrait les noms de colonnes depuis les valeurs du tag
 // "tag" de chaque propriété de l'objet (de type "struct") fourni.
 //
 // Pour une propriété de type "struct", et en l'absence de ce tag, les noms des
 // colonnes seront recursivement extraites du type de la propriété.
-func ExtractFieldsByTags(object any, tag string) (fields []string) {
+func extractFieldsByTags(object any, tag string) (fields []string) {
 	t := reflect.TypeOf(object)
 	for i := range t.NumField() {
 		field := t.Field(i)
@@ -177,9 +177,9 @@ func ExtractFieldsByTags(object any, tag string) (fields []string) {
 	return fields
 }
 
-// ExtractValuesByTags returns the values associated with a tag
+// extractValuesByTags returns the values associated with a tag
 // The values are in same order than the output of ExtractFieldsByTags
-func ExtractValuesByTags(object any, tag string) (values []reflect.Value) {
+func extractValuesByTags(object any, tag string) (values []reflect.Value) {
 
 	t := reflect.TypeOf(object)
 	v := reflect.ValueOf(object)
