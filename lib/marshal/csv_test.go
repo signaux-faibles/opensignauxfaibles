@@ -36,3 +36,8 @@ func TestExtractCSVValues(t *testing.T) {
 		}
 	}
 }
+
+func TestExtractCSVHeaders(t *testing.T) {
+	tuple := TestTuple{}
+	assert.Equal(t, ExtractCSVHeaders(tuple), []string{"test1", "test2", "test4"})
+}
