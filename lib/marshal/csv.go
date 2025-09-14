@@ -8,12 +8,12 @@ import (
 
 // ExtractCSVHeaders extrait les en-têtes csv via le tag "csv"
 func ExtractCSVHeaders(tuple Tuple) (header []string) {
-	return ExtractFieldsByTags(tuple, "csv")
+	return extractFieldsByTags(tuple, "csv")
 }
 
 // ExtractCSVRow returns the tuple values, in same order as the header, and converted to strings
 func ExtractCSVRow(tuple Tuple) (values []string) {
-	rawValues := ExtractValuesByTags(tuple, "csv")
+	rawValues := extractValuesByTags(tuple, "csv")
 	for _, v := range rawValues {
 		values = append(values, valueToString(v))
 	}

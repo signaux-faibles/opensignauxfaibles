@@ -3,7 +3,6 @@ package marshal
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -148,7 +147,7 @@ func TestParserOutput(
 // après le passage (ou échec) du test.
 func CreateTempFileWithContent(t *testing.T, content []byte) *os.File {
 	t.Helper()
-	tmpfile, err := ioutil.TempFile("", "createTempFileWithContent")
+	tmpfile, err := os.CreateTemp("", "createTempFileWithContent")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -161,3 +160,14 @@ func CreateTempFileWithContent(t *testing.T, content []byte) *os.File {
 	}
 	return tmpfile
 }
+
+type TestTuple struct {
+	Test1 string `csv:"test1" sql:"test1"`
+	Test2 *int   `csv:"test2" sql:"test2"`
+	Test3 string
+	Test4 *time.Time `csv:"test4" sql:"test4"`
+}
+
+func (TestTuple) Key() string   { return "" }
+func (TestTuple) Scope() string { return "" }
+func (TestTuple) Type() string  { return "" }
