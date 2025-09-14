@@ -56,10 +56,10 @@ func ImportBatch(
 	var g errgroup.Group
 
 	for _, parser := range parsers {
-		// We create a parser-specific context. Any error will cancel all
+		// We create a parser-specific context. Any error will cancelParserProcess all
 		// parser-related operations
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+		ctx, cancelParserProcess := context.WithCancelCause(context.Background())
+		defer cancelParserProcess(nil)
 
 		if len(batch.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
@@ -84,7 +84,7 @@ func ImportBatch(
 
 					err = dataSink.ProcessOutput(ctx, outputChannel)
 					if err != nil {
-						cancel()
+						cancelParserProcess(err)
 					}
 
 					return err
