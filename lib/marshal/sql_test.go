@@ -34,3 +34,8 @@ func TestExtractValues(t *testing.T) {
 		}
 	}
 }
+
+func TestExtractTableColumns(t *testing.T) {
+	tuple := TestTuple{}
+	assert.Equal(t, ExtractTableColumns(tuple), []string{"test1", "test2", "test4"})
+}
