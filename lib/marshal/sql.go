@@ -1,7 +1,5 @@
 package marshal
 
-import "reflect"
-
 // ExtractTableColumns extrait les noms des colonnes pour une table SQL via le tag "sql"
 func ExtractTableColumns(tuple Tuple) (header []string) {
 	return extractFieldsByTags(tuple, "sql")
@@ -11,17 +9,7 @@ func ExtractTableColumns(tuple Tuple) (header []string) {
 func ExtractTableRow(tuple Tuple) (row []any) {
 	rawValues := extractValuesByTags(tuple, "sql")
 	for _, v := range rawValues {
-		row = append(row, deref(v).Interface())
+		row = append(row, v.Interface())
 	}
 	return row
-}
-
-func deref(val reflect.Value) reflect.Value {
-	for val.Kind() == reflect.Ptr {
-		if val.IsNil() {
-			return val
-		}
-		val = val.Elem()
-	}
-	return val
 }
