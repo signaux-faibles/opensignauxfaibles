@@ -22,7 +22,7 @@ func TestExtractValues(t *testing.T) {
 		{
 			TestTuple{"abc", &anInt, "def", &time.Time{}},
 			3,
-			[]any{"abc", anInt, time.Time{}},
+			[]any{"abc", &anInt, &time.Time{}},
 		},
 	}
 	for _, tc := range testCases {
