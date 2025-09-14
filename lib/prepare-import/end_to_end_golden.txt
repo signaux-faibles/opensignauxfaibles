@@ -23,7 +23,7 @@
       "/1802/sireneUL.csv"
     ]
   },
-  "param": {
+  "params": {
     "date_debut": "2016-01-01T00:00:00Z",
     "date_fin": "2018-02-01T00:00:00Z",
     "date_fin_effectif": "2020-01-01T00:00:00Z"
