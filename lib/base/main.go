@@ -14,7 +14,6 @@ import (
 type AdminBatch struct {
 	ID     AdminID          `json:"id"`
 	Files  BatchFiles       `json:"files"`
-	Name   string           `json:"name"`
 	Params AdminBatchParams `json:"params"`
 }
 
