@@ -7,13 +7,6 @@ import (
 	"time"
 )
 
-// AdminBatch represents a document going to be stored in the Admin db collection.
-type AdminBatch struct {
-	ID    base.AdminID                         `json:"id"`
-	Files map[base.ParserType][]base.BatchFile `json:"files,omitempty"`
-	Param base.AdminBatchParams                `json:"params"`
-}
-
 // UnsupportedFilesError is an Error object that lists files that were not supported.
 type UnsupportedFilesError struct {
 	UnsupportedFiles []string

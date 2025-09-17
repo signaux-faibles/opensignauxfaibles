@@ -7,12 +7,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/prepare-import/createfilter"
 	"opensignauxfaibles/lib/prepare-import/prepareimport"
 )
 
 var goldenAdminObject = createfilter.ReadGoldenFile("end_to_end_golden.txt")
-var emptyAsString, _ = json.MarshalIndent(prepareimport.AdminBatch{}, "", "  ")
+var emptyAsString, _ = json.MarshalIndent(base.AdminBatch{}, "", "  ")
 
 func Test_prepare(t *testing.T) {
 	effectifData, err := os.ReadFile("./createfilter/test_data.csv")

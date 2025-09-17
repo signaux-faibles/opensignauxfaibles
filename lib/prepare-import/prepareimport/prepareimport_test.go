@@ -69,7 +69,7 @@ func TestPrepareImport(t *testing.T) {
 		res, err := PrepareImport(dir, dummyBatchKey, dummyDateFinEffectif)
 		//expected := FilesProperty{filter: {dummyBatchFile("filter_2002.csv")}}
 		//expected := make(map[string][]string)
-		expected := map[base.ParserType][]string{base.Filter: {"/1802/filter_2002.csv"}}
+		expected := base.BatchFiles{base.Filter: {base.BatchFile("/1802/filter_2002.csv")}}
 		if assert.NoError(t, err) {
 			assert.Equal(t, expected, res.Files)
 		}
@@ -81,12 +81,15 @@ func TestPrepareImport(t *testing.T) {
 		parentBatch := newSafeBatchKey(subBatch.GetParentBatch())
 		filterFile := newBatchFile(subBatch, "filter_siren_1803.csv")
 		parentFilterFile := newBatchFile(parentBatch, "filter_siren_1803.csv")
+
 		//expectedFilesProp := FilesProperty{filter: {filterFile}}
-		expectedFilesProp := map[base.ParserType][]string{base.Filter: {filterFile.Path()}}
+		expectedFilesProp := base.BatchFiles{base.Filter: {base.BatchFile(filterFile.Path())}}
+
 		// Setup test environment
 		parentDir := CreateTempFiles(t, parentBatch, []string{parentFilterFile.Name()})
 		subBatchDir := filepath.Join(parentDir, parentBatch.String(), subBatch.String())
 		_ = os.Mkdir(subBatchDir, 0777)
+
 		// Run the test
 		res, err := PrepareImport(parentDir, subBatch, "2018-03-01")
 		if assert.NoError(t, err) {
@@ -110,7 +113,7 @@ func TestPrepareImport(t *testing.T) {
 		// Run the test
 		res, err := PrepareImport(parentDir, dummyBatchKey, providedDateFinEffetif)
 		if assert.NoError(t, err) {
-			assert.Equal(t, expectedDateFinEffectif, res.Param.DateFinEffectif)
+			assert.Equal(t, expectedDateFinEffectif, res.Params.DateFinEffectif)
 		}
 	})
 
@@ -127,7 +130,7 @@ func TestPrepareImport(t *testing.T) {
 		// Run the test
 		res, err := PrepareImport(parentDir, dummyBatchKey, providedDateFinEffetif)
 		if assert.NoError(t, err) {
-			assert.Equal(t, expectedDateFinEffectif, res.Param.DateFinEffectif)
+			assert.Equal(t, expectedDateFinEffectif, res.Params.DateFinEffectif)
 		}
 	})
 
@@ -156,7 +159,7 @@ func TestPrepareImport(t *testing.T) {
 			dir := CreateTempFiles(t, dummyBatchKey, []string{testCase.filename, "filter_2002.csv"})
 
 			res, err := PrepareImport(dir, dummyBatchKey, dummyDateFinEffectif)
-			expected := []string{dummyBatchFile(testCase.filename).Path()}
+			expected := []base.BatchFile{base.BatchFile(dummyBatchFile(testCase.filename).Path())}
 			if assert.NoError(t, err) {
 				assert.Equal(t, expected, res.Files[testCase.filetype])
 			}
@@ -176,10 +179,10 @@ func TestPrepareImport(t *testing.T) {
 		// setup expectations
 		filterFileName := "filter_siren_" + dummyBatchKey.String() + ".csv"
 		sireneULFileName := "sireneUL.csv"
-		expected := map[base.ParserType][]string{
-			"effectif":  {dummyBatchFile("sigfaible_effectif_siret.csv").Path()},
-			"filter":    {dummyBatchFile(filterFileName).Path()},
-			"sirene_ul": {dummyBatchFile(sireneULFileName).Path()},
+		expected := base.BatchFiles{
+			base.Effectif: {base.BatchFile(dummyBatchFile("sigfaible_effectif_siret.csv").Path())},
+			base.Filter:   {base.BatchFile(dummyBatchFile(filterFileName).Path())},
+			base.SireneUl: {base.BatchFile(dummyBatchFile(sireneULFileName).Path())},
 		}
 		expectedDateFinEffectif := makeDayDate(2020, 1, 1)
 		// run prepare-import
@@ -192,16 +195,18 @@ func TestPrepareImport(t *testing.T) {
 		if assert.NoError(t, err) {
 			assert.Equal(t, expected, adminObject.Files)
 		}
+
 		// check that the filter file exists
 		filterFilePath := path.Join(batchDir, dummyBatchKey.Path(), filterFileName)
 		assert.True(t, fileExists(filterFilePath), "the filter file was not found: "+filterFilePath)
 		// check that date_fin_effectif was detected from the effectif file
-		actualDateFinEffectif := adminObject.Param.DateFinEffectif
+		actualDateFinEffectif := adminObject.Params.DateFinEffectif
 		assert.Equal(t, expectedDateFinEffectif, actualDateFinEffectif)
 	})
 
 	t.Run("should create filter file even if effectif file is compressed", func(t *testing.T) {
 		compressedEffectifData := compressFileData(t, "../createfilter/test_data.csv")
+
 		// setup expectations
 		filterFileName := "filter_siren_" + dummyBatchKey.String() + ".csv"
 		expectedEffectifFile := &batchFile{
@@ -209,10 +214,11 @@ func TestPrepareImport(t *testing.T) {
 			filename:    "sigfaible_effectif_siret.csv.gz",
 			gzippedSize: uint64(compressedEffectifData.Len()),
 		}
-		expectedFiles := map[base.ParserType][]string{
-			"effectif":  {expectedEffectifFile.Path()},
-			"filter":    {dummyBatchFile(filterFileName).Path()},
-			"sirene_ul": {dummyBatchFile("sireneUL.csv").Path()},
+
+		expectedFiles := base.BatchFiles{
+			base.Effectif: {base.BatchFile(expectedEffectifFile.Path())},
+			base.Filter:   {base.BatchFile(dummyBatchFile(filterFileName).Path())},
+			base.SireneUl: {base.BatchFile(dummyBatchFile("sireneUL.csv").Path())},
 		}
 		expectedDateFinEffectif := makeDayDate(2020, 1, 1)
 		// run prepare-import
@@ -229,7 +235,7 @@ func TestPrepareImport(t *testing.T) {
 		filterFilePath := path.Join(batchDir, dummyBatchKey.Path(), filterFileName)
 		assert.True(t, fileExists(filterFilePath), "the filter file was not found: "+filterFilePath)
 		// check that date_fin_effectif was detected from the effectif file
-		actualDateFinEffectif := adminObject.Param.DateFinEffectif
+		actualDateFinEffectif := adminObject.Params.DateFinEffectif
 		assert.Equal(t, expectedDateFinEffectif, actualDateFinEffectif)
 	})
 }

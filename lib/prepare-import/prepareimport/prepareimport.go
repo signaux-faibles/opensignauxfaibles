@@ -13,12 +13,12 @@ import (
 )
 
 // PrepareImport generates an Admin object from files found at given pathname of the file system.
-func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif string) (AdminBatch, error) {
+func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif string) (base.AdminBatch, error) {
 
 	batchPath := getBatchPath(pathname, batchKey)
 	println("Listing data files in " + batchPath + "/ ...")
 	if _, err := os.ReadDir(path.Join(pathname, batchPath)); err != nil {
-		return AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchPath)
+		return base.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchPath)
 	}
 
 	var err error
@@ -58,7 +58,7 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 	// if needed, create a filter file from the effectif file
 	if filterFile == nil {
 		if effectifFile == nil {
-			return AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
+			return base.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
 		}
 		effectifFilePath := effectifFile.AbsolutePath(pathname)
 		sireneULFilePath := sireneULFile.AbsolutePath(pathname)
@@ -66,7 +66,7 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 		filterFile = newBatchFile(effectifBatch, "filter_siren_"+effectifBatch.String()+".csv")
 		println("Generating filter file: " + filterFile.Path() + " ...")
 		if err = createFilterFromEffectifAndSirene(path.Join(pathname, filterFile.Path()), effectifFilePath, sireneULFilePath); err != nil {
-			return AdminBatch{}, err
+			return base.AdminBatch{}, err
 		}
 	}
 
@@ -79,7 +79,7 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 			dest := path.Join(pathname, batchKey.GetParentBatch(), batchKey.Path(), filterFile.Name())
 			err = copy(src, dest)
 			if err != nil {
-				return AdminBatch{}, err
+				return base.AdminBatch{}, err
 			}
 			filterFile = newBatchFile(batchKey, filterFile.Name())
 		}
@@ -92,7 +92,7 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 		effectifFilePath := effectifFile.AbsolutePath(pathname)
 		dateFinEffectif, err = createfilter.DetectDateFinEffectif(effectifFilePath, createfilter.DefaultNbIgnoredCols) // TODO: éviter de lire le fichier Effectif deux fois
 		if err != nil {
-			return AdminBatch{}, err
+			return base.AdminBatch{}, err
 		}
 	}
 
@@ -101,7 +101,7 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 		println("Still missing date_fin_effectif => parsing CLI parameter ...")
 		dateFinEffectif, err = time.Parse("2006-01-02", providedDateFinEffectif)
 		if err != nil {
-			return AdminBatch{}, errors.New("date_fin_effectif is missing or invalid: " + providedDateFinEffectif)
+			return base.AdminBatch{}, errors.New("date_fin_effectif is missing or invalid: " + providedDateFinEffectif)
 		}
 	}
 
@@ -109,10 +109,10 @@ func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif s
 		err = UnsupportedFilesError{unsupportedFiles}
 	}
 
-	return AdminBatch{
-		ID:    base.AdminID{string(batchKey), "batch"},
-		Files: populateFilesPaths(filesProperty),
-		Param: populateParamProperty(batchKey, NewDateFinEffectif(dateFinEffectif)),
+	return base.AdminBatch{
+		ID:     base.AdminID{string(batchKey), "batch"},
+		Files:  populateFilesPaths(filesProperty),
+		Params: populateParamProperty(batchKey, NewDateFinEffectif(dateFinEffectif)),
 	}, err
 }
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/prepare-import/prepareimport"
 )
 
@@ -35,21 +36,21 @@ func main() {
 	saveAdminObject(adminObject, *configFile)
 }
 
-func prepare(path, batchKey, dateFinEffectif string) (prepareimport.AdminBatch, error) {
+func prepare(path, batchKey, dateFinEffectif string) (base.AdminBatch, error) {
 	validBatchKey, err := prepareimport.NewBatchKey(batchKey)
 	if err != nil {
-		return prepareimport.AdminBatch{}, errors.Wrap(err, "erreur lors de la création de la clé de batch")
+		return base.AdminBatch{}, errors.Wrap(err, "erreur lors de la création de la clé de batch")
 	}
 	adminObject, err := prepareimport.PrepareImport(path, validBatchKey, dateFinEffectif)
 	if _, ok := err.(prepareimport.UnsupportedFilesError); ok {
 		return adminObject, err
 	} else if err != nil {
-		return prepareimport.AdminBatch{}, errors.Wrap(err, "erreur inattendue pendant la préparation de l'import : ")
+		return base.AdminBatch{}, errors.Wrap(err, "erreur inattendue pendant la préparation de l'import : ")
 	}
 	return adminObject, nil
 }
 
-func saveAdminObject(toSave prepareimport.AdminBatch, configFile string) {
+func saveAdminObject(toSave base.AdminBatch, configFile string) {
 	err := prepareimport.SaveToFile(toSave, configFile)
 
 	if err != nil {
