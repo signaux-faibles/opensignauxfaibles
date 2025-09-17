@@ -139,7 +139,7 @@ func TestPrepareImport(t *testing.T) {
 		dir := CreateTempFiles(t, batch, []string{"filter_2002.csv"})
 		res, err := PrepareImport(dir, batch, dummyDateFinEffectif)
 		if assert.NoError(t, err) {
-			assert.Equal(t, base.AdminID{string(batch), "batch"}, res.ID)
+			assert.Equal(t, base.AdminID{batch, "batch"}, res.ID)
 		}
 	})
 

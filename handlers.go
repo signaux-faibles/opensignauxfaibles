@@ -51,8 +51,12 @@ func (params importBatchHandler) Validate() error {
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
 	batch := base.AdminBatch{}
+	batchKey, err := base.NewBatchKey(params.BatchKey)
+	if err != nil {
+		return err
+	}
 
-	err := engine.Load(&batch, params.BatchKey)
+	err = engine.Load(&batch, batchKey)
 	if err != nil {
 		return errors.New("Impossible de charger la configuration du batch: " + err.Error())
 	}
@@ -68,7 +72,7 @@ func (params importBatchHandler) Run() error {
 	}
 
 	dataSink := engine.NewCompositeSinkFactory(
-		engine.NewCSVSinkFactory(batch.ID.Key),
+		engine.NewCSVSinkFactory(batch.ID.Key.String()),
 		engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
 	)
 	eventSink := engine.NewPostgresReportSink(engine.Db.PostgresDB)
@@ -118,7 +122,12 @@ func (params checkBatchHandler) Run() error {
 	}
 
 	batch := base.AdminBatch{}
-	err := engine.Load(&batch, params.BatchKey)
+	batchKey, err := base.NewBatchKey(params.BatchKey)
+	if err != nil {
+		return err
+	}
+
+	err = engine.Load(&batch, batchKey)
 	if err != nil {
 		return errors.New("Batch inexistant: " + err.Error())
 	}

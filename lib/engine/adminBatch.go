@@ -16,7 +16,7 @@ import (
 )
 
 // Load charge les données d'un batch depuis le fichier de configuration
-func Load(batch *base.AdminBatch, batchKey string) error {
+func Load(batch *base.AdminBatch, batchKey base.BatchKey) error {
 	batchFileContent, err := os.ReadFile(viper.GetString("BATCH_CONFIG_FILE"))
 	if err != nil {
 		return err

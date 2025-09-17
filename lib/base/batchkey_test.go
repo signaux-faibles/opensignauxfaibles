@@ -15,11 +15,12 @@ func TestBatchKey(t *testing.T) {
 
 	t.Run("Should fail if batch key is invalid", func(t *testing.T) {
 		_, err := NewBatchKey("")
-		assert.EqualError(t, err, "la clé du batch doit respecter le format requis AAMM")
+		assert.Error(t, err)
 	})
 
 	t.Run("Should return the path of a batch", func(t *testing.T) {
-		batchKey, _ := NewBatchKey("1802")
+		batchKey, err := NewBatchKey("1802")
+		assert.NoError(t, err)
 		assert.Equal(t, "/1802/", batchKey.Path())
 	})
 

@@ -36,8 +36,8 @@ func IsBatchID(batchID string) bool {
 
 // AdminID represents the "id" property of an AdminBatch object.
 type AdminID struct {
-	Key  string `json:"key"`
-	Type string `json:"type"`
+	Key  BatchKey `json:"key"`
+	Type string   `json:"type"`
 }
 
 // BatchFiles fichiers mappés par type

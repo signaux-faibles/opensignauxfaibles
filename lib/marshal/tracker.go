@@ -74,7 +74,7 @@ type Report struct {
 	Commit        string          `json:"commit"`
 	StartDate     time.Time       `json:"start_date"`
 	Parser        base.ParserType `json:"parser"`
-	BatchKey      string          `json:"batch_key"`
+	BatchKey      base.BatchKey   `json:"batch_key"`
 	HeadFatal     []string        `json:"head_fatal"`
 	HeadRejected  []string        `json:"head_rejected"`
 	IsFatal       bool            `json:"is_fatal"`
@@ -86,7 +86,7 @@ type Report struct {
 }
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.
-func (tracker *ParsingTracker) Report(parser base.ParserType, batchKey, filePath string) Report {
+func (tracker *ParsingTracker) Report(parser base.ParserType, batchKey base.BatchKey, filePath string) Report {
 	nbParsedLines := tracker.currentLine - 1 // -1 because we started counting at line number 1
 	nbValidLines := nbParsedLines - tracker.nbRejectedLines - tracker.nbSkippedLines
 
