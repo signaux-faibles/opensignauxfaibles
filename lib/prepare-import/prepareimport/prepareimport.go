@@ -13,7 +13,7 @@ import (
 )
 
 // PrepareImport generates an Admin object from files found at given pathname of the file system.
-func PrepareImport(pathname string, batchKey BatchKey, providedDateFinEffectif string) (base.AdminBatch, error) {
+func PrepareImport(pathname string, batchKey base.BatchKey, providedDateFinEffectif string) (base.AdminBatch, error) {
 
 	batchPath := getBatchPath(pathname, batchKey)
 	println("Listing data files in " + batchPath + "/ ...")
@@ -136,7 +136,7 @@ func createFilterFromEffectifAndSirene(filterFilePath string, effectifFilePath s
 	)
 }
 
-func getBatchPath(pathname string, batchKey BatchKey) string {
+func getBatchPath(pathname string, batchKey base.BatchKey) string {
 	if batchKey.IsSubBatch() {
 		return path.Join(batchKey.GetParentBatch(), batchKey.String())
 	}

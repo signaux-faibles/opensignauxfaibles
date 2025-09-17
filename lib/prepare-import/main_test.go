@@ -49,7 +49,7 @@ func Test_prepare(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			gzipString, _ := prepareimport.GzipString(prepareimport.SomeText(254781489))
 
-			buildedBatchKey, _ := prepareimport.NewBatchKey(tt.args.batch)
+			buildedBatchKey, _ := base.NewBatchKey(tt.args.batch)
 			parentDir := prepareimport.CreateTempFilesWithContent(t, buildedBatchKey, map[string][]byte{
 				"sigfaibles_effectif_siret.csv":            effectifData,
 				"sigfaibles_debits.csv":                    prepareimport.SomeTextAsBytes(254784321489),

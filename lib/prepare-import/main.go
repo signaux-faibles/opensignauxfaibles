@@ -37,7 +37,7 @@ func main() {
 }
 
 func prepare(path, batchKey, dateFinEffectif string) (base.AdminBatch, error) {
-	validBatchKey, err := prepareimport.NewBatchKey(batchKey)
+	validBatchKey, err := base.NewBatchKey(batchKey)
 	if err != nil {
 		return base.AdminBatch{}, errors.Wrap(err, "erreur lors de la création de la clé de batch")
 	}

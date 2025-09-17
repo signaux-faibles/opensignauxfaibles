@@ -11,7 +11,7 @@ import (
 )
 
 // PopulateFilesProperty populates the "files" property of an Admin object, given a path.
-func PopulateFilesProperty(pathname string, batchKey BatchKey) (FilesProperty, []string) {
+func PopulateFilesProperty(pathname string, batchKey base.BatchKey) (FilesProperty, []string) {
 	batchPath := path.Join(pathname, batchKey.String())
 	filenames, _ := ReadFilenames(batchPath)
 	var augmentedFiles []DataFile
@@ -22,7 +22,7 @@ func PopulateFilesProperty(pathname string, batchKey BatchKey) (FilesProperty, [
 }
 
 // PopulateFilesPropertyFromDataFiles populates the "files" property of an Admin object, given a list of Data files.
-func PopulateFilesPropertyFromDataFiles(filenames []DataFile, batchKey BatchKey) (FilesProperty, []string) {
+func PopulateFilesPropertyFromDataFiles(filenames []DataFile, batchKey base.BatchKey) (FilesProperty, []string) {
 	filesProperty := FilesProperty{}
 	unsupportedFiles := []string{}
 	for _, filename := range filenames {
@@ -90,7 +90,7 @@ func (fp FilesProperty) GetEffectifFile() (BatchFile, error) {
 
 // BatchFile represents a file that is listed in a FilesProperty entry.
 type BatchFile interface {
-	BatchKey() BatchKey
+	BatchKey() base.BatchKey
 	Name() string
 	Path() string
 	AbsolutePath(parentDir string) string
@@ -98,7 +98,7 @@ type BatchFile interface {
 	AddGzippedSize(size uint64) // in bytes
 }
 
-func newBatchFile(batchKey BatchKey, filename string) BatchFile {
+func newBatchFile(batchKey base.BatchKey, filename string) BatchFile {
 	return &batchFile{
 		batchKey: batchKey,
 		filename: filename,
@@ -106,12 +106,12 @@ func newBatchFile(batchKey BatchKey, filename string) BatchFile {
 }
 
 type batchFile struct {
-	batchKey    BatchKey
+	batchKey    base.BatchKey
 	filename    string
 	gzippedSize uint64 // in bytes
 }
 
-func (file *batchFile) BatchKey() BatchKey {
+func (file *batchFile) BatchKey() base.BatchKey {
 	return file.batchKey
 }
 

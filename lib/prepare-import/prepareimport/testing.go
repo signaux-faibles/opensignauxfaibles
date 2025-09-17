@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"log"
+	"opensignauxfaibles/lib/base"
 	"os"
 	"path/filepath"
 	"testing"
@@ -18,8 +19,8 @@ func init() {
 	fake = faker.New()
 }
 
-func newSafeBatchKey(key string) BatchKey {
-	batchKey, err := NewBatchKey(key)
+func newSafeBatchKey(key string) base.BatchKey {
+	batchKey, err := base.NewBatchKey(key)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -32,7 +33,7 @@ var dummyDateFinEffectif = "2014-01-01"
 var validDateFinEffectif = NewDateFinEffectif(time.Date(2014, time.January, 1, 0, 0, 0, 0, time.UTC)) // "2014-01-01"
 
 // CreateTempFiles creates a temporary directory with a batch of files, and clean up after the execution of tests
-func CreateTempFiles(t *testing.T, batchkey BatchKey, filenames []string) string {
+func CreateTempFiles(t *testing.T, batchkey base.BatchKey, filenames []string) string {
 	contentPerFile := map[string][]byte{}
 	for _, filename := range filenames {
 		contentPerFile[filename] = []byte{}
@@ -41,7 +42,7 @@ func CreateTempFiles(t *testing.T, batchkey BatchKey, filenames []string) string
 }
 
 // CreateTempFilesWithContent creates a temporary directory with a batch of files, and clean up after the execution of tests
-func CreateTempFilesWithContent(t *testing.T, batchkey BatchKey, contentPerFile map[string][]byte) string {
+func CreateTempFilesWithContent(t *testing.T, batchkey base.BatchKey, contentPerFile map[string][]byte) string {
 	t.Helper()
 	parentDir, err := os.MkdirTemp(os.TempDir(), "example")
 	if err != nil {

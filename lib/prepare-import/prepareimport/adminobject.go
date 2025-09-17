@@ -16,7 +16,7 @@ func (err UnsupportedFilesError) Error() string {
 	return "type de fichier non supporté : " + strings.Join(err.UnsupportedFiles, ", ")
 }
 
-func populateParamProperty(batchKey BatchKey, dateFinEffectif DateFinEffectif) base.AdminBatchParams {
+func populateParamProperty(batchKey base.BatchKey, dateFinEffectif DateFinEffectif) base.AdminBatchParams {
 	year, _ := strconv.Atoi("20" + batchKey.String()[0:2])
 	month, _ := strconv.Atoi(batchKey.String()[2:4])
 	return base.AdminBatchParams{
