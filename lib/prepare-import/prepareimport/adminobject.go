@@ -9,9 +9,9 @@ import (
 
 // AdminBatch represents a document going to be stored in the Admin db collection.
 type AdminBatch struct {
-	ID    base.AdminID                 `json:"id"`
-	Files map[base.ParserType][]string `json:"files,omitempty"`
-	Param base.AdminBatchParams        `json:"params"`
+	ID    base.AdminID                         `json:"id"`
+	Files map[base.ParserType][]base.BatchFile `json:"files,omitempty"`
+	Param base.AdminBatchParams                `json:"params"`
 }
 
 // UnsupportedFilesError is an Error object that lists files that were not supported.
@@ -33,13 +33,13 @@ func populateParamProperty(batchKey BatchKey, dateFinEffectif DateFinEffectif) b
 	}
 }
 
-func populateFilesPaths(filesProperty FilesProperty) map[base.ParserType][]string {
-	r := make(map[base.ParserType][]string)
+func populateFilesPaths(filesProperty FilesProperty) map[base.ParserType][]base.BatchFile {
+	r := make(map[base.ParserType][]base.BatchFile)
 	for k, v := range filesProperty {
 
-		var paths []string
+		var paths []base.BatchFile
 		for _, batchFile := range v {
-			paths = append(paths, batchFile.Path())
+			paths = append(paths, base.BatchFile(batchFile.Path()))
 		}
 
 		r[k] = paths
