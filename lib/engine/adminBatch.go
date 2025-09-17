@@ -147,8 +147,8 @@ func CheckBatch(
 	return nil
 }
 
-func checkUnsupportedFiletypes(batch base.AdminBatch) []string {
-	var errFileTypes []string
+func checkUnsupportedFiletypes(batch base.AdminBatch) []base.ParserType {
+	var errFileTypes []base.ParserType
 	for fileType := range batch.Files {
 		if !parsing.IsSupportedParser(fileType) {
 			errFileTypes = append(errFileTypes, fileType)

@@ -38,8 +38,8 @@ func (debit Debit) Scope() string {
 }
 
 // Type de l'objet
-func (debit Debit) Type() string {
-	return "debit"
+func (debit Debit) Type() base.ParserType {
+	return base.Debit
 }
 
 // ParserDebit fournit une instance utilisable par ParseFilesFromBatch.
@@ -52,8 +52,8 @@ type debitParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *debitParser) Type() string {
-	return "debit"
+func (parser *debitParser) Type() base.ParserType {
+	return base.Debit
 }
 
 func (parser *debitParser) Close() error {

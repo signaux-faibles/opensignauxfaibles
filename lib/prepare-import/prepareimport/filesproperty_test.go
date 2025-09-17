@@ -42,7 +42,7 @@ func TestPopulateFilesProperty(t *testing.T) {
 
 	t.Run("Should support multiple types of csv files", func(t *testing.T) {
 		type File struct {
-			Type     base.ValidFileType
+			Type     base.ParserType
 			Filename string
 		}
 		files := []File{

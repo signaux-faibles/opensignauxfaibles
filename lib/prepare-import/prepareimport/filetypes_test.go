@@ -12,7 +12,7 @@ func TestExtractFileTypeFromFilename(t *testing.T) {
 	// inspired by https://github.com/golang/go/wiki/TableDrivenTests
 	cases := []struct {
 		name     string
-		category base.ValidFileType
+		category base.ParserType
 	}{
 		// guessed from urssaf files found on stockage/goub server
 		{"sigfaible_debits.csv", base.Debit},

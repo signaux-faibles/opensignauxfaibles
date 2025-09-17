@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 	"testing"
 
@@ -12,11 +13,12 @@ func TestCompositeSink(t *testing.T) {
 
 	ch := make(chan marshal.Tuple)
 
+	const testType base.ParserType = "testtype"
 	go func() {
 		ch <- MockTuple{
 			key:   "123456789",
 			scope: "entreprise",
-			tType: "testtype",
+			tType: testType,
 			H1:    "value1",
 			H2:    "value2",
 			H3:    "value3",
@@ -24,7 +26,7 @@ func TestCompositeSink(t *testing.T) {
 		ch <- MockTuple{
 			key:   "987654321",
 			scope: "entreprise",
-			tType: "testtype",
+			tType: testType,
 			H1:    "value4",
 			H2:    "value5",
 			H3:    "value6",

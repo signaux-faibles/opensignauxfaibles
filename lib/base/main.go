@@ -42,7 +42,7 @@ type AdminID struct {
 }
 
 // BatchFiles fichiers mappés par type
-type BatchFiles map[string][]BatchFile
+type BatchFiles map[ParserType][]BatchFile
 
 // BatchFile encapsule un fichier mentionné dans un Batch
 type BatchFile struct {
@@ -110,7 +110,7 @@ func (file BatchFile) IsCompressed() bool {
 }
 
 // MockBatch with a map[type][]filepaths
-func MockBatch(filetype string, filepaths []string) AdminBatch {
+func MockBatch(filetype ParserType, filepaths []string) AdminBatch {
 	batchFiles := []BatchFile{}
 	for _, file := range filepaths {
 		batchFiles = append(batchFiles, NewBatchFile(file))

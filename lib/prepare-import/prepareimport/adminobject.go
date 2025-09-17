@@ -9,9 +9,9 @@ import (
 
 // AdminBatch represents a document going to be stored in the Admin db collection.
 type AdminBatch struct {
-	ID    base.AdminID                    `json:"id"`
-	Files map[base.ValidFileType][]string `json:"files,omitempty"`
-	Param base.AdminBatchParams           `json:"params"`
+	ID    base.AdminID                 `json:"id"`
+	Files map[base.ParserType][]string `json:"files,omitempty"`
+	Param base.AdminBatchParams        `json:"params"`
 }
 
 // UnsupportedFilesError is an Error object that lists files that were not supported.
@@ -33,8 +33,8 @@ func populateParamProperty(batchKey BatchKey, dateFinEffectif DateFinEffectif) b
 	}
 }
 
-func populateFilesPaths(filesProperty FilesProperty) map[base.ValidFileType][]string {
-	r := make(map[base.ValidFileType][]string)
+func populateFilesPaths(filesProperty FilesProperty) map[base.ParserType][]string {
+	r := make(map[base.ParserType][]string)
 	for k, v := range filesProperty {
 
 		var paths []string
@@ -48,7 +48,7 @@ func populateFilesPaths(filesProperty FilesProperty) map[base.ValidFileType][]st
 }
 
 // types of files that are always provided as "complete"
-var defaultCompleteTypes = []base.ValidFileType{
+var defaultCompleteTypes = []base.ParserType{
 	base.Apconso,
 	base.Apdemande,
 	base.Effectif,
@@ -58,7 +58,7 @@ var defaultCompleteTypes = []base.ValidFileType{
 }
 
 // types of files that will be considered as "complete" if their gzipped size reach a certain threshold (in bytes)
-var thresholdPerGzippedFileType = map[base.ValidFileType]uint64{
+var thresholdPerGzippedFileType = map[base.ParserType]uint64{
 	base.Cotisation: 143813078,
 	base.Delai:      1666199,
 	base.Procol:     1646193,

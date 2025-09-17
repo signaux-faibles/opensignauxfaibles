@@ -87,7 +87,7 @@ func (sirene dummyTuple) Key() string {
 }
 
 // Type de données
-func (sirene dummyTuple) Type() string {
+func (sirene dummyTuple) Type() base.ParserType {
 	return "dummy"
 }
 
@@ -100,7 +100,7 @@ type dummyParser struct {
 	initError error
 }
 
-func (parser *dummyParser) Type() string {
+func (parser *dummyParser) Type() base.ParserType {
 	return "dummy"
 }
 

@@ -58,7 +58,7 @@ func Test_CheckBatchPaths(t *testing.T) {
 
 type TestSinkFactory struct{}
 
-func (TestSinkFactory) CreateSink(parserType string) (DataSink, error) {
+func (TestSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
 	return &DiscardDataSink{}, nil
 }
 

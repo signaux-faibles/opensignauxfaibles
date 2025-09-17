@@ -63,7 +63,7 @@ func ReadFilenames(path string) ([]string, error) {
 }
 
 // FilesProperty represents the "files" property of an Admin object.
-type FilesProperty map[base.ValidFileType][]BatchFile
+type FilesProperty map[base.ParserType][]BatchFile
 
 // GetFilterFile returns the filter file.
 func (fp FilesProperty) GetFilterFile() (BatchFile, error) {
