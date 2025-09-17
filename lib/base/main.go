@@ -1,7 +1,6 @@
 package base
 
 import (
-	"encoding/json"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -45,75 +44,37 @@ type AdminID struct {
 type BatchFiles map[ParserType][]BatchFile
 
 // BatchFile encapsule un fichier mentionné dans un Batch
-type BatchFile struct {
-	// Scheme prefix, e.g. `gzip:`
-	Scheme string
-
-	// Directory path where data is to be looked for
-	basePath string
-
-	// Relative path inside the base path
-	relativePath string
-}
+type BatchFile string
 
 var reScheme = regexp.MustCompile("^[a-z]*:")
 
-// NewBatchFile créé un chemin d'un fichier encapsulé dans un batch avec la
-// variable d'environnement "APP_DATA" comme chemin de base
-func NewBatchFile(path string) BatchFile {
-	return NewBatchFileWithBasePath(path, viper.GetString("APP_DATA"))
+func (file BatchFile) scheme() string {
+	scheme := reScheme.FindString(string(file))
+	return scheme
 }
 
-// MarshalJSON implements json.Marshaller interface
-func (file BatchFile) MarshalJSON() ([]byte, error) {
-	value := file.Scheme + file.relativePath
-	return json.Marshal(value)
-}
-
-// UnmarshalJSON implements json.Unmarshaller interface
-func (file *BatchFile) UnmarshalJSON(raw []byte) error {
-	var value string
-	if err := json.Unmarshal(raw, &value); err != nil {
-		return err
-	}
-
-	batchFile := NewBatchFile(value)
-	file.Scheme = batchFile.Scheme
-	file.relativePath = batchFile.relativePath
-	file.basePath = batchFile.basePath
-
-	return nil
-}
-
-// NewBatchFileWithBasePath crée un chemin d'un fichier encapsulé dans un
-// batch
-func NewBatchFileWithBasePath(path, basePath string) BatchFile {
-	scheme := reScheme.FindString(path)
-	pathWithoutScheme := reScheme.ReplaceAllString(path, "")
-	return BatchFile{Scheme: scheme, relativePath: pathWithoutScheme, basePath: basePath}
+func (file BatchFile) RelativePath() string {
+	pathWithoutScheme := reScheme.ReplaceAllString(string(file), "")
+	return pathWithoutScheme
 }
 
 // FilePath retourne le chemin vers le fichier, sans le schéma
 // (base path)
 func (file BatchFile) FilePath() string {
-	return filepath.Join(file.basePath, file.relativePath)
-}
-
-func (file BatchFile) RelativePath() string {
-	return file.relativePath
+	return filepath.Join(viper.GetString("APP_DATA"), file.RelativePath())
 }
 
 // IsCompressed est vrai si le fichier est compressé
 func (file BatchFile) IsCompressed() bool {
-	return file.Scheme == "gzip:" ||
-		strings.HasSuffix(file.relativePath, ".gz")
+	return file.scheme() == "gzip:" ||
+		strings.HasSuffix(file.RelativePath(), ".gz")
 }
 
 // MockBatch with a map[type][]filepaths
 func MockBatch(filetype ParserType, filepaths []string) AdminBatch {
 	batchFiles := []BatchFile{}
 	for _, file := range filepaths {
-		batchFiles = append(batchFiles, NewBatchFile(file))
+		batchFiles = append(batchFiles, BatchFile(file))
 	}
 	batch := AdminBatch{
 		Files: BatchFiles{filetype: batchFiles},

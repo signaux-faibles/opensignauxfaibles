@@ -40,14 +40,14 @@ func IsSupportedParser(fileType base.ParserType) bool {
 }
 
 // ResolveParsers sélectionne, vérifie et charge les parsers.
-func ResolveParsers(parserNames []base.ParserType) ([]marshal.Parser, error) {
+func ResolveParsers(parserTypes []base.ParserType) ([]marshal.Parser, error) {
 	var parsers []marshal.Parser
-	if parserNames == nil {
+	if len(parserTypes) == 0 {
 		for _, fileParser := range registeredParsers {
 			parsers = append(parsers, fileParser)
 		}
 	} else {
-		for _, fileType := range parserNames {
+		for _, fileType := range parserTypes {
 			if fileParser, ok := registeredParsers[fileType]; ok {
 				parsers = append(parsers, fileParser)
 			} else {

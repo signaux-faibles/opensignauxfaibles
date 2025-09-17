@@ -18,10 +18,10 @@ import (
 )
 
 type importBatchHandler struct {
-	Enable   bool              // set to true by cosiner/flag if the user is running this command
-	BatchKey string            `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
-	Parsers  []base.ParserType `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"` // TODO: tester la population de ce paramètre
-	NoFilter bool              `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
+	Enable   bool     // set to true by cosiner/flag if the user is running this command
+	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
+	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: apconso, cotisation)"` // TODO: tester la population de ce paramètre
+	NoFilter bool     `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
@@ -57,7 +57,12 @@ func (params importBatchHandler) Run() error {
 		return errors.New("Impossible de charger la configuration du batch: " + err.Error())
 	}
 
-	parsers, err := parsing.ResolveParsers(params.Parsers)
+	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
+	for _, p := range params.Parsers {
+		parserTypes = append(parserTypes, base.ParserType(p))
+	}
+
+	parsers, err := parsing.ResolveParsers(parserTypes)
 	if err != nil {
 		return err
 	}
@@ -79,9 +84,9 @@ func (params importBatchHandler) Run() error {
 }
 
 type checkBatchHandler struct {
-	Enable   bool              // set to true by cosiner/flag if the user is running this command
-	BatchKey string            `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à vérifier (ex: 1802, pour Février 2018)"`
-	Parsers  []base.ParserType `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"`
+	Enable   bool     // set to true by cosiner/flag if the user is running this command
+	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à vérifier (ex: 1802, pour Février 2018)"`
+	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"`
 }
 
 func (params checkBatchHandler) Documentation() flag.Flag {
@@ -107,13 +112,18 @@ func (params checkBatchHandler) Validate() error {
 }
 
 func (params checkBatchHandler) Run() error {
+	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
+	for _, p := range params.Parsers {
+		parserTypes = append(parserTypes, base.ParserType(p))
+	}
+
 	batch := base.AdminBatch{}
 	err := engine.Load(&batch, params.BatchKey)
 	if err != nil {
 		return errors.New("Batch inexistant: " + err.Error())
 	}
 
-	parsers, err := parsing.ResolveParsers(params.Parsers)
+	parsers, err := parsing.ResolveParsers(parserTypes)
 	if err != nil {
 		return err
 	}
@@ -126,15 +136,15 @@ func (params checkBatchHandler) Run() error {
 	return nil
 }
 
-func printJSON(object interface{}) {
+func printJSON(object any) {
 	res, _ := json.Marshal(object)
 	fmt.Println(string(res))
 }
 
 type parseFileHandler struct {
-	Enable bool            // set to true by cosiner/flag if the user is running this command
-	Parser base.ParserType `names:"--parser" desc:"Parseur à employer (ex: cotisation)"`
-	File   string          `names:"--file"   desc:"Nom du fichier à parser. Contrairement à l'import, le chemin du fichier doit être complet et ne tient pas compte de la variable d'environnement APP_DATA"`
+	Enable bool   // set to true by cosiner/flag if the user is running this command
+	Parser string `names:"--parser" desc:"Parseur à employer (ex: cotisation)"`
+	File   string `names:"--file"   desc:"Nom du fichier à parser. Contrairement à l'import, le chemin du fichier doit être complet et ne tient pas compte de la variable d'environnement APP_DATA"`
 }
 
 func (params parseFileHandler) Documentation() flag.Flag {
@@ -161,13 +171,14 @@ func (params parseFileHandler) Validate() error {
 }
 
 func (params parseFileHandler) Run() error {
-	parsers, err := parsing.ResolveParsers([]base.ParserType{params.Parser})
+	parserType := base.ParserType(params.Parser)
+	parsers, err := parsing.ResolveParsers([]base.ParserType{parserType})
 	if err != nil {
 		return err
 	}
 
-	file := base.NewBatchFileWithBasePath(params.File, "")
-	batch := base.AdminBatch{Files: base.BatchFiles{params.Parser: []base.BatchFile{file}}}
+	file := base.BatchFile(params.File)
+	batch := base.AdminBatch{Files: base.BatchFiles{parserType: []base.BatchFile{file}}}
 	cache := marshal.NewCache()
 	parser := parsers[0]
 

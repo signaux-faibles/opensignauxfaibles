@@ -82,7 +82,7 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 func Test_ImportBatchWithSinkFailure(t *testing.T) {
 	batch := base.AdminBatch{
 		Files: base.BatchFiles{
-			"apdemande": {base.NewBatchFile("../../lib/apdemande/testData/apdemandeTestData.csv")},
+			"apdemande": {base.BatchFile("../../lib/apdemande/testData/apdemandeTestData.csv")},
 		},
 	}
 	err := ImportBatch(batch, []marshal.Parser{apdemande.Parser}, true, FailSinkFactory{}, DiscardReportSink{})
@@ -108,7 +108,7 @@ func Test_CheckBatch(t *testing.T) {
 
 		batch := base.AdminBatch{
 			Files: base.BatchFiles{
-				"procol": {base.NewBatchFile("gzip:../../lib/urssaf/testData/procolTestData.csv.compressed")},
+				"procol": {base.BatchFile("gzip:../../lib/urssaf/testData/procolTestData.csv.compressed")},
 			},
 		}
 		err = CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol}, DiscardReportSink{})
