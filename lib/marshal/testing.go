@@ -168,6 +168,6 @@ type TestTuple struct {
 	Test4 *time.Time `csv:"test4" sql:"test4"`
 }
 
-func (TestTuple) Key() string   { return "" }
-func (TestTuple) Scope() string { return "" }
-func (TestTuple) Type() string  { return "" }
+func (TestTuple) Key() string           { return "" }
+func (TestTuple) Scope() string         { return "" }
+func (TestTuple) Type() base.ParserType { return "" }

@@ -12,12 +12,9 @@ import (
 
 // AdminBatch metadata Batch
 type AdminBatch struct {
-	ID            AdminID          `json:"id"`
-	Files         BatchFiles       `json:"files"`
-	Name          string           `json:"name"`
-	Readonly      bool             `json:"readonly"`
-	CompleteTypes []string         `json:"complete_types"`
-	Params        AdminBatchParams `json:"params"`
+	ID     AdminID          `json:"id"`
+	Files  BatchFiles       `json:"files"`
+	Params AdminBatchParams `json:"params"`
 }
 
 type AdminBatchParams struct {
@@ -38,14 +35,14 @@ func IsBatchID(batchID string) bool {
 	return err == nil
 }
 
-// AdminID Collection key
+// AdminID represents the "id" property of an AdminBatch object.
 type AdminID struct {
 	Key  string `json:"key"`
 	Type string `json:"type"`
 }
 
 // BatchFiles fichiers mappés par type
-type BatchFiles map[string][]BatchFile
+type BatchFiles map[ParserType][]BatchFile
 
 // BatchFile encapsule un fichier mentionné dans un Batch
 type BatchFile struct {
@@ -113,7 +110,7 @@ func (file BatchFile) IsCompressed() bool {
 }
 
 // MockBatch with a map[type][]filepaths
-func MockBatch(filetype string, filepaths []string) AdminBatch {
+func MockBatch(filetype ParserType, filepaths []string) AdminBatch {
 	batchFiles := []BatchFile{}
 	for _, file := range filepaths {
 		batchFiles = append(batchFiles, NewBatchFile(file))

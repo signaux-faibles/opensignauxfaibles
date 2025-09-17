@@ -29,8 +29,8 @@ func (sireneUL SireneUL) Key() string {
 }
 
 // Type de données
-func (sireneUL SireneUL) Type() string {
-	return "sirene_ul"
+func (sireneUL SireneUL) Type() base.ParserType {
+	return base.SireneUl
 }
 
 // Scope de l'objet
@@ -47,8 +47,8 @@ type sireneULParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *sireneULParser) Type() string {
-	return "sirene_ul"
+func (parser *sireneULParser) Type() base.ParserType {
+	return base.SireneUl
 }
 
 func (parser *sireneULParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {

@@ -18,10 +18,10 @@ import (
 )
 
 type importBatchHandler struct {
-	Enable   bool     // set to true by cosiner/flag if the user is running this command
-	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
-	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"` // TODO: tester la population de ce paramètre
-	NoFilter bool     `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
+	Enable   bool              // set to true by cosiner/flag if the user is running this command
+	BatchKey string            `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
+	Parsers  []base.ParserType `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"` // TODO: tester la population de ce paramètre
+	NoFilter bool              `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
@@ -79,9 +79,9 @@ func (params importBatchHandler) Run() error {
 }
 
 type checkBatchHandler struct {
-	Enable   bool     // set to true by cosiner/flag if the user is running this command
-	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à vérifier (ex: 1802, pour Février 2018)"`
-	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"`
+	Enable   bool              // set to true by cosiner/flag if the user is running this command
+	BatchKey string            `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à vérifier (ex: 1802, pour Février 2018)"`
+	Parsers  []base.ParserType `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"`
 }
 
 func (params checkBatchHandler) Documentation() flag.Flag {
@@ -132,9 +132,9 @@ func printJSON(object interface{}) {
 }
 
 type parseFileHandler struct {
-	Enable bool   // set to true by cosiner/flag if the user is running this command
-	Parser string `names:"--parser" desc:"Parseur à employer (ex: cotisation)"`
-	File   string `names:"--file"   desc:"Nom du fichier à parser. Contrairement à l'import, le chemin du fichier doit être complet et ne tient pas compte de la variable d'environnement APP_DATA"`
+	Enable bool            // set to true by cosiner/flag if the user is running this command
+	Parser base.ParserType `names:"--parser" desc:"Parseur à employer (ex: cotisation)"`
+	File   string          `names:"--file"   desc:"Nom du fichier à parser. Contrairement à l'import, le chemin du fichier doit être complet et ne tient pas compte de la variable d'environnement APP_DATA"`
 }
 
 func (params parseFileHandler) Documentation() flag.Flag {
@@ -161,7 +161,7 @@ func (params parseFileHandler) Validate() error {
 }
 
 func (params parseFileHandler) Run() error {
-	parsers, err := parsing.ResolveParsers([]string{params.Parser})
+	parsers, err := parsing.ResolveParsers([]base.ParserType{params.Parser})
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,7 @@
+prepare-import
+tools/create_filter/create_filter
+.idea
+tools/excludeCategoriesJuridiques/filter_siren*.csv
+tools/excludeCategoriesJuridiques/StockUniteLegale_utf8.zip
+node_modules
+package-lock.json

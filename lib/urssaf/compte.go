@@ -26,8 +26,8 @@ func (compte Compte) Scope() string {
 }
 
 // Type de l'objet
-func (compte Compte) Type() string {
-	return "admin_urssaf"
+func (compte Compte) Type() base.ParserType {
+	return base.AdminUrssaf
 }
 
 // ParserCompte fournit une instance utilisable par ParseFilesFromBatch.
@@ -38,8 +38,8 @@ type comptesParser struct {
 	mapping  marshal.Comptes
 }
 
-func (parser *comptesParser) Type() string {
-	return "admin_urssaf"
+func (parser *comptesParser) Type() base.ParserType {
+	return base.AdminUrssaf
 }
 
 func (parser *comptesParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {

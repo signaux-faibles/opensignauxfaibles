@@ -11,6 +11,7 @@ import (
 
 	"github.com/spf13/viper"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 )
 
@@ -24,7 +25,7 @@ func NewCSVSinkFactory(relativeDirPath string) SinkFactory {
 	return &CSVSinkFactory{relativeDirPath}
 }
 
-func (f *CSVSinkFactory) CreateSink(parserType string) (DataSink, error) {
+func (f *CSVSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
 
 	// resolve filename given parserType
 	rootDir := DefaultExportPath
@@ -33,12 +34,12 @@ func (f *CSVSinkFactory) CreateSink(parserType string) (DataSink, error) {
 	}
 
 	exportPath := filepath.Join(rootDir, f.relativeDirPath)
-	filename := filepath.Join(exportPath, parserType+".csv")
+	filename := filepath.Join(exportPath, string(parserType)+".csv")
 
 	slog.Debug(
 		"Résolution du nom de fichier d'export",
 		slog.String("key", f.relativeDirPath),
-		slog.String("type", parserType),
+		slog.String("type", string(parserType)),
 		slog.String("filename", filename),
 	)
 

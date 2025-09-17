@@ -45,7 +45,7 @@ func TestUrssaf(t *testing.T) {
 			{ParserProcol, "procolTestData.csv", "expectedProcol.json", makeCacheWithComptesMapping()},
 		}
 		for _, testCase := range urssafFiles {
-			t.Run(testCase.Parser.Type(), func(t *testing.T) {
+			t.Run(string(testCase.Parser.Type()), func(t *testing.T) {
 				// Compression du fichier de données
 				err := exec.Command("gzip", "--keep", filepath.Join("testData", testCase.InputFile)).Run() // créée une version gzippée du fichier
 				assert.NoError(t, err)

@@ -36,8 +36,8 @@ func (delai Delai) Scope() string {
 }
 
 // Type de l'objet
-func (delai Delai) Type() string {
-	return "delai"
+func (delai Delai) Type() base.ParserType {
+	return base.Delai
 }
 
 // ParserDelai fournit une instance utilisable par ParseFilesFromBatch.
@@ -50,8 +50,8 @@ type delaiParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *delaiParser) Type() string {
-	return "delai"
+func (parser *delaiParser) Type() base.ParserType {
+	return base.Delai
 }
 
 func (parser *delaiParser) Close() error {

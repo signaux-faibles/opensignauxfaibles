@@ -38,8 +38,8 @@ func (apdemande APDemande) Key() string {
 }
 
 // Type de données
-func (apdemande APDemande) Type() string {
-	return "apdemande"
+func (apdemande APDemande) Type() base.ParserType {
+	return base.Apdemande
 }
 
 // Scope de l'objet
@@ -56,8 +56,8 @@ type apdemandeParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *apdemandeParser) Type() string {
-	return "apdemande"
+func (parser *apdemandeParser) Type() base.ParserType {
+	return base.Apdemande
 }
 
 func (parser *apdemandeParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {

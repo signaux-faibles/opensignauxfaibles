@@ -30,8 +30,8 @@ func (effectif Effectif) Scope() string {
 }
 
 // Type de l'objet
-func (effectif Effectif) Type() string {
-	return "effectif"
+func (effectif Effectif) Type() base.ParserType {
+	return base.Effectif
 }
 
 // ParserEffectif fournit une instance utilisable par ParseFilesFromBatch.
@@ -44,8 +44,8 @@ type effectifParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *effectifParser) Type() string {
-	return "effectif"
+func (parser *effectifParser) Type() base.ParserType {
+	return base.Effectif
 }
 
 func (parser *effectifParser) Init(cache *marshal.Cache, batch *base.AdminBatch) error {
