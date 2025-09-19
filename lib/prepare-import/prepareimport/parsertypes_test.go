@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExtractFileTypeFromFilename(t *testing.T) {
+func TestExtractParserTypeFromFilename(t *testing.T) {
 
 	// inspired by https://github.com/golang/go/wiki/TableDrivenTests
 	cases := []struct {
@@ -55,7 +55,7 @@ func TestExtractFileTypeFromFilename(t *testing.T) {
 	}
 	for _, testCase := range cases {
 		t.Run("should return "+string(testCase.category)+" for file "+testCase.name, func(t *testing.T) {
-			got := ExtractFileTypeFromFilename(testCase.name)
+			got := ExtractParserTypeFromFilename(testCase.name)
 			assert.Equal(t, testCase.category, got)
 		})
 	}

@@ -1,48 +1,41 @@
 package prepareimport
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
 	"opensignauxfaibles/lib/base"
 	"os"
 	"path"
-	"strings"
 )
 
 // PopulateFilesProperty populates the "files" property of an Admin object, given a path.
-func PopulateFilesProperty(pathname string, batchKey base.BatchKey) (FilesProperty, []string) {
+func PopulateFilesProperty(pathname string, batchKey base.BatchKey) (base.BatchFiles, []string) {
 	batchPath := path.Join(pathname, batchKey.String())
 	filenames, _ := ReadFilenames(batchPath)
-	var augmentedFiles []DataFile
+
+	var batchFiles []base.BatchFile
 	for _, file := range filenames {
-		augmentedFiles = append(augmentedFiles, NewDataFile(file, batchPath))
+		batchFiles = append(batchFiles, base.NewBatchFileFromBatch(pathname, batchKey, file))
 	}
-	return PopulateFilesPropertyFromDataFiles(augmentedFiles, batchKey)
+	return PopulateFilesPropertyFromDataFiles(batchFiles)
 }
 
 // PopulateFilesPropertyFromDataFiles populates the "files" property of an Admin object, given a list of Data files.
-func PopulateFilesPropertyFromDataFiles(filenames []DataFile, batchKey base.BatchKey) (FilesProperty, []string) {
-	filesProperty := FilesProperty{}
+func PopulateFilesPropertyFromDataFiles(files []base.BatchFile) (base.BatchFiles, []string) {
+	filesProperty := base.BatchFiles{}
+
 	unsupportedFiles := []string{}
-	for _, filename := range filenames {
-		filetype := filename.DetectFileType()
-		if filetype == "" {
-			unsupportedFiles = append(unsupportedFiles, batchKey.Path()+filename.GetFilename())
+
+	for _, file := range files {
+		parserType := ExtractParserTypeFromFilename(file.Filename())
+
+		if parserType == "" {
+			unsupportedFiles = append(unsupportedFiles, file.RelativePath())
 			continue
 		}
-		if _, exists := filesProperty[filetype]; !exists {
-			filesProperty[filetype] = []BatchFile{}
+		if _, exists := filesProperty[parserType]; !exists {
+			filesProperty[parserType] = []base.BatchFile{}
 		}
-		batchFileToAdd := newBatchFile(batchKey, filename.GetFilename())
-		if strings.HasSuffix(filename.GetOriginalFilename(), ".gz") {
-			size := filename.GetSize()
-			if size == nil {
-				panic(errors.New("file size could not be found for: " + batchFileToAdd.Name()))
-			}
-			batchFileToAdd.AddGzippedSize(*size)
-		}
-		filesProperty[filetype] = append(filesProperty[filetype], batchFileToAdd)
+
+		filesProperty[parserType] = append(filesProperty[parserType], file)
 	}
 	return filesProperty, unsupportedFiles
 }
@@ -60,88 +53,4 @@ func ReadFilenames(path string) ([]string, error) {
 		}
 	}
 	return files, nil
-}
-
-// FilesProperty represents the "files" property of an Admin object.
-type FilesProperty map[base.ParserType][]BatchFile
-
-// GetFilterFile returns the filter file.
-func (fp FilesProperty) GetFilterFile() (BatchFile, error) {
-	if fp["filter"] == nil || len(fp["filter"]) != 1 {
-		return nil, fmt.Errorf("batch requires just 1 filter file, found: %s", fp["filter"])
-	}
-	return fp["filter"][0], nil
-}
-
-func (fp FilesProperty) GetSireneULFile() (BatchFile, error) {
-	if fp[base.SireneUl] == nil || len(fp[base.SireneUl]) != 1 {
-		return nil, fmt.Errorf("batch requires just 1 sireneUL filter file, found %s", fp[base.SireneUl])
-	}
-	return fp[base.SireneUl][0], nil
-}
-
-// GetEffectifFile returns the effectif file.
-func (fp FilesProperty) GetEffectifFile() (BatchFile, error) {
-	if fp["effectif"] == nil || len(fp["effectif"]) != 1 {
-		return nil, fmt.Errorf("batch requires just 1 effectif file, found: %s", fp["effectif"])
-	}
-	return fp["effectif"][0], nil
-}
-
-// BatchFile represents a file that is listed in a FilesProperty entry.
-type BatchFile interface {
-	BatchKey() base.BatchKey
-	Name() string
-	Path() string
-	AbsolutePath(parentDir string) string
-	GetGzippedSize() uint64     // in bytes
-	AddGzippedSize(size uint64) // in bytes
-}
-
-func newBatchFile(batchKey base.BatchKey, filename string) BatchFile {
-	return &batchFile{
-		batchKey: batchKey,
-		filename: filename,
-	}
-}
-
-type batchFile struct {
-	batchKey    base.BatchKey
-	filename    string
-	gzippedSize uint64 // in bytes
-}
-
-func (file *batchFile) BatchKey() base.BatchKey {
-	return file.batchKey
-}
-
-func (file *batchFile) Name() string {
-	return file.filename
-}
-
-// Path retourne le chemin relatif du fichier, avec un préfixe "gzip:" si celui-ci est compressé.
-func (file *batchFile) Path() string {
-	return file.AbsolutePath("")
-}
-
-// AbsolutePath retourne le chemin absolu du fichier, avec un préfixe "gzip:" si celui-ci est compressé.
-func (file *batchFile) AbsolutePath(parentDir string) string {
-	var prefix string
-	if file.gzippedSize > 0 {
-		prefix = "gzip:"
-	}
-	return prefix + path.Join(parentDir, file.batchKey.Path(), file.filename)
-}
-
-func (file *batchFile) AddGzippedSize(size uint64) {
-	file.gzippedSize = size
-}
-
-func (file *batchFile) GetGzippedSize() uint64 {
-	return file.gzippedSize
-}
-
-// MarshalJSON will be called when serializing the AdminObject.
-func (file *batchFile) MarshalJSON() ([]byte, error) {
-	return json.Marshal(file.Path())
 }

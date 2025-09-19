@@ -75,7 +75,7 @@ func ParseFilesFromBatch(ctx context.Context, cache Cache, batch *base.AdminBatc
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
 func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *base.AdminBatch,
 	cache Cache, outputChannel chan Tuple) Report {
-	logger := slog.With("batch", batch.ID.Key, "parser", parser.Type(), "filename", path.RelativePath())
+	logger := slog.With("batch", batch.Key, "parser", parser.Type(), "filename", path.RelativePath())
 	logger.Debug("parsing file")
 
 	tracker := NewParsingTracker()
@@ -88,7 +88,7 @@ func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *b
 
 	logger.Debug("end of file parsing")
 
-	return tracker.Report(fileType, batch.ID.Key, path.RelativePath())
+	return tracker.Report(fileType, batch.Key, path.RelativePath())
 }
 
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.

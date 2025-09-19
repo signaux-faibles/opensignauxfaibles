@@ -14,18 +14,11 @@ func TestBatchKey(t *testing.T) {
 	})
 
 	t.Run("Should fail if batch key is invalid", func(t *testing.T) {
-		_, err := NewBatchKey("")
-		assert.Error(t, err)
-	})
+		testCases := []string{"", "18022"}
 
-	t.Run("Should return the path of a batch", func(t *testing.T) {
-		batchKey, err := NewBatchKey("1802")
-		assert.NoError(t, err)
-		assert.Equal(t, "/1802/", batchKey.Path())
-	})
-
-	t.Run("Should return the parent of a sub-batch", func(t *testing.T) {
-		batchKey, _ := NewBatchKey("1802_01")
-		assert.Equal(t, "1802", batchKey.GetParentBatch())
+		for _, key := range testCases {
+			_, err := NewBatchKey(key)
+			assert.Error(t, err)
+		}
 	})
 }

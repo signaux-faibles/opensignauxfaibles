@@ -15,14 +15,14 @@ func TestParseFilesFromBatch(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("intérrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
-		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.BatchFile("dummy.csv")}}}
+		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewDummyBatchFile("dummy.csv")}}}
 		_, eventChan := ParseFilesFromBatch(ctx, NewCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Init()"}, fatalErrors)
 	})
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
-		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.BatchFile("dummy.csv")}}}
+		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewDummyBatchFile("dummy.csv")}}}
 		_, eventChan := ParseFilesFromBatch(ctx, NewCache(), &batch, &dummyParser{})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)

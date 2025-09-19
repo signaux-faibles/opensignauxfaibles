@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"sync"
 
 	"github.com/cosiner/flag"
@@ -72,7 +73,7 @@ func (params importBatchHandler) Run() error {
 	}
 
 	dataSink := engine.NewCompositeSinkFactory(
-		engine.NewCSVSinkFactory(batch.ID.Key.String()),
+		engine.NewCSVSinkFactory(batch.Key.String()),
 		engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
 	)
 	eventSink := engine.NewPostgresReportSink(engine.Db.PostgresDB)
@@ -186,7 +187,7 @@ func (params parseFileHandler) Run() error {
 		return err
 	}
 
-	file := base.BatchFile(params.File)
+	file := base.NewBatchFile(path.Dir(params.File), path.Base(params.File))
 	batch := base.AdminBatch{Files: base.BatchFiles{parserType: []base.BatchFile{file}}}
 	cache := marshal.NewCache()
 	parser := parsers[0]

@@ -6,103 +6,67 @@ import (
 	"io"
 	"os"
 	"path"
-	"time"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/prepare-import/createfilter"
 )
 
-// PrepareImport generates an Admin object from files found at given pathname of the file system.
-func PrepareImport(pathname string, batchKey base.BatchKey, providedDateFinEffectif string) (base.AdminBatch, error) {
+// PrepareImport generates an Admin object from files found at given pathname,
+// in the "batchKey" directory, on the file system.
+func PrepareImport(basepath string, batchKey base.BatchKey) (base.AdminBatch, error) {
 
-	batchPath := getBatchPath(pathname, batchKey)
-	println("Listing data files in " + batchPath + "/ ...")
-	if _, err := os.ReadDir(path.Join(pathname, batchPath)); err != nil {
-		return base.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchPath)
+	fmt.Println("Listing data files in " + batchKey + "/ ...")
+
+	batchPath := path.Join(basepath, batchKey.String())
+
+	if _, err := os.ReadDir(batchPath); err != nil {
+		return base.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchKey.String())
 	}
 
 	var err error
-	filesProperty, unsupportedFiles := PopulateFilesProperty(pathname, batchKey)
+	batchFiles, unsupportedFiles := PopulateFilesProperty(basepath, batchKey)
 
 	// To complete the FilesProperty, we need:
 	// - a filter file (created from an effectif file, at the batch/parent level)
-	// - a dateFinEffectif value (provided as parameter, or detected from effectif file)
 
-	var dateFinEffectif time.Time
-	effectifFile, _ := filesProperty.GetEffectifFile()
-	filterFile, _ := filesProperty.GetFilterFile()
-	sireneULFile, _ := filesProperty.GetSireneULFile()
-	if (effectifFile == nil || filterFile == nil) && batchKey.IsSubBatch() {
-		println("Looking for effectif and/or filter file in " + batchKey.GetParentBatch() + " ...")
-		parentFilesProperty, _ := PopulateFilesProperty(pathname, newSafeBatchKey(batchKey.GetParentBatch()))
-		if effectifFile == nil {
-			effectifFile, _ = parentFilesProperty.GetEffectifFile()
-		}
-		if filterFile == nil {
-			filterFile, _ = parentFilesProperty.GetFilterFile()
-		}
-	}
+	effectifFile, _ := batchFiles.GetEffectifFile()
+	filterFile, _ := batchFiles.GetFilterFile()
+	sireneULFile, _ := batchFiles.GetSireneULFile()
 
 	if effectifFile != nil {
-		println("Found effectif file: " + effectifFile.Name())
+		fmt.Println("Found effectif file: " + effectifFile.RelativePath())
 	}
 
 	if filterFile != nil {
-		println("Found filter file: " + filterFile.Name())
+		fmt.Println("Found filter file: " + filterFile.RelativePath())
 	}
 
 	if sireneULFile != nil {
-		println("Found sireneUL file: " + sireneULFile.Name())
+		fmt.Println("Found sireneUL file: " + sireneULFile.RelativePath())
+	}
+
+	if filterFile == nil && effectifFile == nil {
+		return base.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
 	}
 
 	// if needed, create a filter file from the effectif file
 	if filterFile == nil {
-		if effectifFile == nil {
-			return base.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
-		}
-		effectifFilePath := effectifFile.AbsolutePath(pathname)
-		sireneULFilePath := sireneULFile.AbsolutePath(pathname)
-		effectifBatch := effectifFile.BatchKey()
-		filterFile = newBatchFile(effectifBatch, "filter_siren_"+effectifBatch.String()+".csv")
-		println("Generating filter file: " + filterFile.Path() + " ...")
-		if err = createFilterFromEffectifAndSirene(path.Join(pathname, filterFile.Path()), effectifFilePath, sireneULFilePath); err != nil {
+		filterFile = base.NewBatchFileFromBatch(basepath, batchKey, "filter_siren.csv")
+
+		fmt.Println("Generating filter file: " + filterFile.RelativePath() + " ...")
+		if err = createFilterFromEffectifAndSirene(
+			filterFile.AbsolutePath(),
+			effectifFile.AbsolutePath(),
+			sireneULFile.AbsolutePath(),
+		); err != nil {
 			return base.AdminBatch{}, err
 		}
 	}
 
 	// add the filter to filesProperty
-	if filesProperty["filter"] == nil && filterFile != nil {
-		if batchKey.IsSubBatch() {
-			// copy the filter into the sub-batch's directory
-			println("Copying filter file to " + filterFile.Path() + " ...")
-			src := path.Join(pathname, filterFile.Path())
-			dest := path.Join(pathname, batchKey.GetParentBatch(), batchKey.Path(), filterFile.Name())
-			err = copy(src, dest)
-			if err != nil {
-				return base.AdminBatch{}, err
-			}
-			filterFile = newBatchFile(batchKey, filterFile.Name())
-		}
-		println("Adding filter file to batch ...")
-		filesProperty["filter"] = append(filesProperty["filter"], filterFile)
-	}
-
-	if effectifFile != nil {
-		println("Detecting dateFinEffectif from effectif file ...")
-		effectifFilePath := effectifFile.AbsolutePath(pathname)
-		dateFinEffectif, err = createfilter.DetectDateFinEffectif(effectifFilePath, createfilter.DefaultNbIgnoredCols) // TODO: éviter de lire le fichier Effectif deux fois
-		if err != nil {
-			return base.AdminBatch{}, err
-		}
-	}
-
-	// make sure we have date_fin_effectif
-	if dateFinEffectif.IsZero() {
-		println("Still missing date_fin_effectif => parsing CLI parameter ...")
-		dateFinEffectif, err = time.Parse("2006-01-02", providedDateFinEffectif)
-		if err != nil {
-			return base.AdminBatch{}, errors.New("date_fin_effectif is missing or invalid: " + providedDateFinEffectif)
-		}
+	if batchFiles["filter"] == nil && filterFile != nil {
+		fmt.Println("Adding filter file to batch ...")
+		batchFiles[base.Filter] = append(batchFiles[base.Filter], filterFile)
 	}
 
 	if len(unsupportedFiles) > 0 {
@@ -110,9 +74,9 @@ func PrepareImport(pathname string, batchKey base.BatchKey, providedDateFinEffec
 	}
 
 	return base.AdminBatch{
-		ID:     base.AdminID{batchKey, "batch"},
-		Files:  populateFilesPaths(filesProperty),
-		Params: populateParamProperty(batchKey, NewDateFinEffectif(dateFinEffectif)),
+		Key:    batchKey,
+		Files:  batchFiles,
+		Params: populateParamProperty(batchKey),
 	}, err
 }
 
@@ -134,13 +98,6 @@ func createFilterFromEffectifAndSirene(filterFilePath string, effectifFilePath s
 		createfilter.DefaultNbIgnoredCols,
 		categoriesJuridiqueFilter,
 	)
-}
-
-func getBatchPath(pathname string, batchKey base.BatchKey) string {
-	if batchKey.IsSubBatch() {
-		return path.Join(batchKey.GetParentBatch(), batchKey.String())
-	}
-	return batchKey.String()
 }
 
 func fileExists(filename string) bool {

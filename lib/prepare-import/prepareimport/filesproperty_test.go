@@ -2,8 +2,7 @@ package prepareimport
 
 import (
 	"opensignauxfaibles/lib/base"
-	"os"
-	"path/filepath"
+	"path"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,32 +10,37 @@ import (
 
 func TestPopulateFilesProperty(t *testing.T) {
 	t.Run("Should return an empty json when there is no file", func(t *testing.T) {
-		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{}, dummyBatchKey)
+		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]base.BatchFile{})
 		assert.Len(t, unsupportedFiles, 0)
-		assert.Equal(t, FilesProperty{}, filesProperty)
+		assert.Equal(t, base.BatchFiles{}, batchFiles)
 	})
 
 	t.Run("PopulateFilesProperty should contain effectif file in \"effectif\" property", func(t *testing.T) {
-		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"sigfaibles_effectif_siret.csv", ""}}, dummyBatchKey)
+		filename := "sigfaibles_effectif_siret.csv"
+		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewDummyBatchFile(filename)})
 		if assert.Len(t, unsupportedFiles, 0) {
 			assert.Equal(t,
-				[]BatchFile{dummyBatchFile("sigfaibles_effectif_siret.csv")},
-				filesProperty[base.Effectif])
+				[]base.BatchFile{base.NewDummyBatchFile("sigfaibles_effectif_siret.csv")},
+				batchFiles[base.Effectif])
 		}
 	})
 
 	t.Run("PopulateFilesProperty should contain one debit file in \"debit\" property", func(t *testing.T) {
-		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"sigfaibles_debits.csv", ""}}, dummyBatchKey)
-		expected := FilesProperty{base.Debit: {dummyBatchFile("sigfaibles_debits.csv")}}
+		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewDummyBatchFile("sigfaibles_debits.csv")})
+		expected := base.BatchFiles{base.Debit: {base.NewDummyBatchFile("sigfaibles_debits.csv")}}
 		assert.Len(t, unsupportedFiles, 0)
-		assert.Equal(t, expected, filesProperty)
+		assert.Equal(t, expected, batchFiles)
 	})
 
 	t.Run("PopulateFilesProperty should contain both debits files in \"debit\" property", func(t *testing.T) {
-		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"sigfaibles_debits.csv", ""}, SimpleDataFile{"sigfaibles_debits2.csv", ""}}, dummyBatchKey)
+		batchFiles, unsupportedFiles :=
+			PopulateFilesPropertyFromDataFiles([]base.BatchFile{
+				base.NewDummyBatchFile("sigfaibles_debits.csv"),
+				base.NewDummyBatchFile("sigfaibles_debits2.csv"),
+			})
 		if assert.Len(t, unsupportedFiles, 0) {
-			assert.Equal(t, []BatchFile{dummyBatchFile("sigfaibles_debits.csv"),
-				dummyBatchFile("sigfaibles_debits2.csv")}, filesProperty[base.Debit])
+			assert.Equal(t, []base.BatchFile{base.NewDummyBatchFile("sigfaibles_debits.csv"),
+				base.NewDummyBatchFile("sigfaibles_debits2.csv")}, batchFiles[base.Debit])
 		}
 	})
 
@@ -53,50 +57,27 @@ func TestPopulateFilesProperty(t *testing.T) {
 			{"sirene_ul", "sireneUL.csv"},                 // --> SIRENE_UL
 			{"sirene", "StockEtablissement_utf8_geo.csv"}, // --> SIRENE
 		}
-		expectedFiles := FilesProperty{}
-		inputFiles := []DataFile{}
+		expectedFiles := base.BatchFiles{}
+		inputFiles := []base.BatchFile{}
 		for _, file := range files {
-			expectedFiles[file.Type] = append(expectedFiles[file.Type], dummyBatchFile(file.Filename))
-			inputFiles = append(inputFiles, SimpleDataFile{file.Filename, ""})
+			expectedFiles[file.Type] = append(expectedFiles[file.Type], base.NewDummyBatchFile(file.Filename))
+			inputFiles = append(inputFiles, base.NewDummyBatchFile(file.Filename))
 		}
-		resFilesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles(inputFiles, dummyBatchKey)
+		resFilesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles(inputFiles)
 		assert.Len(t, unsupportedFiles, 0)
 		assert.Equal(t, expectedFiles, resFilesProperty)
 	})
 
 	t.Run("Should not include unsupported files", func(t *testing.T) {
-		filesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"coco.csv", ""}}, dummyBatchKey)
+		batchFiles, unsupportedFiles :=
+			PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewDummyBatchFile("coco.csv")})
 		assert.Len(t, unsupportedFiles, 1)
-		assert.Equal(t, FilesProperty{}, filesProperty)
+		assert.Equal(t, base.BatchFiles{}, batchFiles)
 	})
 
 	t.Run("Should report unsupported files", func(t *testing.T) {
-		_, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]DataFile{SimpleDataFile{"coco.csv", ""}}, dummyBatchKey)
-		assert.Equal(t, []string{dummyBatchKey.Path() + "coco.csv"}, unsupportedFiles)
-	})
-
-	t.Run("Should skip subdirectories", func(t *testing.T) {
-		subBatch := newSafeBatchKey("1803_01")
-		parentBatch := subBatch.GetParentBatch()
-		parentDir := CreateTempFiles(t, newSafeBatchKey(parentBatch), []string{})
-		subBatchDir := filepath.Join(parentDir, parentBatch, subBatch.String())
-		_ = os.Mkdir(subBatchDir, 0777)
-		parentFilesProperty, unsupportedFiles := PopulateFilesProperty(parentDir, newSafeBatchKey(parentBatch))
-		assert.Equal(t, []string{}, unsupportedFiles)
-		assert.Equal(t, FilesProperty{}, parentFilesProperty)
-	})
-
-	t.Run("Should add a 'gzip:' prefix to compressed files", func(t *testing.T) {
-		bytes, err := GzipString(SomeText(254781489))
-		if err != nil {
-			t.Errorf("erreur pendant la compression d'un texte aléatoire : %s", err)
-		}
-		dir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			"sigfaibles_debits.csv.gz": bytes,
-		})
-		resFilesProperty, _ := PopulateFilesProperty(dir, dummyBatchKey)
-		assert.Len(t, resFilesProperty["debit"], 1)
-		actualFilePath := resFilesProperty["debit"][0].Path() // cf batchFile.MarshalJSON()
-		assert.Equal(t, "gzip:/1802/sigfaibles_debits.csv.gz", actualFilePath)
+		batchFiles := []base.BatchFile{base.NewDummyBatchFileFromBatch("coco.csv", dummyBatchKey)}
+		_, unsupportedFiles := PopulateFilesPropertyFromDataFiles(batchFiles)
+		assert.Equal(t, []string{path.Join(dummyBatchKey.String(), "coco.csv")}, unsupportedFiles)
 	})
 }

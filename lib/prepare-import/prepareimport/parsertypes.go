@@ -5,8 +5,8 @@ import (
 	"regexp"
 )
 
-// ExtractFileTypeFromFilename returns a file type from filename, or empty string for unsupported file names
-func ExtractFileTypeFromFilename(filename string) base.ParserType {
+// ExtractParserTypeFromFilename returns a file type from filename, or empty string for unsupported file names
+func ExtractParserTypeFromFilename(filename string) base.ParserType {
 	possiblyGzFilename := regexp.MustCompile(`^(.*)\.gz$`).ReplaceAllString(filename, `$1`)
 	switch {
 	case filename == "consommation_ap.csv":

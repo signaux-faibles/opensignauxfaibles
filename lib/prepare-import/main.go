@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/pkg/errors"
+	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/prepare-import/prepareimport"
@@ -12,36 +13,31 @@ import (
 
 // Implementation of the prepare-import command.
 func main() {
-	var path = flag.String("path", ".", "Chemin d'accès au répertoire des batches")
+	var path = flag.String("path", viper.GetString("APP_DATA"), "Chemin d'accès au répertoire des batches")
+
 	var batchKey = flag.String(
 		"batch",
 		"",
 		"Clé du batch à importer au format AAMM (année + mois + suffixe optionnel)\n"+
 			"Exemple: 1802_1",
 	)
-	var dateFinEffectif = flag.String(
-		"date-fin-effectif",
-		"",
-		"Date de fin des données \"effectif\" fournies, au format AAAA-MM-JJ (année + mois + jour)\n"+
-			"Exemple: 2014-01-01",
-	)
 	var configFile = flag.String("configFile", "./batch.toml", "Chemin du fichier où est écrit la configuration\n"+
 		"Exemple: ./batch.toml")
 
 	flag.Parse()
-	adminObject, err := prepare(*path, *batchKey, *dateFinEffectif)
+	adminObject, err := prepare(*path, *batchKey)
 	if err != nil {
 		panic(err)
 	}
 	saveAdminObject(adminObject, *configFile)
 }
 
-func prepare(path, batchKey, dateFinEffectif string) (base.AdminBatch, error) {
+func prepare(path, batchKey string) (base.AdminBatch, error) {
 	validBatchKey, err := base.NewBatchKey(batchKey)
 	if err != nil {
 		return base.AdminBatch{}, errors.Wrap(err, "erreur lors de la création de la clé de batch")
 	}
-	adminObject, err := prepareimport.PrepareImport(path, validBatchKey, dateFinEffectif)
+	adminObject, err := prepareimport.PrepareImport(path, validBatchKey)
 	if _, ok := err.(prepareimport.UnsupportedFilesError); ok {
 		return adminObject, err
 	} else if err != nil {

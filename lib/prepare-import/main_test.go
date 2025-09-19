@@ -21,35 +21,34 @@ func Test_prepare(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	type args struct {
-		batch       string
-		finEffectif string
-	}
 	type want struct {
 		adminObject string
 		error       string
 	}
+
 	tests := []struct {
-		name string
-		args args
-		want want
+		name  string
+		batch string
+		want  want
 	}{
 		{
 			"test avec tous les bons paramètres",
-			args{"1802", "2018-01-01"},
+			"1802",
 			want{adminObject: goldenAdminObject, error: prepareimport.UnsupportedFilesError{}.Error()},
 		},
 		{
 			"test avec un mauvais paramètre batch",
-			args{"180", "2018-01-01"},
+			"180",
 			want{adminObject: string(emptyAsString), error: "la clé du batch doit respecter le format requis AAMM"},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gzipString, _ := prepareimport.GzipString(prepareimport.SomeText(254781489))
 
-			buildedBatchKey, _ := base.NewBatchKey(tt.args.batch)
+			buildedBatchKey, _ := base.NewBatchKey(tt.batch)
+
 			parentDir := prepareimport.CreateTempFilesWithContent(t, buildedBatchKey, map[string][]byte{
 				"sigfaibles_effectif_siret.csv":            effectifData,
 				"sigfaibles_debits.csv":                    prepareimport.SomeTextAsBytes(254784321489),
@@ -58,7 +57,7 @@ func Test_prepare(t *testing.T) {
 				"sigfaible_pcoll.csv.gz":                   gzipString,
 				"sireneUL.csv":                             ReadFileData(t, "createfilter/test_uniteLegale.csv"),
 			})
-			actual, err2 := prepare(parentDir, tt.args.batch, tt.args.finEffectif)
+			actual, err2 := prepare(parentDir, tt.batch)
 			assert.ErrorContains(t, err2, tt.want.error)
 			objectBytes, err := json.MarshalIndent(actual, "", "  ")
 			assert.NoError(t, err)

@@ -12,7 +12,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // Usage: $ ./create_filter --path test_data.csv
@@ -177,23 +176,6 @@ func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
 		}
 	}
 	return false
-}
-
-// DetectDateFinEffectif determines DateFinEffectif by parsing the effectif file.
-func DetectDateFinEffectif(path string, nIgnoredCols int) (dateFinEffectif time.Time, err error) {
-	r, f, err := makeEffectifReaderFromFile(path)
-	if err != nil {
-		return time.Time{}, err
-	}
-	defer f.Close()
-	header, err := r.Read() // en tête
-	if err != nil {
-		return time.Time{}, err
-	}
-	nbColsToExclude := guessLastNMissingFromReader(r, nIgnoredCols)
-	lastColWithValue := len(header) - 1 - nbColsToExclude - nIgnoredCols
-	lastPeriodWithValue := header[lastColWithValue]
-	return effectifColNameToDate(lastPeriodWithValue)
 }
 
 func guessLastNMissing(path string, nIgnoredCols int) int {

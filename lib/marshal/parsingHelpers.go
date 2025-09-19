@@ -24,7 +24,7 @@ func OpenCsvReader(batchFile base.BatchFile, comma rune, lazyQuotes bool) (*os.F
 
 // OpenFileReader ouvre un fichier potentiellement gzippé et retourne un io.Reader.
 func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
-	file, err := os.Open(batchFile.FilePath())
+	file, err := os.Open(batchFile.AbsolutePath())
 	if err != nil {
 		return nil, nil, err
 	}

@@ -35,7 +35,7 @@ func ImportBatch(
 	eventSink ReportSink,
 ) error {
 
-	logger := slog.With("batch", batch.ID.Key)
+	logger := slog.With("batch", batch.Key)
 	logger.Info("starting raw data import")
 
 	var cache = marshal.NewCache()
@@ -108,8 +108,8 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
 		for _, batchFile := range filepaths {
-			if _, err := os.Stat(batchFile.FilePath()); err != nil {
-				ErrorString += batchFile.FilePath() + " is missing (" + err.Error() + ").\n"
+			if _, err := os.Stat(batchFile.AbsolutePath()); err != nil {
+				ErrorString += batchFile.AbsolutePath() + " is missing (" + err.Error() + ").\n"
 			}
 		}
 	}
@@ -132,7 +132,7 @@ func CheckBatch(
 	}
 	var cache = marshal.NewCache()
 	for _, parser := range parsers {
-		logger := slog.With("batch", batch.ID.Key, "parser", parser.Type())
+		logger := slog.With("batch", batch.Key, "parser", parser.Type())
 		outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser)
 
 		DiscardTuple(outputChannel)
