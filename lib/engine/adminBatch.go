@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"log/slog"
 	"os"
 
@@ -14,9 +15,9 @@ import (
 	"opensignauxfaibles/lib/parsing"
 )
 
-// Load charge les données d'un batch depuis un fichier JSON
-func Load(batch *base.AdminBatch, path string) error {
-	batchFileContent, err := os.ReadFile(path)
+// Load charge les données d'un batch depuis du JSON
+func Load(batch *base.AdminBatch, reader io.Reader) error {
+	batchFileContent, err := io.ReadAll(reader)
 	if err != nil {
 		return err
 	}
