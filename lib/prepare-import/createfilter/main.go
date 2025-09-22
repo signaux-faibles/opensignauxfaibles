@@ -58,7 +58,6 @@ func main() {
 }
 
 // CreateFilter generates a "filter" from an "effectif" file.
-// If the effectif file has a "gzip:" prefix, it will be decompressed on the fly.
 func CreateFilter(writer io.Writer, effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) error {
 	last := guessLastNMissing(effectifFileName, nIgnoredCols)
 	r, f, err := makeEffectifReaderFromFile(effectifFileName)
@@ -89,13 +88,11 @@ func applyFilter(perimeter map[string]struct{}, f filter) map[string]struct{} {
 	return newPerimeter
 }
 
-// If the effectif file has a "gzip:" prefix, it will be decompressed on the fly.
+// If the effectif file has a ".gz" suffix, it will be decompressed on the fly.
 func makeEffectifReaderFromFile(effectifFileName string) (*csv.Reader, *os.File, error) {
 	var fileReader io.Reader
-	compressed := strings.HasPrefix(effectifFileName, "gzip:")
-	if compressed {
-		effectifFileName = strings.Replace(effectifFileName, "gzip:", "", 1)
-	}
+	compressed := strings.HasSuffix(effectifFileName, "csv.gz")
+
 	file, err := os.Open(effectifFileName)
 	if err != nil {
 		return nil, nil, err

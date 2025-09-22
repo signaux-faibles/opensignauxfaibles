@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
 	"sync"
 
 	"github.com/cosiner/flag"
@@ -187,7 +186,7 @@ func (params parseFileHandler) Run() error {
 		return err
 	}
 
-	file := base.NewBatchFile(path.Dir(params.File), path.Base(params.File))
+	file := base.NewBatchFile(params.File)
 	batch := base.AdminBatch{Files: base.BatchFiles{parserType: []base.BatchFile{file}}}
 	cache := marshal.NewCache()
 	parser := parsers[0]

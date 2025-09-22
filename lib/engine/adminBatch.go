@@ -108,8 +108,8 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
 		for _, batchFile := range filepaths {
-			if _, err := os.Stat(batchFile.AbsolutePath()); err != nil {
-				ErrorString += batchFile.AbsolutePath() + " is missing (" + err.Error() + ").\n"
+			if _, err := os.Stat(batchFile.Path()); err != nil {
+				ErrorString += batchFile.Path() + " is missing (" + err.Error() + ").\n"
 			}
 		}
 	}

@@ -54,8 +54,8 @@ func createCheckTestBatch(t *testing.T) {
 	batch := base.AdminBatch{
 		Key: "1910",
 		Files: base.BatchFiles{
-			"admin_urssaf": {base.NewBatchFile(".", "lib/urssaf/testData/comptesTestData.csv")},
-			"debit":        {base.NewBatchFile(".", "lib/urssaf/testData/debitCorrompuTestData.csv")},
+			"admin_urssaf": {base.NewBatchFile("lib/urssaf/testData/comptesTestData.csv")},
+			"debit":        {base.NewBatchFile("lib/urssaf/testData/debitCorrompuTestData.csv")},
 		},
 		Params: base.AdminBatchParams{
 			DateDebut: time.Date(2001, time.January, 1, 0, 0, 0, 0, time.UTC),

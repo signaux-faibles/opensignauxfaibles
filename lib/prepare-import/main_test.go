@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,13 +58,18 @@ func Test_prepare(t *testing.T) {
 				"sigfaible_pcoll.csv.gz":                   gzipString,
 				"sireneUL.csv":                             ReadFileData(t, "createfilter/test_uniteLegale.csv"),
 			})
+
 			actual, err2 := prepare(parentDir, tt.batch)
 			assert.ErrorContains(t, err2, tt.want.error)
 			objectBytes, err := json.MarshalIndent(actual, "", "  ")
 			assert.NoError(t, err)
-			assert.Equal(t, tt.want.adminObject, string(objectBytes))
+			assert.Equal(t, tt.want.adminObject, stripAllBasepaths(string(objectBytes), parentDir+"/"))
 		})
 	}
+}
+
+func stripAllBasepaths(jsonStr, basepath string) string {
+	return strings.ReplaceAll(jsonStr, basepath, "")
 }
 
 func ReadFileData(t *testing.T, filePath string) []byte {

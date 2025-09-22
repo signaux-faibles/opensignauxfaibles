@@ -159,7 +159,10 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		compressedFileData := compressFileData(t, "../urssaf/testData/comptesTestData.csv")
 		compressedFile := CreateTempFileWithContent(t, compressedFileData.Bytes())
 		cache := NewCache()
-		batch := base.MockBatch("admin_urssaf", []string{"gzip:" + compressedFile.Name()})
+		batch := base.MockBatch(
+			"admin_urssaf",
+			[]base.BatchFile{base.NewCompressedBatchFile(compressedFile.Name())},
+		)
 		actual, err := GetCompteSiretMapping(cache, &batch, OpenAndReadSiretMapping)
 		if assert.NoError(t, err) {
 			assert.EqualValues(t, expectedComptes, actual.GetSortedKeys())
@@ -191,11 +194,11 @@ func TestGetCompteSiretMapping(t *testing.T) {
 			expected    Comptes
 		}{
 			// Basic reading from file
-			{NewCache(), base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected1},
+			{NewCache(), base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected1},
 			// Cache superseeds reading from file
-			{Cache{"comptes": stdExpected2}, base.MockBatch("admin_urssaf", []string{"a"}), false, stdExpected2},
+			{Cache{"comptes": stdExpected2}, base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected2},
 			// No cache, no file = error
-			{NewCache(), base.MockBatch("otherStuff", []string{"a"}), true, nil},
+			{NewCache(), base.MockBatch("otherStuff", []base.BatchFile{base.NewBatchFile("a")}), true, nil},
 		}
 
 		for ind, tc := range testCases {

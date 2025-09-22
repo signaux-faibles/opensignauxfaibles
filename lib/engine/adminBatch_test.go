@@ -39,19 +39,19 @@ func Test_IsBatchID(t *testing.T) {
 
 func Test_CheckBatchPaths(t *testing.T) {
 	testCases := []struct {
-		Filepath      string
+		Filepath      base.BatchFile
 		ErrorExpected bool
 	}{
-		{"./test_data/empty_file", false},
-		{"./test_data/missing_file", true},
+		{base.NewBatchFile("test_data/empty_file"), false},
+		{base.NewBatchFile("test_data/missing_file"), true},
 	}
 	for _, tc := range testCases {
-		mockbatch := base.MockBatch("debit", []string{tc.Filepath})
+		mockbatch := base.MockBatch("debit", []base.BatchFile{tc.Filepath})
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||
 			(err != nil && !tc.ErrorExpected) {
 			// t.Log(err.Error()) // delete_me
-			t.Error("Validity of path " + tc.Filepath + " is wrongly checked")
+			t.Error("Validity of path " + tc.Filepath.Path() + " is wrongly checked")
 		}
 	}
 }
@@ -72,7 +72,7 @@ func Test_ImportBatch(t *testing.T) {
 }
 
 func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
-	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
+	batch := base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("this_file_does_not_exist")})
 	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")

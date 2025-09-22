@@ -10,6 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 )
 
@@ -49,8 +50,8 @@ func TestUrssaf(t *testing.T) {
 				// Compression du fichier de données
 				err := exec.Command("gzip", "--keep", filepath.Join("testData", testCase.InputFile)).Run() // créée une version gzippée du fichier
 				assert.NoError(t, err)
-				compressedFilePath := filepath.Join("testData", testCase.InputFile+".gz")
-				t.Cleanup(func() { os.Remove(compressedFilePath) })
+				compressedFilePath := base.NewBatchFile("testData", testCase.InputFile+".gz")
+				t.Cleanup(func() { os.Remove(compressedFilePath.Path()) })
 				// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
 				initialGoldenContent, err := os.ReadFile(filepath.Join("testData", testCase.GoldenFile))
 				assert.NoError(t, err)
@@ -66,15 +67,16 @@ func TestComptes(t *testing.T) {
 
 	t.Run("Le fichier de test Comptes est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedComptes.json")
-		var testData = filepath.Join("testData", "comptesTestData.csv")
+		var testData = base.NewBatchFile("testData", "comptesTestData.csv")
 		marshal.TestParserOutput(t, ParserCompte, marshal.NewCache(), testData, golden, *update)
 	})
 }
 
 func TestDebit(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebit.json")
-	var testData = filepath.Join("testData", "debitTestData.csv")
+	var testData = base.NewBatchFile("testData", "debitTestData.csv")
 	var cache = makeCacheWithComptesMapping()
+
 	marshal.TestParserOutput(t, ParserDebit, cache, testData, golden, *update)
 
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
@@ -106,14 +108,14 @@ func TestDebit(t *testing.T) {
 
 func TestDebitCorrompu(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
-	var testData = filepath.Join("testData", "debitCorrompuTestData.csv")
+	var testData = base.NewBatchFile("testData", "debitCorrompuTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDebit, cache, testData, golden, *update)
 }
 
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
-	var testData = filepath.Join("testData", "delaiTestData.csv")
+	var testData = base.NewBatchFile("testData", "delaiTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserDelai, cache, testData, golden, *update)
 
@@ -126,7 +128,7 @@ func TestDelai(t *testing.T) {
 
 func TestCcsf(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCcsf.json")
-	var testData = filepath.Join("testData", "ccsfTestData.csv")
+	var testData = base.NewBatchFile("testData", "ccsfTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCCSF, cache, testData, golden, *update)
 
@@ -139,7 +141,7 @@ func TestCcsf(t *testing.T) {
 
 func TestCotisation(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCotisation.json")
-	var testData = filepath.Join("testData", "cotisationTestData.csv")
+	var testData = base.NewBatchFile("testData", "cotisationTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	marshal.TestParserOutput(t, ParserCotisation, cache, testData, golden, *update)
 
@@ -184,7 +186,7 @@ func TestProcol(t *testing.T) {
 
 	t.Run("Le fichier de test Procol est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedProcol.json")
-		var testData = filepath.Join("testData", "procolTestData.csv")
+		var testData = base.NewBatchFile("testData", "procolTestData.csv")
 		marshal.TestParserOutput(t, ParserProcol, cache, testData, golden, *update)
 	})
 
@@ -201,7 +203,7 @@ func TestProcol(t *testing.T) {
 }
 
 func TestEffectif(t *testing.T) {
-	var testData = filepath.Join("testData", "effectifTestData.csv") // Données pour 3 établissements
+	var testData = base.NewBatchFile("testData", "effectifTestData.csv") // Données pour 3 établissements)
 
 	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectif.json")
@@ -236,7 +238,7 @@ func TestEffectif(t *testing.T) {
 func TestEffectifEnt(t *testing.T) {
 	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
-		var testData = filepath.Join("testData", "effectifEntTestData.csv")
+		var testData = base.NewBatchFile("testData", "effectifEntTestData.csv")
 		cache := marshal.NewCache()
 		marshal.TestParserOutput(t, ParserEffectifEnt, cache, testData, golden, *update)
 	})

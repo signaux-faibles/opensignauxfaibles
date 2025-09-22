@@ -1,12 +1,10 @@
 package base
 
-import "time"
+import (
+	"time"
+)
 
-func MockBatch(filetype ParserType, filepaths []string) AdminBatch {
-	batchFiles := []BatchFile{}
-	for _, file := range filepaths {
-		batchFiles = append(batchFiles, NewDummyBatchFile(file))
-	}
+func MockBatch(filetype ParserType, batchFiles []BatchFile) AdminBatch {
 	batch := AdminBatch{
 		Files: BatchFiles{filetype: batchFiles},
 		Params: AdminBatchParams{
@@ -15,14 +13,4 @@ func MockBatch(filetype ParserType, filepaths []string) AdminBatch {
 		},
 	}
 	return batch
-}
-
-// NewDummyBatchFile creates a BatchFile for testing contexts where the actual
-// basepath does not matter
-func NewDummyBatchFile(relativepath string) BatchFile {
-	return NewBatchFile(".", relativepath)
-}
-
-func NewDummyBatchFileFromBatch(relativepath string, batch BatchKey) BatchFile {
-	return NewBatchFileFromBatch(".", batch, relativepath)
 }

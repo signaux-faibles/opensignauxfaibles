@@ -10,7 +10,7 @@ type BatchKey string
 // NewBatchKey constructs a valid batch key
 func NewBatchKey(key string) (BatchKey, error) {
 	if !validBatchKey.MatchString(key) {
-		return "", errors.New("la clé du batch doit respecter le format requis AAMM")
+		return "", errors.New("la clé du batch doit respecter le format requis AAMM. Reçu :" + key)
 	}
 	return BatchKey(key), nil
 }

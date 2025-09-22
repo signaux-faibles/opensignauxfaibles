@@ -17,17 +17,17 @@ func TestPopulateFilesProperty(t *testing.T) {
 
 	t.Run("PopulateFilesProperty should contain effectif file in \"effectif\" property", func(t *testing.T) {
 		filename := "sigfaibles_effectif_siret.csv"
-		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewDummyBatchFile(filename)})
+		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewBatchFile(filename)})
 		if assert.Len(t, unsupportedFiles, 0) {
 			assert.Equal(t,
-				[]base.BatchFile{base.NewDummyBatchFile("sigfaibles_effectif_siret.csv")},
+				[]base.BatchFile{base.NewBatchFile("sigfaibles_effectif_siret.csv")},
 				batchFiles[base.Effectif])
 		}
 	})
 
 	t.Run("PopulateFilesProperty should contain one debit file in \"debit\" property", func(t *testing.T) {
-		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewDummyBatchFile("sigfaibles_debits.csv")})
-		expected := base.BatchFiles{base.Debit: {base.NewDummyBatchFile("sigfaibles_debits.csv")}}
+		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewBatchFile("sigfaibles_debits.csv")})
+		expected := base.BatchFiles{base.Debit: {base.NewBatchFile("sigfaibles_debits.csv")}}
 		assert.Len(t, unsupportedFiles, 0)
 		assert.Equal(t, expected, batchFiles)
 	})
@@ -35,12 +35,12 @@ func TestPopulateFilesProperty(t *testing.T) {
 	t.Run("PopulateFilesProperty should contain both debits files in \"debit\" property", func(t *testing.T) {
 		batchFiles, unsupportedFiles :=
 			PopulateFilesPropertyFromDataFiles([]base.BatchFile{
-				base.NewDummyBatchFile("sigfaibles_debits.csv"),
-				base.NewDummyBatchFile("sigfaibles_debits2.csv"),
+				base.NewBatchFile("sigfaibles_debits.csv"),
+				base.NewBatchFile("sigfaibles_debits2.csv"),
 			})
 		if assert.Len(t, unsupportedFiles, 0) {
-			assert.Equal(t, []base.BatchFile{base.NewDummyBatchFile("sigfaibles_debits.csv"),
-				base.NewDummyBatchFile("sigfaibles_debits2.csv")}, batchFiles[base.Debit])
+			assert.Equal(t, []base.BatchFile{base.NewBatchFile("sigfaibles_debits.csv"),
+				base.NewBatchFile("sigfaibles_debits2.csv")}, batchFiles[base.Debit])
 		}
 	})
 
@@ -60,8 +60,8 @@ func TestPopulateFilesProperty(t *testing.T) {
 		expectedFiles := base.BatchFiles{}
 		inputFiles := []base.BatchFile{}
 		for _, file := range files {
-			expectedFiles[file.Type] = append(expectedFiles[file.Type], base.NewDummyBatchFile(file.Filename))
-			inputFiles = append(inputFiles, base.NewDummyBatchFile(file.Filename))
+			expectedFiles[file.Type] = append(expectedFiles[file.Type], base.NewBatchFile(file.Filename))
+			inputFiles = append(inputFiles, base.NewBatchFile(file.Filename))
 		}
 		resFilesProperty, unsupportedFiles := PopulateFilesPropertyFromDataFiles(inputFiles)
 		assert.Len(t, unsupportedFiles, 0)
@@ -70,13 +70,13 @@ func TestPopulateFilesProperty(t *testing.T) {
 
 	t.Run("Should not include unsupported files", func(t *testing.T) {
 		batchFiles, unsupportedFiles :=
-			PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewDummyBatchFile("coco.csv")})
+			PopulateFilesPropertyFromDataFiles([]base.BatchFile{base.NewBatchFile("coco.csv")})
 		assert.Len(t, unsupportedFiles, 1)
 		assert.Equal(t, base.BatchFiles{}, batchFiles)
 	})
 
 	t.Run("Should report unsupported files", func(t *testing.T) {
-		batchFiles := []base.BatchFile{base.NewDummyBatchFileFromBatch("coco.csv", dummyBatchKey)}
+		batchFiles := []base.BatchFile{base.NewBatchFileFromBatch(".", dummyBatchKey, "coco.csv")}
 		_, unsupportedFiles := PopulateFilesPropertyFromDataFiles(batchFiles)
 		assert.Equal(t, []string{path.Join(dummyBatchKey.String(), "coco.csv")}, unsupportedFiles)
 	})

@@ -28,7 +28,7 @@ func PopulateFilesPropertyFromDataFiles(files []base.BatchFile) (base.BatchFiles
 		parserType := ExtractParserTypeFromFilename(file.Filename())
 
 		if parserType == "" {
-			unsupportedFiles = append(unsupportedFiles, file.RelativePath())
+			unsupportedFiles = append(unsupportedFiles, file.Path())
 			continue
 		}
 		if _, exists := filesProperty[parserType]; !exists {

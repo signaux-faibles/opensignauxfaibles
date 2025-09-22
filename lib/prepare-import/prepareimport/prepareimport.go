@@ -34,15 +34,15 @@ func PrepareImport(basepath string, batchKey base.BatchKey) (base.AdminBatch, er
 	sireneULFile, _ := batchFiles.GetSireneULFile()
 
 	if effectifFile != nil {
-		fmt.Println("Found effectif file: " + effectifFile.RelativePath())
+		fmt.Println("Found effectif file: " + effectifFile.Path())
 	}
 
 	if filterFile != nil {
-		fmt.Println("Found filter file: " + filterFile.RelativePath())
+		fmt.Println("Found filter file: " + filterFile.Path())
 	}
 
 	if sireneULFile != nil {
-		fmt.Println("Found sireneUL file: " + sireneULFile.RelativePath())
+		fmt.Println("Found sireneUL file: " + sireneULFile.Path())
 	}
 
 	if filterFile == nil && effectifFile == nil {
@@ -53,11 +53,11 @@ func PrepareImport(basepath string, batchKey base.BatchKey) (base.AdminBatch, er
 	if filterFile == nil {
 		filterFile = base.NewBatchFileFromBatch(basepath, batchKey, "filter_siren.csv")
 
-		fmt.Println("Generating filter file: " + filterFile.RelativePath() + " ...")
+		fmt.Println("Generating filter file: " + filterFile.Path() + " ...")
 		if err = createFilterFromEffectifAndSirene(
-			filterFile.AbsolutePath(),
-			effectifFile.AbsolutePath(),
-			sireneULFile.AbsolutePath(),
+			filterFile.Path(),
+			effectifFile.Path(),
+			sireneULFile.Path(),
 		); err != nil {
 			return base.AdminBatch{}, err
 		}

@@ -37,7 +37,6 @@ func TestImportEndToEnd(t *testing.T) {
 
 	t.Run("Verify exported Postgres files", func(t *testing.T) {
 		verifyPostgresExport(t)
-
 	})
 }
 
@@ -50,18 +49,18 @@ func createImportTestBatch(t *testing.T) {
 		Files: map[base.ParserType][]base.BatchFile{
 			Dummy:            {},
 			base.Filter:      {},
-			base.Apconso:     {base.NewBatchFile(".", "lib/apconso/testData/apconsoTestData.csv")},
-			base.Apdemande:   {base.NewBatchFile(".", "lib/apdemande/testData/apdemandeTestData.csv")},
-			base.Sirene:      {base.NewBatchFile(".", "lib/sirene/testData/sireneTestData.csv")},
-			base.SireneUl:    {base.NewBatchFile(".", "lib/sirene_ul/testData/sireneULTestData.csv")},
-			base.AdminUrssaf: {base.NewBatchFile(".", "lib/urssaf/testData/comptesTestData.csv")},
-			base.Debit:       {base.NewBatchFile(".", "lib/urssaf/testData/debitTestData.csv")},
-			base.Ccsf:        {base.NewBatchFile(".", "lib/urssaf/testData/ccsfTestData.csv")},
-			base.Cotisation:  {base.NewBatchFile(".", "lib/urssaf/testData/cotisationTestData.csv")},
-			base.Delai:       {base.NewBatchFile(".", "lib/urssaf/testData/delaiTestData.csv")},
-			base.Effectif:    {base.NewBatchFile(".", "lib/urssaf/testData/effectifTestData.csv")},
-			base.EffectifEnt: {base.NewBatchFile(".", "lib/urssaf/testData/effectifEntTestData.csv")},
-			base.Procol:      {base.NewBatchFile(".", "lib/urssaf/testData/procolTestData.csv")},
+			base.Apconso:     {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
+			base.Apdemande:   {base.NewBatchFile("lib/apdemande/testData/apdemandeTestData.csv")},
+			base.Sirene:      {base.NewBatchFile("lib/sirene/testData/sireneTestData.csv")},
+			base.SireneUl:    {base.NewBatchFile("lib/sirene_ul/testData/sireneULTestData.csv")},
+			base.AdminUrssaf: {base.NewBatchFile("lib/urssaf/testData/comptesTestData.csv")},
+			base.Debit:       {base.NewBatchFile("lib/urssaf/testData/debitTestData.csv")},
+			base.Ccsf:        {base.NewBatchFile("lib/urssaf/testData/ccsfTestData.csv")},
+			base.Cotisation:  {base.NewBatchFile("lib/urssaf/testData/cotisationTestData.csv")},
+			base.Delai:       {base.NewBatchFile("lib/urssaf/testData/delaiTestData.csv")},
+			base.Effectif:    {base.NewBatchFile("lib/urssaf/testData/effectifTestData.csv")},
+			base.EffectifEnt: {base.NewBatchFile("lib/urssaf/testData/effectifEntTestData.csv")},
+			base.Procol:      {base.NewBatchFile("lib/urssaf/testData/procolTestData.csv")},
 		},
 		Params: base.AdminBatchParams{
 			DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),

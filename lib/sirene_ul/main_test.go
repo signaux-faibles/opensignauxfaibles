@@ -7,13 +7,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 var golden = filepath.Join("testData", "expectedSireneUL.json")
-var testData = filepath.Join("testData", "sireneULTestData.csv")
+var testData = base.NewBatchFile("testData", "sireneULTestData.csv")
 
 func TestSireneUl(t *testing.T) {
 	marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
