@@ -17,4 +17,6 @@ Flags:
                          Pour procéder à l'importation même si aucun filtre n'est fourni
     --batch-config           (type: string)
                          Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA.
+    --dry-run                (type: bool)
+                         Pour parser les fichiers sans créer de fichiers CSV / imports en base
 ---
