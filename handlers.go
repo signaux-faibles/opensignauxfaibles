@@ -55,6 +55,8 @@ func (params importBatchHandler) Validate() error {
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
+	// Étape 1
+	// On définit d'abord un ensemble de fichiers à importer (batch)
 	batch := base.AdminBatch{}
 
 	if params.BatchConfig != "" {
@@ -89,32 +91,39 @@ func (params importBatchHandler) Run() error {
 		}
 	}
 
+	// Étape 2
+	// On définit les parsers à faire tourner
 	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
 	for _, p := range params.Parsers {
 		parserTypes = append(parserTypes, base.ParserType(p))
 	}
 
-	var dataSink engine.SinkFactory
+	// Étape 3
+	// On définit la destination des données parsées et des rapports de
+	// validation
+	var dataSinkFactory engine.SinkFactory
 	var reportSink engine.ReportSink
 
 	if !params.DryRun {
-		dataSink = engine.NewCompositeSinkFactory(
+		dataSinkFactory = engine.NewCompositeSinkFactory(
 			engine.NewCSVSinkFactory(batch.Key.String()),
 			engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
 		)
 		reportSink = engine.NewPostgresReportSink(engine.Db.PostgresDB)
 	} else {
-		dataSink = &engine.DiscardSinkFactory{}
-		reportSink = &engine.DiscardReportSink{}
+		dataSinkFactory = &engine.DiscardSinkFactory{}
+		reportSink = &engine.StdoutReportSink{}
 	}
 
-	err := engine.ImportBatch(batch, parserTypes, params.NoFilter, dataSink, reportSink)
+	// Étape 4
+	// On réalise l'import
+	err := engine.ImportBatch(batch, parserTypes, params.NoFilter, dataSinkFactory, reportSink)
 
 	if err != nil {
 		return err
 	}
 
-	printJSON("ok")
+	printJSON("Import terminé")
 	return nil
 }
 
