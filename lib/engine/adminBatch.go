@@ -14,7 +14,7 @@ import (
 	"opensignauxfaibles/lib/parsing"
 )
 
-// Load charge les données d'un batch depuis le fichier de configuration
+// Load charge les données d'un batch depuis un fichier JSON
 func Load(batch *base.AdminBatch, path string) error {
 	batchFileContent, err := os.ReadFile(path)
 	if err != nil {

@@ -78,13 +78,21 @@ func (params importBatchHandler) Run() error {
 		return err
 	}
 
-	dataSink := engine.NewCompositeSinkFactory(
-		engine.NewCSVSinkFactory(batch.Key.String()),
-		engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
-	)
-	eventSink := engine.NewPostgresReportSink(engine.Db.PostgresDB)
+	var dataSink engine.SinkFactory
+	var reportSink engine.ReportSink
 
-	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataSink, eventSink)
+	if !params.DryRun {
+		dataSink = engine.NewCompositeSinkFactory(
+			engine.NewCSVSinkFactory(batch.Key.String()),
+			engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
+		)
+		reportSink = engine.NewPostgresReportSink(engine.Db.PostgresDB)
+	} else {
+		dataSink = &engine.DiscardSinkFactory{}
+		reportSink = &engine.DiscardReportSink{}
+	}
+
+	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataSink, reportSink)
 
 	if err != nil {
 		return err

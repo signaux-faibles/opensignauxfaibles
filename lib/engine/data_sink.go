@@ -121,6 +121,13 @@ func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple
 	return err
 }
 
+// DiscardSinkFactory discards all data, regardless of the parser
+type DiscardSinkFactory struct{}
+
+func (f *DiscardSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+	return &DiscardDataSink{}, nil
+}
+
 type DiscardDataSink struct {
 	counter int
 }
