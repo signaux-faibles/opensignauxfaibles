@@ -139,17 +139,6 @@ func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan marshal.Tup
 	return nil
 }
 
-type DiscardReportSink struct {
-	counter int
-}
-
-func (s DiscardReportSink) Process(ch chan marshal.Report) error {
-	for range ch {
-		s.counter++
-	}
-	return nil
-}
-
 // getType return the name of the type of the input
 func getType(myvar any) string {
 	return reflect.TypeOf(myvar).String()

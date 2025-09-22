@@ -3,9 +3,7 @@ package engine
 import (
 	"testing"
 
-	"opensignauxfaibles/lib/apdemande"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
 )
 
 func Test_IsBatchID(t *testing.T) {
@@ -59,7 +57,7 @@ func (TestSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) 
 func Test_ImportBatch(t *testing.T) {
 
 	batch := base.AdminBatch{}
-	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardReportSink{})
+	err := ImportBatch(batch, []base.ParserType{}, false, TestSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}
@@ -67,7 +65,7 @@ func Test_ImportBatch(t *testing.T) {
 
 func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 	batch := base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("this_file_does_not_exist")})
-	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardReportSink{})
+	err := ImportBatch(batch, []base.ParserType{}, false, TestSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
 	}
@@ -79,7 +77,7 @@ func Test_ImportBatchWithSinkFailure(t *testing.T) {
 			"apdemande": {base.NewBatchFile("../..", "lib/apdemande/testData/apdemandeTestData.csv")},
 		},
 	}
-	err := ImportBatch(batch, []marshal.Parser{apdemande.Parser}, true, FailSinkFactory{}, DiscardReportSink{})
+	err := ImportBatch(batch, []base.ParserType{base.Apdemande}, true, FailSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer si le sink échoue")
 	}

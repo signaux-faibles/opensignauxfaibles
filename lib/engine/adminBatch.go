@@ -28,11 +28,16 @@ func Load(batch *base.AdminBatch, path string) error {
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
 	batch base.AdminBatch,
-	parsers []marshal.Parser,
+	parserTypes []base.ParserType,
 	skipFilter bool,
 	sinkFactory SinkFactory,
 	eventSink ReportSink,
 ) error {
+
+	parsers, err := parsing.ResolveParsers(parserTypes)
+	if err != nil {
+		return err
+	}
 
 	logger := slog.With("batch", batch.Key)
 	logger.Info("starting raw data import")

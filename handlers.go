@@ -6,15 +6,18 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"sync"
 
 	"github.com/cosiner/flag"
+	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/marshal"
 	"opensignauxfaibles/lib/parsing"
+	prepareimport "opensignauxfaibles/lib/prepare-import"
 )
 
 type importBatchHandler struct {
@@ -55,27 +58,40 @@ func (params importBatchHandler) Run() error {
 	batch := base.AdminBatch{}
 
 	if params.BatchConfig != "" {
+		// On lit le batch depuis un fichier json
+		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
 		err := engine.Load(&batch, params.BatchConfig)
 		if err != nil {
-			return errors.New("Impossible de charger la configuration du batch: " + err.Error())
+			return fmt.Errorf("impossible de charger la configuration du batch : %w", err)
 		}
-	} else {
-		// Guess batch from filenames
-		// batchKey, err := base.NewBatchKey(params.BatchKey)
-		// if err != nil {
-		// 	return err
-		// }
 
+	} else {
+		// On devine le batch à partir des noms de fichiers
+		slog.Info("Batch non fourni en paramètre, tentative de déterminer les fichiers à importer")
+
+		batchKey, err := base.NewBatchKey(params.BatchKey)
+		if err != nil {
+			return err
+		}
+
+		batch, err = prepareimport.PrepareImport(viper.GetString("APP_DATA"), batchKey)
+		if _, ok := err.(prepareimport.UnsupportedFilesError); ok {
+			slog.Warn(fmt.Sprintf("Des fichiers non-identifiés sont présents : %v", err))
+		} else if err != nil {
+			return fmt.Errorf("une erreur est survenue en préparant l'import : %w", err)
+		}
+
+		slog.Info("Batch deviné avec succès")
+
+		batchJSON, _ := json.MarshalIndent(batch, "", "  ")
+		if batchJSON != nil {
+			slog.Info(string(batchJSON))
+		}
 	}
 
 	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
 	for _, p := range params.Parsers {
 		parserTypes = append(parserTypes, base.ParserType(p))
-	}
-
-	parsers, err := parsing.ResolveParsers(parserTypes)
-	if err != nil {
-		return err
 	}
 
 	var dataSink engine.SinkFactory
@@ -92,7 +108,7 @@ func (params importBatchHandler) Run() error {
 		reportSink = &engine.DiscardReportSink{}
 	}
 
-	err = engine.ImportBatch(batch, parsers, params.NoFilter, dataSink, reportSink)
+	err := engine.ImportBatch(batch, parserTypes, params.NoFilter, dataSink, reportSink)
 
 	if err != nil {
 		return err
