@@ -23,6 +23,7 @@ type importBatchHandler struct {
 	Parsers     []string `names:"--parsers" desc:"Parseurs à employer (ex: apconso, cotisation)"` // TODO: tester la population de ce paramètre
 	NoFilter    bool     `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
 	BatchConfig string   `names:"--batch-config" desc:"Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA."`
+	DryRun      bool     `names:"--dry-run" desc:"Pour parser les fichiers sans créer de fichiers CSV / imports en base"`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
