@@ -1,17 +1,11 @@
 package engine
 
 import (
-	"os"
-	"os/exec"
-	"path/filepath"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 
 	"opensignauxfaibles/lib/apdemande"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/urssaf"
 )
 
 func Test_IsBatchID(t *testing.T) {
@@ -89,29 +83,4 @@ func Test_ImportBatchWithSinkFailure(t *testing.T) {
 	if err == nil {
 		t.Error("ImportBatch devrait échouer si le sink échoue")
 	}
-}
-
-func Test_CheckBatch(t *testing.T) {
-
-	t.Run("CheckBatch devrait réussir à parser un fichier compressé spécifié avec le schéma 'gzip:'", func(t *testing.T) {
-
-		// Compression du fichier de données
-		procolFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv")
-		compressedFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv.compressed")
-		cmd := exec.Command("gzip", "--suffix", ".compressed", "--keep", procolFilePath) // compresse le fichier avec une extension autre que .gz
-		err := cmd.Run()
-		assert.NoError(t, err)
-		cmd.Wait()
-		t.Cleanup(func() { os.Remove(compressedFilePath) })
-
-		// Exécution de CheckBatch sur un AdminBatch mentionnant un fichier compressé
-
-		batch := base.AdminBatch{
-			Files: base.BatchFiles{
-				"procol": {base.NewBatchFile("../..", "lib/urssaf/testData/procolTestData.csv.compressed")},
-			},
-		}
-		err = CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol}, DiscardReportSink{})
-		assert.NoError(t, err)
-	})
 }

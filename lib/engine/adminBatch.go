@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
 	"opensignauxfaibles/lib/base"
@@ -16,8 +15,8 @@ import (
 )
 
 // Load charge les données d'un batch depuis le fichier de configuration
-func Load(batch *base.AdminBatch, batchKey base.BatchKey) error {
-	batchFileContent, err := os.ReadFile(viper.GetString("BATCH_CONFIG_FILE"))
+func Load(batch *base.AdminBatch, path string) error {
+	batchFileContent, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
@@ -118,33 +117,6 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 	}
 	return nil
 
-}
-
-// CheckBatch checks batch, discard all data but logs events
-func CheckBatch(
-	batch base.AdminBatch,
-	parsers []marshal.Parser,
-	eventSink ReportSink,
-) error {
-	ctx := context.Background()
-	if err := CheckBatchPaths(&batch); err != nil {
-		return err
-	}
-	var cache = marshal.NewCache()
-	for _, parser := range parsers {
-		logger := slog.With("batch", batch.Key, "parser", parser.Type())
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser)
-
-		DiscardTuple(outputChannel)
-		for report := range eventChannel {
-			if report.LinesRejected > 0 {
-				logger.Error(report.Summary)
-			} else {
-				logger.Info(report.Summary)
-			}
-		}
-	}
-	return nil
 }
 
 func checkUnsupportedFiletypes(batch base.AdminBatch) []base.ParserType {

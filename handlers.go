@@ -52,14 +52,19 @@ func (params importBatchHandler) Validate() error {
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
 	batch := base.AdminBatch{}
-	batchKey, err := base.NewBatchKey(params.BatchKey)
-	if err != nil {
-		return err
-	}
 
-	err = engine.Load(&batch, batchKey)
-	if err != nil {
-		return errors.New("Impossible de charger la configuration du batch: " + err.Error())
+	if params.BatchConfig != "" {
+		err := engine.Load(&batch, params.BatchConfig)
+		if err != nil {
+			return errors.New("Impossible de charger la configuration du batch: " + err.Error())
+		}
+	} else {
+		// Guess batch from filenames
+		// batchKey, err := base.NewBatchKey(params.BatchKey)
+		// if err != nil {
+		// 	return err
+		// }
+
 	}
 
 	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
@@ -85,64 +90,6 @@ func (params importBatchHandler) Run() error {
 	}
 
 	printJSON("ok")
-	return nil
-}
-
-type checkBatchHandler struct {
-	Enable   bool     // set to true by cosiner/flag if the user is running this command
-	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à vérifier (ex: 1802, pour Février 2018)"`
-	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: altares,cotisation)"`
-}
-
-func (params checkBatchHandler) Documentation() flag.Flag {
-	return flag.Flag{
-		Usage: "Vérifie la validité d'un batch avant son importation",
-		Desc: `
-		Vérifie la validité du batch sur le point d'être importé et des fichiers qui le constituent.
-		Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
-		Répond avec un propriété JSON "reports" qui contient les rapports textuels de parsing de chaque fichier.
-	`,
-	}
-}
-
-func (params checkBatchHandler) IsEnabled() bool {
-	return params.Enable
-}
-
-func (params checkBatchHandler) Validate() error {
-	if params.BatchKey == "" {
-		return errors.New("paramètre `batch` obligatoire")
-	}
-	return nil
-}
-
-func (params checkBatchHandler) Run() error {
-	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
-	for _, p := range params.Parsers {
-		parserTypes = append(parserTypes, base.ParserType(p))
-	}
-
-	batch := base.AdminBatch{}
-	batchKey, err := base.NewBatchKey(params.BatchKey)
-	if err != nil {
-		return err
-	}
-
-	err = engine.Load(&batch, batchKey)
-	if err != nil {
-		return errors.New("Batch inexistant: " + err.Error())
-	}
-
-	parsers, err := parsing.ResolveParsers(parserTypes)
-	if err != nil {
-		return err
-	}
-
-	eventSink := engine.NewPostgresReportSink(engine.Db.PostgresDB)
-	err = engine.CheckBatch(batch, parsers, eventSink)
-	if err != nil {
-		return fmt.Errorf("erreurs détectées: %v", err)
-	}
 	return nil
 }
 
