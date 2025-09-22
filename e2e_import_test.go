@@ -8,6 +8,7 @@ import (
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -23,7 +24,7 @@ func TestImportEndToEnd(t *testing.T) {
 	t.Run("Create batch and run import", func(t *testing.T) {
 		createImportTestBatch(t)
 
-		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter")
+		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter", "--batch-config", path.Join(tmpDir, "batch.json"))
 		assert.Equal(t, 0, exitCode, "sfdata import should succeed")
 	})
 

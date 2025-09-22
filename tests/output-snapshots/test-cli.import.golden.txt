@@ -15,4 +15,6 @@ Flags:
                          Parseurs à employer (ex: apconso, cotisation)
     --no-filter              (type: bool)
                          Pour procéder à l'importation même si aucun filtre n'est fourni
+    --batch-config           (type: string)
+                         Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA.
 ---

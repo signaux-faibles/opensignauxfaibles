@@ -18,10 +18,11 @@ import (
 )
 
 type importBatchHandler struct {
-	Enable   bool     // set to true by cosiner/flag if the user is running this command
-	BatchKey string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
-	Parsers  []string `names:"--parsers" desc:"Parseurs à employer (ex: apconso, cotisation)"` // TODO: tester la population de ce paramètre
-	NoFilter bool     `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
+	Enable      bool     // set to true by cosiner/flag if the user is running this command
+	BatchKey    string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
+	Parsers     []string `names:"--parsers" desc:"Parseurs à employer (ex: apconso, cotisation)"` // TODO: tester la population de ce paramètre
+	NoFilter    bool     `names:"--no-filter" desc:"Pour procéder à l'importation même si aucun filtre n'est fourni"`
+	BatchConfig string   `names:"--batch-config" desc:"Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA."`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {

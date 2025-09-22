@@ -36,6 +36,7 @@ const (
 	pgPassword  = "testpass"
 )
 
+var tmpDir = filepath.Join("tests", "tmp-test-execution-files")
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func TestMain(m *testing.M) {
@@ -67,8 +68,6 @@ func setupSuite() (*TestSuite, error) {
 	)
 
 	log.Println("  Setting up configuration")
-
-	tmpDir := filepath.Join("tests", "tmp-test-execution-files")
 
 	// When running the command with cmd.Exec, the viper config is lost, so we
 	// use environment variables instead
