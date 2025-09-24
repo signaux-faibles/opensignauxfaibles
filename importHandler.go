@@ -22,6 +22,9 @@ type importBatchHandler struct {
 	NoFilter    bool     `names:"--no-filter" desc:"Pour procéder à l'import même si aucun filtre n'est fourni"`
 	BatchConfig string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA."`
 	DryRun      bool     `names:"--dry-run" desc:"Pour parser les fichiers sans créer de fichiers CSV / imports en base"`
+
+	// Use for testign to provide an AdminBatch object
+	adminBatch *base.AdminBatch
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
@@ -54,7 +57,9 @@ func (params importBatchHandler) Run() error {
 	// On définit d'abord un ensemble de fichiers à importer (batch)
 	batch := base.AdminBatch{}
 
-	if params.BatchConfig != "" {
+	if params.adminBatch != nil {
+		batch = *params.adminBatch
+	} else if params.BatchConfig != "" {
 		// On lit le batch depuis un fichier json
 		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
 

@@ -26,7 +26,7 @@ func TestReadFilenames(t *testing.T) {
 
 func TestPrepareImport(t *testing.T) {
 	t.Run("Should warn if the batch was not found in the specified directory", func(t *testing.T) {
-		wantedBatch := newSafeBatchKey("1803") // different of dummyBatchKey
+		wantedBatch := base.NewSafeBatchKey("1803") // different of dummyBatchKey
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
 		_, err := PrepareImport(parentDir, wantedBatch)
 		expected := "could not find directory 1803 in provided path"
@@ -63,7 +63,7 @@ func TestPrepareImport(t *testing.T) {
 	})
 
 	t.Run("Should include an id property", func(t *testing.T) {
-		batch := newSafeBatchKey("1802")
+		batch := base.NewSafeBatchKey("1802")
 		dir := CreateTempFiles(t, batch, []string{"filter_2002.csv"})
 		res, err := PrepareImport(dir, batch)
 

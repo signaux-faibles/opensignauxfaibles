@@ -21,8 +21,8 @@ import (
 
 func TestImportEndToEnd(t *testing.T) {
 
+	createImportTestBatch(t)
 	t.Run("Create batch and run import", func(t *testing.T) {
-		createImportTestBatch(t)
 
 		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter", "--batch-config", path.Join(tmpDir, "batch.json"))
 		assert.Equal(t, 0, exitCode, "sfdata import should succeed")
@@ -38,6 +38,11 @@ func TestImportEndToEnd(t *testing.T) {
 
 	t.Run("Verify exported Postgres files", func(t *testing.T) {
 		verifyPostgresExport(t)
+	})
+
+	t.Run("Run with --dry-run", func(t *testing.T) {
+		exitCode := runCLI("sfdata", "import", "--dry-run", "--batch", "1910", "--no-filter", "--batch-config", path.Join(tmpDir, "batch.json"))
+		assert.Equal(t, 0, exitCode, "sfdata import should succeed with --dry-run")
 	})
 }
 

@@ -1,8 +1,17 @@
 package base
 
 import (
+	"log"
 	"time"
 )
+
+func NewSafeBatchKey(key string) BatchKey {
+	batchKey, err := NewBatchKey(key)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return batchKey
+}
 
 func MockBatch(filetype ParserType, batchFiles []BatchFile) AdminBatch {
 	batch := AdminBatch{

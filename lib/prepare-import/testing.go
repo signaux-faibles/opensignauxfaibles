@@ -3,7 +3,6 @@ package prepareimport
 import (
 	"bytes"
 	"compress/gzip"
-	"log"
 	"opensignauxfaibles/lib/base"
 	"os"
 	"path/filepath"
@@ -18,15 +17,7 @@ func init() {
 	fake = faker.New()
 }
 
-func newSafeBatchKey(key string) base.BatchKey {
-	batchKey, err := base.NewBatchKey(key)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return batchKey
-}
-
-var dummyBatchKey = newSafeBatchKey("1802")
+var dummyBatchKey = base.NewSafeBatchKey("1802")
 
 // CreateTempFiles creates a temporary directory with a batch of files, and clean up after the execution of tests
 func CreateTempFiles(t *testing.T, batchkey base.BatchKey, filenames []string) string {
