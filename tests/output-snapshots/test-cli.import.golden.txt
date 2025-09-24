@@ -9,7 +9,7 @@ Description:
     Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
 
 Flags:
-    --BatchKey               (type: string; env: APP_DATA)
+    --path                   (type: string; env: APP_DATA)
                          Directory where raw data can be found. If the batch is not explicitly defined via "--batch-config", then it is expected to be in a subfolder named after the batchkey provided with "--batch"
     --batch batch_key        (type: string)
                          Identifiant du batch à importer (ex: 1802, pour Février 2018)
