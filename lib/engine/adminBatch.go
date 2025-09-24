@@ -26,14 +26,23 @@ func Load(batch *base.AdminBatch, reader io.Reader) error {
 	return err
 }
 
+type AdminBatchProvider interface {
+	Get() (base.AdminBatch, error)
+}
+
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
-	batch base.AdminBatch,
+	batchProvider AdminBatchProvider,
 	parserTypes []base.ParserType,
 	skipFilter bool,
 	sinkFactory SinkFactory,
 	eventSink ReportSink,
 ) error {
+
+	batch, err := batchProvider.Get()
+	if err != nil {
+		return err
+	}
 
 	parsers, err := parsing.ResolveParsers(parserTypes)
 	if err != nil {
