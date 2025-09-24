@@ -52,7 +52,7 @@ func (params parseFileHandler) Run() error {
 
 	file := base.NewBatchFile(params.File)
 	batch := base.AdminBatch{Files: base.BatchFiles{parserType: []base.BatchFile{file}}}
-	cache := marshal.NewCache()
+	cache := marshal.NewEmptyCache()
 	parser := parsers[0]
 
 	// the following code is inspired from marshal.ParseFilesFromBatch()

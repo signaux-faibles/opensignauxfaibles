@@ -72,7 +72,7 @@ func ConsumeFatalErrors(ch chan Report) []string {
 // RunParserInline returns Tuples and Reports resulting from the execution of a
 // Parser on a given list of rows, with an empty Cache.
 func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndReports) {
-	return RunParserInlineEx(t, NewCache(), parser, rows)
+	return RunParserInlineEx(t, NewEmptyCache(), parser, rows)
 }
 
 // RunParserInlineEx returns Tuples and Reports resulting from the execution of a

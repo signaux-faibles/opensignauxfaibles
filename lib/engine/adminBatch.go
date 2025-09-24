@@ -43,7 +43,7 @@ func ImportBatch(
 	logger := slog.With("batch", batch.Key)
 	logger.Info("starting raw data import")
 
-	var cache = marshal.NewCache()
+	var cache = marshal.NewEmptyCache()
 
 	filter, err := marshal.GetSirenFilter(cache, &batch)
 	if err != nil {

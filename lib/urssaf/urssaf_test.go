@@ -17,7 +17,7 @@ import (
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func makeCacheWithComptesMapping() marshal.Cache {
-	cache := marshal.NewCache()
+	cache := marshal.NewEmptyCache()
 	cache.Set("comptes", marshal.MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "00000000000000",
@@ -38,7 +38,7 @@ func TestUrssaf(t *testing.T) {
 		}
 		urssafFiles := []TestCase{
 			{ParserCCSF, "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
-			{ParserCompte, "comptesTestData.csv", "expectedComptes.json", marshal.NewCache()},
+			{ParserCompte, "comptesTestData.csv", "expectedComptes.json", marshal.NewEmptyCache()},
 			{ParserDebit, "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
 			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
 			{ParserEffectifEnt, "effectifEntTestData.csv", "expectedEffectifEnt.json", makeCacheWithComptesMapping()},
@@ -68,7 +68,7 @@ func TestComptes(t *testing.T) {
 	t.Run("Le fichier de test Comptes est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedComptes.json")
 		var testData = base.NewBatchFile("testData", "comptesTestData.csv")
-		marshal.TestParserOutput(t, ParserCompte, marshal.NewCache(), testData, golden, *update)
+		marshal.TestParserOutput(t, ParserCompte, marshal.NewEmptyCache(), testData, golden, *update)
 	})
 }
 
@@ -164,7 +164,7 @@ func TestCotisation(t *testing.T) {
 	})
 
 	t.Run("toute ligne de cotisation d'un établissement non inclus dans les comptes urssaf doit être sautée silencieusement", func(t *testing.T) {
-		cache := marshal.NewCache()
+		cache := marshal.NewEmptyCache()
 		cache.Set("comptes", marshal.MockComptesMapping(
 			map[string]string{
 				"111982477292496174": "00000000000000",
@@ -207,13 +207,13 @@ func TestEffectif(t *testing.T) {
 
 	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectif.json")
-		cache := marshal.NewCache()
+		cache := marshal.NewEmptyCache()
 		marshal.TestParserOutput(t, ParserEffectif, cache, testData, golden, *update)
 	})
 
 	t.Run("Effectif n'est importé que si inclus dans le filtre", func(t *testing.T) {
 		allowedSiren := "149285238" // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
-		cache := marshal.NewCache()
+		cache := marshal.NewEmptyCache()
 		cache.Set("filter", marshal.SirenFilter{allowedSiren: true})
 		output := marshal.RunParser(ParserEffectif, cache, testData)
 		// test: vérifier que tous les tuples retournés concernent ce SIREN
@@ -239,7 +239,7 @@ func TestEffectifEnt(t *testing.T) {
 	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
 		var testData = base.NewBatchFile("testData", "effectifEntTestData.csv")
-		cache := marshal.NewCache()
+		cache := marshal.NewEmptyCache()
 		marshal.TestParserOutput(t, ParserEffectifEnt, cache, testData, golden, *update)
 	})
 

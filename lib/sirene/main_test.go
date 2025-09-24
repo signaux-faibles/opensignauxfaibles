@@ -18,7 +18,7 @@ var golden = filepath.Join("testData", "expectedSirene.json")
 var testData = base.NewBatchFile("testData", "sireneTestData.csv")
 
 func TestSirene(t *testing.T) {
-	marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
+	marshal.TestParserOutput(t, Parser, marshal.NewEmptyCache(), testData, golden, *update)
 
 	t.Run("should fail if a required column is missing", func(t *testing.T) {
 		output := marshal.RunParserInline(t, Parser, []string{"siren"}) // many columns are missing
