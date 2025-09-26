@@ -23,6 +23,18 @@ type AdminBatchParams struct {
 	DateFin   time.Time `json:"date_fin"`
 }
 
+type AdminBatchProvider interface {
+	Get() (AdminBatch, error)
+}
+
+type BasicBatchProvider struct {
+	Batch AdminBatch
+}
+
+func (p BasicBatchProvider) Get() (AdminBatch, error) {
+	return p.Batch, nil
+}
+
 // IsBatchID retourne `true` si `batchID` est un identifiant de Batch.
 func IsBatchID(batchID string) bool {
 	if len(batchID) < 4 {

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"os"
 
 	"github.com/cosiner/flag"
 
@@ -53,49 +52,27 @@ func (params importBatchHandler) Validate() error {
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
+	batchKey, err := base.NewBatchKey(params.BatchKey)
+	if err != nil {
+		return err
+	}
+
 	// Étape 1
-	// On définit d'abord un ensemble de fichiers à importer (batch)
-	batch := base.AdminBatch{}
+	// On définit d'abord un ensemble de fichiers à importer (batchProvider)
+	var batchProvider base.AdminBatchProvider
 
 	if params.adminBatch != nil {
-		batch = *params.adminBatch
+		batchProvider = base.BasicBatchProvider{Batch: *params.adminBatch}
 	} else if params.BatchConfig != "" {
 		// On lit le batch depuis un fichier json
 		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
-
-		path := params.BatchConfig
-		fileReader, err := os.Open(path)
-
-		if err == nil {
-			err = engine.Load(&batch, fileReader)
-		}
-
-		if err != nil {
-			return fmt.Errorf("impossible de charger la configuration du batch : %w", err)
-		}
+		batchProvider = engine.JSONAdminBatchProvider{Path: params.BatchConfig}
 
 	} else {
 		// On devine le batch à partir des noms de fichiers
 		slog.Info("Batch non fourni en paramètre, tentative de déterminer les fichiers à importer")
+		batchProvider = prepareimport.InferAdminBatchProvider{Path: params.Path, BatchKey: batchKey}
 
-		batchKey, err := base.NewBatchKey(params.BatchKey)
-		if err != nil {
-			return err
-		}
-
-		batch, err = prepareimport.PrepareImport(params.Path, batchKey)
-		if _, ok := err.(prepareimport.UnsupportedFilesError); ok {
-			slog.Warn(fmt.Sprintf("Des fichiers non-identifiés sont présents : %v", err))
-		} else if err != nil {
-			return fmt.Errorf("une erreur est survenue en préparant l'import : %w", err)
-		}
-
-		slog.Info("Batch deviné avec succès")
-
-		batchJSON, _ := json.MarshalIndent(batch, "", "  ")
-		if batchJSON != nil {
-			slog.Info(string(batchJSON))
-		}
 	}
 
 	// Étape 2
@@ -113,7 +90,7 @@ func (params importBatchHandler) Run() error {
 
 	if !params.DryRun {
 		dataSinkFactory = engine.NewCompositeSinkFactory(
-			engine.NewCSVSinkFactory(batch.Key.String()),
+			engine.NewCSVSinkFactory(batchKey.String()),
 			engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
 		)
 		reportSink = engine.NewPostgresReportSink(engine.Db.PostgresDB)
@@ -124,7 +101,7 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 4
 	// On réalise l'import
-	err := engine.ImportBatch(batch, parserTypes, params.NoFilter, dataSinkFactory, reportSink)
+	err = engine.ImportBatch(batchProvider, parserTypes, params.NoFilter, dataSinkFactory, reportSink)
 
 	if err != nil {
 		return err

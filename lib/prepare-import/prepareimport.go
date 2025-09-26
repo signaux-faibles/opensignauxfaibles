@@ -1,9 +1,11 @@
 package prepareimport
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path"
 
@@ -125,4 +127,29 @@ func copy(src, dst string) error {
 		return err
 	}
 	return out.Close()
+}
+
+// InferAdminBatchProvider infers the batch imports given the filenames
+type InferAdminBatchProvider struct {
+	Path     string
+	BatchKey base.BatchKey
+}
+
+func (p InferAdminBatchProvider) Get() (base.AdminBatch, error) {
+	var batch base.AdminBatch
+	batch, err := PrepareImport(p.Path, p.BatchKey)
+
+	if _, ok := err.(UnsupportedFilesError); ok {
+		slog.Warn(fmt.Sprintf("Des fichiers non-identifiés sont présents : %v", err))
+	} else if err != nil {
+		return batch, fmt.Errorf("une erreur est survenue en préparant l'import : %w", err)
+	}
+
+	slog.Info("Batch inféré avec succès")
+
+	batchJSON, _ := json.MarshalIndent(batch, "", "  ")
+	if batchJSON != nil {
+		slog.Info(string(batchJSON))
+	}
+	return batch, nil
 }

@@ -34,7 +34,7 @@
       "commit": "",
       "start_date": "0001-01-01T00:00:00Z",
       "parser": "sirene_ul",
-      "batch_key": "",
+      "batch_key": "1902",
       "head_fatal": [],
       "head_rejected": [],
       "is_fatal": false,
