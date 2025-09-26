@@ -29,7 +29,7 @@ func Load(batch *base.AdminBatch, reader io.Reader) error {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
-	batchProvider base.AdminBatchProvider,
+	batchProvider base.BatchProvider,
 	parserTypes []base.ParserType,
 	skipFilter bool,
 	sinkFactory SinkFactory,
@@ -141,13 +141,13 @@ func checkUnsupportedFiletypes(batch base.AdminBatch) []base.ParserType {
 	return errFileTypes
 }
 
-// JSONAdminBatchProvider reads an admin batch from a JSON file.
-// Implements base.AdminBatchProvider interface.
-type JSONAdminBatchProvider struct {
+// JSONBatchProvider reads an admin batch from a JSON file.
+// Implements base.BatchProvider interface.
+type JSONBatchProvider struct {
 	Path string
 }
 
-func (p JSONAdminBatchProvider) Get() (base.AdminBatch, error) {
+func (p JSONBatchProvider) Get() (base.AdminBatch, error) {
 	fileReader, err := os.Open(p.Path)
 
 	var batch = base.AdminBatch{}

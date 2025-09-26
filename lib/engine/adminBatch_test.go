@@ -1,9 +1,13 @@
 package engine
 
 import (
+	"log/slog"
+	"strings"
 	"testing"
 
 	"opensignauxfaibles/lib/base"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_IsBatchID(t *testing.T) {
@@ -84,4 +88,36 @@ func Test_ImportBatchWithSinkFailure(t *testing.T) {
 	if err == nil {
 		t.Error("ImportBatch devrait échouer si le sink échoue")
 	}
+}
+
+func Test_ImportBatchDryRun(t *testing.T) {
+	// Set up import
+	adminBatch := base.MockBatch(base.Apdemande, []base.BatchFile{base.NewBatchFile("..", "apdemande/testData/apdemandeTestData.csv")})
+	batchProvider := base.BasicBatchProvider{Batch: adminBatch}
+
+	noFilter := true
+
+	dataSinkFactory := &DiscardSinkFactory{}
+	reportSink := &StdoutReportSink{}
+
+	// Capture logs
+	logs := new(strings.Builder)
+
+	logger := slog.New(slog.NewTextHandler(logs, nil))
+
+	originalLogger := slog.Default()
+	defer slog.SetDefault(originalLogger)
+
+	slog.SetDefault(logger)
+
+	// Run import
+	err := ImportBatch(batchProvider, []base.ParserType{}, noFilter, dataSinkFactory, reportSink)
+	assert.NoError(t, err)
+
+	// Check that the import summary is part of the logs
+	assert.Contains(
+		t,
+		strings.ReplaceAll(logs.String(), "\\", ""),
+		`"summary": "../apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"`,
+	)
 }

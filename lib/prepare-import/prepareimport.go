@@ -129,13 +129,14 @@ func copy(src, dst string) error {
 	return out.Close()
 }
 
-// InferAdminBatchProvider infers the batch imports given the filenames
-type InferAdminBatchProvider struct {
+// InferBatchProvider infers the batch imports given the filenames
+// Implements BatchProvider interface
+type InferBatchProvider struct {
 	Path     string
 	BatchKey base.BatchKey
 }
 
-func (p InferAdminBatchProvider) Get() (base.AdminBatch, error) {
+func (p InferBatchProvider) Get() (base.AdminBatch, error) {
 	var batch base.AdminBatch
 	batch, err := PrepareImport(p.Path, p.BatchKey)
 

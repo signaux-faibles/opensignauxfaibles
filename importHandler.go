@@ -14,16 +14,13 @@ import (
 )
 
 type importBatchHandler struct {
-	Enable      bool     // set to true by cosiner/flag if the user is running this command
-	Path        string   `names:"--path" env:"APP_DATA" desc:"Directory where raw data can be found. If the batch is not explicitly defined via \"--batch-config\", then it is expected to be in a subfolder named after the batchkey provided with \"--batch\""`
-	BatchKey    string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
-	Parsers     []string `names:"--parsers" desc:"Parseurs à employer (ex: apconso, cotisation)"` // TODO: tester la population de ce paramètre
-	NoFilter    bool     `names:"--no-filter" desc:"Pour procéder à l'import même si aucun filtre n'est fourni"`
-	BatchConfig string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA."`
-	DryRun      bool     `names:"--dry-run" desc:"Pour parser les fichiers sans créer de fichiers CSV / imports en base"`
-
-	// Use for testign to provide an AdminBatch object
-	adminBatch *base.AdminBatch
+	Enable          bool     // set to true by cosiner/flag if the user is running this command
+	Path            string   `names:"--path" env:"APP_DATA" desc:"Directory where raw data can be found. If the batch is not explicitly defined via \"--batch-config\", then it is expected to be in a subfolder named after the batchkey provided with \"--batch\""`
+	BatchKey        string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
+	Parsers         []string `names:"--parsers" desc:"Parseurs à employer (ex: apconso, cotisation)"` // TODO: tester la population de ce paramètre
+	NoFilter        bool     `names:"--no-filter" desc:"Pour procéder à l'import même si aucun filtre n'est fourni"`
+	BatchConfigFile string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA."`
+	DryRun          bool     `names:"--dry-run" desc:"Pour parser les fichiers sans créer de fichiers CSV / imports en base"`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
@@ -59,19 +56,17 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 1
 	// On définit d'abord un ensemble de fichiers à importer (batchProvider)
-	var batchProvider base.AdminBatchProvider
+	var batchProvider base.BatchProvider
 
-	if params.adminBatch != nil {
-		batchProvider = base.BasicBatchProvider{Batch: *params.adminBatch}
-	} else if params.BatchConfig != "" {
+	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
 		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
-		batchProvider = engine.JSONAdminBatchProvider{Path: params.BatchConfig}
+		batchProvider = engine.JSONBatchProvider{Path: params.BatchConfigFile}
 
 	} else {
 		// On devine le batch à partir des noms de fichiers
 		slog.Info("Batch non fourni en paramètre, tentative de déterminer les fichiers à importer")
-		batchProvider = prepareimport.InferAdminBatchProvider{Path: params.Path, BatchKey: batchKey}
+		batchProvider = prepareimport.InferBatchProvider{Path: params.Path, BatchKey: batchKey}
 
 	}
 

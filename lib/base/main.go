@@ -23,7 +23,7 @@ type AdminBatchParams struct {
 	DateFin   time.Time `json:"date_fin"`
 }
 
-type AdminBatchProvider interface {
+type BatchProvider interface {
 	Get() (AdminBatch, error)
 }
 
