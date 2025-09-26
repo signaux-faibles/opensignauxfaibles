@@ -72,7 +72,7 @@ func ConsumeFatalErrors(ch chan Report) []string {
 // RunParserInline returns Tuples and Reports resulting from the execution of a
 // Parser on a given list of rows, with an empty Cache.
 func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndReports) {
-	return RunParserInlineEx(t, NewCache(), parser, rows)
+	return RunParserInlineEx(t, NewEmptyCache(), parser, rows)
 }
 
 // RunParserInlineEx returns Tuples and Reports resulting from the execution of a
@@ -80,7 +80,7 @@ func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesA
 func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) (output tuplesAndReports) {
 	csvData := strings.Join(rows, "\n")
 	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
-	return RunParser(parser, cache, csvFile.Name())
+	return RunParser(parser, cache, base.NewBatchFile(csvFile.Name()))
 }
 
 // RunParser returns Tuples and Reports resulting from the execution of a
@@ -89,10 +89,10 @@ func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) 
 func RunParser(
 	parser Parser,
 	cache Cache,
-	inputFile string,
+	inputFile base.BatchFile,
 ) (output tuplesAndReports) {
 	ctx := context.Background()
-	batch := base.MockBatch(parser.Type(), []string{inputFile})
+	batch := base.MockBatch(parser.Type(), []base.BatchFile{inputFile})
 	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser)
 
 	// intercepter et afficher les évènements pendant l'importation
@@ -120,7 +120,7 @@ func TestParserOutput(
 	t *testing.T,
 	parser Parser,
 	cache Cache,
-	inputFile string,
+	inputFile base.BatchFile,
 	goldenFile string,
 	update bool,
 ) {
@@ -168,6 +168,6 @@ type TestTuple struct {
 	Test4 *time.Time `csv:"test4" sql:"test4"`
 }
 
-func (TestTuple) Key() string   { return "" }
-func (TestTuple) Scope() string { return "" }
-func (TestTuple) Type() string  { return "" }
+func (TestTuple) Key() string           { return "" }
+func (TestTuple) Scope() string         { return "" }
+func (TestTuple) Type() base.ParserType { return "" }

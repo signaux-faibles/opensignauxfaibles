@@ -5,6 +5,7 @@ package engine
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 
@@ -86,4 +87,17 @@ func insertReport(report marshal.Report, conn *pgxpool.Pool, tableName string) e
 	ctx := context.Background()
 	_, err := conn.Exec(ctx, query, row...)
 	return err
+}
+
+type StdoutReportSink struct{}
+
+func (s *StdoutReportSink) Process(ch chan marshal.Report) error {
+	for report := range ch {
+		jsonReport, err := json.MarshalIndent(report, "", "  ")
+		if err != nil {
+			return err
+		}
+		slog.Info(string(jsonReport))
+	}
+	return nil
 }

@@ -1,7 +1,5 @@
 # Paramètrage de l'import
 APP_DATA = "sample-data-raw"
-# Chemin du fichier de config, relatif à APP_DATA
-BATCH_CONFIG_FILE = "./batch.json"
 
 # URL de connexion à la base de données PostgreSQL
 POSTGRES_DB_URL="postgres://testuser:testpass@localhost:5432/testdb?sslmode=disable"

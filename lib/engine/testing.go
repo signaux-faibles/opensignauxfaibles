@@ -3,6 +3,7 @@ package engine
 import (
 	"context"
 	"fmt"
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 	"time"
 )
@@ -25,6 +26,17 @@ func (s *FailDataSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple)
 
 type FailSinkFactory struct{}
 
-func (FailSinkFactory) CreateSink(parserType string) (DataSink, error) {
+func (FailSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
 	return &FailDataSink{}, nil
+}
+
+type DiscardReportSink struct {
+	counter int
+}
+
+func (s DiscardReportSink) Process(ch chan marshal.Report) error {
+	for range ch {
+		s.counter++
+	}
+	return nil
 }

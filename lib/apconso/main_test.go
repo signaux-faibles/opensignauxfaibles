@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 )
 
@@ -14,8 +15,8 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 
 func TestApconso(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedApconso.json")
-	var testData = filepath.Join("testData", "apconsoTestData.csv")
-	marshal.TestParserOutput(t, Parser, marshal.NewCache(), testData, golden, *update)
+	var testData = base.NewBatchFile("testData", "apconsoTestData.csv")
+	marshal.TestParserOutput(t, Parser, marshal.NewEmptyCache(), testData, golden, *update)
 
 	t.Run("doit détecter s'il manque des colonnes", func(t *testing.T) {
 		output := marshal.RunParserInline(t, Parser, []string{"ID_DA,ETAB_SIRET,MOIS,HEURE,MONTANTS,EFFECTIFS"}) // typo: HEURE au lieu de HEURES

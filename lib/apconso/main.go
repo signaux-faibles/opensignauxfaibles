@@ -25,8 +25,8 @@ func (apconso APConso) Key() string {
 }
 
 // Type de données
-func (apconso APConso) Type() string {
-	return "apconso"
+func (apconso APConso) Type() base.ParserType {
+	return base.Apconso
 }
 
 // Scope de l'objet
@@ -43,8 +43,8 @@ type apconsoParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *apconsoParser) Type() string {
-	return "apconso"
+func (parser *apconsoParser) Type() base.ParserType {
+	return base.Apconso
 }
 
 func (parser *apconsoParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {

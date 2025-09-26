@@ -6,6 +6,5 @@ Flags:
 
 Commands:
     parseFile    Parse un fichier vers la sortie standard
-    check        Vérifie la validité d'un batch avant son importation
     import       Importe des fichiers de données
 ---

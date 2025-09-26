@@ -84,7 +84,7 @@
       "commit": "",
       "start_date": "0001-01-01T00:00:00Z",
       "parser": "sirene",
-      "batch_key": "",
+      "batch_key": "1902",
       "head_fatal": [],
       "head_rejected": [
         "Line 5: strconv.ParseFloat: parsing \"NOT_VALID\": invalid syntax",

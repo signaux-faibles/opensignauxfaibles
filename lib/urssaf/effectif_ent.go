@@ -29,8 +29,8 @@ func (effectifEnt EffectifEnt) Scope() string {
 }
 
 // Type de l'objet
-func (effectifEnt EffectifEnt) Type() string {
-	return "effectif_ent"
+func (effectifEnt EffectifEnt) Type() base.ParserType {
+	return base.EffectifEnt
 }
 
 // ParserEffectifEnt fournit une instance utilisable par ParseFilesFromBatch.
@@ -43,8 +43,8 @@ type effectifEntParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *effectifEntParser) Type() string {
-	return "effectif_ent"
+func (parser *effectifEntParser) Type() base.ParserType {
+	return base.EffectifEnt
 }
 
 func (parser *effectifEntParser) Close() error {

@@ -1,0 +1,27 @@
+{
+  "key": "1802",
+  "files": {
+    "debit": [
+      "1802/sigfaibles_debits.csv"
+    ],
+    "effectif": [
+      "1802/sigfaibles_effectif_siret.csv"
+    ],
+    "filter": [
+      "1802/filter_siren.csv"
+    ],
+    "paydex": [
+      "1802/E_202011095813_Retro-Paydex_20201207.csv"
+    ],
+    "procol": [
+      "1802/sigfaible_pcoll.csv.gz"
+    ],
+    "sirene_ul": [
+      "1802/sireneUL.csv"
+    ]
+  },
+  "params": {
+    "date_debut": "2016-01-01T00:00:00Z",
+    "date_fin": "2018-02-01T00:00:00Z"
+  }
+}

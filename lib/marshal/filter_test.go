@@ -55,13 +55,13 @@ func TestGetSirenFilter(t *testing.T) {
 		{"No cache, no filter in batch 2",
 			"", "", base.MockBatch("filter", nil), nil},
 		{"No cache, (mock)read from file",
-			"", "", base.MockBatch("filter", []string{"at least one"}), SirenFilter{"012345678": true}},
+			"", "", base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("at least one")}), SirenFilter{"012345678": true}},
 		{"Cache has precedence over file",
-			"filter", SirenFilter{"876543210": true}, base.MockBatch("filter", []string{"at least one"}), SirenFilter{"876543210": true}},
+			"filter", SirenFilter{"876543210": true}, base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("at least one")}), SirenFilter{"876543210": true}},
 	}
 
 	for ind, tc := range testCases {
-		cache := NewCache()
+		cache := NewEmptyCache()
 		cache.Set(tc.cacheKey, tc.cacheValue)
 		actual, err := getSirenFilter(cache, &tc.batch, mockReadFilter)
 		if err != nil {
@@ -147,12 +147,12 @@ func TestReadFilter(t *testing.T) {
 }
 
 func TestNilFilter(t *testing.T) {
-	filter := GetSirenFilterFromCache(Cache{}) // => nil
+	filter := GetSirenFilterFromCache(NewEmptyCache()) // => nil
 	assert.Equal(t, true, filter == nil)
 	assert.Equal(t, false, filter.includes("012345678"))
 	assert.Equal(t, false, filter.Skips("012345678"))
 	assert.Equal(t, false, filter.Skips("912345678"))
-	cache := Cache{}
+	cache := NewEmptyCache()
 	cache.Set("filter", SirenFilter{"012345678": true})
 	filter = GetSirenFilterFromCache(cache) // => not nil
 	assert.Equal(t, false, filter == nil)

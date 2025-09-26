@@ -16,14 +16,14 @@ func TestParseFilesFromBatch(t *testing.T) {
 
 	t.Run("intérrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
 		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
-		_, eventChan := ParseFilesFromBatch(ctx, NewCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
+		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Init()"}, fatalErrors)
 	})
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
 		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
-		_, eventChan := ParseFilesFromBatch(ctx, NewCache(), &batch, &dummyParser{})
+		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{})
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)
 	})
@@ -87,7 +87,7 @@ func (sirene dummyTuple) Key() string {
 }
 
 // Type de données
-func (sirene dummyTuple) Type() string {
+func (sirene dummyTuple) Type() base.ParserType {
 	return "dummy"
 }
 
@@ -100,7 +100,7 @@ type dummyParser struct {
 	initError error
 }
 
-func (parser *dummyParser) Type() string {
+func (parser *dummyParser) Type() base.ParserType {
 	return "dummy"
 }
 

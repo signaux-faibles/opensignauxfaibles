@@ -30,8 +30,8 @@ func (procol Procol) Scope() string {
 }
 
 // Type de l'objet
-func (procol Procol) Type() string {
-	return "procol"
+func (procol Procol) Type() base.ParserType {
+	return base.Procol
 }
 
 // ParserProcol fournit une instance utilisable par ParseFilesFromBatch.
@@ -43,8 +43,8 @@ type procolParser struct {
 	idx    marshal.ColMapping
 }
 
-func (parser *procolParser) Type() string {
-	return "procol"
+func (parser *procolParser) Type() base.ParserType {
+	return base.Procol
 }
 
 func (parser *procolParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {
