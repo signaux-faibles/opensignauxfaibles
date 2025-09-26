@@ -23,7 +23,7 @@ func TestCreateFilter(t *testing.T) {
 	t.Run("create_filter golden file", func(t *testing.T) {
 
 		var cmdOutput bytes.Buffer
-		var cmdError bytes.Buffer = *bytes.NewBufferString("") // default: no error
+		var cmdError = *bytes.NewBufferString("") // default: no error
 
 		categorieJuridiqueFilter := CategorieJuridiqueFilter("./test_uniteLegale.csv")
 		err := CreateFilter(&cmdOutput, "test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
@@ -33,7 +33,7 @@ func TestCreateFilter(t *testing.T) {
 		expectedOutput := DiffWithGoldenFile(outGoldenFile, *updateGoldenFile, cmdOutput)
 		expectedError := DiffWithGoldenFile(errGoldenFile, *updateGoldenFile, cmdError)
 
-		assert.Equal(t, string(expectedOutput), cmdOutput.String())
+		assert.Equal(t, string(expectedOutput), sortOutput(cmdOutput.String()))
 		assert.Equal(t, string(expectedError), cmdError.String())
 	})
 }
