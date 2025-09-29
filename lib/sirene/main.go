@@ -102,8 +102,8 @@ func (sirene Sirene) Key() string {
 }
 
 // Type de données
-func (sirene Sirene) Type() string {
-	return "sirene"
+func (sirene Sirene) Type() base.ParserType {
+	return base.Sirene
 }
 
 // Scope de l'objet
@@ -120,8 +120,8 @@ type sireneParser struct {
 	colIndex marshal.ColMapping
 }
 
-func (parser *sireneParser) Type() string {
-	return "sirene"
+func (parser *sireneParser) Type() base.ParserType {
+	return base.Sirene
 }
 
 func (parser *sireneParser) Init(_ *marshal.Cache, _ *base.AdminBatch) error {

@@ -3,6 +3,7 @@ package engine
 import (
 	"context"
 	"fmt"
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 	"reflect"
 
@@ -21,7 +22,7 @@ const DefaultBufferSize = 100000
 // SinkFactory creates DataSink instances configured for specific parser types
 type SinkFactory interface {
 	// CreateSink returns a new DataSink instance configured for the given parser type
-	CreateSink(parserType string) (DataSink, error)
+	CreateSink(parserType base.ParserType) (DataSink, error)
 }
 
 // A DataSink directs a stream of output data to the desired sink
@@ -49,7 +50,7 @@ type compositeSinkFactory struct {
 	bufferSize int
 }
 
-func (f *compositeSinkFactory) CreateSink(parserType string) (DataSink, error) {
+func (f *compositeSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
 	var sinks []DataSink
 	for _, factory := range f.factories {
 		sink, err := factory.CreateSink(parserType)
@@ -120,22 +121,18 @@ func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple
 	return err
 }
 
+// DiscardSinkFactory discards all data, regardless of the parser
+type DiscardSinkFactory struct{}
+
+func (f *DiscardSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+	return &DiscardDataSink{}, nil
+}
+
 type DiscardDataSink struct {
 	counter int
 }
 
 func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
-	for range ch {
-		s.counter++
-	}
-	return nil
-}
-
-type DiscardReportSink struct {
-	counter int
-}
-
-func (s DiscardReportSink) Process(ch chan marshal.Report) error {
 	for range ch {
 		s.counter++
 	}

@@ -30,8 +30,8 @@ func (cotisation Cotisation) Scope() string {
 }
 
 // Type de l'objet
-func (cotisation Cotisation) Type() string {
-	return "cotisation"
+func (cotisation Cotisation) Type() base.ParserType {
+	return base.Cotisation
 }
 
 // ParserCotisation fournit une instance utilisable par ParseFilesFromBatch.
@@ -44,8 +44,8 @@ type cotisationParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *cotisationParser) Type() string {
-	return "cotisation"
+func (parser *cotisationParser) Type() base.ParserType {
+	return base.Cotisation
 }
 
 func (parser *cotisationParser) Close() error {

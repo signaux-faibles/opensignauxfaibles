@@ -84,7 +84,7 @@ type filterReader func([]base.BatchFile) (SirenFilter, error)
 func readFilterFiles(filenames []base.BatchFile) (SirenFilter, error) {
 	filter := make(SirenFilter)
 	for _, p := range filenames {
-		file, err := os.Open(p.FilePath())
+		file, err := os.Open(p.Path())
 		if err != nil {
 			return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 		}

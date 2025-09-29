@@ -3,6 +3,7 @@ package engine
 import (
 	"bytes"
 	"context"
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
 	"testing"
 )
@@ -15,12 +16,12 @@ type MockTuple struct {
 	H3    string `csv:"header3"`
 	key   string
 	scope string
-	tType string
+	tType base.ParserType
 }
 
-func (m MockTuple) Key() string   { return m.key }
-func (m MockTuple) Scope() string { return m.scope }
-func (m MockTuple) Type() string  { return m.tType }
+func (m MockTuple) Key() string           { return m.key }
+func (m MockTuple) Scope() string         { return m.scope }
+func (m MockTuple) Type() base.ParserType { return m.tType }
 
 func TestCSVSink_ProcessOutput(t *testing.T) {
 

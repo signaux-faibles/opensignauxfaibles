@@ -1,17 +1,13 @@
 package engine
 
 import (
-	"os"
-	"os/exec"
-	"path/filepath"
+	"log/slog"
+	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
-	"opensignauxfaibles/lib/apdemande"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/urssaf"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_IsBatchID(t *testing.T) {
@@ -39,41 +35,43 @@ func Test_IsBatchID(t *testing.T) {
 
 func Test_CheckBatchPaths(t *testing.T) {
 	testCases := []struct {
-		Filepath      string
+		Filepath      base.BatchFile
 		ErrorExpected bool
 	}{
-		{"./test_data/empty_file", false},
-		{"./test_data/missing_file", true},
+		{base.NewBatchFile("test_data/empty_file"), false},
+		{base.NewBatchFile("test_data/missing_file"), true},
 	}
 	for _, tc := range testCases {
-		mockbatch := base.MockBatch("debit", []string{tc.Filepath})
+		mockbatch := base.MockBatch("debit", []base.BatchFile{tc.Filepath})
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||
 			(err != nil && !tc.ErrorExpected) {
 			// t.Log(err.Error()) // delete_me
-			t.Error("Validity of path " + tc.Filepath + " is wrongly checked")
+			t.Error("Validity of path " + tc.Filepath.Path() + " is wrongly checked")
 		}
 	}
 }
 
 type TestSinkFactory struct{}
 
-func (TestSinkFactory) CreateSink(parserType string) (DataSink, error) {
+func (TestSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
 	return &DiscardDataSink{}, nil
 }
 
 func Test_ImportBatch(t *testing.T) {
 
-	batch := base.AdminBatch{}
-	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardReportSink{})
+	batchProvider := base.BasicBatchProvider{Batch: base.AdminBatch{}}
+	err := ImportBatch(batchProvider, []base.ParserType{}, false, TestSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}
 }
 
 func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
-	batch := base.MockBatch("filter", []string{"this_file_does_not_exist"})
-	err := ImportBatch(batch, []marshal.Parser{}, false, TestSinkFactory{}, DiscardReportSink{})
+	batchProvider := base.BasicBatchProvider{
+		Batch: base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("this_file_does_not_exist")}),
+	}
+	err := ImportBatch(batchProvider, []base.ParserType{}, false, TestSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
 	}
@@ -82,36 +80,44 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 func Test_ImportBatchWithSinkFailure(t *testing.T) {
 	batch := base.AdminBatch{
 		Files: base.BatchFiles{
-			"apdemande": {base.NewBatchFile("../../lib/apdemande/testData/apdemandeTestData.csv")},
+			"apdemande": {base.NewBatchFile("../..", "lib/apdemande/testData/apdemandeTestData.csv")},
 		},
 	}
-	err := ImportBatch(batch, []marshal.Parser{apdemande.Parser}, true, FailSinkFactory{}, DiscardReportSink{})
+	batchProvider := base.BasicBatchProvider{Batch: batch}
+	err := ImportBatch(batchProvider, []base.ParserType{base.Apdemande}, true, FailSinkFactory{}, DiscardReportSink{})
 	if err == nil {
 		t.Error("ImportBatch devrait échouer si le sink échoue")
 	}
 }
 
-func Test_CheckBatch(t *testing.T) {
+func Test_ImportBatchDryRun(t *testing.T) {
+	// Set up import
+	adminBatch := base.MockBatch(base.Apdemande, []base.BatchFile{base.NewBatchFile("..", "apdemande/testData/apdemandeTestData.csv")})
+	batchProvider := base.BasicBatchProvider{Batch: adminBatch}
 
-	t.Run("CheckBatch devrait réussir à parser un fichier compressé spécifié avec le schéma 'gzip:'", func(t *testing.T) {
+	noFilter := true
 
-		// Compression du fichier de données
-		procolFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv")
-		compressedFilePath := filepath.Join("..", "urssaf", "testData", "procolTestData.csv.compressed")
-		cmd := exec.Command("gzip", "--suffix", ".compressed", "--keep", procolFilePath) // compresse le fichier avec une extension autre que .gz
-		err := cmd.Run()
-		assert.NoError(t, err)
-		cmd.Wait()
-		t.Cleanup(func() { os.Remove(compressedFilePath) })
+	dataSinkFactory := &DiscardSinkFactory{}
+	reportSink := &StdoutReportSink{}
 
-		// Exécution de CheckBatch sur un AdminBatch mentionnant un fichier compressé
+	// Capture logs
+	logs := new(strings.Builder)
 
-		batch := base.AdminBatch{
-			Files: base.BatchFiles{
-				"procol": {base.NewBatchFile("gzip:../../lib/urssaf/testData/procolTestData.csv.compressed")},
-			},
-		}
-		err = CheckBatch(batch, []marshal.Parser{urssaf.ParserProcol}, DiscardReportSink{})
-		assert.NoError(t, err)
-	})
+	logger := slog.New(slog.NewTextHandler(logs, nil))
+
+	originalLogger := slog.Default()
+	defer slog.SetDefault(originalLogger)
+
+	slog.SetDefault(logger)
+
+	// Run import
+	err := ImportBatch(batchProvider, []base.ParserType{}, noFilter, dataSinkFactory, reportSink)
+	assert.NoError(t, err)
+
+	// Check that the import summary is part of the logs
+	assert.Contains(
+		t,
+		strings.ReplaceAll(logs.String(), "\\", ""),
+		`"summary": "../apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"`,
+	)
 }

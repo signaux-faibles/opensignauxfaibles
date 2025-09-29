@@ -37,12 +37,6 @@ func TestCLI(t *testing.T) {
 			"test-cli.unknown.output.txt",
 		},
 		{
-			"sfdata check --help",
-			[]string{"check", "--help"},
-			"test-cli.check.golden.txt",
-			"test-cli.check.output.txt",
-		},
-		{
 			"sfdata import --help",
 			[]string{"import", "--help"},
 			"test-cli.import.golden.txt",

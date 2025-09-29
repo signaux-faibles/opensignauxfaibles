@@ -13,7 +13,7 @@ import (
 
 // Parser spécifie les fonctions qui doivent être implémentées par chaque parseur de fichier.
 type Parser interface {
-	Type() string
+	Type() base.ParserType
 	Init(cache *Cache, batch *base.AdminBatch) error
 	Open(filePath base.BatchFile) error
 	ParseLines(parsedLineChan chan ParsedLineResult)
@@ -51,9 +51,9 @@ func (res *ParsedLineResult) SetFilterError(err error) {
 
 // Tuple spécifie les fonctions que chaque parseur doit implémenter pour ses tuples.
 type Tuple interface {
-	Key() string   // entité définie par le tuple: numéro SIRET ou SIREN
-	Scope() string // type d'entité: "entreprise" ou "etablissement"
-	Type() string  // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
+	Key() string           // entité définie par le tuple: numéro SIRET ou SIREN
+	Scope() string         // type d'entité: "entreprise" ou "etablissement"
+	Type() base.ParserType // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
@@ -75,7 +75,7 @@ func ParseFilesFromBatch(ctx context.Context, cache Cache, batch *base.AdminBatc
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
 func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *base.AdminBatch,
 	cache Cache, outputChannel chan Tuple) Report {
-	logger := slog.With("batch", batch.ID.Key, "parser", parser.Type(), "filename", path.RelativePath())
+	logger := slog.With("batch", batch.Key, "parser", parser.Type(), "filename", path.Path())
 	logger.Debug("parsing file")
 
 	tracker := NewParsingTracker()
@@ -88,7 +88,7 @@ func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *b
 
 	logger.Debug("end of file parsing")
 
-	return tracker.Report(fileType, batch.ID.Key, path.RelativePath())
+	return tracker.Report(fileType, batch.Key, path.Path())
 }
 
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.

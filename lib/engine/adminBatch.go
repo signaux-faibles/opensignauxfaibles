@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"log/slog"
 	"os"
 
-	"github.com/spf13/viper"
 	"golang.org/x/sync/errgroup"
 
 	"opensignauxfaibles/lib/base"
@@ -15,9 +16,9 @@ import (
 	"opensignauxfaibles/lib/parsing"
 )
 
-// Load charge les données d'un batch depuis le fichier de configuration
-func Load(batch *base.AdminBatch, batchKey string) error {
-	batchFileContent, err := os.ReadFile(viper.GetString("BATCH_CONFIG_FILE"))
+// Load charge les données d'un batch depuis du JSON
+func Load(batch *base.AdminBatch, reader io.Reader) error {
+	batchFileContent, err := io.ReadAll(reader)
 	if err != nil {
 		return err
 	}
@@ -28,17 +29,27 @@ func Load(batch *base.AdminBatch, batchKey string) error {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
-	batch base.AdminBatch,
-	parsers []marshal.Parser,
+	batchProvider base.BatchProvider,
+	parserTypes []base.ParserType,
 	skipFilter bool,
 	sinkFactory SinkFactory,
 	eventSink ReportSink,
 ) error {
 
-	logger := slog.With("batch", batch.ID.Key)
+	batch, err := batchProvider.Get()
+	if err != nil {
+		return err
+	}
+
+	parsers, err := parsing.ResolveParsers(parserTypes)
+	if err != nil {
+		return err
+	}
+
+	logger := slog.With("batch", batch.Key)
 	logger.Info("starting raw data import")
 
-	var cache = marshal.NewCache()
+	var cache = marshal.NewEmptyCache()
 
 	filter, err := marshal.GetSirenFilter(cache, &batch)
 	if err != nil {
@@ -108,8 +119,8 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
 		for _, batchFile := range filepaths {
-			if _, err := os.Stat(batchFile.FilePath()); err != nil {
-				ErrorString += batchFile.FilePath() + " is missing (" + err.Error() + ").\n"
+			if _, err := os.Stat(batchFile.Path()); err != nil {
+				ErrorString += batchFile.Path() + " is missing (" + err.Error() + ").\n"
 			}
 		}
 	}
@@ -120,39 +131,34 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 
 }
 
-// CheckBatch checks batch, discard all data but logs events
-func CheckBatch(
-	batch base.AdminBatch,
-	parsers []marshal.Parser,
-	eventSink ReportSink,
-) error {
-	ctx := context.Background()
-	if err := CheckBatchPaths(&batch); err != nil {
-		return err
-	}
-	var cache = marshal.NewCache()
-	for _, parser := range parsers {
-		logger := slog.With("batch", batch.ID.Key, "parser", parser.Type())
-		outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser)
-
-		DiscardTuple(outputChannel)
-		for report := range eventChannel {
-			if report.LinesRejected > 0 {
-				logger.Error(report.Summary)
-			} else {
-				logger.Info(report.Summary)
-			}
-		}
-	}
-	return nil
-}
-
-func checkUnsupportedFiletypes(batch base.AdminBatch) []string {
-	var errFileTypes []string
+func checkUnsupportedFiletypes(batch base.AdminBatch) []base.ParserType {
+	var errFileTypes []base.ParserType
 	for fileType := range batch.Files {
 		if !parsing.IsSupportedParser(fileType) {
 			errFileTypes = append(errFileTypes, fileType)
 		}
 	}
 	return errFileTypes
+}
+
+// JSONBatchProvider reads an admin batch from a JSON file.
+// Implements base.BatchProvider interface.
+type JSONBatchProvider struct {
+	Path string
+}
+
+func (p JSONBatchProvider) Get() (base.AdminBatch, error) {
+	fileReader, err := os.Open(p.Path)
+
+	var batch = base.AdminBatch{}
+
+	if err == nil {
+		err = Load(&batch, fileReader)
+	}
+
+	if err != nil {
+		return batch, fmt.Errorf("impossible de charger la configuration du batch : %w", err)
+	}
+
+	return batch, nil
 }

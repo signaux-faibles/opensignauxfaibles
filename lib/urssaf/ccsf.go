@@ -30,8 +30,8 @@ func (ccsf CCSF) Scope() string {
 }
 
 // Type de l'objet
-func (ccsf CCSF) Type() string {
-	return "ccsf"
+func (ccsf CCSF) Type() base.ParserType {
+	return base.Ccsf
 }
 
 // ParserCCSF fournit une instance utilisable par ParseFilesFromBatch.
@@ -44,8 +44,8 @@ type ccsfParser struct {
 	idx     marshal.ColMapping
 }
 
-func (parser *ccsfParser) Type() string {
-	return "ccsf"
+func (parser *ccsfParser) Type() base.ParserType {
+	return base.Ccsf
 }
 
 func (parser *ccsfParser) Init(cache *marshal.Cache, batch *base.AdminBatch) (err error) {

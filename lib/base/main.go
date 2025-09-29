@@ -2,8 +2,9 @@ package base
 
 import (
 	"encoding/json"
+	"fmt"
+	"path"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 
@@ -12,18 +13,26 @@ import (
 
 // AdminBatch metadata Batch
 type AdminBatch struct {
-	ID            AdminID          `json:"id"`
-	Files         BatchFiles       `json:"files"`
-	Name          string           `json:"name"`
-	Readonly      bool             `json:"readonly"`
-	CompleteTypes []string         `json:"complete_types"`
-	Params        AdminBatchParams `json:"params"`
+	Key    BatchKey         `json:"key"`
+	Files  BatchFiles       `json:"files"`
+	Params AdminBatchParams `json:"params"`
 }
 
 type AdminBatchParams struct {
-	DateDebut       time.Time `json:"date_debut"`
-	DateFin         time.Time `json:"date_fin"`
-	DateFinEffectif time.Time `json:"date_fin_effectif"`
+	DateDebut time.Time `json:"date_debut"`
+	DateFin   time.Time `json:"date_fin"`
+}
+
+type BatchProvider interface {
+	Get() (AdminBatch, error)
+}
+
+type BasicBatchProvider struct {
+	Batch AdminBatch
+}
+
+func (p BasicBatchProvider) Get() (AdminBatch, error) {
+	return p.Batch, nil
 }
 
 // IsBatchID retourne `true` si `batchID` est un identifiant de Batch.
@@ -38,92 +47,111 @@ func IsBatchID(batchID string) bool {
 	return err == nil
 }
 
-// AdminID Collection key
-type AdminID struct {
-	Key  string `json:"key"`
-	Type string `json:"type"`
-}
-
 // BatchFiles fichiers mappés par type
-type BatchFiles map[string][]BatchFile
+type BatchFiles map[ParserType][]BatchFile
 
-// BatchFile encapsule un fichier mentionné dans un Batch
-type BatchFile struct {
-	// Scheme prefix, e.g. `gzip:`
-	Scheme string
-
-	// Directory path where data is to be looked for
-	basePath string
-
-	// Relative path inside the base path
-	relativePath string
+func (files BatchFiles) GetFilterFile() (BatchFile, error) {
+	if files["filter"] == nil || len(files["filter"]) != 1 {
+		return nil, fmt.Errorf("batch requires just 1 filter file, found: %s", files["filter"])
+	}
+	return files["filter"][0], nil
 }
 
-var reScheme = regexp.MustCompile("^[a-z]*:")
-
-// NewBatchFile créé un chemin d'un fichier encapsulé dans un batch avec la
-// variable d'environnement "APP_DATA" comme chemin de base
-func NewBatchFile(path string) BatchFile {
-	return NewBatchFileWithBasePath(path, viper.GetString("APP_DATA"))
+func (files BatchFiles) GetSireneULFile() (BatchFile, error) {
+	if files[SireneUl] == nil || len(files[SireneUl]) != 1 {
+		return nil, fmt.Errorf("batch requires just 1 sireneUL filter file, found %s", files[SireneUl])
+	}
+	return files[SireneUl][0], nil
 }
 
-// MarshalJSON implements json.Marshaller interface
-func (file BatchFile) MarshalJSON() ([]byte, error) {
-	value := file.Scheme + file.relativePath
-	return json.Marshal(value)
+// GetEffectifFile returns the effectif file.
+func (files BatchFiles) GetEffectifFile() (BatchFile, error) {
+	if files["effectif"] == nil || len(files["effectif"]) != 1 {
+		return nil, fmt.Errorf("batch requires just 1 effectif file, found: %s", files["effectif"])
+	}
+	return files["effectif"][0], nil
 }
 
-// UnmarshalJSON implements json.Unmarshaller interface
-func (file *BatchFile) UnmarshalJSON(raw []byte) error {
-	var value string
-	if err := json.Unmarshal(raw, &value); err != nil {
+func (files *BatchFiles) UnmarshalJSON(data []byte) error {
+	var temp map[ParserType][]string
+	if err := json.Unmarshal(data, &temp); err != nil {
 		return err
 	}
 
-	batchFile := NewBatchFile(value)
-	file.Scheme = batchFile.Scheme
-	file.relativePath = batchFile.relativePath
-	file.basePath = batchFile.basePath
+	*files = make(BatchFiles)
 
+	for parserType, paths := range temp {
+		var parserFiles []BatchFile
+		for _, path := range paths {
+			parserFiles = append(parserFiles, NewBatchFile(path))
+		}
+
+		(*files)[parserType] = parserFiles
+	}
 	return nil
 }
 
-// NewBatchFileWithBasePath crée un chemin d'un fichier encapsulé dans un
-// batch
-func NewBatchFileWithBasePath(path, basePath string) BatchFile {
-	scheme := reScheme.FindString(path)
-	pathWithoutScheme := reScheme.ReplaceAllString(path, "")
-	return BatchFile{Scheme: scheme, relativePath: pathWithoutScheme, basePath: basePath}
+// BatchFile is the relevant metadata of a file that needs to be imported
+type BatchFile interface {
+	Filename() string
+
+	// Relative path given a base path
+	// Usually begins with the batch key
+	Path() string
+
+	IsCompressed() bool
 }
 
-// FilePath retourne le chemin vers le fichier, sans le schéma
-// (base path)
-func (file BatchFile) FilePath() string {
-	return filepath.Join(file.basePath, file.relativePath)
+type batchFile struct {
+	path string
+
+	// Explicitely specify if the file is compressed
+	// If set to nil, then the ".gz" suffix of the filename will determine if
+	// the file is compressed.
+	isCompressed *bool
 }
 
-func (file BatchFile) RelativePath() string {
-	return file.relativePath
+func (file *batchFile) MarshalJSON() ([]byte, error) {
+	return json.Marshal(file.Path())
+}
+
+func (file *batchFile) UnmarshalJSON(pathBytes []byte) error {
+	file.path = path.Join(viper.GetString("APP_DATA"), string(pathBytes))
+	return nil
+}
+
+func (file *batchFile) Filename() string {
+	return filepath.Base(file.Path())
+}
+
+func (file *batchFile) Path() string {
+	return file.path
 }
 
 // IsCompressed est vrai si le fichier est compressé
-func (file BatchFile) IsCompressed() bool {
-	return file.Scheme == "gzip:" ||
-		strings.HasSuffix(file.relativePath, ".gz")
+func (file *batchFile) IsCompressed() bool {
+	if file.isCompressed != nil {
+		return *file.isCompressed
+	}
+
+	return strings.HasSuffix(file.Path(), ".gz")
 }
 
-// MockBatch with a map[type][]filepaths
-func MockBatch(filetype string, filepaths []string) AdminBatch {
-	batchFiles := []BatchFile{}
-	for _, file := range filepaths {
-		batchFiles = append(batchFiles, NewBatchFile(file))
-	}
-	batch := AdminBatch{
-		Files: BatchFiles{filetype: batchFiles},
-		Params: AdminBatchParams{
-			DateDebut: time.Date(2019, 0, 1, 0, 0, 0, 0, time.UTC), // January 1st, 2019
-			DateFin:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC), // February 1st, 2019
-		},
-	}
-	return batch
+//--------- BatchFile creation helpers --------
+
+// NewBatchFile create a BatchFile from a given absolute or relative file.
+// If several path segments are given, they are concatenated with path.Join.
+func NewBatchFile(pathSegments ...string) BatchFile {
+	return &batchFile{path.Join(pathSegments...), nil}
+}
+
+func NewCompressedBatchFile(path string) BatchFile {
+	True := true
+	return &batchFile{path, &True}
+}
+
+// NewBatchFileFromBatch is a helper function that allows to give a batch and filename instead of an
+// actual relative path. The batch key is used as subdirectory.
+func NewBatchFileFromBatch(basepath string, batch BatchKey, filename string) BatchFile {
+	return NewBatchFile(basepath, batch.String(), filename)
 }
