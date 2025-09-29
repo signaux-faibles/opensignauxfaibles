@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS stg_effectif (
 );
 
 CREATE INDEX IF NOT EXISTS idx_stg_effectif_siret ON stg_effectif(siret);
+CREATE INDEX IF NOT EXISTS idx_stg_effectif_siren ON stg_effectif(LEFT(siret, 9));
 
 
 CREATE TABLE IF NOT EXISTS stg_effectif_ent (
