@@ -56,7 +56,11 @@ func ImportBatch(
 		return err
 	}
 	if !skipFilter && filter == nil {
-		return errors.New("veuillez inclure un filtre")
+		return errors.New(`
+    Le filtre est manquant ou n'a pas été initialisé.
+    Lorsque le filtre est manquant, il est nécessaire de préciser le fichier filtre à
+    importer, ou de l'initialiser via l'import d'un fichier 'effectif' seul.
+    `)
 	}
 
 	unsupported := checkUnsupportedFiletypes(batch)

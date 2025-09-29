@@ -20,7 +20,7 @@ import (
 )
 
 func TestImportEndToEnd(t *testing.T) {
-	cleanDB := setupTest(t)
+	cleanDB := setupDBTest(t)
 	defer cleanDB()
 
 	createImportTestBatch(t)
@@ -254,5 +254,23 @@ func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 }
 
 func TestEmptyFilter(t *testing.T) {
+	batch := base.AdminBatch{
+		Key: "1910",
+		Files: map[base.ParserType][]base.BatchFile{
+			base.Apconso: {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
+		},
+	}
 
+	err := engine.ImportBatch(
+		base.BasicBatchProvider{Batch: batch},
+		[]base.ParserType{},
+		false,
+		// Should not write anything to DB
+		&engine.FailSinkFactory{},
+		engine.DiscardReportSink{},
+	)
+
+	t.Log(err)
+	assert.ErrorContains(t, err, "n'a pas été initialisé")
+	assert.ErrorContains(t, err, "import d'un fichier 'effectif'")
 }

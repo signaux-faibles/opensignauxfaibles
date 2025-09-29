@@ -109,8 +109,9 @@ func setupSuite() (*TestSuite, error) {
 	}, nil
 }
 
-// setupTest returns a cleaner function
-func setupTest(t *testing.T) func() {
+// setupDBTest returns a cleaner function that truncates tables and reset
+// materialized views.
+func setupDBTest(t *testing.T) func() {
 	t.Helper()
 	postgresURI := suite.PostgresURI
 
