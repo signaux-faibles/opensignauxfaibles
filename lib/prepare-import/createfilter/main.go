@@ -22,7 +22,7 @@ const DefaultNbMois = 100
 // DefaultMinEffectif is the default effectif threshold, expressed in number of employees.
 const DefaultMinEffectif = 10
 
-// DefaultNbIgnoredCols is the default number of rightmost columns that don't contain effectif data.
+// DefaultN thebIgnoredCols is the default number of rightmost columns that don't contain effectif data.
 const DefaultNbIgnoredCols = 2
 
 // NbLeadingColsToSkip is the number of leftmost columns that don't contain effectif data.

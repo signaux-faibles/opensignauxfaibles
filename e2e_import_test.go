@@ -20,6 +20,8 @@ import (
 )
 
 func TestImportEndToEnd(t *testing.T) {
+	cleanDB := setupTest(t)
+	defer cleanDB()
 
 	createImportTestBatch(t)
 	t.Run("Create batch and run import", func(t *testing.T) {
@@ -249,4 +251,8 @@ func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 	}
 
 	return tables
+}
+
+func TestEmptyFilter(t *testing.T) {
+
 }

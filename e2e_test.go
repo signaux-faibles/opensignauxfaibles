@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -12,9 +13,11 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
@@ -104,6 +107,54 @@ func setupSuite() (*TestSuite, error) {
 		PostgresURI:    postgresURI,
 		GoldenFilesDir: filepath.Join("tests", "output-snapshots"),
 	}, nil
+}
+
+// setupTest returns a cleaner function
+func setupTest(t *testing.T) func() {
+	t.Helper()
+	postgresURI := suite.PostgresURI
+
+	return func() {
+		db, err := pgx.Connect(context.Background(), postgresURI)
+		assert.NoError(t, err)
+		tables := []string{
+			"import_logs",
+			"labels_motif_recours",
+			"migrations",
+			"stg_apconso",
+			"stg_apdemande",
+			"stg_cotisation",
+			"stg_debit",
+			"stg_delai",
+			"stg_effectif",
+			"stg_effectif_ent",
+			"stg_sirene",
+			"stg_sirene_ul",
+		}
+		materializedViews := []string{
+			"stg_apdemande_by_period",
+			"filter",
+		}
+
+		// Teardown: truncate tables
+		_, err = db.Exec(
+			context.Background(),
+			fmt.Sprintf(
+				"TRUNCATE %s CASCADE;",
+				strings.Join(tables, ", "),
+			),
+		)
+		assert.NoError(t, err)
+
+		// Teardown: refresh views
+		for _, view := range materializedViews {
+			_, err = db.Exec(
+				context.Background(),
+				fmt.Sprintf("REFRESH MATERIALIZED VIEW %s;", view),
+			)
+			assert.NoError(t, err)
+		}
+	}
 }
 
 func teardownSuite() {
