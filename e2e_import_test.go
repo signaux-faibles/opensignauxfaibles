@@ -15,6 +15,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 )
@@ -273,4 +274,38 @@ func TestEmptyFilter(t *testing.T) {
 	t.Log(err)
 	assert.ErrorContains(t, err, "n'a pas été initialisé")
 	assert.ErrorContains(t, err, "import d'un fichier 'effectif'")
+}
+
+func TestNonEmptyFilter(t *testing.T) {
+	cleanDB := setupDBTest(t)
+	defer cleanDB()
+
+	db, err := pgx.Connect(context.Background(), suite.PostgresURI)
+	assert.NoError(t, err)
+
+	_, err = db.Exec(
+		context.Background(),
+		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', '2018-01-01', 759);`,
+	)
+	assert.NoError(t, err)
+	_, err = db.Exec(
+		context.Background(),
+		`REFRESH MATERIALIZED VIEW filter;`,
+	)
+	assert.NoError(t, err)
+	_, err = db.Exec(
+		context.Background(),
+		`TRUNCATE stg_effectif;`,
+	)
+	assert.NoError(t, err)
+
+	var count int
+	err = db.QueryRow(
+		context.Background(),
+		`SELECT count(*) FROM filter;`,
+	).Scan(&count)
+	assert.NoError(t, err)
+
+	assert.Equal(t, 1, count)
+
 }

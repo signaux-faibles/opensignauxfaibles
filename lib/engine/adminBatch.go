@@ -58,8 +58,10 @@ func ImportBatch(
 	if !skipFilter && filter == nil {
 		return errors.New(`
     Le filtre est manquant ou n'a pas été initialisé.
-    Lorsque le filtre est manquant, il est nécessaire de préciser le fichier filtre à
-    importer, ou de l'initialiser via l'import d'un fichier 'effectif' seul.
+    Lorsque le filtre est manquant, il est nécessaire de l'initialiser via
+    l'import d'un fichier 'effectif', ou de placer le fichier filtre à
+    importer, préfixé par 'filter_' dans le dossier des données à importer.
+    Si vous souhaitez importer sans filtre, utilisez l'option "--no-filter".
     `)
 	}
 
