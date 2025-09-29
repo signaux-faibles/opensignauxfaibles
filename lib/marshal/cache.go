@@ -10,7 +10,8 @@ type Cache interface {
 	Set(name string, value any)
 }
 
-// Cache saves values in memory
+// cache stores values in memory, for future retrieval
+// It is thread-safe
 type cache struct {
 	data map[string]any
 	mu   sync.RWMutex
