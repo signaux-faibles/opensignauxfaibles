@@ -84,9 +84,13 @@ func (params importBatchHandler) Run() error {
 	var reportSink engine.ReportSink
 
 	if !params.DryRun {
+		viewsToRefresh := map[string][]base.ParserType{
+			"clean_ap": {base.Apdemande, base.Apconso},
+		}
+
 		dataSinkFactory = engine.NewCompositeSinkFactory(
 			engine.NewCSVSinkFactory(batchKey.String()),
-			engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
+			engine.NewPostgresSinkFactory(engine.Db.PostgresDB, viewsToRefresh),
 		)
 		reportSink = engine.NewPostgresReportSink(engine.Db.PostgresDB)
 	} else {

@@ -6,7 +6,9 @@ import (
 	"log/slog"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/marshal"
+	"slices"
 	"strings"
+	"sync"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -15,15 +17,34 @@ import (
 // BatchSize controls the max number of rows inserted at a time
 const BatchSize = 1000
 
+// A PostgresSinkFactory create sinks that send data to the relevant
+// postgresql table.
+// At the end of all processes, it updates the materialized tables if needed.
+// It implements the `SinkFactory` and `Finalizer` interfaces.
 type PostgresSinkFactory struct {
 	conn *pgxpool.Pool
+
+	// Keys are the materialized viewsToRefresh to update
+	// Values are specific parser types the viewsToRefresh depend on.
+	// The materialized view will only be updated if any data has been imported
+	// for this parser type.
+	viewsToRefresh map[string][]base.ParserType
+
+	// Parser Types for which a sink has been created
+	// Use mutex for concurrent write access
+	parserSinks []base.ParserType
+	mu          sync.Mutex
 }
 
-func NewPostgresSinkFactory(conn *pgxpool.Pool) SinkFactory {
-	return &PostgresSinkFactory{conn}
+func NewPostgresSinkFactory(conn *pgxpool.Pool, views map[string][]base.ParserType) SinkFactory {
+	return &PostgresSinkFactory{conn: conn, viewsToRefresh: views}
 }
 
 func (f *PostgresSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+	f.mu.Lock()
+	f.parserSinks = append(f.parserSinks, parserType)
+	f.mu.Unlock()
+
 	switch parserType {
 	case base.Apconso,
 		base.Apdemande,
@@ -36,16 +57,31 @@ func (f *PostgresSinkFactory) CreateSink(parserType base.ParserType) (DataSink, 
 		base.SireneUl:
 
 		tableName := fmt.Sprintf("stg_%s", parserType)
-		materializedTableUpdate := ""
-
-		if parserType == base.Apdemande {
-			materializedTableUpdate = "stg_apdemande_by_period"
-		}
-
-		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil
+		return &PostgresSink{f.conn, tableName}, nil
 	}
 
 	return &DiscardDataSink{}, nil
+}
+
+func (f *PostgresSinkFactory) Finalize() error {
+	for view, parserTypes := range f.viewsToRefresh {
+		for _, parser := range parserTypes {
+			if slices.Contains(f.parserSinks, parser) {
+				// Data has been updated for a parser type on which the view depends
+				// => udpdate the view
+				_, err := f.conn.Exec(context.Background(), fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", view))
+				if err != nil {
+					return fmt.Errorf("failed to refresh materialized view %s: %w", view, err)
+				}
+
+				slog.Debug("Materialized View updated", "view", view)
+
+				break
+			}
+		}
+	}
+
+	return nil
 }
 
 // PostgresSink writes the output to postgresql.
@@ -60,9 +96,6 @@ type PostgresSink struct {
 
 	// Name of the table to which to write
 	table string
-
-	// Name of a materialized view to refresh after write
-	viewToRefresh string
 }
 
 func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
@@ -114,15 +147,6 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple)
 	}
 
 	logger.Debug("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
-
-	if s.viewToRefresh != "" {
-		_, err = s.conn.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", s.viewToRefresh))
-		if err != nil {
-			return fmt.Errorf("failed to refresh materialized view %s: %w", s.viewToRefresh, err)
-		}
-
-		logger.Debug("Materialized View updated", "view", s.viewToRefresh)
-	}
 
 	return nil
 }

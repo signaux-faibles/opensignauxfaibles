@@ -28,6 +28,8 @@ func Load(batch *base.AdminBatch, reader io.Reader) error {
 }
 
 // ImportBatch lance tous les parsers sur le batch fourni
+// Si "sinkFactory" implémente également l'interface `Finalizer`, alors la
+// fonction `Finalize` est déclenchée à la fin de tous les imports.
 func ImportBatch(
 	batchProvider base.BatchProvider,
 	parserTypes []base.ParserType,
@@ -104,6 +106,17 @@ func ImportBatch(
 		}
 	}
 	err = g.Wait() // wait for all events and tuples to be inserted, get the error if any
+
+	if finalizer, ok := sinkFactory.(Finalizer); ok {
+		// If any finalizer function is detected (e.g. update materialized views
+		// for postgresql sink factory), run it now
+		logger.Debug("Fonction de finalisation de l'import détectée.")
+		err = finalizer.Finalize()
+		if err != nil {
+			return fmt.Errorf("une erreur est survenue lors de l'exécution de la fonction de finalisation : %w", err)
+		}
+		logger.Info("Finalisation de l'import effectuée avec succès")
+	}
 
 	if err != nil {
 		return err

@@ -32,9 +32,6 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS clean_ap AS
       -- Vue intermédiaire des consommations.
       -- * calcule les ETP consommés,
       -- * formatée dans un format identique que les demandes pour permettre un UNION ALL
-      --
-      -- Contrairement à la demande, cette vue bénéficie déjà des bons indexes, et
-      -- ne nécessite pas d'être matérialisée
         SELECT
             c.siret,
             periode::date,

@@ -143,3 +143,9 @@ func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan marshal.Tup
 func getType(myvar any) string {
 	return reflect.TypeOf(myvar).String()
 }
+
+// Finalizer is an (optional) interface for sink factories that need to run a final
+// operation after all processes have completed
+type Finalizer interface {
+	Finalize() error
+}
