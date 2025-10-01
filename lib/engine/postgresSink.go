@@ -74,7 +74,7 @@ func (f *PostgresSinkFactory) Finalize() error {
 					return fmt.Errorf("failed to refresh materialized view %s: %w", view, err)
 				}
 
-				slog.Debug("Materialized View updated", "view", view)
+				slog.Info("Materialized View updated", "view", view)
 
 				break
 			}

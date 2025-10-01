@@ -37,7 +37,9 @@ type DataSink interface {
 }
 
 // NewCompositeSinkFactory gives a SinkFactory, that creates DataSink
-// instances that combine multiple sinks
+// instances that combine multiple sinks.
+// It also implements the `Finalizer` interface that runs any finalization
+// function from each individual sinks (if any)
 func NewCompositeSinkFactory(factories ...SinkFactory) SinkFactory {
 	return &compositeSinkFactory{
 		factories:  factories,
@@ -60,6 +62,19 @@ func (f *compositeSinkFactory) CreateSink(parserType base.ParserType) (DataSink,
 		sinks = append(sinks, sink)
 	}
 	return &compositeSink{sinks, f.bufferSize}, nil
+}
+
+func (f *compositeSinkFactory) Finalize() error {
+	for _, factory := range f.factories {
+		if finalizer, ok := factory.(Finalizer); ok {
+			err := finalizer.Finalize()
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 type compositeSink struct {

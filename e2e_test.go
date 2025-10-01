@@ -199,8 +199,8 @@ func startPostgresContainer() {
 }
 
 func rmPostgresContainer() {
-	exec.Command("docker", "stop", pgContainer).Run()
-	exec.Command("docker", "rm", "-f", pgContainer).Run()
+	// exec.Command("docker", "stop", pgContainer).Run()
+	// exec.Command("docker", "rm", "-f", pgContainer).Run()
 }
 
 func deleteTempFolder() {
