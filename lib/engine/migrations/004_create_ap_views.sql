@@ -46,19 +46,18 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS clean_ap AS
           AND c.periode IS NOT NULL
        )
 
+    -- on agrége par siret x période les consommations et les demandes
+    SELECT
+        siret,
+        LEFT(siret, 9)::VARCHAR(9) as siren,
+        periode,
+        SUM(ETP_autorise) as ETP_autorise,
+        SUM(ETP_consomme) as ETP_consomme,
+        -- Pour motif_recours, on concatène les valeurs uniques
+        STRING_AGG(DISTINCT motif_recours, '; ' ORDER BY motif_recours) as motif_recours
 
--- on agrége par siret x période les consommations et les demandes
-SELECT
-    siret,
-    LEFT(siret, 9)::VARCHAR(9) as siren,
-    periode,
-    SUM(ETP_autorise) as ETP_autorise,
-    SUM(ETP_consomme) as ETP_consomme,
-    -- Pour motif_recours, on concatène les valeurs uniques
-    STRING_AGG(DISTINCT motif_recours, '; ' ORDER BY motif_recours) as motif_recours
-
-FROM (SELECT * FROM stg_apdemande_by_period UNION ALL SELECT * FROM stg_apconso_by_period) tmp
-GROUP BY siret, periode;
+    FROM (SELECT * FROM stg_apdemande_by_period UNION ALL SELECT * FROM stg_apconso_by_period) tmp
+    GROUP BY siret, periode;
 
 CREATE INDEX IF NOT EXISTS idx_clean_ap_period ON clean_ap(periode);
 CREATE INDEX IF NOT EXISTS idx_clean_ap_siret ON clean_ap(siret);
