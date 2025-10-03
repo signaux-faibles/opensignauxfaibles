@@ -4,21 +4,37 @@
 package parsing
 
 import (
-	"errors"
-
-	"opensignauxfaibles/lib/apconso"
-	"opensignauxfaibles/lib/apdemande"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/sirene"
-	sireneul "opensignauxfaibles/lib/sirene_ul"
-	"opensignauxfaibles/lib/urssaf"
+	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing/apconso"
+	"opensignauxfaibles/lib/parsing/apdemande"
+	"opensignauxfaibles/lib/parsing/sirene"
+	sireneul "opensignauxfaibles/lib/parsing/sirene_ul"
+	"opensignauxfaibles/lib/parsing/urssaf"
 )
 
-// RegisteredParsers liste des parsers disponibles
+// Implements engine.ParserRegistry
+type ParserRegistry map[base.ParserType]engine.Parser
+
+func (pr ParserRegistry) Resolve(parserType base.ParserType) engine.Parser {
+	if parser, ok := pr[parserType]; ok {
+		return parser
+	}
+	return nil
+}
+
+func (pr ParserRegistry) All() []engine.Parser {
+	var parsers []engine.Parser
+	for _, parser := range pr {
+		parsers = append(parsers, parser)
+	}
+	return parsers
+}
+
+// DefaultParsers liste des parsers disponibles
 // Note: penser à tenir à jour la table des formats, dans la documentation:
 // https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#sp%C3%A9cificit%C3%A9s-de-limport
-var registeredParsers = map[base.ParserType]marshal.Parser{
+var DefaultParsers = ParserRegistry{
 	base.Debit:       urssaf.ParserDebit,
 	base.Ccsf:        urssaf.ParserCCSF,
 	base.Cotisation:  urssaf.ParserCotisation,
@@ -31,29 +47,4 @@ var registeredParsers = map[base.ParserType]marshal.Parser{
 	base.Apdemande:   apdemande.Parser,
 	base.Sirene:      sirene.Parser,
 	base.SireneUl:    sireneul.Parser,
-}
-
-// IsSupportedParser retourne true si un parseur est défini pour le fileType spécifié
-// ou si le type est "filter". (cf issue #354)
-func IsSupportedParser(fileType base.ParserType) bool {
-	return fileType == "filter" || registeredParsers[fileType] != nil
-}
-
-// ResolveParsers sélectionne, vérifie et charge les parsers.
-func ResolveParsers(parserTypes []base.ParserType) ([]marshal.Parser, error) {
-	var parsers []marshal.Parser
-	if len(parserTypes) == 0 {
-		for _, fileParser := range registeredParsers {
-			parsers = append(parsers, fileParser)
-		}
-	} else {
-		for _, fileType := range parserTypes {
-			if fileParser, ok := registeredParsers[fileType]; ok {
-				parsers = append(parsers, fileParser)
-			} else {
-				return parsers, errors.New(string(fileType) + " n'est pas un parser reconnu.")
-			}
-		}
-	}
-	return parsers, nil
 }

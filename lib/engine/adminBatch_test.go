@@ -61,7 +61,15 @@ func (TestSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) 
 func Test_ImportBatch(t *testing.T) {
 
 	batchProvider := base.BasicBatchProvider{Batch: base.AdminBatch{}}
-	err := ImportBatch(batchProvider, []base.ParserType{}, false, TestSinkFactory{}, DiscardReportSink{})
+	err := ImportBatch(
+		batchProvider,
+		[]base.ParserType{},
+		// TODO check
+		nil,
+		false,
+		TestSinkFactory{},
+		DiscardReportSink{},
+	)
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}
@@ -71,7 +79,15 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 	batchProvider := base.BasicBatchProvider{
 		Batch: base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("this_file_does_not_exist")}),
 	}
-	err := ImportBatch(batchProvider, []base.ParserType{}, false, TestSinkFactory{}, DiscardReportSink{})
+	err := ImportBatch(
+		batchProvider,
+		[]base.ParserType{},
+		// TODO check
+		nil,
+		false,
+		TestSinkFactory{},
+		DiscardReportSink{},
+	)
 	if err == nil {
 		t.Error("ImportBatch devrait échouer en tentant d'ouvrir un fichier filtre illisible")
 	}
@@ -84,7 +100,15 @@ func Test_ImportBatchWithSinkFailure(t *testing.T) {
 		},
 	}
 	batchProvider := base.BasicBatchProvider{Batch: batch}
-	err := ImportBatch(batchProvider, []base.ParserType{base.Apdemande}, true, FailSinkFactory{}, DiscardReportSink{})
+	err := ImportBatch(
+		batchProvider,
+		[]base.ParserType{base.Apdemande},
+		// TODO check
+		nil,
+		true,
+		FailSinkFactory{},
+		DiscardReportSink{},
+	)
 	if err == nil {
 		t.Error("ImportBatch devrait échouer si le sink échoue")
 	}
@@ -111,7 +135,15 @@ func Test_ImportBatchDryRun(t *testing.T) {
 	slog.SetDefault(logger)
 
 	// Run import
-	err := ImportBatch(batchProvider, []base.ParserType{}, noFilter, dataSinkFactory, reportSink)
+	err := ImportBatch(
+		batchProvider,
+		[]base.ParserType{},
+		// TODO check
+		nil,
+		noFilter,
+		dataSinkFactory,
+		reportSink,
+	)
 	assert.NoError(t, err)
 
 	// Check that the import summary is part of the logs

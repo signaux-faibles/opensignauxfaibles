@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/marshal"
 )
 
 // GitCommit est le hash du dernier commit à inclure dans le binaire.
@@ -92,7 +91,7 @@ func initConfig() {
 	if err != nil {
 		slog.Warn("aucun fichier de configuration n'a pu être trouvé", slog.Any("error", err))
 	}
-	marshal.SetGitCommit(GitCommit)
+	engine.SetGitCommit(GitCommit)
 }
 
 // Ask cosiner/flag to parse arguments

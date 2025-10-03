@@ -6,7 +6,7 @@ import (
 	"errors"
 	"log"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
+	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 	"os"
 	"sync"
@@ -45,22 +45,22 @@ func (params parseFileHandler) Validate() error {
 
 func (params parseFileHandler) Run() error {
 	parserType := base.ParserType(params.Parser)
-	parsers, err := parsing.ResolveParsers([]base.ParserType{parserType})
+	parsers, err := engine.ResolveParsers(parsing.DefaultParsers, []base.ParserType{parserType})
 	if err != nil {
 		return err
 	}
 
 	file := base.NewBatchFile(params.File)
 	batch := base.AdminBatch{Files: base.BatchFiles{parserType: []base.BatchFile{file}}}
-	cache := marshal.NewEmptyCache()
+	cache := engine.NewEmptyCache()
 	parser := parsers[0]
 
-	// the following code is inspired from marshal.ParseFilesFromBatch()
-	outputChannel := make(chan marshal.Tuple)
-	reportChannel := make(chan marshal.Report)
+	// the following code is inspired from engine.ParseFilesFromBatch()
+	outputChannel := make(chan engine.Tuple)
+	reportChannel := make(chan engine.Report)
 	ctx := context.Background()
 	go func() {
-		reportChannel <- marshal.ParseFile(ctx, file, parser, &batch, cache, outputChannel)
+		reportChannel <- engine.ParseFile(ctx, file, parser, &batch, cache, outputChannel)
 		close(outputChannel)
 		close(reportChannel)
 	}()

@@ -11,14 +11,12 @@ import (
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-
-	"opensignauxfaibles/lib/marshal"
 )
 
 const ReportTable string = "import_logs"
 
 type ReportSink interface {
-	Process(ch chan marshal.Report) error
+	Process(ch chan Report) error
 }
 
 type PostgresReportSink struct {
@@ -32,7 +30,7 @@ func NewPostgresReportSink(conn *pgxpool.Pool) ReportSink {
 	return &PostgresReportSink{conn, ReportTable}
 }
 
-func (s *PostgresReportSink) Process(ch chan marshal.Report) error {
+func (s *PostgresReportSink) Process(ch chan Report) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
 	logger.Debug("stream reports/logs to PostgreSQL")
@@ -54,7 +52,7 @@ func (s *PostgresReportSink) Process(ch chan marshal.Report) error {
 	return nil
 }
 
-func insertReport(report marshal.Report, conn *pgxpool.Pool, tableName string) error {
+func insertReport(report Report, conn *pgxpool.Pool, tableName string) error {
 
 	query := fmt.Sprintf(`
 		INSERT INTO %s (
@@ -91,7 +89,7 @@ func insertReport(report marshal.Report, conn *pgxpool.Pool, tableName string) e
 
 type StdoutReportSink struct{}
 
-func (s *StdoutReportSink) Process(ch chan marshal.Report) error {
+func (s *StdoutReportSink) Process(ch chan Report) error {
 	for report := range ch {
 		jsonReport, err := json.MarshalIndent(report, "", "  ")
 		if err != nil {

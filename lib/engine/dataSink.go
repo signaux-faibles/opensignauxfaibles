@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
 	"reflect"
 
 	"golang.org/x/sync/errgroup"
@@ -33,7 +32,7 @@ type DataSink interface {
 	// caller.
 	//
 	// The channel ch must be completely consumed.
-	ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error
+	ProcessOutput(ctx context.Context, ch chan Tuple) error
 }
 
 // NewCompositeSinkFactory gives a SinkFactory, that creates DataSink
@@ -67,18 +66,18 @@ type compositeSink struct {
 	bufferSize int
 }
 
-func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
+func (s *compositeSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
 
 	// Creates a new context for the ability to cancel all sinks if any sink
 	// fails. For the moment this is an intended and acceptable behavior.
 	subctx, cancel := context.WithCancelCause(context.Background())
 	defer cancel(nil)
 
-	var outChannels []chan marshal.Tuple
+	var outChannels []chan Tuple
 
 	// We duplicate the channels
 	for range s.sinks {
-		outChannels = append(outChannels, make(chan marshal.Tuple, s.bufferSize))
+		outChannels = append(outChannels, make(chan Tuple, s.bufferSize))
 	}
 
 	go func() {
@@ -132,7 +131,7 @@ type DiscardDataSink struct {
 	counter int
 }
 
-func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
+func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
 	for range ch {
 		s.counter++
 	}

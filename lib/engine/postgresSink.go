@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -65,12 +64,12 @@ type PostgresSink struct {
 	viewToRefresh string
 }
 
-func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
+func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
 	logger.Debug("stream output to PostgreSQL")
 
-	var currentBatch []marshal.Tuple
+	var currentBatch []Tuple
 	var headers []string
 
 	logger.Debug("truncate table")
@@ -86,7 +85,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple)
 
 	for tuple := range ch {
 		if headers == nil {
-			headers = marshal.ExtractTableColumns(tuple)
+			headers = ExtractTableColumns(tuple)
 		}
 
 		currentBatch = append(currentBatch, tuple)
@@ -127,7 +126,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple)
 	return nil
 }
 
-func insertTuples(tuples []marshal.Tuple, conn *pgxpool.Pool, tableName string, columns []string) error {
+func insertTuples(tuples []Tuple, conn *pgxpool.Pool, tableName string, columns []string) error {
 	if len(tuples) == 0 {
 		return nil
 	}
@@ -137,7 +136,7 @@ func insertTuples(tuples []marshal.Tuple, conn *pgxpool.Pool, tableName string, 
 	// TODO rather than construct values
 	// implement CopyFromSource interface
 	for _, tuple := range tuples {
-		row := marshal.ExtractTableRow(tuple)
+		row := ExtractTableRow(tuple)
 		values = append(values, row)
 	}
 	lowerColumns := make([]string, len(columns))

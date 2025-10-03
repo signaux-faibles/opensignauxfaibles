@@ -10,6 +10,7 @@ import (
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 	prepareimport "opensignauxfaibles/lib/prepare-import"
 )
 
@@ -96,7 +97,14 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 4
 	// On réalise l'import
-	err = engine.ImportBatch(batchProvider, parserTypes, params.NoFilter, dataSinkFactory, reportSink)
+	err = engine.ImportBatch(
+		batchProvider,
+		parserTypes,
+		parsing.DefaultParsers,
+		params.NoFilter,
+		dataSinkFactory,
+		reportSink,
+	)
 
 	if err != nil {
 		return err

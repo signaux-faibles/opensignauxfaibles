@@ -4,11 +4,10 @@ import (
 	"bytes"
 	"context"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
 	"testing"
 )
 
-// MockTuple implements the marshal.Tuple interface for testing
+// MockTuple implements the Tuple interface for testing
 // H1, H2, H3 are three mock data
 type MockTuple struct {
 	H1    string `csv:"header1"`
@@ -31,7 +30,7 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 	}
 
 	// setup channel
-	ch := make(chan marshal.Tuple, 3)
+	ch := make(chan Tuple, 3)
 	ch <- MockTuple{
 		H1:    "value1",
 		H2:    "value2",

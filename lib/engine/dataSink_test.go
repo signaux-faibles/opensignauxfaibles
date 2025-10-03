@@ -3,7 +3,6 @@ package engine
 import (
 	"context"
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +10,7 @@ import (
 
 func TestCompositeSink(t *testing.T) {
 
-	ch := make(chan marshal.Tuple)
+	ch := make(chan Tuple)
 
 	const testType base.ParserType = "testtype"
 	go func() {
@@ -56,7 +55,7 @@ func TestCompositeSink(t *testing.T) {
 }
 
 func TestCompositeSink_FailingSink(t *testing.T) {
-	ch := make(chan marshal.Tuple)
+	ch := make(chan Tuple)
 
 	go func() {
 		ch <- MockTuple{

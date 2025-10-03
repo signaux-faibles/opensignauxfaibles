@@ -12,7 +12,6 @@ import (
 	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
 )
 
 const DefaultExportPath = "/export/csv"
@@ -63,7 +62,7 @@ type CSVSink struct {
 // The directory is derived from the CSVSink's directory
 // path, relative to the export root directory ("export.path"
 // configuration, or by default the `DefaultExportPath` constant)
-func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) error {
+func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
 	logger := slog.With("sink", "csv", "file", s.file)
 	logger.Debug("stream data to CSV file")
 
@@ -92,10 +91,10 @@ func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan marshal.Tuple) erro
 	headersWritten := false
 	for tuple := range ch {
 		if !headersWritten {
-			w.Write(marshal.ExtractCSVHeaders(tuple))
+			w.Write(ExtractCSVHeaders(tuple))
 			headersWritten = true
 		}
-		w.Write(marshal.ExtractCSVRow(tuple))
+		w.Write(ExtractCSVRow(tuple))
 		nWritten++
 	}
 	w.Flush()

@@ -12,8 +12,6 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/parsing"
 )
 
 // Load charge les données d'un batch depuis du JSON
@@ -31,6 +29,7 @@ func Load(batch *base.AdminBatch, reader io.Reader) error {
 func ImportBatch(
 	batchProvider base.BatchProvider,
 	parserTypes []base.ParserType,
+	registry ParserRegistry,
 	skipFilter bool,
 	sinkFactory SinkFactory,
 	eventSink ReportSink,
@@ -41,7 +40,7 @@ func ImportBatch(
 		return err
 	}
 
-	parsers, err := parsing.ResolveParsers(parserTypes)
+	parsers, err := ResolveParsers(registry, parserTypes)
 	if err != nil {
 		return err
 	}
@@ -49,9 +48,9 @@ func ImportBatch(
 	logger := slog.With("batch", batch.Key)
 	logger.Info("starting raw data import")
 
-	var cache = marshal.NewEmptyCache()
+	var cache = NewEmptyCache()
 
-	filter, err := marshal.GetSirenFilter(cache, &batch)
+	filter, err := GetSirenFilter(cache, &batch)
 	if err != nil {
 		return err
 	}
@@ -65,7 +64,7 @@ func ImportBatch(
     `)
 	}
 
-	unsupported := checkUnsupportedFiletypes(batch)
+	unsupported := checkUnsupportedFiletypes(registry, batch)
 	for _, file := range unsupported {
 		logger.Warn("Type de fichier non reconnu", "file", file)
 	}
@@ -81,7 +80,7 @@ func ImportBatch(
 		if len(batch.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
-			outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
 
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
@@ -137,11 +136,11 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 
 }
 
-func checkUnsupportedFiletypes(batch base.AdminBatch) []base.ParserType {
+func checkUnsupportedFiletypes(registry ParserRegistry, batch base.AdminBatch) []base.ParserType {
 	var errFileTypes []base.ParserType
-	for fileType := range batch.Files {
-		if !parsing.IsSupportedParser(fileType) {
-			errFileTypes = append(errFileTypes, fileType)
+	for parserType := range batch.Files {
+		if parserType != base.Filter && registry.Resolve(parserType) == nil {
+			errFileTypes = append(errFileTypes, parserType)
 		}
 	}
 	return errFileTypes

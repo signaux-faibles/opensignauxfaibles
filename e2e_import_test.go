@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 	"os"
 	"path"
 	"path/filepath"
@@ -285,6 +286,7 @@ func TestEmptyFilter(t *testing.T) {
 			err := engine.ImportBatch(
 				base.BasicBatchProvider{Batch: batch},
 				[]base.ParserType{},
+				parsing.DefaultParsers,
 				tc.skipFilter,
 				// Should not write anything to DB
 				&engine.DiscardSinkFactory{},
