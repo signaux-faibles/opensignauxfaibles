@@ -312,7 +312,7 @@ func TestNonEmptyFilter(t *testing.T) {
 
 	_, err = db.Exec(
 		context.Background(),
-		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', '2018-01-01', 759);`,
+		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', CURRENT_DATE, 759);`,
 	)
 	assert.NoError(t, err)
 	_, err = db.Exec(
@@ -336,3 +336,37 @@ func TestNonEmptyFilter(t *testing.T) {
 	assert.Equal(t, 1, count)
 
 }
+
+// func TestNonEmptyFilter2(t *testing.T) {
+// 	cleanDB := setupDBTest(t)
+// 	defer cleanDB()
+
+// 	db, err := pgx.Connect(context.Background(), suite.PostgresURI)
+// 	assert.NoError(t, err)
+
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', '2018-01-01', 9);`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`REFRESH MATERIALIZED VIEW filter;`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`TRUNCATE stg_effectif;`,
+// 	)
+// 	assert.NoError(t, err)
+
+// 	var count int
+// 	err = db.QueryRow(
+// 		context.Background(),
+// 		`SELECT count(*) FROM filter;`,
+// 	).Scan(&count)
+// 	assert.NoError(t, err)
+
+// 	assert.Equal(t, 1, count)
+
+// }
