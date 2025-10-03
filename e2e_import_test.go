@@ -254,51 +254,53 @@ func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 	return tables
 }
 
-func TestFilter(t *testing.T) {
-	t.Run("Empty filter triggers an error if skipFilter=false", func(t *testing.T) {
-		batch := base.AdminBatch{
-			Key: "1910",
-			Files: map[base.ParserType][]base.BatchFile{
-				base.Apconso: {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
-			},
-		}
-
-		err := engine.ImportBatch(
-			base.BasicBatchProvider{Batch: batch},
-			[]base.ParserType{},
+func TestEmptyFilter(t *testing.T) {
+	testCases := []struct {
+		skipFilter  bool
+		expectError bool
+		errContains []string
+	}{
+		{
 			false,
-			// Should not write anything to DB
-			&engine.FailSinkFactory{},
-			engine.DiscardReportSink{},
-		)
-
-		t.Log(err)
-		assert.ErrorContains(t, err, "n'a pas été initialisé")
-		assert.ErrorContains(t, err, "import d'un fichier 'effectif'")
-	})
-
-	t.Run("Empty filter triggers no error if skipFilter=true", func(t *testing.T) {
-		cleanDB := setupDBTest(t)
-		defer cleanDB()
-
-		batch := base.AdminBatch{
-			Key: "1910",
-			Files: map[base.ParserType][]base.BatchFile{
-				base.Apconso: {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
-			},
-		}
-
-		err := engine.ImportBatch(
-			base.BasicBatchProvider{Batch: batch},
-			[]base.ParserType{},
 			true,
-			// Should not write anything to DB
-			&engine.DiscardSinkFactory{},
-			engine.DiscardReportSink{},
-		)
+			[]string{"n'a pas été initialisé", "import d'un fichier 'effectif'"},
+		},
+		{
+			true,
+			false,
+			nil,
+		},
+	}
 
-		assert.NoError(t, err)
-	})
+	for _, tc := range testCases {
+
+		t.Run(fmt.Sprintf("Empty filter ; skipFilter=%v ; expectError=%v", tc.skipFilter, tc.expectError), func(t *testing.T) {
+			batch := base.AdminBatch{
+				Key: "1910",
+				Files: map[base.ParserType][]base.BatchFile{
+					base.Apconso: {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
+				},
+			}
+
+			err := engine.ImportBatch(
+				base.BasicBatchProvider{Batch: batch},
+				[]base.ParserType{},
+				tc.skipFilter,
+				// Should not write anything to DB
+				&engine.DiscardSinkFactory{},
+				engine.DiscardReportSink{},
+			)
+
+			if tc.expectError {
+				t.Log(err)
+				for _, s := range tc.errContains {
+					assert.ErrorContains(t, err, s)
+				}
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
 
 func TestNonEmptyFilter(t *testing.T) {
