@@ -1,13 +1,24 @@
 package filter
 
+import "opensignauxfaibles/lib/sfregexp"
+
 const sirenLength = 9
 
 // sirenFilter is a simple SirenFilter implementation
 type sirenFilter map[string]bool
 
 // ShouldSkip retourne `true` si le numéro SIREN/SIRET est hors périmètre.
-// Si aucun filtre n'est défini, renvoi `false` par défaut (aucun filtrage).
+// Tout siret ou siren incorrect est hors périmètre.
+// Si aucun filtre n'est défini ("nil"), filtre uniquement les siret / siren
+// incorrects.
 func (f sirenFilter) ShouldSkip(siretOrSiren string) bool {
+	sirenRe := sfregexp.RegexpDict["siren"]
+	siretRe := sfregexp.RegexpDict["siret"]
+	if !sirenRe.MatchString(siretOrSiren) && !siretRe.MatchString(siretOrSiren) {
+		// siret / siren invalide
+		return true
+	}
+
 	if f == nil {
 		return false
 	}

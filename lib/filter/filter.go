@@ -31,7 +31,7 @@ func Get(batch *base.AdminBatch) (engine.SirenFilter, error) {
 	return GetFromReaders(readers)
 }
 
-// getSirenFilterFromReaders tries each reader in order until one succeeds.
+// GetFromReaders tries each reader in order until one succeeds.
 // The first successful filter is cached and returned.
 func GetFromReaders(readers []engine.FilterReader) (engine.SirenFilter, error) {
 	var filter engine.SirenFilter
