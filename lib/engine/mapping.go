@@ -14,16 +14,6 @@ import (
 	"opensignauxfaibles/lib/sfregexp"
 )
 
-// GetSiret gets the siret related to a specific compte at a given point in
-// time
-func GetSiret(compte string, date *time.Time, cache Cache, batch *base.AdminBatch) (string, error) {
-	comptes, err := GetCompteSiretMapping(cache, batch, OpenAndReadSiretMapping)
-	if err != nil {
-		return "", err
-	}
-	return GetSiretFromComptesMapping(compte, date, comptes)
-}
-
 // GetSiretFromComptesMapping gets the siret related to a specific compte at a
 // given point in time
 func GetSiretFromComptesMapping(compte string, date *time.Time, comptes Comptes) (string, error) {
@@ -58,7 +48,7 @@ func (comptes *Comptes) GetSortedKeys() []string {
 
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache. Lazy loaded.
-func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader) (Comptes, error) {
+func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, filter SirenFilter, mr mappingReader) (Comptes, error) {
 	value, err := cache.Get("comptes")
 	slog.Debug("associe les siret et les numéros de compte URSSAF", slog.Any("AdminBatch", *batch))
 	if err == nil {
@@ -78,7 +68,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 		return nil, errors.New("no admin_urssaf mapping found")
 	}
 	for _, p := range path {
-		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch)
+		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch, filter)
 		if err != nil {
 			slog.Error("erreur pendant le mapping siret <-> compte", slog.Any("error", err))
 			return nil, err
@@ -90,7 +80,7 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, mr mappingReader
 	return compteSiretMapping, nil
 }
 
-type mappingReader func(string, base.BatchFile, Comptes, Cache, *base.AdminBatch) (Comptes, error)
+type mappingReader func(string, base.BatchFile, Comptes, Cache, *base.AdminBatch, SirenFilter) (Comptes, error)
 
 // OpenAndReadSiretMapping opens files and reads their content
 func OpenAndReadSiretMapping(
@@ -99,6 +89,7 @@ func OpenAndReadSiretMapping(
 	compteSiretMapping Comptes,
 	cache Cache,
 	batch *base.AdminBatch,
+	filter SirenFilter,
 ) (Comptes, error) {
 
 	file, fileReader, err := OpenFileReader(batchFile)
@@ -107,7 +98,7 @@ func OpenAndReadSiretMapping(
 	}
 	defer file.Close()
 
-	addSiretMapping, err := readSiretMapping(fileReader, cache, batch)
+	addSiretMapping, err := readSiretMapping(fileReader, cache, batch, filter)
 	slog.Debug("lecture du mapping des sirets", slog.Any("mapping", addSiretMapping))
 	if err != nil {
 		return nil, err
@@ -124,11 +115,8 @@ func readSiretMapping(
 	reader io.Reader,
 	cache Cache,
 	batch *base.AdminBatch,
+	filter SirenFilter,
 ) (Comptes, error) {
-	filter, err := GetSirenFilter(cache, batch)
-	if err != nil {
-		return nil, err
-	}
 
 	var addSiretMapping = make(map[string][]SiretDate)
 

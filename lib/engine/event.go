@@ -8,9 +8,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"opensignauxfaibles/lib/db"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const ReportTable string = "import_logs"
@@ -20,13 +20,13 @@ type ReportSink interface {
 }
 
 type PostgresReportSink struct {
-	conn *pgxpool.Pool
+	conn db.Pool
 
 	// Name of the table to which to write
 	table string
 }
 
-func NewPostgresReportSink(conn *pgxpool.Pool) ReportSink {
+func NewPostgresReportSink(conn db.Pool) ReportSink {
 	return &PostgresReportSink{conn, ReportTable}
 }
 
@@ -52,7 +52,7 @@ func (s *PostgresReportSink) Process(ch chan Report) error {
 	return nil
 }
 
-func insertReport(report Report, conn *pgxpool.Pool, tableName string) error {
+func insertReport(report Report, conn db.Pool, tableName string) error {
 
 	query := fmt.Sprintf(`
 		INSERT INTO %s (

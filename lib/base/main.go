@@ -35,18 +35,6 @@ func (p BasicBatchProvider) Get() (AdminBatch, error) {
 	return p.Batch, nil
 }
 
-// IsBatchID retourne `true` si `batchID` est un identifiant de Batch.
-func IsBatchID(batchID string) bool {
-	if len(batchID) < 4 {
-		return false
-	}
-	_, err := time.Parse("0601", batchID[0:4])
-	if len(batchID) > 4 && batchID[4] != '_' {
-		return false
-	}
-	return err == nil
-}
-
 // BatchFiles fichiers mappés par type
 type BatchFiles map[ParserType][]BatchFile
 

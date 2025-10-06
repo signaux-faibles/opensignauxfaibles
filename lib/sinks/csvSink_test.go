@@ -1,10 +1,14 @@
-package engine
+package sinks
 
 import (
 	"bytes"
 	"context"
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // MockTuple implements the Tuple interface for testing
@@ -30,7 +34,7 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 	}
 
 	// setup channel
-	ch := make(chan Tuple, 3)
+	ch := make(chan engine.Tuple, 3)
 	ch <- MockTuple{
 		H1:    "value1",
 		H2:    "value2",
@@ -62,4 +66,39 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 	if buf.String() != expectedOutput {
 		t.Error("Expect output data to be properly csv formatted")
 	}
+}
+
+func TestExtractCSVValues(t *testing.T) {
+	anInt := 1
+	testCases := []struct {
+		tuple          engine.TestTuple
+		expectedLen    int
+		expectedValues []string
+	}{
+		{
+			engine.TestTuple{},
+			3,
+			[]string{"", "", ""},
+		},
+		{
+			engine.TestTuple{"abc", &anInt, "def", &time.Time{}},
+			3,
+			[]string{"abc", "1", "0001-01-01"},
+		},
+	}
+	for _, tc := range testCases {
+
+		extracted := ExtractCSVRow(tc.tuple)
+
+		if assert.Len(t, extracted, tc.expectedLen) {
+			for i, expected := range tc.expectedValues {
+				assert.Equal(t, extracted[i], expected)
+			}
+		}
+	}
+}
+
+func TestExtractCSVHeaders(t *testing.T) {
+	tuple := engine.TestTuple{}
+	assert.Equal(t, ExtractCSVHeaders(tuple), []string{"test1", "test2", "test4"})
 }

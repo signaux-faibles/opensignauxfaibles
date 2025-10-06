@@ -1,4 +1,4 @@
-package engine
+package sinks
 
 import (
 	"context"
@@ -8,10 +8,14 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"reflect"
+	"strconv"
+	"time"
 
 	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 )
 
 const DefaultExportPath = "/export/csv"
@@ -20,11 +24,11 @@ type CSVSinkFactory struct {
 	relativeDirPath string
 }
 
-func NewCSVSinkFactory(relativeDirPath string) SinkFactory {
+func NewCSVSinkFactory(relativeDirPath string) engine.SinkFactory {
 	return &CSVSinkFactory{relativeDirPath}
 }
 
-func (f *CSVSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+func (f *CSVSinkFactory) CreateSink(parserType base.ParserType) (engine.DataSink, error) {
 
 	// resolve filename given parserType
 	rootDir := DefaultExportPath
@@ -62,7 +66,7 @@ type CSVSink struct {
 // The directory is derived from the CSVSink's directory
 // path, relative to the export root directory ("export.path"
 // configuration, or by default the `DefaultExportPath` constant)
-func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
+func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) error {
 	logger := slog.With("sink", "csv", "file", s.file)
 	logger.Debug("stream data to CSV file")
 
@@ -118,4 +122,50 @@ func createFile(filePath string) (*os.File, error) {
 	}
 
 	return file, nil
+}
+
+// ExtractCSVHeaders extrait les en-têtes csv via le tag "csv"
+func ExtractCSVHeaders(tuple engine.Tuple) (header []string) {
+	return engine.ExtractFieldsByTags(tuple, "csv")
+}
+
+// ExtractCSVRow returns the tuple values, in same order as the header, and converted to strings
+func ExtractCSVRow(tuple engine.Tuple) (values []string) {
+	rawValues := engine.ExtractValuesByTags(tuple, "csv")
+	for _, v := range rawValues {
+		values = append(values, valueToString(v))
+	}
+	return values
+}
+
+func valueToString(v reflect.Value) string {
+	if v.Kind() == reflect.Ptr && v.IsNil() {
+		return ""
+	}
+
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	switch v.Kind() {
+	case reflect.String:
+		return v.String()
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return strconv.FormatInt(v.Int(), 10)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return strconv.FormatUint(v.Uint(), 10)
+	case reflect.Float32, reflect.Float64:
+		return strconv.FormatFloat(v.Float(), 'f', -1, 64)
+	case reflect.Bool:
+		return strconv.FormatBool(v.Bool())
+	case reflect.Struct:
+		if v.Type() == reflect.TypeOf(time.Time{}) {
+			t := v.Interface().(time.Time)
+			return t.Format(time.DateOnly)
+		}
+		return ""
+	default:
+		// Fallback to string representation
+		return v.String()
+	}
 }

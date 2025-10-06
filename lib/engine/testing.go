@@ -116,37 +116,6 @@ func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) 
 	return RunParser(parser, cache, base.NewBatchFile(csvFile.Name()))
 }
 
-// RunParser returns Tuples and Reports resulting from the execution of a
-// Parser on a given input file.
-// TimeStamps are set to 0 for reproducibility
-func RunParser(
-	parser Parser,
-	cache Cache,
-	inputFile base.BatchFile,
-) (output tuplesAndReports) {
-	ctx := context.Background()
-	batch := base.MockBatch(parser.Type(), []base.BatchFile{inputFile})
-	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser)
-
-	// intercepter et afficher les évènements pendant l'importation
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for event := range events {
-			event.StartDate = time.Time{}
-			output.Reports = append(output.Reports, event)
-		}
-	}()
-
-	for tuple := range tuples {
-		output.Tuples = append(output.Tuples, tuple)
-	}
-
-	wg.Wait()
-	return output
-}
-
 // TestParserOutput compares output Tuples and output Reports with JSON stored
 // in a golden file. If update = true, the the golden file is updated.
 func TestParserOutput(
@@ -174,6 +143,37 @@ func TestParserOutput(
 	}
 
 	assert.Equal(t, string(expected), string(actual))
+}
+
+// RunParser returns Tuples and Reports resulting from the execution of a
+// Parser on a given input file.
+// TimeStamps are set to 0 for reproducibility
+func RunParser(
+	parser Parser,
+	cache Cache,
+	inputFile base.BatchFile,
+) (output tuplesAndReports) {
+	ctx := context.Background()
+	batch := base.MockBatch(parser.Type(), []base.BatchFile{inputFile})
+	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser, nil)
+
+	// intercepter et afficher les évènements pendant l'importation
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for event := range events {
+			event.StartDate = time.Time{}
+			output.Reports = append(output.Reports, event)
+		}
+	}()
+
+	for tuple := range tuples {
+		output.Tuples = append(output.Tuples, tuple)
+	}
+
+	wg.Wait()
+	return output
 }
 
 // CreateTempFileWithContent créée un fichier temporaire et le supprime
@@ -204,3 +204,31 @@ type TestTuple struct {
 func (TestTuple) Key() string           { return "" }
 func (TestTuple) Scope() string         { return "" }
 func (TestTuple) Type() base.ParserType { return "" }
+
+// -----------------------------------------------------
+// Test DataSinkFactory and Data Sink implementations
+// -----------------------------------------------------
+
+type TestSinkFactory struct{}
+
+func (TestSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+	return &DiscardDataSink{}, nil
+}
+
+// DiscardSinkFactory discards all data, regardless of the parser
+type DiscardSinkFactory struct{}
+
+func (f *DiscardSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+	return &DiscardDataSink{}, nil
+}
+
+type DiscardDataSink struct {
+	Counter int
+}
+
+func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
+	for range ch {
+		s.Counter++
+	}
+	return nil
+}

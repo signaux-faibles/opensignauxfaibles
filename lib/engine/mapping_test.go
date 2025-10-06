@@ -14,52 +14,6 @@ import (
 	"opensignauxfaibles/lib/base"
 )
 
-func TestGetSiret(t *testing.T) {
-
-	stdTime1, _ := time.Parse("2006-02-01", "2015-01-01")
-	stdTime2, _ := time.Parse("2006-02-01", "2016-01-01")
-	var stdMapping = map[string][]SiretDate{
-		"abc": {
-			{"01234567891011", stdTime1},
-			{"87654321091011", stdTime2},
-		},
-	}
-	var batch = base.AdminBatch{}
-	testCases := []struct {
-		compte      string
-		date        string
-		mapping     Comptes
-		expectError bool
-		expected    string
-	}{
-		{"abc", "2015-01-01", map[string][]SiretDate{}, true, ""},
-		{"abc", "2014-06-01", stdMapping, false, "01234567891011"},
-		{"abc", "2014-12-31", stdMapping, false, "01234567891011"},
-		{"abc", "2015-01-01", stdMapping, false, "87654321091011"},
-		{"abc", "2016-01-01", stdMapping, true, ""},
-	}
-
-	for ind, tc := range testCases {
-
-		var cache = NewCache(map[string]any{"comptes": tc.mapping})
-
-		time, _ := time.Parse("2006-02-01", tc.date)
-		actual, err := GetSiret(tc.compte, &time, cache, &batch)
-		if err != nil && !tc.expectError {
-			t.Fatalf("Unexpected error during cache request in test %d: %v", ind, err)
-		}
-		if err == nil && tc.expectError {
-			t.Fatalf("Expected error missing during cache request in test %d: %v", ind, err)
-		}
-		expected := tc.expected
-		if actual != expected {
-			t.Log(actual)
-			t.Log(expected)
-			t.Fatalf("GetSiret failed on test %d", ind)
-		}
-	}
-}
-
 func TestReadSiretMapping(t *testing.T) {
 
 	t.Run("readSiretMapping doit être insensible à la casse des en-têtes de colonnes", func(t *testing.T) {

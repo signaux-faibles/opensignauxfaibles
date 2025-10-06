@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 	"os"
@@ -59,18 +60,18 @@ func createImportTestBatch(t *testing.T) {
 		Files: map[base.ParserType][]base.BatchFile{
 			Dummy:            {},
 			base.Filter:      {},
-			base.Apconso:     {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
-			base.Apdemande:   {base.NewBatchFile("lib/apdemande/testData/apdemandeTestData.csv")},
-			base.Sirene:      {base.NewBatchFile("lib/sirene/testData/sireneTestData.csv")},
-			base.SireneUl:    {base.NewBatchFile("lib/sirene_ul/testData/sireneULTestData.csv")},
-			base.AdminUrssaf: {base.NewBatchFile("lib/urssaf/testData/comptesTestData.csv")},
-			base.Debit:       {base.NewBatchFile("lib/urssaf/testData/debitTestData.csv")},
-			base.Ccsf:        {base.NewBatchFile("lib/urssaf/testData/ccsfTestData.csv")},
-			base.Cotisation:  {base.NewBatchFile("lib/urssaf/testData/cotisationTestData.csv")},
-			base.Delai:       {base.NewBatchFile("lib/urssaf/testData/delaiTestData.csv")},
-			base.Effectif:    {base.NewBatchFile("lib/urssaf/testData/effectifTestData.csv")},
-			base.EffectifEnt: {base.NewBatchFile("lib/urssaf/testData/effectifEntTestData.csv")},
-			base.Procol:      {base.NewBatchFile("lib/urssaf/testData/procolTestData.csv")},
+			base.Apconso:     {base.NewBatchFile("lib/parsing/apconso/testData/apconsoTestData.csv")},
+			base.Apdemande:   {base.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
+			base.Sirene:      {base.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
+			base.SireneUl:    {base.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
+			base.AdminUrssaf: {base.NewBatchFile("lib/parsing/urssaf/testData/comptesTestData.csv")},
+			base.Debit:       {base.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")},
+			base.Ccsf:        {base.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},
+			base.Cotisation:  {base.NewBatchFile("lib/parsing/urssaf/testData/cotisationTestData.csv")},
+			base.Delai:       {base.NewBatchFile("lib/parsing/urssaf/testData/delaiTestData.csv")},
+			base.Effectif:    {base.NewBatchFile("lib/parsing/urssaf/testData/effectifTestData.csv")},
+			base.EffectifEnt: {base.NewBatchFile("lib/parsing/urssaf/testData/effectifEntTestData.csv")},
+			base.Procol:      {base.NewBatchFile("lib/parsing/urssaf/testData/procolTestData.csv")},
 		},
 		Params: base.AdminBatchParams{
 			DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
@@ -150,7 +151,7 @@ func verifyPostgresExport(t *testing.T) {
 	hasEventTable := false
 
 	for _, table := range tables {
-		if table == engine.VersionTable {
+		if table == db.VersionTable {
 			hasMigrationTable = true
 			continue
 		}
@@ -283,11 +284,13 @@ func TestEmptyFilter(t *testing.T) {
 				},
 			}
 
+			var filter engine.SirenFilter
+
 			err := engine.ImportBatch(
-				base.BasicBatchProvider{Batch: batch},
+				batch,
 				[]base.ParserType{},
 				parsing.DefaultParsers,
-				tc.skipFilter,
+				filter,
 				// Should not write anything to DB
 				&engine.DiscardSinkFactory{},
 				engine.DiscardReportSink{},

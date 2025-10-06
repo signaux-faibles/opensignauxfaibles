@@ -22,3 +22,26 @@ func TestBatchKey(t *testing.T) {
 		}
 	})
 }
+
+func Test_IsBatchID(t *testing.T) {
+	if !IsBatchKey("1801") {
+		t.Error("1801 devrait être un ID de batch")
+	}
+
+	if IsBatchKey("") {
+		t.Error("'' ne devrait pas être considéré comme un ID de batch")
+	}
+
+	if IsBatchKey("190193039") {
+		t.Error("'190193039' ne devrait pas être considéré comme un ID de batch")
+	}
+	if !IsBatchKey("1901_93039") {
+		t.Error("'1901_93039'  devrait être considéré comme un ID de batch")
+	}
+
+	if IsBatchKey("abcd") {
+		t.Error("'abcd' ne devrait pas être considéré comme un ID de batch")
+	} else {
+		t.Log("'abcd' est bien rejeté: ")
+	}
+}

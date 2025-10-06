@@ -16,9 +16,11 @@ func OpenCsvReader(batchFile base.BatchFile, comma rune, lazyQuotes bool) (*os.F
 	if err != nil {
 		return file, nil, err
 	}
+
 	reader := csv.NewReader(fileReader)
 	reader.Comma = comma
 	reader.LazyQuotes = lazyQuotes
+
 	return file, reader, err
 }
 
@@ -41,22 +43,28 @@ func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
 }
 
 // ParseLines appelle la fonction parseLine() sur chaque ligne du fichier CSV pour transmettre les tuples et/ou erreurs dans parsedLineChan.
-func ParseLines(parsedLineChan chan ParsedLineResult, lineReader *csv.Reader, parseLine func(row []string, parsedLine *ParsedLineResult)) {
+func ParseLines(parser Parser, parsedLineChan chan ParsedLineResult) {
+	defer close(parsedLineChan)
+
 	var lineNumber = 0 // starting with the header
+
 	stopProgressLogger := LogProgress(&lineNumber)
 	defer stopProgressLogger()
+
 	for {
 		lineNumber++
 		parsedLine := ParsedLineResult{}
-		row, err := lineReader.Read()
+		err := parser.ReadNext(&parsedLine)
+
 		if err == io.EOF {
 			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddRegularError(err)
-		} else if len(row) > 0 {
-			parseLine(row, &parsedLine)
+			parsedLineChan <- parsedLine
+			break
 		}
+
 		parsedLineChan <- parsedLine
 	}
 }

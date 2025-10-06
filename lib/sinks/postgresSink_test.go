@@ -1,6 +1,7 @@
-package engine
+package sinks
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"testing"
 	"time"
 
@@ -10,17 +11,17 @@ import (
 func TestExtractValues(t *testing.T) {
 	anInt := 1
 	testCases := []struct {
-		tuple          TestTuple
+		tuple          engine.TestTuple
 		expectedLen    int
 		expectedValues []any
 	}{
 		{
-			TestTuple{},
+			engine.TestTuple{},
 			3,
 			[]any{"", (*int)(nil), (*time.Time)(nil)},
 		},
 		{
-			TestTuple{"abc", &anInt, "def", &time.Time{}},
+			engine.TestTuple{"abc", &anInt, "def", &time.Time{}},
 			3,
 			[]any{"abc", &anInt, &time.Time{}},
 		},
@@ -36,6 +37,6 @@ func TestExtractValues(t *testing.T) {
 }
 
 func TestExtractTableColumns(t *testing.T) {
-	tuple := TestTuple{}
+	tuple := engine.TestTuple{}
 	assert.Equal(t, ExtractTableColumns(tuple), []string{"test1", "test2", "test4"})
 }

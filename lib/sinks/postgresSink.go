@@ -1,28 +1,29 @@
-package engine
+package sinks
 
 import (
 	"context"
 	"fmt"
 	"log/slog"
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/db"
+	"opensignauxfaibles/lib/engine"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // BatchSize controls the max number of rows inserted at a time
 const BatchSize = 1000
 
 type PostgresSinkFactory struct {
-	conn *pgxpool.Pool
+	conn db.Pool
 }
 
-func NewPostgresSinkFactory(conn *pgxpool.Pool) SinkFactory {
+func NewPostgresSinkFactory(conn db.Pool) engine.SinkFactory {
 	return &PostgresSinkFactory{conn}
 }
 
-func (f *PostgresSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+func (f *PostgresSinkFactory) CreateSink(parserType base.ParserType) (engine.DataSink, error) {
 	switch parserType {
 	case base.Apconso,
 		base.Apdemande,
@@ -44,7 +45,7 @@ func (f *PostgresSinkFactory) CreateSink(parserType base.ParserType) (DataSink, 
 		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil
 	}
 
-	return &DiscardDataSink{}, nil
+	return &engine.DiscardDataSink{}, nil
 }
 
 // PostgresSink writes the output to postgresql.
@@ -55,7 +56,7 @@ func (f *PostgresSinkFactory) CreateSink(parserType base.ParserType) (DataSink, 
 //
 // The columns of this table will correspond to the "Tuple.Headers()"
 type PostgresSink struct {
-	conn *pgxpool.Pool
+	conn db.Pool
 
 	// Name of the table to which to write
 	table string
@@ -64,12 +65,12 @@ type PostgresSink struct {
 	viewToRefresh string
 }
 
-func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
+func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
 	logger.Debug("stream output to PostgreSQL")
 
-	var currentBatch []Tuple
+	var currentBatch []engine.Tuple
 	var headers []string
 
 	logger.Debug("truncate table")
@@ -126,7 +127,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
 	return nil
 }
 
-func insertTuples(tuples []Tuple, conn *pgxpool.Pool, tableName string, columns []string) error {
+func insertTuples(tuples []engine.Tuple, conn db.Pool, tableName string, columns []string) error {
 	if len(tuples) == 0 {
 		return nil
 	}
@@ -153,4 +154,18 @@ func insertTuples(tuples []Tuple, conn *pgxpool.Pool, tableName string, columns 
 	)
 
 	return err
+}
+
+// ExtractTableColumns extrait les noms des colonnes pour une table SQL via le tag "sql"
+func ExtractTableColumns(tuple engine.Tuple) (header []string) {
+	return engine.ExtractFieldsByTags(tuple, "sql")
+}
+
+// ExtractTableRow extrait les valeurs des colonnes pour une table SQL via le tag "sql"
+func ExtractTableRow(tuple engine.Tuple) (row []any) {
+	rawValues := engine.ExtractValuesByTags(tuple, "sql")
+	for _, v := range rawValues {
+		row = append(row, v.Interface())
+	}
+	return row
 }

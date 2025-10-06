@@ -60,7 +60,7 @@ func (params parseFileHandler) Run() error {
 	reportChannel := make(chan engine.Report)
 	ctx := context.Background()
 	go func() {
-		reportChannel <- engine.ParseFile(ctx, file, parser, &batch, cache, outputChannel)
+		reportChannel <- engine.ParseFile(ctx, file, parser, &batch, cache, outputChannel, nil)
 		close(outputChannel)
 		close(reportChannel)
 	}()

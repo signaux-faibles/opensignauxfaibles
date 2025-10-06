@@ -40,7 +40,7 @@ func TestUrssaf(t *testing.T) {
 			{ParserCCSF, "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
 			{ParserCompte, "comptesTestData.csv", "expectedComptes.json", engine.NewEmptyCache()},
 			{ParserDebit, "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
-			{ParserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
+			{parserDelai, "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
 			{ParserEffectifEnt, "effectifEntTestData.csv", "expectedEffectifEnt.json", makeCacheWithComptesMapping()},
 			{ParserEffectif, "effectifTestData.csv", "expectedEffectif.json", makeCacheWithComptesMapping()},
 			{ParserProcol, "procolTestData.csv", "expectedProcol.json", makeCacheWithComptesMapping()},
@@ -117,10 +117,10 @@ func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = base.NewBatchFile("testData", "delaiTestData.csv")
 	var cache = makeCacheWithComptesMapping()
-	engine.TestParserOutput(t, ParserDelai, cache, testData, golden, *update)
+	engine.TestParserOutput(t, parserDelai, cache, testData, golden, *update)
 
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInlineEx(t, cache, ParserDelai, []string{"dummy"})
+		output := engine.RunParserInlineEx(t, cache, parserDelai, []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, engine.GetFatalError(output), "Colonne Numero_compte_externe non trouvée")
 	})

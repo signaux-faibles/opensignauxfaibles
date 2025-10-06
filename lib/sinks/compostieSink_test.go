@@ -1,8 +1,9 @@
-package engine
+package sinks
 
 import (
 	"context"
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,7 +11,7 @@ import (
 
 func TestCompositeSink(t *testing.T) {
 
-	ch := make(chan Tuple)
+	ch := make(chan engine.Tuple)
 
 	const testType base.ParserType = "testtype"
 	go func() {
@@ -33,9 +34,9 @@ func TestCompositeSink(t *testing.T) {
 		close(ch)
 	}()
 
-	f1 := TestSinkFactory{}
-	f2 := TestSinkFactory{}
-	compositeFactory := NewCompositeSinkFactory(f1, f2)
+	f1 := engine.TestSinkFactory{}
+	f2 := engine.TestSinkFactory{}
+	compositeFactory := Combine(f1, f2)
 
 	ctx := context.Background()
 	compSink, _ := compositeFactory.CreateSink("testtype")
@@ -47,7 +48,7 @@ func TestCompositeSink(t *testing.T) {
 	}
 
 	for _, sink := range allSinks {
-		n := sink.(*DiscardDataSink).counter
+		n := sink.(*engine.DiscardDataSink).Counter
 		if n != 2 {
 			t.Fatalf("A composite sink is expected to dispatch all data (2 tuples) to all output sinks, got %d", n)
 		}
@@ -55,7 +56,7 @@ func TestCompositeSink(t *testing.T) {
 }
 
 func TestCompositeSink_FailingSink(t *testing.T) {
-	ch := make(chan Tuple)
+	ch := make(chan engine.Tuple)
 
 	go func() {
 		ch <- MockTuple{
@@ -77,9 +78,9 @@ func TestCompositeSink_FailingSink(t *testing.T) {
 		close(ch)
 	}()
 
-	f1 := TestSinkFactory{}
-	f2 := FailSinkFactory{}
-	compositeFactory := &compositeSinkFactory{[]SinkFactory{f1, f2}, 1}
+	f1 := engine.TestSinkFactory{}
+	f2 := engine.FailSinkFactory{}
+	compositeFactory := &compositeSinkFactory{[]engine.SinkFactory{f1, f2}, 1}
 
 	ctx := context.Background()
 	compSink, _ := compositeFactory.CreateSink("testtype")

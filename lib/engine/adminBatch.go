@@ -27,60 +27,40 @@ func Load(batch *base.AdminBatch, reader io.Reader) error {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
-	batchProvider base.BatchProvider,
+	batchConfig base.AdminBatch,
 	parserTypes []base.ParserType,
 	registry ParserRegistry,
-	skipFilter bool,
+	filter SirenFilter,
 	sinkFactory SinkFactory,
 	eventSink ReportSink,
 ) error {
-
-	batch, err := batchProvider.Get()
-	if err != nil {
-		return err
-	}
 
 	parsers, err := ResolveParsers(registry, parserTypes)
 	if err != nil {
 		return err
 	}
 
-	logger := slog.With("batch", batch.Key)
+	logger := slog.With("batch", batchConfig.Key)
 	logger.Info("starting raw data import")
 
-	var cache = NewEmptyCache()
-
-	filter, err := GetSirenFilter(cache, &batch)
-	if err != nil {
-		return err
-	}
-	if !skipFilter && filter == nil {
-		return errors.New(`
-    Le filtre est manquant ou n'a pas été initialisé.
-    Lorsque le filtre est manquant, il est nécessaire de l'initialiser via
-    l'import d'un fichier 'effectif', ou de placer le fichier filtre à
-    importer, préfixé par 'filter_' dans le dossier des données à importer.
-    Si vous souhaitez importer sans filtre, utilisez l'option "--no-filter".
-    `)
-	}
-
-	unsupported := checkUnsupportedFiletypes(registry, batch)
+	unsupported := checkUnsupportedFiletypes(registry, batchConfig)
 	for _, file := range unsupported {
 		logger.Warn("Type de fichier non reconnu", "file", file)
 	}
 
 	var g errgroup.Group
 
+	var cache = NewEmptyCache()
 	for _, parser := range parsers {
 		// We create a parser-specific context. Any error will cancelParserProcess all
 		// parser-related operations
 		ctx, cancelParserProcess := context.WithCancelCause(context.Background())
 		defer cancelParserProcess(nil)
 
-		if len(batch.Files[parser.Type()]) > 0 {
+		if len(batchConfig.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
-			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter) // appelle la fonction ParseFile() pour chaque type de fichier
 
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(

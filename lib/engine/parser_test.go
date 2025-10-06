@@ -39,7 +39,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.AddTuple(dummyTuple{})
 
 		tracker := NewParsingTracker()
-		parseTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		processTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")
@@ -57,7 +57,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.SetFilterError(errors.New("filtered"))
 
 		tracker := NewParsingTracker()
-		parseTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		processTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")
@@ -104,7 +104,7 @@ func (parser *dummyParser) Type() base.ParserType {
 	return "dummy"
 }
 
-func (parser *dummyParser) Init(cache *Cache, batch *base.AdminBatch) error {
+func (parser *dummyParser) Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error {
 	return parser.initError
 }
 

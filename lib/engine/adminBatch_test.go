@@ -10,37 +10,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_IsBatchID(t *testing.T) {
-	if !base.IsBatchID("1801") {
-		t.Error("1801 devrait être un ID de batch")
-	}
-
-	if base.IsBatchID("") {
-		t.Error("'' ne devrait pas être considéré comme un ID de batch")
-	}
-
-	if base.IsBatchID("190193039") {
-		t.Error("'190193039' ne devrait pas être considéré comme un ID de batch")
-	}
-	if !base.IsBatchID("1901_93039") {
-		t.Error("'1901_93039'  devrait être considéré comme un ID de batch")
-	}
-
-	if base.IsBatchID("abcd") {
-		t.Error("'abcd' ne devrait pas être considéré comme un ID de batch")
-	} else {
-		t.Log("'abcd' est bien rejeté: ")
-	}
-}
-
 func Test_CheckBatchPaths(t *testing.T) {
 	testCases := []struct {
 		Filepath      base.BatchFile
 		ErrorExpected bool
 	}{
+		// Really exists but is empty
 		{base.NewBatchFile("test_data/empty_file"), false},
+
+		// Does not exist
 		{base.NewBatchFile("test_data/missing_file"), true},
 	}
+
 	for _, tc := range testCases {
 		mockbatch := base.MockBatch("debit", []base.BatchFile{tc.Filepath})
 		err := CheckBatchPaths(&mockbatch)
@@ -52,35 +33,27 @@ func Test_CheckBatchPaths(t *testing.T) {
 	}
 }
 
-type TestSinkFactory struct{}
-
-func (TestSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
-	return &DiscardDataSink{}, nil
-}
-
 func Test_ImportBatch(t *testing.T) {
 
-	batchProvider := base.BasicBatchProvider{Batch: base.AdminBatch{}}
 	err := ImportBatch(
-		batchProvider,
+		base.AdminBatch{},
 		[]base.ParserType{},
-		// TODO check
 		nil,
-		false,
+		nil,
 		TestSinkFactory{},
 		DiscardReportSink{},
 	)
+
 	if err == nil {
 		t.Error("ImportBatch devrait nous empêcher d'importer sans filtre")
 	}
 }
 
 func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
-	batchProvider := base.BasicBatchProvider{
-		Batch: base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("this_file_does_not_exist")}),
-	}
+	batch := base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("this_file_does_not_exist")})
+
 	err := ImportBatch(
-		batchProvider,
+		batch,
 		[]base.ParserType{},
 		// TODO check
 		nil,
@@ -96,7 +69,7 @@ func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
 func Test_ImportBatchWithSinkFailure(t *testing.T) {
 	batch := base.AdminBatch{
 		Files: base.BatchFiles{
-			"apdemande": {base.NewBatchFile("../..", "lib/apdemande/testData/apdemandeTestData.csv")},
+			"apdemande": {base.NewBatchFile("../..", "lib/parsing/apdemande/testData/apdemandeTestData.csv")},
 		},
 	}
 	batchProvider := base.BasicBatchProvider{Batch: batch}
@@ -116,7 +89,7 @@ func Test_ImportBatchWithSinkFailure(t *testing.T) {
 
 func Test_ImportBatchDryRun(t *testing.T) {
 	// Set up import
-	adminBatch := base.MockBatch(base.Apdemande, []base.BatchFile{base.NewBatchFile("..", "apdemande/testData/apdemandeTestData.csv")})
+	adminBatch := base.MockBatch(base.Apdemande, []base.BatchFile{base.NewBatchFile("..", "parsing/apdemande/testData/apdemandeTestData.csv")})
 	batchProvider := base.BasicBatchProvider{Batch: adminBatch}
 
 	noFilter := true
@@ -150,6 +123,6 @@ func Test_ImportBatchDryRun(t *testing.T) {
 	assert.Contains(
 		t,
 		strings.ReplaceAll(logs.String(), "\\", ""),
-		`"summary": "../apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"`,
+		`"summary": "../parsing/apdemande/testData/apdemandeTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"`,
 	)
 }

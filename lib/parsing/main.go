@@ -13,10 +13,14 @@ import (
 	"opensignauxfaibles/lib/parsing/urssaf"
 )
 
-// Implements engine.ParserRegistry
+// ParserRegistry implements engine.ParserRegistry
 type ParserRegistry map[base.ParserType]engine.Parser
 
 func (pr ParserRegistry) Resolve(parserType base.ParserType) engine.Parser {
+	if pr == nil {
+		return nil
+	}
+
 	if parser, ok := pr[parserType]; ok {
 		return parser
 	}
@@ -24,6 +28,10 @@ func (pr ParserRegistry) Resolve(parserType base.ParserType) engine.Parser {
 }
 
 func (pr ParserRegistry) All() []engine.Parser {
+	if pr == nil {
+		return []engine.Parser{}
+	}
+
 	var parsers []engine.Parser
 	for _, parser := range pr {
 		parsers = append(parsers, parser)
@@ -35,16 +43,16 @@ func (pr ParserRegistry) All() []engine.Parser {
 // Note: penser à tenir à jour la table des formats, dans la documentation:
 // https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#sp%C3%A9cificit%C3%A9s-de-limport
 var DefaultParsers = ParserRegistry{
-	base.Debit:       urssaf.ParserDebit,
-	base.Ccsf:        urssaf.ParserCCSF,
-	base.Cotisation:  urssaf.ParserCotisation,
-	base.AdminUrssaf: urssaf.ParserCompte,
-	base.Delai:       urssaf.ParserDelai,
-	base.Effectif:    urssaf.ParserEffectif,
-	base.EffectifEnt: urssaf.ParserEffectifEnt,
-	base.Procol:      urssaf.ParserProcol,
-	base.Apconso:     apconso.Parser,
-	base.Apdemande:   apdemande.Parser,
-	base.Sirene:      sirene.Parser,
-	base.SireneUl:    sireneul.Parser,
+	base.Debit:       urssaf.NewParserDebit(),
+	base.Ccsf:        urssaf.NewParserCCSF(),
+	base.Cotisation:  urssaf.NewParserCotisation(),
+	base.AdminUrssaf: urssaf.NewParserComptes(),
+	base.Delai:       urssaf.NewParserDelai(),
+	base.Effectif:    urssaf.NewParserEffectif(),
+	base.EffectifEnt: urssaf.NewParserEffectifEnt(),
+	base.Procol:      urssaf.NewParserProcol(),
+	base.Apconso:     apconso.NewParserApconso(),
+	base.Apdemande:   apdemande.NewParserApdemande(),
+	base.Sirene:      sirene.NewParserSirene(),
+	base.SireneUl:    sireneul.NewParserSireneUL(),
 }

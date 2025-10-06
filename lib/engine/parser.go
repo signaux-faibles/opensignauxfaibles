@@ -11,38 +11,18 @@ import (
 	"opensignauxfaibles/lib/sfregexp"
 )
 
-// Parser spécifie les fonctions qui doivent être implémentées par chaque parseur de fichier.
+// Parser spécifie les fonctions qui doivent être implémentées par chaque
+// parseur de fichier
 type Parser interface {
 	Type() base.ParserType
-	Init(cache *Cache, batch *base.AdminBatch) error
+	Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error
+
 	Open(filePath base.BatchFile) error
-	ParseLines(parsedLineChan chan ParsedLineResult)
 	Close() error
-}
 
-type ParserRegistry interface {
-	Resolve(base.ParserType) Parser
-	All() []Parser
-}
-
-// ResolveParsers gets the appropriate parsers from a types array.
-// If "types" is empty, all parsers are returned.
-// A provided type that is missing from the registry triggers an error.
-func ResolveParsers(registry ParserRegistry, types []base.ParserType) ([]Parser, error) {
-	var parsers []Parser
-
-	if len(types) == 0 {
-		return registry.All(), nil
-	}
-
-	for _, parserType := range types {
-		parser := registry.Resolve(parserType)
-		if parser == nil {
-			return nil, fmt.Errorf("parser registry could not resolve parser \"%s\"", parserType)
-		}
-		parsers = append(parsers, parser)
-	}
-	return parsers, nil
+	// ReadNext extracts tuples from next line
+	// Any error definitely interrupts the parsing
+	ReadNext(*ParsedLineResult) error
 }
 
 // ParsedLineResult est le résultat du parsing d'une ligne.
@@ -82,14 +62,20 @@ type Tuple interface {
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
-func ParseFilesFromBatch(ctx context.Context, cache Cache, batch *base.AdminBatch, parser Parser) (chan Tuple, chan Report) {
+func ParseFilesFromBatch(
+	ctx context.Context,
+	cache Cache,
+	batch *base.AdminBatch,
+	parser Parser,
+	filter SirenFilter,
+) (chan Tuple, chan Report) {
 	outputChannel := make(chan Tuple)
 	reportChannel := make(chan Report)
 	fileType := parser.Type()
 
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			reportChannel <- ParseFile(ctx, path, parser, batch, cache, outputChannel)
+			reportChannel <- ParseFile(ctx, path, parser, batch, cache, outputChannel, filter)
 		}
 		close(outputChannel)
 		close(reportChannel)
@@ -99,14 +85,15 @@ func ParseFilesFromBatch(ctx context.Context, cache Cache, batch *base.AdminBatc
 
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
 func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *base.AdminBatch,
-	cache Cache, outputChannel chan Tuple) Report {
+	cache Cache, outputChannel chan Tuple, filter SirenFilter) Report {
 	logger := slog.With("batch", batch.Key, "parser", parser.Type(), "filename", path.Path())
 	logger.Debug("parsing file")
 
 	tracker := NewParsingTracker()
 	fileType := parser.Type()
 
-	err := runParserOnFile(ctx, path, parser, batch, cache, &tracker, outputChannel)
+	err := runParserOnFile(ctx, path, parser, batch, cache, &tracker,
+		outputChannel, filter)
 	if err != nil {
 		tracker.AddFatalError(err)
 	}
@@ -117,19 +104,27 @@ func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *b
 }
 
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
-func runParserOnFile(ctx context.Context, filePath base.BatchFile, parser Parser, batch *base.AdminBatch, cache Cache, tracker *ParsingTracker, outputChannel chan Tuple) error {
-	// TODO this was GetSirenFilterFromCache, why ?
-	filter, _ := GetSirenFilter(cache, batch)
-	if err := parser.Init(&cache, batch); err != nil {
+func runParserOnFile(
+	ctx context.Context,
+	filePath base.BatchFile,
+	parser Parser,
+	batch *base.AdminBatch,
+	cache Cache,
+	tracker *ParsingTracker,
+	outputChannel chan Tuple,
+	filter SirenFilter,
+) error {
+
+	if err := parser.Init(&cache, filter, batch); err != nil {
 		return err
 	}
 	if err := parser.Open(filePath); err != nil {
 		return err
 	}
 	parsedLineChan := make(chan ParsedLineResult)
-	go parser.ParseLines(parsedLineChan)
+	go ParseLines(parser, parsedLineChan)
 	for lineResult := range parsedLineChan {
-		err := parseTuplesFromLine(ctx, lineResult, &filter, tracker, outputChannel)
+		err := processTuplesFromLine(ctx, lineResult, filter, tracker, outputChannel)
 		if err != nil {
 			// Do not proceed with parsing if fatal error
 			tracker.AddFatalError(err)
@@ -142,10 +137,10 @@ func runParserOnFile(ctx context.Context, filePath base.BatchFile, parser Parser
 	return parser.Close()
 }
 
-// parseTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.
+// processTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.
 // Return an error only if parsing cannot proceed. Otherwise, track errors
 // with the ParsingTracker.
-func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filter *SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) error {
+func processTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filter SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) error {
 	filterError := lineResult.FilterError
 	if filterError != nil {
 		tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
@@ -154,14 +149,17 @@ func parseTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filte
 	for _, err := range lineResult.Errors {
 		tracker.AddParseError(err)
 	}
+
 	for _, tuple := range lineResult.Tuples {
 		if _, err := isValid(tuple); err != nil {
 			// On rapporte une erreur de siret/siren invalide seulement si aucune autre error n'a été rapportée par le parseur
 			if len(lineResult.Errors) == 0 {
 				tracker.AddParseError(err)
 			}
+
 		} else if filter.ShouldSkip(tuple.Key()) {
 			tracker.AddFilterError(errors.New("(filtered)"))
+
 		} else {
 			select {
 			case <-ctx.Done():
