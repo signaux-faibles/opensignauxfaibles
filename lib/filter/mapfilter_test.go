@@ -73,28 +73,3 @@ func TestIncludes(t *testing.T) {
 		}
 	}
 }
-
-// func TestNilFilter(t *testing.T) {
-// 	cache := NewEmptyCache()
-// 	readers := []FilterReader{&CacheReader{cache}}
-// 	filter, err := getSirenFilterFromReaders(cache, readers) // => nil
-// 	assert.NoError(t, err)
-
-// 	assert.Equal(t, true, filter == nil)
-// 	assert.Equal(t, false, !filter.ShouldSkip("012345678"))
-// 	assert.Equal(t, false, filter.ShouldSkip("012345678"))
-// 	assert.Equal(t, false, filter.ShouldSkip("912345678"))
-
-// 	cache = NewEmptyCache()
-// 	readers = []FilterReader{&CacheReader{cache}}
-
-// 	cache.Set("filter", sirenFilter{"012345678": true})
-
-// 	filter, err = getSirenFilterFromReaders(cache, readers) // => not nil
-// 	assert.NoError(t, err)
-
-// 	assert.Equal(t, false, filter == nil)
-// 	assert.Equal(t, true, !filter.ShouldSkip("012345678"))
-// 	assert.Equal(t, false, filter.ShouldSkip("012345678"))
-// 	assert.Equal(t, true, filter.ShouldSkip("912345678"))
-// }

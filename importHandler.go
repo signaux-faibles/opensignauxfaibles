@@ -12,8 +12,8 @@ import (
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
-	"opensignauxfaibles/lib/parsing"
 	prepareimport "opensignauxfaibles/lib/prepare-import"
+	"opensignauxfaibles/lib/registry"
 	"opensignauxfaibles/lib/sinks"
 )
 
@@ -128,7 +128,7 @@ func (params importBatchHandler) Run() error {
 	err = engine.ImportBatch(
 		batchConfig,
 		parserTypes,
-		parsing.DefaultParsers,
+		registry.DefaultParsers,
 		sirenFilter,
 		dataSinkFactory,
 		reportSink,

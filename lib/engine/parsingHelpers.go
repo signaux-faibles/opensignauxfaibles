@@ -57,7 +57,6 @@ func ParseLines(parser Parser, parsedLineChan chan ParsedLineResult) {
 		err := parser.ReadNext(&parsedLine)
 
 		if err == io.EOF {
-			close(parsedLineChan)
 			break
 		} else if err != nil {
 			parsedLine.AddRegularError(err)

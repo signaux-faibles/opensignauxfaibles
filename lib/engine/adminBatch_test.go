@@ -38,8 +38,8 @@ func Test_ImportBatch(t *testing.T) {
 	err := ImportBatch(
 		base.AdminBatch{},
 		[]base.ParserType{},
-		nil,
-		nil,
+		EmptyRegistry{},
+		NoFilter{},
 		TestSinkFactory{},
 		DiscardReportSink{},
 	)

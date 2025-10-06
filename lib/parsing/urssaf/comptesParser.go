@@ -12,6 +12,10 @@ import (
 type comptesParser struct {
 	periodes []time.Time
 	mapping  engine.Comptes
+
+	// internal values to act as a generator
+	values []string
+	index  int
 }
 
 func NewParserComptes() *comptesParser {
@@ -25,6 +29,7 @@ func (parser *comptesParser) Type() base.ParserType {
 func (parser *comptesParser) Init(cache *engine.Cache, filter engine.SirenFilter, batch *base.AdminBatch) (err error) {
 	if len(batch.Files["admin_urssaf"]) > 0 {
 		parser.periodes = misc.GenereSeriePeriode(batch.Params.DateDebut, batch.Params.DateFin)
+
 		parser.mapping, err = engine.GetCompteSiretMapping(*cache, batch, filter, engine.OpenAndReadSiretMapping)
 	}
 	return err
@@ -45,19 +50,29 @@ func (parser *comptesParser) ReadNext(res *engine.ParsedLineResult) error {
 	// tuples are always processed in the same order, and therefore that errors
 	// (e.g. "siret invalide") are reported at consistent Cycle/line numbers.
 	// cf https://github.com/signaux-faibles/opensignauxfaibles/pull/225#issuecomment-720594272
-	accounts := parser.mapping.GetSortedKeys()
-	for accountIndex := range accounts {
+	if parser.index == 0 {
+		parser.values = parser.mapping.GetSortedKeys()
+	}
 
-		account := accounts[accountIndex]
-		for _, p := range parser.periodes {
-			var err error
-			compte := Compte{}
-			compte.NumeroCompte = account
-			compte.Periode = p
-			compte.Siret, err = engine.GetSiretFromComptesMapping(account, &p, parser.mapping)
-			res.AddRegularError(err)
+	if parser.index >= len(parser.values) {
+		return io.EOF
+	}
+
+	account := parser.values[parser.index]
+
+	for _, p := range parser.periodes {
+		var err error
+		compte := Compte{}
+		compte.NumeroCompte = account
+		compte.Periode = p
+		compte.Siret, err = engine.GetSiretFromComptesMapping(account, &p, parser.mapping)
+		res.AddRegularError(err)
+
+		if len(res.Errors) == 0 {
 			res.AddTuple(compte)
 		}
 	}
-	return io.EOF
+
+	parser.index++
+	return nil
 }

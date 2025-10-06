@@ -1,17 +1,18 @@
 package urssaf
 
 import (
-	"encoding/csv"
 	"os"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
-// debitParser implements engine.Parser
+// debitParser implements ParseHandler
 type debitParser struct {
+	parsing.BaseParser
+
 	file    *os.File
-	reader  *csv.Reader
 	comptes engine.Comptes
 	idx     engine.ColMapping
 }
@@ -30,20 +31,14 @@ func (parser *debitParser) Init(cache *engine.Cache, filter engine.SirenFilter, 
 }
 
 func (parser *debitParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ';', false)
+	parser.file, parser.BaseParser.Reader, err = engine.OpenCsvReader(filePath, ';', false)
 	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.reader, Debit{})
+		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.BaseParser.Reader, Debit{})
 	}
 	return err
 }
 
-func (parser *debitParser) ReadNext(res *engine.ParsedLineResult) error {
-
-	row, err := parser.reader.Read()
-
-	if err != nil {
-		return err
-	}
+func (parser *debitParser) ParseRow(row []string, res *engine.ParsedLineResult) error {
 
 	idxRow := parser.idx.IndexRow(row)
 

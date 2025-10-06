@@ -7,7 +7,7 @@ import (
 	"log"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/registry"
 	"os"
 	"sync"
 
@@ -45,7 +45,7 @@ func (params parseFileHandler) Validate() error {
 
 func (params parseFileHandler) Run() error {
 	parserType := base.ParserType(params.Parser)
-	parsers, err := engine.ResolveParsers(parsing.DefaultParsers, []base.ParserType{parserType})
+	parsers, err := engine.ResolveParsers(registry.DefaultParsers, []base.ParserType{parserType})
 	if err != nil {
 		return err
 	}

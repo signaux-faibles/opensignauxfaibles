@@ -155,7 +155,7 @@ func RunParser(
 ) (output tuplesAndReports) {
 	ctx := context.Background()
 	batch := base.MockBatch(parser.Type(), []base.BatchFile{inputFile})
-	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser, nil)
+	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser, NoFilter{})
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
@@ -232,3 +232,20 @@ func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan Tuple) erro
 	}
 	return nil
 }
+
+// -----------------------------------------------------
+// Test PacakgeRegistry mock implementation
+// -----------------------------------------------------
+
+type EmptyRegistry struct{}
+
+func (r EmptyRegistry) Resolve(base.ParserType) Parser { return nil }
+func (r EmptyRegistry) All() []Parser                  { return []Parser{} }
+
+// -----------------------------------------------------
+// Test Filter skips nothing
+// -----------------------------------------------------
+
+type NoFilter struct{}
+
+func (f NoFilter) ShouldSkip(string) bool { return false }
