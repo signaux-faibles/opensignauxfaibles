@@ -1,3 +1,5 @@
+// Package urssaf expose tous les parsers pour extraire les données des
+// URSSAF
 package urssaf
 
 import (
@@ -8,14 +10,14 @@ import (
 
 // UrssafRowParser est la base commune pour les parsers de l'URSSAF
 type UrssafRowParser struct {
-	comptes *engine.Comptes
+	comptes *Comptes
 }
 
-func (p *UrssafRowParser) GetComptes() *engine.Comptes {
+func (p *UrssafRowParser) GetComptes() *Comptes {
 	return p.comptes
 }
 
-func (p *UrssafRowParser) setComptes(comptes engine.Comptes) {
+func (p *UrssafRowParser) setComptes(comptes Comptes) {
 	p.comptes = &comptes
 }
 
@@ -31,8 +33,8 @@ func (p *UrssafParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, 
 		return err
 	}
 
-	if urssafRowParser, ok := p.RowParser.(interface{ setComptes(engine.Comptes) }); ok {
-		comptes, err := engine.GetCompteSiretMapping(*cache, batch, filter, engine.OpenAndReadSiretMapping)
+	if urssafRowParser, ok := p.RowParser.(interface{ setComptes(Comptes) }); ok {
+		comptes, err := GetCompteSiretMapping(*cache, batch, filter, OpenAndReadSiretMapping)
 		if err != nil {
 			return err
 		}

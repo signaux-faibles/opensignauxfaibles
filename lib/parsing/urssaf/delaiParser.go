@@ -10,6 +10,10 @@ import (
 
 type DelaiParser struct{}
 
+func NewDelaiParser() engine.Parser {
+	return &DelaiParser{}
+}
+
 func (parser *DelaiParser) Type() base.ParserType { return base.Delai }
 func (parser *DelaiParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
@@ -27,7 +31,7 @@ type delaiRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 
 	idxRow := idx.IndexRow(row)
 

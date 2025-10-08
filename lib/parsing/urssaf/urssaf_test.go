@@ -14,7 +14,7 @@ import (
 	"opensignauxfaibles/lib/engine"
 )
 
-var update = flag.Bool("update", false, "Update the expected test values in golden file")
+var update = flag.Bool("update", false, "update the expected test values in golden file")
 
 func makeCacheWithComptesMapping() engine.Cache {
 	cache := engine.NewEmptyCache()
@@ -37,13 +37,10 @@ func TestUrssaf(t *testing.T) {
 			Cache      engine.Cache
 		}
 		urssafFiles := []TestCase{
-			{NewParserCCSF(), "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
-			{NewParserComptes(), "comptesTestData.csv", "expectedComptes.json", engine.NewEmptyCache()},
-			{NewParserDebit(), "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
-			{NewParserDelai(), "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
-			{NewParserEffectifEnt(), "effectifEntTestData.csv", "expectedEffectifEnt.json", makeCacheWithComptesMapping()},
-			{NewParserEffectif(), "effectifTestData.csv", "expectedEffectif.json", makeCacheWithComptesMapping()},
-			{NewParserProcol(), "procolTestData.csv", "expectedProcol.json", makeCacheWithComptesMapping()},
+			{NewCCSFParser(), "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
+			{NewDebitParser(), "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
+			{NewDelaiParser(), "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
+			{NewProcolParser(), "procolTestData.csv", "expectedProcol.json", makeCacheWithComptesMapping()},
 		}
 		for _, testCase := range urssafFiles {
 			t.Run(string(testCase.Parser.Type()), func(t *testing.T) {
@@ -70,7 +67,7 @@ func TestComptes(t *testing.T) {
 	t.Run("Le fichier de test Comptes est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedComptes.json")
 		var testData = base.NewBatchFile("testData", "comptesTestData.csv")
-		engine.TestParserOutput(t, NewParserComptes(), engine.NewEmptyCache(), testData, golden, *update)
+		engine.TestParserOutput(t, NewComptesParser(), engine.NewEmptyCache(), testData, golden, *update)
 	})
 }
 
@@ -79,17 +76,17 @@ func TestDebit(t *testing.T) {
 	var testData = base.NewBatchFile("testData", "debitTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 
-	engine.TestParserOutput(t, NewParserDebit(), cache, testData, golden, *update)
+	engine.TestParserOutput(t, NewDebitParser(), cache, testData, golden, *update)
 
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInlineEx(t, cache, NewParserDebit(), []string{"dummy"})
+		output := engine.RunParserInlineEx(t, cache, NewDebitParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, engine.GetFatalError(output), "Colonne num_cpte non trouvée")
 	})
 
 	// t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
 	// 	cache.Set("filter", engine.SirenFilter{"111111111": true}) // SIREN correspondant à un des 3 comptes retournés par makeCacheWithComptesMapping
-	// 	output := engine.RunParser(NewParserDebit(), cache, testData)
+	// 	output := engine.RunParser(NewDebitParser(), cache, testData)
 	// 	// test: tous les tuples retournés concernent le compte associé au SIREN spécifié ci-dessus
 	// 	for _, tuple := range output.Tuples {
 	// 		debit, _ := tuple.(Debit)
@@ -99,7 +96,7 @@ func TestDebit(t *testing.T) {
 
 	// t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
 	// 	cache.Set("filter", engine.SirenFilter{"111111111": true}) // SIREN correspondant à un des 3 comptes retournés par makeCacheWithComptesMapping
-	// 	output := engine.RunParser(NewParserDebit(), cache, testData)
+	// 	output := engine.RunParser(NewDebitParser(), cache, testData)
 	// 	// test: tous les tuples retournés concernent le compte associé au SIREN spécifié ci-dessus
 	// 	for _, tuple := range output.Tuples {
 	// 		debit, _ := tuple.(Debit)
@@ -112,17 +109,17 @@ func TestDebitCorrompu(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
 	var testData = base.NewBatchFile("testData", "debitCorrompuTestData.csv")
 	var cache = makeCacheWithComptesMapping()
-	engine.TestParserOutput(t, NewParserDebit(), cache, testData, golden, *update)
+	engine.TestParserOutput(t, NewDebitParser(), cache, testData, golden, *update)
 }
 
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = base.NewBatchFile("testData", "delaiTestData.csv")
 	var cache = makeCacheWithComptesMapping()
-	engine.TestParserOutput(t, NewParserDelai(), cache, testData, golden, *update)
+	engine.TestParserOutput(t, NewDelaiParser(), cache, testData, golden, *update)
 
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInlineEx(t, cache, NewParserDelai(), []string{"dummy"})
+		output := engine.RunParserInlineEx(t, cache, NewDelaiParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, engine.GetFatalError(output), "Colonne Numero_compte_externe non trouvée")
 	})
@@ -132,10 +129,10 @@ func TestCcsf(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCcsf.json")
 	var testData = base.NewBatchFile("testData", "ccsfTestData.csv")
 	var cache = makeCacheWithComptesMapping()
-	engine.TestParserOutput(t, NewParserCCSF(), cache, testData, golden, *update)
+	engine.TestParserOutput(t, NewCCSFParser(), cache, testData, golden, *update)
 
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInlineEx(t, cache, NewParserCCSF(), []string{"dummy"})
+		output := engine.RunParserInlineEx(t, cache, NewCCSFParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, engine.GetFatalError(output), "Colonne Compte non trouvée")
 	})
@@ -145,10 +142,10 @@ func TestCotisation(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCotisation.json")
 	var testData = base.NewBatchFile("testData", "cotisationTestData.csv")
 	var cache = makeCacheWithComptesMapping()
-	engine.TestParserOutput(t, NewParserCotisation(), cache, testData, golden, *update)
+	engine.TestParserOutput(t, NewCotisationParser(), cache, testData, golden, *update)
 
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInlineEx(t, cache, NewParserCotisation(), []string{"dummy"})
+		output := engine.RunParserInlineEx(t, cache, NewCotisationParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, engine.GetFatalError(output), "Colonne Compte non trouvée")
 	})
@@ -158,7 +155,7 @@ func TestCotisation(t *testing.T) {
 	// 	cache := makeCacheWithComptesMapping()
 	// 	cache.Set("filter", engine.SirenFilter{allowedSiren: true})
 	// 	// test
-	// 	output := engine.RunParser(NewParserCotisation(), cache, testData)
+	// 	output := engine.RunParser(NewCotisationParser(), cache, testData)
 	// 	reportData := output.Reports[0]
 	// 	assert.Equal(t, false, reportData.IsFatal, "aucune erreur fatale ne doit être rapportée")
 	// 	assert.Equal(t, []string{}, reportData.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
@@ -175,7 +172,7 @@ func TestCotisation(t *testing.T) {
 			},
 		))
 		// test
-		output := engine.RunParser(NewParserCotisation(), cache, testData)
+		output := engine.RunParser(NewCotisationParser(), cache, testData)
 		report := output.Reports[0]
 		assert.Equal(t, false, report.IsFatal, "aucune erreur fatale ne doit être rapportée")
 		assert.Equal(t, []string{}, report.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
@@ -189,17 +186,17 @@ func TestProcol(t *testing.T) {
 	t.Run("Le fichier de test Procol est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedProcol.json")
 		var testData = base.NewBatchFile("testData", "procolTestData.csv")
-		engine.TestParserOutput(t, NewParserProcol(), cache, testData, golden, *update)
+		engine.TestParserOutput(t, NewProcolParser(), cache, testData, golden, *update)
 	})
 
 	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInlineEx(t, cache, NewParserProcol(), []string{"dummy"})
+		output := engine.RunParserInlineEx(t, cache, NewProcolParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, engine.GetFatalError(output), "non trouvée")
 	})
 
 	t.Run("est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewParserProcol(), []string{"dT_eFfeT;lIb_aCtx_stDx;sIret"})
+		output := engine.RunParserInline(t, NewProcolParser(), []string{"dT_eFfeT;lIb_aCtx_stDx;sIret"})
 		assert.Len(t, engine.GetFatalErrors(output.Reports[0]), 0)
 	})
 }
@@ -210,14 +207,14 @@ func TestEffectif(t *testing.T) {
 	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectif.json")
 		cache := engine.NewEmptyCache()
-		engine.TestParserOutput(t, NewParserEffectif(), cache, testData, golden, *update)
+		engine.TestParserOutput(t, NewEffectifParser(), cache, testData, golden, *update)
 	})
 
 	// t.Run("Effectif n'est importé que si inclus dans le filtre", func(t *testing.T) {
 	// 	allowedSiren := "149285238" // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
 	// 	cache := engine.NewEmptyCache()
 	// 	cache.Set("filter", filter.SirenFilter{allowedSiren: true})
-	// 	output := engine.RunParser(NewParserEffectif(), cache, testData)
+	// 	output := engine.RunParser(NewEffectifParser(), cache, testData)
 	// 	// test: vérifier que tous les tuples retournés concernent ce SIREN
 	// 	for _, tuple := range output.Tuples {
 	// 		effectif, _ := tuple.(Effectif)
@@ -226,33 +223,13 @@ func TestEffectif(t *testing.T) {
 	// })
 
 	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewParserEffectif(), []string{"siret"}) // "compte" column is missing
+		output := engine.RunParserInline(t, NewEffectifParser(), []string{"siret"}) // "compte" column is missing
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Contains(t, engine.GetFatalError(output), "Colonne compte non trouvée")
 	})
 
 	t.Run("Effectif est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewParserEffectif(), []string{"CoMpTe;SiReT"})
-		assert.Len(t, engine.GetFatalErrors(output.Reports[0]), 0)
-	})
-}
-
-func TestEffectifEnt(t *testing.T) {
-	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
-		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
-		var testData = base.NewBatchFile("testData", "effectifEntTestData.csv")
-		cache := engine.NewEmptyCache()
-		engine.TestParserOutput(t, NewParserEffectifEnt(), cache, testData, golden, *update)
-	})
-
-	t.Run("EffectifEnt ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewParserEffectifEnt(), []string{"siret"})
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne siren non trouvée")
-	})
-
-	t.Run("EffectifEnt est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewParserEffectifEnt(), []string{"SiReN"})
+		output := engine.RunParserInline(t, NewEffectifParser(), []string{"CoMpTe;SiReT"})
 		assert.Len(t, engine.GetFatalErrors(output.Reports[0]), 0)
 	})
 }

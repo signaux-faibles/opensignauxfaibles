@@ -11,6 +11,7 @@ import (
 
 // OpenFileReader ouvre un fichier potentiellement gzippé et retourne un io.Reader.
 func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
+	// TODO duplicate with batchfile.Open
 	file, err := os.Open(batchFile.Path())
 	if err != nil {
 		return nil, nil, err
@@ -28,7 +29,7 @@ func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
 }
 
 // ParseLines appelle la fonction parseLine() sur chaque ligne du fichier CSV pour transmettre les tuples et/ou erreurs dans parsedLineChan.
-func ParseLines(parserInst ParserInstance, parsedLineChan chan ParsedLineResult) {
+func ParseLines(parserInst ParserInst, parsedLineChan chan ParsedLineResult) {
 	defer close(parsedLineChan)
 
 	var lineNumber = 0 // starting with the header

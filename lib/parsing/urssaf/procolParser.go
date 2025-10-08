@@ -13,6 +13,10 @@ import (
 
 type ProcolParser struct{}
 
+func NewProcolParser() engine.Parser {
+	return &ProcolParser{}
+}
+
 func (parser *ProcolParser) Type() base.ParserType { return base.Procol }
 func (parser *ProcolParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
@@ -30,7 +34,7 @@ type procolRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 
 	var err error
 	idxRow := idx.IndexRow(row)

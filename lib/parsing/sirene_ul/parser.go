@@ -1,51 +1,37 @@
 package sireneul
 
 import (
-	"encoding/csv"
-	"os"
+	"io"
 	"time"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
-type sireneULParser struct {
-	file   *os.File
-	reader *csv.Reader
-	idx    engine.ColMapping
+type SireneULParser struct{}
+
+func NewSireneULParser() engine.Parser {
+	return &SireneULParser{}
 }
 
-func NewParserSireneUL() *sireneULParser {
-	return &sireneULParser{}
-}
-
-func (parser *sireneULParser) Type() base.ParserType {
-	return base.SireneUl
-}
-
-func (parser *sireneULParser) Init(_ *engine.Cache, _ engine.SirenFilter, _ *base.AdminBatch) error {
-	return nil
-}
-
-func (parser *sireneULParser) Close() error {
-	return parser.file.Close()
-}
-
-func (parser *sireneULParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ',', true)
-	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.reader, SireneUL{})
+func (p *SireneULParser) Type() base.ParserType { return base.SireneUl }
+func (p *SireneULParser) New(r io.Reader) engine.ParserInst {
+	return &parsing.CsvParserInst{
+		Reader:     r,
+		RowParser:  &sireneULRowParser{},
+		Comma:      ',',
+		LazyQuotes: false,
+		DestTuple:  SireneUL{},
 	}
-	return err
 }
 
-func (parser *sireneULParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
+type sireneULRowParser struct{}
 
-	idxRow := parser.idx.IndexRow(row)
+func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+	var err error
+
+	idxRow := idx.IndexRow(row)
 	sireneul := SireneUL{}
 	sireneul.Siren = idxRow.GetVal("siren")
 	sireneul.RaisonSociale = idxRow.GetVal("denominationUniteLegale")

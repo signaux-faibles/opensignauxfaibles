@@ -1,6 +1,7 @@
-package engine
+package urssaf
 
 import (
+	"bufio"
 	"encoding/csv"
 	"errors"
 	"io"
@@ -11,6 +12,8 @@ import (
 	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 	"opensignauxfaibles/lib/sfregexp"
 )
 
@@ -48,7 +51,7 @@ func (comptes *Comptes) GetSiret(compte string, date *time.Time) (string, error)
 
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache. Lazy loaded.
-func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, filter SirenFilter, mr mappingReader) (Comptes, error) {
+func GetCompteSiretMapping(cache engine.Cache, batch *base.AdminBatch, filter engine.SirenFilter, mr mappingReader) (Comptes, error) {
 	value, err := cache.Get("comptes")
 	slog.Debug("associe les siret et les numéros de compte URSSAF", slog.Any("AdminBatch", *batch))
 	if err == nil {
@@ -80,25 +83,26 @@ func GetCompteSiretMapping(cache Cache, batch *base.AdminBatch, filter SirenFilt
 	return compteSiretMapping, nil
 }
 
-type mappingReader func(string, base.BatchFile, Comptes, Cache, *base.AdminBatch, SirenFilter) (Comptes, error)
+type mappingReader func(string, base.BatchFile, Comptes, engine.Cache,
+	*base.AdminBatch, engine.SirenFilter) (Comptes, error)
 
 // OpenAndReadSiretMapping opens files and reads their content
 func OpenAndReadSiretMapping(
 	basePath string,
 	batchFile base.BatchFile,
 	compteSiretMapping Comptes,
-	cache Cache,
+	cache engine.Cache,
 	batch *base.AdminBatch,
-	filter SirenFilter,
+	filter engine.SirenFilter,
 ) (Comptes, error) {
 
-	file, fileReader, err := OpenFileReader(batchFile)
+	file, err := batchFile.Open()
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}
 	defer file.Close()
 
-	addSiretMapping, err := readSiretMapping(fileReader, cache, batch, filter)
+	addSiretMapping, err := readSiretMapping(bufio.NewReader(file), cache, batch, filter)
 	slog.Debug("lecture du mapping des sirets", slog.Any("mapping", addSiretMapping))
 	if err != nil {
 		return nil, err
@@ -113,9 +117,9 @@ func OpenAndReadSiretMapping(
 // readSiretMapping reads a admin_urssaf file
 func readSiretMapping(
 	reader io.Reader,
-	cache Cache,
+	cache engine.Cache,
 	batch *base.AdminBatch,
-	filter SirenFilter,
+	filter engine.SirenFilter,
 ) (Comptes, error) {
 
 	var addSiretMapping = make(map[string][]SiretDate)
@@ -128,7 +132,7 @@ func readSiretMapping(
 	if err != nil {
 		return nil, err
 	}
-	idx := indexFields(LowercaseFields(fields))
+	idx, _ := parsing.HeaderIndexer{}.Index(parsing.LowercaseFields(fields))
 	requiredFields := []string{"compte", "siret", "date_disp_siret"}
 	if _, err := idx.HasFields(requiredFields); err != nil {
 		return nil, err

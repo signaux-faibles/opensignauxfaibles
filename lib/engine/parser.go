@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -12,7 +13,8 @@ import (
 	"opensignauxfaibles/lib/sfregexp"
 )
 
-// Parser creates a ParserInst for specific content
+// Parser crée une instance de parser `ParserInst` avec le contenu spécifique
+// du `io.Reader`
 type Parser interface {
 	New(io.Reader) ParserInst
 	Type() base.ParserType
@@ -127,7 +129,7 @@ func runParserOnFile(
 	}
 	defer file.Close()
 
-	parserInst := parser.New(file)
+	parserInst := parser.New(bufio.NewReader(file))
 
 	if err := parserInst.Init(&cache, filter, batch); err != nil {
 		return err

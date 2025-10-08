@@ -10,6 +10,10 @@ import (
 
 type DebitParser struct{}
 
+func NewDebitParser() engine.Parser {
+	return &DebitParser{}
+}
+
 func (parser *DebitParser) Type() base.ParserType { return base.Debit }
 func (parser *DebitParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
@@ -27,11 +31,11 @@ type debitRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 
 	idxRow := idx.IndexRow(row)
 
-	periodeDebut, periodeFin, err := engine.UrssafToPeriod(idxRow.GetVal("Periode"))
+	periodeDebut, periodeFin, err := UrssafToPeriod(idxRow.GetVal("Periode"))
 	res.AddRegularError(err)
 
 	if siret, err := rp.GetComptes().GetSiret(idxRow.GetVal("num_cpte"), &periodeDebut); err == nil {
@@ -44,7 +48,7 @@ func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 			CodeMotifEcartNegatif:     idxRow.GetVal("Motif_ecn"),
 		}
 
-		debit.DateTraitement, err = engine.UrssafToDate(idxRow.GetVal("Dt_trt_ecn"))
+		debit.DateTraitement, err = UrssafToDate(idxRow.GetVal("Dt_trt_ecn"))
 		res.AddRegularError(err)
 		partOuvriere, err := idxRow.GetFloat64("Mt_PO")
 		res.AddRegularError(err)

@@ -12,43 +12,43 @@ func TestIncludes(t *testing.T) {
 	testCases := []struct {
 		name     string
 		siret    string
-		filter   sirenFilter
+		filter   SirenFilter
 		expected bool
 	}{
 		{
 			"siren inclus dans filtre",
 			"012345678",
-			sirenFilter{"012345678": true},
+			SirenFilter{"012345678": true},
 			true,
 		},
 		{
 			"siret inclus dans filtre",
 			"01234567891011",
-			sirenFilter{"012345678": true},
+			SirenFilter{"012345678": true},
 			true,
 		},
 		{
 			"siren trop court",
 			"0123",
-			sirenFilter{"012345678": true},
+			SirenFilter{"012345678": true},
 			false,
 		},
 		{
 			"numéro invalide mais ayant comme prefixe un siren filtré",
 			"0123456789",
-			sirenFilter{"012345678": true},
+			SirenFilter{"012345678": true},
 			false,
 		},
 		{
 			"siren non inclus dans filtre",
 			"876543210",
-			sirenFilter{"012345678": true},
+			SirenFilter{"012345678": true},
 			false,
 		},
 		{
 			"siret non inclus dans filtre",
 			"87654321091011",
-			sirenFilter{"012345678": true},
+			SirenFilter{"012345678": true},
 			false,
 		},
 		{

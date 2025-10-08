@@ -1,4 +1,4 @@
-package engine
+package urssaf
 
 import (
 	"bytes"
@@ -12,6 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/filter"
 )
 
 func TestReadSiretMapping(t *testing.T) {
@@ -19,14 +21,14 @@ func TestReadSiretMapping(t *testing.T) {
 	t.Run("readSiretMapping doit être insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
 		batch := base.AdminBatch{}
 		csvHeader := `UrsSaf_geStion;DEp;ComptE;Etat_Compte;SIren;Siret;Date_creA_siret;DatE_disp_sirEt;Cle_mD5`
-		_, err := readSiretMapping(strings.NewReader(csvHeader), NewCache(map[string]any{}), &batch)
+		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NewCache(map[string]any{}), &batch)
 		assert.NoError(t, err)
 	})
 
 	t.Run("readSiretMapping doit rapporter une erreur s'il manque une colonne", func(t *testing.T) {
 		batch := base.AdminBatch{}
 		csvHeader := `UrsSaf_geStion`
-		_, err := readSiretMapping(strings.NewReader(csvHeader), NewCache(map[string]any{}), &batch)
+		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NewCache(map[string]any{}), &batch)
 		assert.Error(t, err, "Colonne Compte non trouvée.")
 	})
 
@@ -51,12 +53,12 @@ func TestReadSiretMapping(t *testing.T) {
 			},
 		}
 
-		stdFilterCache := NewCache(map[string]any{"filter": SirenFilter{"012345678": true}})
+		stdFilterCache := engine.NewCache(map[string]any{"filter": filter.SirenFilter{"012345678": true}})
 		expectedHeader := "Urssaf_gestion;Dep;Compte;Etat_compte;Siren;Siret;Date_crea_siret;Date_disp_siret"
 
 		testCases := []struct {
 			csv         string
-			cache       Cache
+			cache       engine.Cache
 			expectError bool
 			expected    Comptes
 		}{

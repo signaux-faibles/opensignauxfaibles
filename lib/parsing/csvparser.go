@@ -9,7 +9,7 @@ import (
 
 // RowParser parses a single row
 type RowParser interface {
-	ParseRow(row []string, result *engine.ParsedLineResult, idx engine.ColMapping) error
+	ParseRow(row []string, result *engine.ParsedLineResult, idx ColIndex) error
 }
 
 // CsvParserInstance provides a CSV Parser implementation base
@@ -22,7 +22,7 @@ type CsvParserInst struct {
 	LazyQuotes bool
 	DestTuple  any
 
-	idx engine.ColMapping
+	idx ColIndex
 
 	csvReader *csv.Reader
 
@@ -42,7 +42,7 @@ func (p *CsvParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, bat
 		return err
 	}
 
-	p.idx, err = engine.IndexColumnsFromCsvHeader(p.csvReader, p.DestTuple)
+	p.idx, err = HeaderIndexer{p.DestTuple}.Index(p.Header())
 	return err
 }
 

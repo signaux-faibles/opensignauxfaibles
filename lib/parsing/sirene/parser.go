@@ -3,9 +3,8 @@ package sirene
 import (
 	//"bufio"
 
-	"encoding/csv"
 	"errors"
-	"os"
+	"io"
 	"regexp"
 	"strconv"
 	"strings"
@@ -13,45 +12,32 @@ import (
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
-type sireneParser struct {
-	file     *os.File
-	reader   *csv.Reader
-	colIndex engine.ColMapping
+type SireneParser struct{}
+
+func NewSireneParser() engine.Parser {
+	return &SireneParser{}
 }
 
-func NewParserSirene() *sireneParser {
-	return &sireneParser{}
-}
-
-func (parser *sireneParser) Type() base.ParserType {
-	return base.Sirene
-}
-
-func (parser *sireneParser) Init(_ *engine.Cache, _ engine.SirenFilter, _ *base.AdminBatch) error {
-	return nil
-}
-
-func (parser *sireneParser) Close() error {
-	return parser.file.Close()
-}
-
-func (parser *sireneParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ',', true)
-	if err == nil {
-		parser.colIndex, err = engine.IndexColumnsFromCsvHeader(parser.reader, Sirene{})
+func (p *SireneParser) Type() base.ParserType { return base.Sirene }
+func (p *SireneParser) New(r io.Reader) engine.ParserInst {
+	return &parsing.CsvParserInst{
+		Reader:     r,
+		RowParser:  &sireneRowParser{},
+		Comma:      ',',
+		LazyQuotes: false,
+		DestTuple:  Sirene{},
 	}
-	return err
 }
 
-func (parser *sireneParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
+type sireneRowParser struct{}
 
-	idxRow := parser.colIndex.IndexRow(row)
+func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+	var err error
+
+	idxRow := idx.IndexRow(row)
 	sirene := Sirene{}
 	sirene.Siren = idxRow.GetVal("siren")
 	sirene.Nic = idxRow.GetVal("nic")

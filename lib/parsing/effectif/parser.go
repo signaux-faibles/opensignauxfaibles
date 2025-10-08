@@ -1,4 +1,4 @@
-package urssaf
+package effectif
 
 import (
 	"io"
@@ -12,6 +12,10 @@ import (
 
 type EffectifParser struct{}
 
+func NewEffectifParser() engine.Parser {
+	return &EffectifParser{}
+}
+
 func (parser *EffectifParser) Type() base.ParserType { return base.Effectif }
 func (parser *EffectifParser) New(r io.Reader) engine.ParserInst {
 	return &EffectifParserInst{
@@ -22,14 +26,11 @@ func (parser *EffectifParser) New(r io.Reader) engine.ParserInst {
 			LazyQuotes: false,
 			DestTuple:  Effectif{},
 		},
-		// proper idx defined at `Init`
-		engine.ColMapping{},
 	}
 
 }
 
 type effectifRowParser struct {
-	UrssafRowParser
 	periods []periodCol
 }
 
@@ -38,7 +39,7 @@ func (rp *effectifRowParser) setPeriods(periods []periodCol) {
 	rp.periods = periods
 }
 
-func (rp *effectifRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (rp *effectifRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 	for _, period := range rp.periods {
 		value := row[period.colIndex]
 

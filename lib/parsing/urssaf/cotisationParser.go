@@ -10,6 +10,10 @@ import (
 
 type CotisationParser struct{}
 
+func NewCotisationParser() engine.Parser {
+	return &CotisationParser{}
+}
+
 func (parser *CotisationParser) Type() base.ParserType { return base.Cotisation }
 func (parser *CotisationParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
@@ -27,13 +31,13 @@ type cotisationRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *cotisationRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (rp *cotisationRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 
 	idxRow := idx.IndexRow(row)
 
 	cotisation := Cotisation{}
 
-	periodeDebut, periodeFin, err := engine.UrssafToPeriod(idxRow.GetVal("periode"))
+	periodeDebut, periodeFin, err := UrssafToPeriod(idxRow.GetVal("periode"))
 	res.AddRegularError(err)
 
 	siret, err := rp.GetComptes().GetSiret(idxRow.GetVal("Compte"), &periodeDebut)

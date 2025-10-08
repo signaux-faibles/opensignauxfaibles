@@ -1,9 +1,11 @@
 package base
 
 import (
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"path"
 	"path/filepath"
 	"strings"
@@ -126,6 +128,22 @@ func (file *batchFile) IsCompressed() bool {
 	}
 
 	return strings.HasSuffix(file.Path(), ".gz")
+}
+
+func (file *batchFile) Open() (io.ReadCloser, error) {
+	var openfile io.ReadCloser
+	openfile, err := os.Open(file.Path())
+	if err != nil {
+		return nil, err
+	}
+
+	if file.IsCompressed() {
+		openfile, err = gzip.NewReader(openfile)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return openfile, err
 }
 
 //--------- BatchFile creation helpers --------

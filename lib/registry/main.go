@@ -7,6 +7,7 @@ import (
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing/apconso"
 	"opensignauxfaibles/lib/parsing/apdemande"
+	"opensignauxfaibles/lib/parsing/effectif"
 	"opensignauxfaibles/lib/parsing/sirene"
 	sireneul "opensignauxfaibles/lib/parsing/sirene_ul"
 	"opensignauxfaibles/lib/parsing/urssaf"
@@ -45,10 +46,9 @@ var DefaultParsers = ParserRegistry{
 	base.Debit:       urssaf.NewDebitParser(),
 	base.Ccsf:        urssaf.NewCCSFParser(),
 	base.Cotisation:  urssaf.NewCotisationParser(),
-	base.AdminUrssaf: urssaf.NewComptesParser(),
 	base.Delai:       urssaf.NewDelaiParser(),
-	base.Effectif:    urssaf.NewEffectifParser(),
-	base.EffectifEnt: urssaf.NewEffectifEntParser(),
+	base.Effectif:    effectif.NewEffectifParser(),
+	base.EffectifEnt: effectif.NewEffectifEntParser(),
 	base.Procol:      urssaf.NewProcolParser(),
 	base.Apconso:     apconso.NewApconsoParser(),
 	base.Apdemande:   apdemande.NewApdemandeParser(),

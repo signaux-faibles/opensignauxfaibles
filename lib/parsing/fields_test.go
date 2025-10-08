@@ -1,4 +1,4 @@
-package engine
+package parsing
 
 import (
 	"encoding/csv"
@@ -33,7 +33,7 @@ func TestIndexColumnsFromCsvHeader(t *testing.T) {
 
 func TestIndexedRow(t *testing.T) {
 
-	idx := CreateColMapping(map[string]int{"data": 0}) // simule un fichier csv avec une colonne "data" à l'indice 0
+	idx := ColIndex{"data": 0} // simule un fichier csv avec une colonne "data" à l'indice 0
 
 	t.Run("GetOptionalVal retourne la valeur ou une chaine vide, selon la présence de la colonne", func(t *testing.T) {
 		row := idx.IndexRow([]string{"2020"})

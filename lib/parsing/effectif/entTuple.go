@@ -1,4 +1,4 @@
-package urssaf
+package effectif
 
 import (
 	"time"
