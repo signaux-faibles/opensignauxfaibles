@@ -1,51 +1,37 @@
 package apconso
 
 import (
-	"encoding/csv"
-	"os"
+	"io"
 	"time"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
-type apconsoParser struct {
-	file   *os.File
-	reader *csv.Reader
-	idx    engine.ColMapping
+type ApconsoParser struct{}
+
+func NewApconsoParser() engine.Parser {
+	return &ApconsoParser{}
 }
 
-func NewParserApconso() *apconsoParser {
-	return &apconsoParser{}
-}
-
-func (parser *apconsoParser) Type() base.ParserType {
-	return base.Apconso
-}
-
-func (parser *apconsoParser) Init(_ *engine.Cache, _ engine.SirenFilter, _ *base.AdminBatch) error {
-	return nil
-}
-
-func (parser *apconsoParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ',', false)
-	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.reader, APConso{})
+func (p *ApconsoParser) Type() base.ParserType { return base.Apconso }
+func (p *ApconsoParser) New(r io.Reader) engine.ParserInst {
+	return &parsing.CsvParserInst{
+		Reader:     r,
+		RowParser:  &apconsoRowParser{},
+		Comma:      ',',
+		LazyQuotes: false,
+		DestTuple:  APConso{},
 	}
-	return err
 }
 
-func (parser *apconsoParser) Close() error {
-	return parser.file.Close()
-}
+type apconsoRowParser struct{}
 
-func (parser *apconsoParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
+func (rp *apconsoRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+	var err error
 
-	idxRow := parser.idx.IndexRow(row)
+	idxRow := idx.IndexRow(row)
 	apconso := APConso{}
 	apconso.ID = idxRow.GetVal("ID_DA")
 	apconso.Siret = idxRow.GetVal("ETAB_SIRET")

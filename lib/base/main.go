@@ -3,6 +3,7 @@ package base
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"path"
 	"path/filepath"
 	"strings"
@@ -88,6 +89,8 @@ type BatchFile interface {
 	Path() string
 
 	IsCompressed() bool
+
+	Open() (io.ReadCloser, error)
 }
 
 type batchFile struct {

@@ -1,60 +1,46 @@
 package apdemande
 
 import (
-	"encoding/csv"
 	"errors"
 	"fmt"
-	"os"
+	"io"
 	"strings"
 	"time"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/misc"
+	"opensignauxfaibles/lib/parsing"
 )
 
-type apdemandeParser struct {
-	file   *os.File
-	reader *csv.Reader
-	idx    engine.ColMapping
+type ApdemandeParser struct{}
+
+func NewApdemandeParser() engine.Parser {
+	return &ApdemandeParser{}
 }
 
-func NewParserApdemande() *apdemandeParser {
-	return &apdemandeParser{}
-}
-
-func (parser *apdemandeParser) Type() base.ParserType {
-	return base.Apdemande
-}
-
-func (parser *apdemandeParser) Init(_ *engine.Cache, _ engine.SirenFilter, _ *base.AdminBatch) error {
-	return nil
-}
-
-func (parser *apdemandeParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ',', true)
-	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.reader, APDemande{})
+func (p *ApdemandeParser) Type() base.ParserType { return base.Apdemande }
+func (p *ApdemandeParser) New(r io.Reader) engine.ParserInst {
+	return &parsing.CsvParserInst{
+		Reader:     r,
+		RowParser:  &apdemandeRowParser{},
+		Comma:      ',',
+		LazyQuotes: true,
+		DestTuple:  APDemande{},
 	}
-	return err
 }
 
-func (parser *apdemandeParser) Close() error {
-	return parser.file.Close()
-}
+type apdemandeRowParser struct{}
 
-func (parser *apdemandeParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
-
-	idxRow := parser.idx.IndexRow(row)
+func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+	idxRow := idx.IndexRow(row)
 
 	if idxRow.GetVal("ETAB_SIRET") == "" {
 		res.AddRegularError(errors.New("invalidLine: siret unspecified"))
 		return nil
 	}
+
+	var err error
 
 	apdemande := APDemande{}
 	apdemande.ID = idxRow.GetVal("ID_DA")

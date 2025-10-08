@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log/slog"
 	"time"
 
@@ -11,17 +12,22 @@ import (
 	"opensignauxfaibles/lib/sfregexp"
 )
 
-// Parser spécifie les fonctions qui doivent être implémentées par chaque
-// parseur de fichier
+// Parser creates a ParserInst for specific content
 type Parser interface {
+	New(io.Reader) ParserInst
 	Type() base.ParserType
-	Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error
+}
 
-	Open(filePath base.BatchFile) error
-	Close() error
+// ParserInst extrait des données structurées d'un contenu, lu via un
+// `io.Reader`
+type ParserInst interface {
+	io.Reader
+
+	Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error
 
 	// ReadNext extracts tuples from next line
 	// Any error definitely interrupts the parsing
+	// Should return io.EOF when there is nothing left to parse.
 	ReadNext(*ParsedLineResult) error
 }
 
@@ -115,14 +121,21 @@ func runParserOnFile(
 	filter SirenFilter,
 ) error {
 
-	if err := parser.Init(&cache, filter, batch); err != nil {
+	file, err := filePath.Open()
+	if err != nil {
 		return err
 	}
-	if err := parser.Open(filePath); err != nil {
+	defer file.Close()
+
+	parserInst := parser.New(file)
+
+	if err := parserInst.Init(&cache, filter, batch); err != nil {
 		return err
 	}
+
 	parsedLineChan := make(chan ParsedLineResult)
-	go ParseLines(parser, parsedLineChan)
+	go ParseLines(parserInst, parsedLineChan)
+
 	for lineResult := range parsedLineChan {
 		err := processTuplesFromLine(ctx, lineResult, filter, tracker, outputChannel)
 		if err != nil {
@@ -134,7 +147,8 @@ func runParserOnFile(
 
 		tracker.Next()
 	}
-	return parser.Close()
+
+	return nil
 }
 
 // processTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.

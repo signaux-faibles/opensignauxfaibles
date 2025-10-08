@@ -1,50 +1,45 @@
 package urssaf
 
 import (
-	"encoding/csv"
-	"os"
+	"io"
 	"strconv"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 	"opensignauxfaibles/lib/sfregexp"
 )
 
-type effectifParser struct {
-	file    *os.File
-	reader  *csv.Reader
+type EffectifParser struct{}
+
+func (parser *EffectifParser) Type() base.ParserType { return base.Effectif }
+func (parser *EffectifParser) New(r io.Reader) engine.ParserInst {
+	return &EffectifParserInst{
+		parsing.CsvParserInst{
+			Reader:     r,
+			RowParser:  &effectifRowParser{},
+			Comma:      ';',
+			LazyQuotes: false,
+			DestTuple:  Effectif{},
+		},
+		// proper idx defined at `Init`
+		engine.ColMapping{},
+	}
+
+}
+
+type effectifRowParser struct {
+	UrssafRowParser
 	periods []periodCol
-	idx     engine.ColMapping
 }
 
-func NewParserEffectif() *effectifParser {
-	return &effectifParser{}
+// Used at `Init`
+func (rp *effectifRowParser) setPeriods(periods []periodCol) {
+	rp.periods = periods
 }
 
-func (parser *effectifParser) Type() base.ParserType {
-	return base.Effectif
-}
-
-func (parser *effectifParser) Init(cache *engine.Cache, _ engine.SirenFilter, batch *base.AdminBatch) error {
-	return nil
-}
-
-func (parser *effectifParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ';', false)
-	if err == nil {
-		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader, Effectif{})
-	}
-	return err
-}
-
-func (parser *effectifParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-
-	if err != nil {
-		return err
-	}
-
-	for _, period := range parser.periods {
+func (rp *effectifRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+	for _, period := range rp.periods {
 		value := row[period.colIndex]
 
 		if value != "" {
@@ -52,7 +47,7 @@ func (parser *effectifParser) ReadNext(res *engine.ParsedLineResult) error {
 			e, err := strconv.Atoi(noThousandsSep)
 			res.AddRegularError(err)
 			if e > 0 {
-				idxRow := parser.idx.IndexRow(row)
+				idxRow := idx.IndexRow(row)
 				res.AddTuple(Effectif{
 					Siret:        idxRow.GetVal("siret"),
 					NumeroCompte: idxRow.GetVal("compte"),
@@ -63,8 +58,4 @@ func (parser *effectifParser) ReadNext(res *engine.ParsedLineResult) error {
 		}
 	}
 	return nil
-}
-
-func (parser *effectifParser) Close() error {
-	return parser.file.Close()
 }

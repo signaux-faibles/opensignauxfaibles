@@ -1,49 +1,46 @@
 package urssaf
 
 import (
-	"encoding/csv"
-	"os"
+	"io"
 	"strconv"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 	"opensignauxfaibles/lib/sfregexp"
 )
 
-type effectifEntParser struct {
-	file    *os.File
-	reader  *csv.Reader
+type EffectifEntParser struct{}
+
+func (parser *EffectifEntParser) Type() base.ParserType { return base.EffectifEnt }
+func (parser *EffectifEntParser) New(r io.Reader) engine.ParserInst {
+	return &EffectifParserInst{
+		parsing.CsvParserInst{
+			Reader:     r,
+			RowParser:  &effectifEntRowParser{},
+			Comma:      ';',
+			LazyQuotes: false,
+			DestTuple:  EffectifEnt{},
+		},
+		// proper idx defined at `Init`
+		engine.ColMapping{},
+	}
+
+}
+
+type effectifEntRowParser struct {
+	UrssafRowParser
 	periods []periodCol
-	idx     engine.ColMapping
 }
 
-func NewParserEffectifEnt() *effectifEntParser {
-	return &effectifEntParser{}
+// Used at `Init`
+func (rp *effectifEntRowParser) setPeriods(periods []periodCol) {
+	rp.periods = periods
 }
 
-func (parser *effectifEntParser) Type() base.ParserType {
-	return base.EffectifEnt
-}
+func (rp *effectifEntRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
 
-func (parser *effectifEntParser) Init(_ *engine.Cache, _ engine.SirenFilter, _ *base.AdminBatch) error {
-	return nil
-}
-
-func (parser *effectifEntParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ';', false)
-	if err == nil {
-		parser.idx, parser.periods, err = parseEffectifColMapping(parser.reader, EffectifEnt{})
-	}
-	return err
-}
-
-func (parser *effectifEntParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
-
-	for _, period := range parser.periods {
+	for _, period := range rp.periods {
 		value := row[period.colIndex]
 
 		if value != "" {
@@ -52,7 +49,7 @@ func (parser *effectifEntParser) ReadNext(res *engine.ParsedLineResult) error {
 			res.AddRegularError(err)
 			e := int(s)
 			if e > 0 {
-				idxRow := parser.idx.IndexRow(row)
+				idxRow := idx.IndexRow(row)
 				res.AddTuple(EffectifEnt{
 					Siren:       idxRow.GetVal("siren"),
 					Periode:     period.dateStart,
@@ -62,8 +59,4 @@ func (parser *effectifEntParser) ReadNext(res *engine.ParsedLineResult) error {
 		}
 	}
 	return nil
-}
-
-func (parser *effectifEntParser) Close() error {
-	return parser.file.Close()
 }

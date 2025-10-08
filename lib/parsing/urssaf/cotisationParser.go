@@ -1,56 +1,42 @@
 package urssaf
 
 import (
-	"encoding/csv"
-	"os"
+	"io"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
-func NewParserCotisation() *parserCotisation {
-	return &parserCotisation{}
-}
+type CotisationParser struct{}
 
-// parserCotisation implements engine.Parser
-type parserCotisation struct {
-	file    *os.File
-	reader  *csv.Reader
-	comptes engine.Comptes
-	idx     engine.ColMapping
-}
-
-func (parser *parserCotisation) Type() base.ParserType {
-	return base.Cotisation
-}
-
-func (parser *parserCotisation) Init(cache *engine.Cache, filter engine.SirenFilter, batch *base.AdminBatch) (err error) {
-	parser.comptes, err = engine.GetCompteSiretMapping(*cache, batch, filter, engine.OpenAndReadSiretMapping)
-	return err
-}
-
-func (parser *parserCotisation) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ';', true)
-	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.reader, Cotisation{})
+func (parser *CotisationParser) Type() base.ParserType { return base.Cotisation }
+func (parser *CotisationParser) New(r io.Reader) engine.ParserInst {
+	return &UrssafParserInst{
+		parsing.CsvParserInst{
+			Reader:     r,
+			RowParser:  &cotisationRowParser{},
+			Comma:      ';',
+			LazyQuotes: true,
+			DestTuple:  Cotisation{},
+		},
 	}
-	return err
 }
 
-func (parser *parserCotisation) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
+type cotisationRowParser struct {
+	UrssafRowParser
+}
 
-	idxRow := parser.idx.IndexRow(row)
+func (rp *cotisationRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+
+	idxRow := idx.IndexRow(row)
 
 	cotisation := Cotisation{}
 
 	periodeDebut, periodeFin, err := engine.UrssafToPeriod(idxRow.GetVal("periode"))
 	res.AddRegularError(err)
 
-	siret, err := engine.GetSiretFromComptesMapping(idxRow.GetVal("Compte"), &periodeDebut, parser.comptes)
+	siret, err := rp.GetComptes().GetSiret(idxRow.GetVal("Compte"), &periodeDebut)
 	if err != nil {
 		res.SetFilterError(err)
 	} else {
@@ -67,8 +53,4 @@ func (parser *parserCotisation) ReadNext(res *engine.ParsedLineResult) error {
 		res.AddTuple(cotisation)
 	}
 	return nil
-}
-
-func (parser *parserCotisation) Close() error {
-	return parser.file.Close()
 }

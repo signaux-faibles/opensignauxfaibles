@@ -3,26 +3,11 @@ package engine
 import (
 	"bufio"
 	"compress/gzip"
-	"encoding/csv"
 	"io"
 	"os"
 
 	"opensignauxfaibles/lib/base"
 )
-
-// OpenCsvReader ouvre un fichier CSV potentiellement gzippé et retourne un csv.Reader.
-func OpenCsvReader(batchFile base.BatchFile, comma rune, lazyQuotes bool) (*os.File, *csv.Reader, error) {
-	file, fileReader, err := OpenFileReader(batchFile)
-	if err != nil {
-		return file, nil, err
-	}
-
-	reader := csv.NewReader(fileReader)
-	reader.Comma = comma
-	reader.LazyQuotes = lazyQuotes
-
-	return file, reader, err
-}
 
 // OpenFileReader ouvre un fichier potentiellement gzippé et retourne un io.Reader.
 func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
@@ -43,7 +28,7 @@ func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
 }
 
 // ParseLines appelle la fonction parseLine() sur chaque ligne du fichier CSV pour transmettre les tuples et/ou erreurs dans parsedLineChan.
-func ParseLines(parser Parser, parsedLineChan chan ParsedLineResult) {
+func ParseLines(parserInst ParserInstance, parsedLineChan chan ParsedLineResult) {
 	defer close(parsedLineChan)
 
 	var lineNumber = 0 // starting with the header
@@ -54,7 +39,7 @@ func ParseLines(parser Parser, parsedLineChan chan ParsedLineResult) {
 	for {
 		lineNumber++
 		parsedLine := ParsedLineResult{}
-		err := parser.ReadNext(&parsedLine)
+		err := parserInst.ReadNext(&parsedLine)
 
 		if err == io.EOF {
 			break

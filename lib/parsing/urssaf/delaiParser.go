@@ -1,57 +1,35 @@
 package urssaf
 
 import (
-	"encoding/csv"
+	"io"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
-	"os"
+	"opensignauxfaibles/lib/parsing"
 	"time"
 )
 
-// Type de l'objet
-func (delai Delai) Type() base.ParserType {
-	return base.Delai
-}
+type DelaiParser struct{}
 
-// Implémente engine.Parser
-type parserDelai struct {
-	reader  *csv.Reader
-	file    *os.File
-	comptes engine.Comptes
-	idx     engine.ColMapping
-}
-
-func NewParserDelai() *parserDelai {
-	return &parserDelai{}
-}
-
-func (parser *parserDelai) Type() base.ParserType {
-	return base.Delai
-}
-
-func (parser *parserDelai) Init(cache *engine.Cache, filter engine.SirenFilter, batch *base.AdminBatch) (err error) {
-	parser.comptes, err = engine.GetCompteSiretMapping(*cache, batch, filter, engine.OpenAndReadSiretMapping)
-	return err
-}
-
-func (parser *parserDelai) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ';', false)
-
-	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.reader, Delai{})
+func (parser *DelaiParser) Type() base.ParserType { return base.Delai }
+func (parser *DelaiParser) New(r io.Reader) engine.ParserInst {
+	return &UrssafParserInst{
+		parsing.CsvParserInst{
+			Reader:     r,
+			RowParser:  &delaiRowParser{},
+			Comma:      ';',
+			LazyQuotes: false,
+			DestTuple:  Delai{},
+		},
 	}
-	return err
 }
 
-func (parser *parserDelai) ReadNext(res *engine.ParsedLineResult) error {
+type delaiRowParser struct {
+	UrssafRowParser
+}
 
-	row, err := parser.reader.Read()
+func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
 
-	if err != nil {
-		return err
-	}
-
-	idxRow := parser.idx.IndexRow(row)
+	idxRow := idx.IndexRow(row)
 
 	date, err := time.Parse("02/01/2006", idxRow.GetVal("Date_creation"))
 
@@ -61,7 +39,7 @@ func (parser *parserDelai) ReadNext(res *engine.ParsedLineResult) error {
 
 	}
 
-	siret, err := engine.GetSiretFromComptesMapping(idxRow.GetVal("Numero_compte_externe"), &date, parser.comptes)
+	siret, err := rp.GetComptes().GetSiret(idxRow.GetVal("Numero_compte_externe"), &date)
 	if err != nil {
 		res.SetFilterError(err)
 		return err
@@ -89,8 +67,4 @@ func (parser *parserDelai) ReadNext(res *engine.ParsedLineResult) error {
 		res.AddTuple(delai)
 	}
 	return nil
-}
-
-func (parser *parserDelai) Close() error {
-	return parser.file.Close()
 }

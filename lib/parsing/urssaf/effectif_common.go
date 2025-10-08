@@ -1,23 +1,45 @@
 package urssaf
 
 import (
-	"encoding/csv"
 	"regexp"
 	"time"
 
+	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
+
+// EffectifParserInst is a variant of parsing.CsvParsirInst
+// where the index is defined dynamically
+type EffectifParserInst struct {
+	parsing.CsvParserInst
+
+	idx engine.ColMapping
+}
+
+func (p *EffectifParserInst) Init(cache *engine.Cache, filter engine.SirenFilter,
+	batch *base.AdminBatch) error {
+	err := p.CsvParserInst.Init(cache, filter, batch)
+	if err != nil {
+		return err
+	}
+
+	idx, periods, err := parseEffectifColMapping(p.Header(), EffectifEnt{})
+	p.idx = idx
+
+	if rowParser, ok := p.CsvParserInst.RowParser.(interface{ setPeriods([]periodCol) }); ok {
+		rowParser.setPeriods(periods)
+	}
+
+	return nil
+}
 
 type periodCol struct {
 	dateStart time.Time
 	colIndex  int
 }
 
-func parseEffectifColMapping(reader *csv.Reader, destObject interface{}) (engine.ColMapping, []periodCol, error) {
-	fields, err := reader.Read()
-	if err != nil {
-		return engine.ColMapping{}, nil, err
-	}
+func parseEffectifColMapping(fields []string, destObject interface{}) (engine.ColMapping, []periodCol, error) {
 	idx, err := engine.ValidateAndIndexColumnsFromInputTags(engine.LowercaseFields(fields), destObject)
 	// Dans quels champs lire l'effectifEnt
 	periods := parseEffectifPeriod(fields)

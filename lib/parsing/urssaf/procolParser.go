@@ -1,61 +1,39 @@
 package urssaf
 
 import (
-	"encoding/csv"
-	"os"
+	"io"
 	"regexp"
 	"strings"
 	"time"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
-type procolParser struct {
-	file   *os.File
-	reader *csv.Reader
-	idx    engine.ColMapping
-}
+type ProcolParser struct{}
 
-func NewParserProcol() *procolParser {
-	return &procolParser{}
-}
-
-func (parser *procolParser) Type() base.ParserType {
-	return base.Procol
-}
-
-func (parser *procolParser) Init(_ *engine.Cache, _ engine.SirenFilter, _ *base.AdminBatch) error {
-	return nil
-}
-
-func (parser *procolParser) Close() error {
-	return parser.file.Close()
-}
-
-func (parser *procolParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ';', true)
-	if err == nil {
-		parser.idx, err = parseProcolColMapping(parser.reader)
+func (parser *ProcolParser) Type() base.ParserType { return base.Procol }
+func (parser *ProcolParser) New(r io.Reader) engine.ParserInst {
+	return &UrssafParserInst{
+		parsing.CsvParserInst{
+			Reader:     r,
+			RowParser:  &procolRowParser{},
+			Comma:      ';',
+			LazyQuotes: false,
+			DestTuple:  Procol{},
+		},
 	}
-	return err
 }
 
-func parseProcolColMapping(reader *csv.Reader) (engine.ColMapping, error) {
-	fields, err := reader.Read()
-	if err != nil {
-		return engine.ColMapping{}, err
-	}
-	return engine.ValidateAndIndexColumnsFromInputTags(engine.LowercaseFields(fields), Procol{})
+type procolRowParser struct {
+	UrssafRowParser
 }
 
-func (parser *procolParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
+func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
 
-	idxRow := parser.idx.IndexRow(row)
+	var err error
+	idxRow := idx.IndexRow(row)
 	procol := Procol{}
 	procol.DateEffet, err = time.Parse("02Jan2006", idxRow.GetVal("dt_effet"))
 	res.AddRegularError(err)

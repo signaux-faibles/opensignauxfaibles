@@ -42,16 +42,16 @@ func (pr ParserRegistry) All() []engine.Parser {
 // Note: penser à tenir à jour la table des formats, dans la documentation:
 // https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#sp%C3%A9cificit%C3%A9s-de-limport
 var DefaultParsers = ParserRegistry{
-	base.Debit:       urssaf.NewParserDebit(),
-	base.Ccsf:        urssaf.NewParserCCSF(),
-	base.Cotisation:  urssaf.NewParserCotisation(),
-	base.AdminUrssaf: urssaf.NewParserComptes(),
-	base.Delai:       urssaf.NewParserDelai(),
-	base.Effectif:    urssaf.NewParserEffectif(),
-	base.EffectifEnt: urssaf.NewParserEffectifEnt(),
-	base.Procol:      urssaf.NewParserProcol(),
-	base.Apconso:     apconso.NewParserApconso(),
-	base.Apdemande:   apdemande.NewParserApdemande(),
-	base.Sirene:      sirene.NewParserSirene(),
-	base.SireneUl:    sireneul.NewParserSireneUL(),
+	base.Debit:       urssaf.NewDebitParser(),
+	base.Ccsf:        urssaf.NewCCSFParser(),
+	base.Cotisation:  urssaf.NewCotisationParser(),
+	base.AdminUrssaf: urssaf.NewComptesParser(),
+	base.Delai:       urssaf.NewDelaiParser(),
+	base.Effectif:    urssaf.NewEffectifParser(),
+	base.EffectifEnt: urssaf.NewEffectifEntParser(),
+	base.Procol:      urssaf.NewProcolParser(),
+	base.Apconso:     apconso.NewApconsoParser(),
+	base.Apdemande:   apdemande.NewApdemandeParser(),
+	base.Sirene:      sirene.NewSireneParser(),
+	base.SireneUl:    sireneul.NewSireneULParser(),
 }

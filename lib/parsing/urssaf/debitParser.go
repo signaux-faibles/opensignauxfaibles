@@ -1,51 +1,40 @@
 package urssaf
 
 import (
-	"os"
+	"io"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 )
 
-// debitParser implements ParseHandler
-type debitParser struct {
-	parsing.BaseParser
+type DebitParser struct{}
 
-	file    *os.File
-	comptes engine.Comptes
-	idx     engine.ColMapping
-}
-
-func NewParserDebit() *debitParser {
-	return &debitParser{}
-}
-
-func (parser *debitParser) Type() base.ParserType {
-	return base.Debit
-}
-
-func (parser *debitParser) Init(cache *engine.Cache, filter engine.SirenFilter, batch *base.AdminBatch) (err error) {
-	parser.comptes, err = engine.GetCompteSiretMapping(*cache, batch, filter, engine.OpenAndReadSiretMapping)
-	return err
-}
-
-func (parser *debitParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.BaseParser.Reader, err = engine.OpenCsvReader(filePath, ';', false)
-	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.BaseParser.Reader, Debit{})
+func (parser *DebitParser) Type() base.ParserType { return base.Debit }
+func (parser *DebitParser) New(r io.Reader) engine.ParserInst {
+	return &UrssafParserInst{
+		parsing.CsvParserInst{
+			Reader:     r,
+			RowParser:  &debitRowParser{},
+			Comma:      ';',
+			LazyQuotes: false,
+			DestTuple:  Debit{},
+		},
 	}
-	return err
 }
 
-func (parser *debitParser) ParseRow(row []string, res *engine.ParsedLineResult) error {
+type debitRowParser struct {
+	UrssafRowParser
+}
 
-	idxRow := parser.idx.IndexRow(row)
+func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+
+	idxRow := idx.IndexRow(row)
 
 	periodeDebut, periodeFin, err := engine.UrssafToPeriod(idxRow.GetVal("Periode"))
 	res.AddRegularError(err)
 
-	if siret, err := engine.GetSiretFromComptesMapping(idxRow.GetVal("num_cpte"), &periodeDebut, parser.comptes); err == nil {
+	if siret, err := rp.GetComptes().GetSiret(idxRow.GetVal("num_cpte"), &periodeDebut); err == nil {
 		debit := Debit{
 			Siret:                     siret,
 			NumeroCompte:              idxRow.GetVal("num_cpte"),
@@ -85,8 +74,4 @@ func (parser *debitParser) ParseRow(row []string, res *engine.ParsedLineResult) 
 		res.SetFilterError(err)
 	}
 	return nil
-}
-
-func (parser *debitParser) Close() error {
-	return parser.file.Close()
 }

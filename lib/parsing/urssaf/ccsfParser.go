@@ -1,65 +1,53 @@
 package urssaf
 
 import (
-	"encoding/csv"
 	"errors"
-	"os"
+	"io"
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
-type ccsfParser struct {
-	file    *os.File
-	reader  *csv.Reader
-	comptes engine.Comptes
-	idx     engine.ColMapping
-}
+type CCSFParser struct{}
 
-func NewParserCCSF() *ccsfParser {
-	return &ccsfParser{}
-}
-
-func (parser *ccsfParser) Type() base.ParserType {
-	return base.Ccsf
-}
-
-func (parser *ccsfParser) Init(cache *engine.Cache, filter engine.SirenFilter, batch *base.AdminBatch) (err error) {
-	parser.comptes, err = engine.GetCompteSiretMapping(*cache, batch, filter, engine.OpenAndReadSiretMapping)
-	return err
-}
-
-func (parser *ccsfParser) Close() error {
-	return parser.file.Close()
-}
-
-func (parser *ccsfParser) Open(filePath base.BatchFile) (err error) {
-	parser.file, parser.reader, err = engine.OpenCsvReader(filePath, ';', false)
-	if err == nil {
-		parser.idx, err = engine.IndexColumnsFromCsvHeader(parser.reader, CCSF{})
+func (parser *CCSFParser) Type() base.ParserType { return base.Ccsf }
+func (parser *CCSFParser) New(r io.Reader) engine.ParserInst {
+	return &UrssafParserInst{
+		parsing.CsvParserInst{
+			Reader:     r,
+			RowParser:  &ccsfRowParser{},
+			Comma:      ';',
+			LazyQuotes: false,
+			DestTuple:  CCSF{},
+		},
 	}
-	return err
 }
 
-func (parser *ccsfParser) ReadNext(res *engine.ParsedLineResult) error {
-	row, err := parser.reader.Read()
-	if err != nil {
-		return err
-	}
+type ccsfRowParser struct {
+	UrssafRowParser
+}
 
+func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+
+	var err error
 	ccsf := CCSF{}
 	if len(row) >= 4 {
-		idxRow := parser.idx.IndexRow(row)
+		idxRow := idx.IndexRow(row)
 		ccsf.Action = idxRow.GetVal("Code_externe_action")
 		ccsf.Stade = idxRow.GetVal("Code_externe_stade")
 		ccsf.DateTraitement, err = engine.UrssafToDate(idxRow.GetVal("Date_de_traitement"))
 		res.AddRegularError(err)
+
 		if err != nil {
 			return err
 		}
 
-		ccsf.key, err = engine.GetSiretFromComptesMapping(idxRow.GetVal("Compte"),
-			&ccsf.DateTraitement, parser.comptes)
+		ccsf.key, err = rp.GetComptes().GetSiret(
+			idxRow.GetVal("Compte"),
+			&ccsf.DateTraitement,
+		)
+
 		if err != nil {
 			// Compte filtré
 			res.SetFilterError(err)

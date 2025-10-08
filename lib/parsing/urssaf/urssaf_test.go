@@ -56,7 +56,6 @@ func TestUrssaf(t *testing.T) {
 				// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
 				initialGoldenContent, err := os.ReadFile(filepath.Join("testData", testCase.GoldenFile))
 				assert.NoError(t, err)
-
 				goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(testCase.InputFile), []byte(testCase.InputFile+".gz"))
 				tmpGoldenFile := engine.CreateTempFileWithContent(t, goldenContent)
 

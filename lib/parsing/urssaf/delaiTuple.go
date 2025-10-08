@@ -1,6 +1,7 @@
 package urssaf
 
 import (
+	"opensignauxfaibles/lib/base"
 	"time"
 )
 
@@ -29,4 +30,9 @@ func (delai Delai) Key() string {
 // Scope de l'objet
 func (delai Delai) Scope() string {
 	return "etablissement"
+}
+
+// Type de l'objet
+func (delai Delai) Type() base.ParserType {
+	return base.Delai
 }
