@@ -24,10 +24,14 @@ type HeaderIndexer struct {
 // tag "input"  annotant les propriétés du type de destination du parseur.
 //
 // Si aucun type n'est précisé, les en-têtes ne sont pas validées.
-func (i HeaderIndexer) Index(headers []string) (ColIndex, error) {
-	var colIndex = ColIndex{}
-	for i, name := range headers {
-		colIndex[name] = i
+func (i HeaderIndexer) Index(headers []string, caseSensitive bool) (ColIndex, error) {
+	var colIndex = newColIndex(caseSensitive)
+
+	for pos, name := range headers {
+		if !caseSensitive {
+			name = strings.ToLower(name)
+		}
+		colIndex.mapping[name] = pos
 	}
 
 	var err error
@@ -41,12 +45,31 @@ func (i HeaderIndexer) Index(headers []string) (ColIndex, error) {
 }
 
 // ColIndex fournit l'indice de chaque colonne.
-type ColIndex map[string]int
+type ColIndex struct {
+	mapping       map[string]int
+	caseSensitive bool
+}
+
+// newColIndex initializes an empty ColIndex
+func newColIndex(caseSensitive bool) ColIndex {
+	c := ColIndex{}
+	c.mapping = make(map[string]int)
+	c.caseSensitive = caseSensitive
+	return c
+}
+
+func (idx ColIndex) Get(name string) (int, bool) {
+	if !idx.caseSensitive {
+		name = strings.ToLower(name)
+	}
+	pos, found := idx.mapping[name]
+	return pos, found
+}
 
 // HasFields vérifie la présence d'un ensemble de colonnes.
 func (idx ColIndex) HasFields(requiredFields []string) (bool, error) {
 	for _, name := range requiredFields {
-		if _, found := idx[name]; !found {
+		if _, found := idx.Get(name); !found {
 			return false, errors.New("Colonne " + name + " non trouvée. Abandon.")
 		}
 	}
@@ -67,7 +90,7 @@ type IndexedRow struct {
 // GetVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
 // Dans le cas où la colonne n'existe pas, une erreur fatale est déclenchée.
 func (indexedRow IndexedRow) GetVal(colName string) string {
-	index, ok := indexedRow.idx[colName]
+	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
 		log.Fatal("Column not found in ColMapping: " + colName)
 	}
@@ -77,7 +100,7 @@ func (indexedRow IndexedRow) GetVal(colName string) string {
 // GetOptionalVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
 // Dans le cas où la colonne n'existe pas, le booléen sera faux.
 func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
-	index, ok := indexedRow.idx[colName]
+	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
 		return "", false
 	}
@@ -87,7 +110,7 @@ func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 // GetFloat64 retourne la valeur décimale associée à la colonne donnée, sur la ligne en cours.
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
-	index, ok := indexedRow.idx[colName]
+	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
 		return nil, fmt.Errorf("GetFloat64 failed to find column: %v", colName)
 	}
@@ -97,7 +120,7 @@ func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 // GetCommaFloat64 retourne la valeur décimale avec virgule associée à la colonne donnée, sur la ligne en cours.
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
-	index, ok := indexedRow.idx[colName]
+	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
 		return nil, fmt.Errorf("GetCommaFloat64 failed to find column: %v", colName)
 	}
@@ -108,7 +131,7 @@ func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
 // GetInt retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
-	index, ok := indexedRow.idx[colName]
+	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
 		return nil, fmt.Errorf("GetInt failed to find column: %v", colName)
 	}
@@ -118,7 +141,7 @@ func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 // GetIntFromFloat retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetIntFromFloat(colName string) (*int, error) {
-	index, ok := indexedRow.idx[colName]
+	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
 		return nil, fmt.Errorf("GetIntFromFloat failed to find column: %v", colName)
 	}
@@ -128,7 +151,7 @@ func (indexedRow IndexedRow) GetIntFromFloat(colName string) (*int, error) {
 // GetBool retourne la valeur booléenne associée à la colonne donnée, sur la ligne en cours.
 // Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
 func (indexedRow IndexedRow) GetBool(colName string) (bool, error) {
-	index, ok := indexedRow.idx[colName]
+	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
 		return false, fmt.Errorf("GetBool failed to find column: %v", colName)
 	}

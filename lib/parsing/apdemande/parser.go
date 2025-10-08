@@ -22,17 +22,18 @@ func NewApdemandeParser() engine.Parser {
 func (p *ApdemandeParser) Type() base.ParserType { return base.Apdemande }
 func (p *ApdemandeParser) New(r io.Reader) engine.ParserInst {
 	return &parsing.CsvParserInst{
-		Reader:     r,
-		RowParser:  &apdemandeRowParser{},
-		Comma:      ',',
-		LazyQuotes: true,
-		DestTuple:  APDemande{},
+		Reader:        r,
+		RowParser:     &apdemandeRowParser{},
+		Comma:         ',',
+		LazyQuotes:    true,
+		CaseSensitive: false,
+		DestTuple:     APDemande{},
 	}
 }
 
 type apdemandeRowParser struct{}
 
-func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 	idxRow := idx.IndexRow(row)
 
 	if idxRow.GetVal("ETAB_SIRET") == "" {

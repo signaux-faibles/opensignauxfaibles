@@ -18,9 +18,10 @@ type CsvParserInst struct {
 	io.Reader
 	RowParser
 
-	Comma      rune
-	LazyQuotes bool
-	DestTuple  any
+	Comma         rune
+	LazyQuotes    bool
+	CaseSensitive bool
+	DestTuple     any
 
 	idx ColIndex
 
@@ -42,7 +43,7 @@ func (p *CsvParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, bat
 		return err
 	}
 
-	p.idx, err = HeaderIndexer{p.DestTuple}.Index(p.Header())
+	p.idx, err = HeaderIndexer{p.DestTuple}.Index(p.Header(), p.CaseSensitive)
 	return err
 }
 
