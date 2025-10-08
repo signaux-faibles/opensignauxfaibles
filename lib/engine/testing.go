@@ -123,7 +123,6 @@ func TestParserOutput(
 		t.Fatal("Could not open golden file" + err.Error())
 	}
 
-	fmt.Println(string(actual))
 	assert.Equal(t, string(expected), string(actual))
 }
 

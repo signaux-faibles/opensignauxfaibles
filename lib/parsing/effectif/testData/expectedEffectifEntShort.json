@@ -30,11 +30,11 @@
       "head_fatal": [],
       "head_rejected": [],
       "is_fatal": false,
-      "lines_parsed": 3,
+      "lines_parsed": 1,
       "lines_rejected": 0,
       "lines_skipped": 0,
-      "lines_valid": 3,
-      "summary": "testData/effectifEntTestData.csv: intégration terminée, 3 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 3 lignes valides"
+      "lines_valid": 1,
+      "summary": "testData/effectifEntTestDataShort.csv: intégration terminée, 1 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 1 lignes valides"
     }
   ]
 }
