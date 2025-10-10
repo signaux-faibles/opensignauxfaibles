@@ -21,11 +21,12 @@ func (parser *ProcolParser) Type() base.ParserType { return base.Procol }
 func (parser *ProcolParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{
-			Reader:     r,
-			RowParser:  &procolRowParser{},
-			Comma:      ';',
-			LazyQuotes: false,
-			DestTuple:  Procol{},
+			Reader:        r,
+			RowParser:     &procolRowParser{},
+			Comma:         ';',
+			LazyQuotes:    false,
+			CaseSensitive: false,
+			DestTuple:     Procol{},
 		},
 	}
 }

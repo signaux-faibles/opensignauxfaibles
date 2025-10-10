@@ -7,6 +7,7 @@ import (
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -158,12 +159,12 @@ func insertTuples(tuples []engine.Tuple, conn db.Pool, tableName string, columns
 
 // ExtractTableColumns extrait les noms des colonnes pour une table SQL via le tag "sql"
 func ExtractTableColumns(tuple engine.Tuple) (header []string) {
-	return engine.ExtractFieldsByTags(tuple, "sql")
+	return parsing.ExtractFieldsByTags(tuple, "sql")
 }
 
 // ExtractTableRow extrait les valeurs des colonnes pour une table SQL via le tag "sql"
 func ExtractTableRow(tuple engine.Tuple) (row []any) {
-	rawValues := engine.ExtractValuesByTags(tuple, "sql")
+	rawValues := parsing.ExtractValuesByTags(tuple, "sql")
 	for _, v := range rawValues {
 		row = append(row, v.Interface())
 	}

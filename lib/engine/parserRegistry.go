@@ -5,14 +5,22 @@ import (
 	"opensignauxfaibles/lib/base"
 )
 
+// ParserRegistry est une interface pour accéder à l'ensemble des parsers supportés
 type ParserRegistry interface {
-	Resolve(base.ParserType) Parser
+	// All retourne tous les parsers disponibles
 	All() []Parser
+
+	// Resolve retourne le parser associé à un type donné
+	//
+	// Retourne `nil` si ce parser n'existe pas
+	Resolve(base.ParserType) Parser
 }
 
-// ResolveParsers gets the appropriate parsers from a types array.
-// If "types" is empty, all parsers are returned.
-// A provided type that is missing from the registry triggers an error.
+// ResolveParsers récupère les parsers associés aux types donnés en entrée.
+//
+// Si aucun type n'est renseigné, tous les parsers sont retournés.
+//
+// Si un type absent du registre est requêté, une erreur est retournée.
 func ResolveParsers(registry ParserRegistry, types []base.ParserType) ([]Parser, error) {
 	var parsers []Parser
 

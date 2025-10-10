@@ -16,6 +16,7 @@ import (
 
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing"
 )
 
 const DefaultExportPath = "/export/csv"
@@ -126,12 +127,12 @@ func createFile(filePath string) (*os.File, error) {
 
 // ExtractCSVHeaders extrait les en-têtes csv via le tag "csv"
 func ExtractCSVHeaders(tuple engine.Tuple) (header []string) {
-	return engine.ExtractFieldsByTags(tuple, "csv")
+	return parsing.ExtractFieldsByTags(tuple, "csv")
 }
 
 // ExtractCSVRow returns the tuple values, in same order as the header, and converted to strings
 func ExtractCSVRow(tuple engine.Tuple) (values []string) {
-	rawValues := engine.ExtractValuesByTags(tuple, "csv")
+	rawValues := parsing.ExtractValuesByTags(tuple, "csv")
 	for _, v := range rawValues {
 		values = append(values, valueToString(v))
 	}

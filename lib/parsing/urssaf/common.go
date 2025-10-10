@@ -21,7 +21,7 @@ func (p *UrssafRowParser) setComptes(comptes Comptes) {
 	p.comptes = &comptes
 }
 
-// UrssaParserInst factorise l'initialisation des comptes pour tous les
+// UrssafParserInst factorise l'initialisation des comptes pour tous les
 // parsers URSSAF
 type UrssafParserInst struct {
 	parsing.CsvParserInst

@@ -19,25 +19,21 @@ import (
 func TestReadSiretMapping(t *testing.T) {
 
 	t.Run("readSiretMapping doit être insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
-		batch := base.AdminBatch{}
 		csvHeader := `UrsSaf_geStion;DEp;ComptE;Etat_Compte;SIren;Siret;Date_creA_siret;DatE_disp_sirEt;Cle_mD5`
-		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NewCache(map[string]any{}), &batch)
+		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NoFilter)
 		assert.NoError(t, err)
 	})
 
 	t.Run("readSiretMapping doit rapporter une erreur s'il manque une colonne", func(t *testing.T) {
-		batch := base.AdminBatch{}
 		csvHeader := `UrsSaf_geStion`
-		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NewCache(map[string]any{}), &batch)
+		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NoFilter)
 		assert.Error(t, err, "Colonne Compte non trouvée.")
 	})
 
 	t.Run("readSiretMapping doit produire les mêmes tuples que d'habitude", func(t *testing.T) {
 
-		var batch = base.AdminBatch{}
-
-		stdTime1, _ := time.Parse("2006-02-01", "2899-01-01")
-		stdTime2, _ := time.Parse("2006-02-01", "2015-01-01")
+		stdTime1, _ := time.Parse("2006-01-02", "2899-01-01")
+		stdTime2, _ := time.Parse("2006-01-02", "2015-01-01")
 		stdExpected1 := Comptes{
 			"abc": []SiretDate{{"01234567891011", stdTime1}},
 		}
@@ -53,21 +49,21 @@ func TestReadSiretMapping(t *testing.T) {
 			},
 		}
 
-		stdFilterCache := engine.NewCache(map[string]any{"filter": filter.SirenFilter{"012345678": true}})
+		stdFilterCache := filter.MapFilter{"012345678": true}
 		expectedHeader := "Urssaf_gestion;Dep;Compte;Etat_compte;Siren;Siret;Date_crea_siret;Date_disp_siret"
 
 		testCases := []struct {
 			csv         string
-			cache       engine.Cache
+			filter      engine.SirenFilter
 			expectError bool
 			expected    Comptes
 		}{
 			// No closing date
 			{expectedHeader + `
-		;;"abc";;;"01234567891011";;""`, NewCache(map[string]any{}), false, stdExpected1},
+		;;"abc";;;"01234567891011";;""`, engine.NoFilter, false, stdExpected1},
 			// With closing date
 			{expectedHeader + `
-		;;"abc";;;"01234567891011";;"1150101"`, NewCache(map[string]any{}), false, stdExpected2},
+		;;"abc";;;"01234567891011";;"1150101"`, engine.NoFilter, false, stdExpected2},
 			// With filtered siret
 			{expectedHeader + `
 		;;"abc";;;"01234567891011";;"1150101"`, stdFilterCache, false, stdExpected2},
@@ -78,19 +74,19 @@ func TestReadSiretMapping(t *testing.T) {
 			// With two entries 1
 			{expectedHeader + `
 		;;"abc";;;"01234567891011";;"1150101"
-		;;"abc";;;"87654321091011";;""`, NewCache(map[string]any{}), false, stdExpected3},
+		;;"abc";;;"87654321091011";;""`, engine.NoFilter, false, stdExpected3},
 			// With two entries 2: different order
 			{expectedHeader + `
 	    ;;"abc";;;"87654321091011";;""
-	    ;;"abc";;;"01234567891011";;"1150101"`, NewCache(map[string]any{}), false, stdExpected3},
+	    ;;"abc";;;"01234567891011";;"1150101"`, engine.NoFilter, false, stdExpected3},
 			// With invalid siret
 			{expectedHeader + `
 		  ;;"abc";;;"8765432109101A";;""
-	    ;;"abc";;;"01234567891011";;"1150101"`, NewCache(map[string]any{}), false, stdExpected2},
+	    ;;"abc";;;"01234567891011";;"1150101"`, engine.NoFilter, false, stdExpected2},
 		}
 
 		for ind, tc := range testCases {
-			actual, err := readSiretMapping(strings.NewReader(tc.csv), tc.cache, &batch)
+			actual, err := readSiretMapping(strings.NewReader(tc.csv), tc.filter)
 			if err != nil && !tc.expectError {
 				t.Fatalf("unexpected error during file reading in test %d: %v", ind, err)
 			}
@@ -110,13 +106,13 @@ func TestGetCompteSiretMapping(t *testing.T) {
 	t.Run("GetCompteSiretMapping can read from compressed admin_urssaf file with `gzip:` scheme", func(t *testing.T) {
 		expectedComptes := []string{"111982477292496174", "450359886246036238", "636043216536562844"}
 		compressedFileData := compressFileData(t, "../urssaf/testData/comptesTestData.csv")
-		compressedFile := CreateTempFileWithContent(t, compressedFileData.Bytes())
-		cache := NewEmptyCache()
+		compressedFile := engine.CreateTempFileWithContent(t, compressedFileData.Bytes())
+		cache := engine.NewEmptyCache()
 		batch := base.MockBatch(
 			"admin_urssaf",
 			[]base.BatchFile{base.NewCompressedBatchFile(compressedFile.Name())},
 		)
-		actual, err := GetCompteSiretMapping(cache, &batch, OpenAndReadSiretMapping)
+		actual, err := GetCompteSiretMapping(cache, &batch, engine.NoFilter, OpenAndReadSiretMapping)
 		if assert.NoError(t, err) {
 			assert.EqualValues(t, expectedComptes, actual.GetSortedKeys())
 		}
@@ -133,7 +129,7 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		}
 
 		// When file is read, returnd stdExpected1
-		mockOpenFile := func(s1 string, s2 base.BatchFile, c Comptes, ca Cache, ba *base.AdminBatch) (Comptes, error) {
+		mockOpenFile := func(s1 string, s2 base.BatchFile, c Comptes, ca engine.Cache, ba *base.AdminBatch, filter engine.SirenFilter) (Comptes, error) {
 			for key := range stdExpected1 {
 				c[key] = stdExpected1[key]
 			}
@@ -141,22 +137,22 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		}
 
 		testCases := []struct {
-			cache       Cache
+			cache       engine.Cache
 			batch       base.AdminBatch
 			expectError bool
 			expected    Comptes
 		}{
 			// Basic reading from file
-			{NewEmptyCache(), base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected1},
+			{engine.NewEmptyCache(), base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected1},
 			// Cache superseeds reading from file
-			{NewCache(map[string]any{"comptes": stdExpected2}), base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected2},
+			{engine.NewCache(map[string]any{"comptes": stdExpected2}), base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected2},
 			// No cache, no file = error
-			{NewEmptyCache(), base.MockBatch("otherStuff", []base.BatchFile{base.NewBatchFile("a")}), true, nil},
+			{engine.NewEmptyCache(), base.MockBatch("otherStuff", []base.BatchFile{base.NewBatchFile("a")}), true, nil},
 		}
 
 		for ind, tc := range testCases {
 
-			actual, err := GetCompteSiretMapping(tc.cache, &tc.batch, mockOpenFile)
+			actual, err := GetCompteSiretMapping(tc.cache, &tc.batch, engine.NoFilter, mockOpenFile)
 			if err != nil && !tc.expectError {
 				t.Fatalf("Unexpected error during mapping request in test %d: %v", ind, err)
 			}
@@ -178,7 +174,7 @@ func TestGetSiretFromComptesMapping(t *testing.T) {
 		compteManquant := "636043216536562844"
 		// test
 		date := time.Now()
-		siret, err := GetSiretFromComptesMapping(compteManquant, &date, comptes)
+		siret, err := comptes.GetSiret(compteManquant, &date)
 		assert.Equal(t, "", siret)
 		assert.Equal(t, "Pas de siret associé au compte "+compteManquant+" à la période "+date.String(), err.Error())
 	})
@@ -188,7 +184,7 @@ func TestGetSiretFromComptesMapping(t *testing.T) {
 		compteManquant := "636043216536562844"
 		// test
 		date := time.Time{}
-		siret, err := GetSiretFromComptesMapping(compteManquant, &date, comptes)
+		siret, err := comptes.GetSiret(compteManquant, &date)
 		assert.Equal(t, "", siret)
 		assert.Equal(t, "Pas de siret associé au compte "+compteManquant+" à la période "+date.String(), err.Error())
 	})

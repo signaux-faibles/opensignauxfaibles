@@ -13,7 +13,7 @@ type DBReader struct {
 }
 
 func (f *DBReader) Read() (engine.SirenFilter, error) {
-	var filter = make(SirenFilter)
+	var filter = make(MapFilter)
 
 	rows, err := f.Conn.Query(context.Background(), "SELECT siren FROM filter")
 	if err != nil {

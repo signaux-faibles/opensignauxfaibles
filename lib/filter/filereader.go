@@ -30,7 +30,7 @@ func (f *FileReader) Read() (engine.SirenFilter, error) {
 	}
 	defer file.Close()
 
-	filter := make(SirenFilter)
+	filter := make(MapFilter)
 	err = parseCSVFilter(bufio.NewReader(file), filter)
 	if err != nil {
 		return nil, errors.New("Erreur à la lecture du fichier, " + err.Error())
@@ -44,7 +44,7 @@ func (f *FileReader) SuccessStr() string {
 
 // parseCSVFilter reads the content of a io.Reader and adds it to an existing
 // filter
-func parseCSVFilter(reader io.Reader, filter SirenFilter) error {
+func parseCSVFilter(reader io.Reader, filter MapFilter) error {
 
 	csvreader := csv.NewReader(reader)
 	csvreader.Comma = ';'

@@ -19,7 +19,7 @@ type HeaderIndexer struct {
 	Dest any
 }
 
-// IndexColumnsFromCsvHeader valide puis indexe les colonnes trouvées
+// Index valide puis indexe les colonnes trouvées
 // en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le
 // tag "input"  annotant les propriétés du type de destination du parseur.
 //

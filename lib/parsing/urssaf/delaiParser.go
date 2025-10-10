@@ -18,11 +18,12 @@ func (parser *DelaiParser) Type() base.ParserType { return base.Delai }
 func (parser *DelaiParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{
-			Reader:     r,
-			RowParser:  &delaiRowParser{},
-			Comma:      ';',
-			LazyQuotes: false,
-			DestTuple:  Delai{},
+			Reader:        r,
+			RowParser:     &delaiRowParser{},
+			Comma:         ';',
+			CaseSensitive: false,
+			LazyQuotes:    false,
+			DestTuple:     Delai{},
 		},
 	}
 }

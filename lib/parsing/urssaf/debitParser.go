@@ -18,11 +18,12 @@ func (parser *DebitParser) Type() base.ParserType { return base.Debit }
 func (parser *DebitParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{
-			Reader:     r,
-			RowParser:  &debitRowParser{},
-			Comma:      ';',
-			LazyQuotes: false,
-			DestTuple:  Debit{},
+			Reader:        r,
+			RowParser:     &debitRowParser{},
+			Comma:         ';',
+			CaseSensitive: false,
+			LazyQuotes:    false,
+			DestTuple:     Debit{},
 		},
 	}
 }

@@ -26,18 +26,6 @@ type AdminBatchParams struct {
 	DateFin   time.Time `json:"date_fin"`
 }
 
-type BatchProvider interface {
-	Get() (AdminBatch, error)
-}
-
-type BasicBatchProvider struct {
-	Batch AdminBatch
-}
-
-func (p BasicBatchProvider) Get() (AdminBatch, error) {
-	return p.Batch, nil
-}
-
 // BatchFiles fichiers mappés par type
 type BatchFiles map[ParserType][]BatchFile
 

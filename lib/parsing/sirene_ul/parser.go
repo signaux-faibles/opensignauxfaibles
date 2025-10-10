@@ -1,3 +1,5 @@
+// Package sireneul exporte un parser pour extraire les données d'un fichier
+// Sirene Unités légales
 package sireneul
 
 import (
@@ -28,7 +30,7 @@ func (p *SireneULParser) New(r io.Reader) engine.ParserInst {
 
 type sireneULRowParser struct{}
 
-func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 	var err error
 
 	idxRow := idx.IndexRow(row)

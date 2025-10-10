@@ -77,6 +77,7 @@ func ParseFilesFromBatch(
 	parser Parser,
 	filter SirenFilter,
 ) (chan Tuple, chan Report) {
+
 	outputChannel := make(chan Tuple)
 	reportChannel := make(chan Report)
 	fileType := parser.Type()

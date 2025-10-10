@@ -18,11 +18,12 @@ func (parser *CotisationParser) Type() base.ParserType { return base.Cotisation 
 func (parser *CotisationParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{
-			Reader:     r,
-			RowParser:  &cotisationRowParser{},
-			Comma:      ';',
-			LazyQuotes: true,
-			DestTuple:  Cotisation{},
+			Reader:        r,
+			RowParser:     &cotisationRowParser{},
+			Comma:         ';',
+			LazyQuotes:    true,
+			CaseSensitive: false,
+			DestTuple:     Cotisation{},
 		},
 	}
 }

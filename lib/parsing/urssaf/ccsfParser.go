@@ -19,11 +19,12 @@ func (parser *CCSFParser) Type() base.ParserType { return base.Ccsf }
 func (parser *CCSFParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{
-			Reader:     r,
-			RowParser:  &ccsfRowParser{},
-			Comma:      ';',
-			LazyQuotes: false,
-			DestTuple:  CCSF{},
+			Reader:        r,
+			RowParser:     &ccsfRowParser{},
+			Comma:         ';',
+			LazyQuotes:    false,
+			CaseSensitive: false,
+			DestTuple:     CCSF{},
 		},
 	}
 }

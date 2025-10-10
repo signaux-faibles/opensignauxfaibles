@@ -20,3 +20,9 @@ type FilterReader interface {
 	Read() (SirenFilter, error)
 	SuccessStr() string
 }
+
+var NoFilter SirenFilter = noFilter{}
+
+type noFilter struct{}
+
+func (f noFilter) ShouldSkip(string) bool { return false }

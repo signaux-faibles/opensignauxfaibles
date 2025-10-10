@@ -3,7 +3,6 @@ package engine
 import (
 	"context"
 	"errors"
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,16 +13,22 @@ import (
 func TestParseFilesFromBatch(t *testing.T) {
 	ctx := context.Background()
 
-	t.Run("intérrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
-		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
-		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{initError: errors.New("error from Init()")})
-		fatalErrors := ConsumeFatalErrors(eventChan)
+	t.Run("interrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
+		batch := base.MockBatch("dummy", []base.BatchFile{base.NewMockBatchFile("")})
+		_, reportChan := ParseFilesFromBatch(
+			ctx,
+			NewEmptyCache(),
+			&batch,
+			&dummyParser{initError: errors.New("error from Init()")},
+			NoFilter,
+		)
+		fatalErrors := ConsumeFatalErrors(reportChan)
 		assert.Equal(t, []string{"Fatal: error from Init()"}, fatalErrors)
 	})
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
-		batch := base.AdminBatch{Files: base.BatchFiles{"dummy": {base.NewBatchFile("dummy.csv")}}}
-		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{})
+		batch := base.MockBatch("dummy", []base.BatchFile{base.OpenFailsBatchFile{}})
+		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{}, NoFilter)
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)
 	})
@@ -39,7 +44,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.AddTuple(dummyTuple{})
 
 		tracker := NewParsingTracker()
-		processTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		processTuplesFromLine(ctx, parsedLine, NoFilter, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")
@@ -57,7 +62,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.SetFilterError(errors.New("filtered"))
 
 		tracker := NewParsingTracker()
-		processTuplesFromLine(ctx, parsedLine, &SirenFilter{}, &tracker, make(chan Tuple))
+		processTuplesFromLine(ctx, parsedLine, NoFilter, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")
@@ -95,26 +100,3 @@ func (sirene dummyTuple) Type() base.ParserType {
 func (sirene dummyTuple) Scope() string {
 	return "etablissement"
 }
-
-type dummyParser struct {
-	initError error
-}
-
-func (parser *dummyParser) Type() base.ParserType {
-	return "dummy"
-}
-
-func (parser *dummyParser) Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error {
-	return parser.initError
-}
-
-func (parser *dummyParser) Open(filePath base.BatchFile) (err error) {
-	log.Println("opening", filePath) // TODO: supprimer cet affichage ?
-	return errors.New("error from Open()")
-}
-
-func (parser *dummyParser) Close() error {
-	return errors.New("error from Close()")
-}
-
-func (parser *dummyParser) ParseLines(parsedLineChan chan ParsedLineResult) {}

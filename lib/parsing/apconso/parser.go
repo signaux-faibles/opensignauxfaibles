@@ -18,11 +18,12 @@ func NewApconsoParser() engine.Parser {
 func (p *ApconsoParser) Type() base.ParserType { return base.Apconso }
 func (p *ApconsoParser) New(r io.Reader) engine.ParserInst {
 	return &parsing.CsvParserInst{
-		Reader:     r,
-		RowParser:  &apconsoRowParser{},
-		Comma:      ',',
-		LazyQuotes: false,
-		DestTuple:  APConso{},
+		Reader:        r,
+		RowParser:     &apconsoRowParser{},
+		Comma:         ',',
+		CaseSensitive: false,
+		LazyQuotes:    false,
+		DestTuple:     APConso{},
 	}
 }
 

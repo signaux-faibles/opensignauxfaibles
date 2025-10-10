@@ -10,13 +10,13 @@ func TestReadFilter(t *testing.T) {
 	testCases := []struct {
 		name     string
 		input    string
-		expected SirenFilter
+		expected MapFilter
 		wantErr  bool
 	}{
 		{
 			name:     "valid sirens",
 			input:    "012345678\n876543210",
-			expected: SirenFilter{"012345678": true, "876543210": true},
+			expected: MapFilter{"012345678": true, "876543210": true},
 			wantErr:  false,
 		},
 		{
@@ -34,14 +34,14 @@ func TestReadFilter(t *testing.T) {
 		{
 			name:     "valid siren with header",
 			input:    "siren\n012345678",
-			expected: SirenFilter{"012345678": true},
+			expected: MapFilter{"012345678": true},
 			wantErr:  false,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			testFilter := make(SirenFilter)
+			testFilter := make(MapFilter)
 			err := parseCSVFilter(strings.NewReader(tc.input), testFilter)
 
 			if tc.wantErr {

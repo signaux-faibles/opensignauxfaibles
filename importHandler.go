@@ -60,20 +60,18 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 1
 	// On définit d'abord un ensemble de fichiers à importer (batchProvider)
-	var batchProvider base.BatchProvider
-
+	var batch base.AdminBatch
 	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
 		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
-		batchProvider = engine.JSONBatchProvider{Path: params.BatchConfigFile}
+		batch, err = engine.JSONBatchProvider{Path: params.BatchConfigFile}.Get()
 
 	} else {
 		// On devine le batch à partir des noms de fichiers
 		slog.Info("Batch non fourni en paramètre, tentative de déterminer les fichiers à importer")
-		batchProvider = prepareimport.InferBatchProvider{Path: params.Path, BatchKey: batchKey}
+		batch, err = prepareimport.InferBatchProvider{Path: params.Path, BatchKey: batchKey}.Get()
 	}
 
-	batchConfig, err := batchProvider.Get()
 	if err != nil {
 		return err
 	}
@@ -106,8 +104,10 @@ func (params importBatchHandler) Run() error {
 
 	var sirenFilter engine.SirenFilter
 
-	if !params.NoFilter {
-		sirenFilter, err = filter.Get(&batchConfig)
+	if params.NoFilter {
+		sirenFilter = engine.NoFilter
+	} else {
+		sirenFilter, err = filter.Get(&batch)
 		if err != nil {
 			return fmt.Errorf("unable to get filter: %w", err)
 		}
@@ -126,7 +126,7 @@ func (params importBatchHandler) Run() error {
 	// Étape 5
 	// On réalise l'import
 	err = engine.ImportBatch(
-		batchConfig,
+		batch,
 		parserTypes,
 		registry.DefaultParsers,
 		sirenFilter,

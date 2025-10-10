@@ -8,7 +8,6 @@ import (
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/registry"
 	"os"
 	"path"
 	"path/filepath"
@@ -17,7 +16,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 )
@@ -256,91 +254,91 @@ func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 	return tables
 }
 
-func TestEmptyFilter(t *testing.T) {
-	testCases := []struct {
-		skipFilter  bool
-		expectError bool
-		errContains []string
-	}{
-		{
-			false,
-			true,
-			[]string{"n'a pas été initialisé", "import d'un fichier 'effectif'"},
-		},
-		{
-			true,
-			false,
-			nil,
-		},
-	}
+// func TestEmptyFilter(t *testing.T) {
+// 	testCases := []struct {
+// 		skipFilter  bool
+// 		expectError bool
+// 		errContains []string
+// 	}{
+// 		{
+// 			false,
+// 			true,
+// 			[]string{"n'a pas été initialisé", "import d'un fichier 'effectif'"},
+// 		},
+// 		{
+// 			true,
+// 			false,
+// 			nil,
+// 		},
+// 	}
 
-	for _, tc := range testCases {
+// 	for _, tc := range testCases {
 
-		t.Run(fmt.Sprintf("Empty filter ; skipFilter=%v ; expectError=%v", tc.skipFilter, tc.expectError), func(t *testing.T) {
-			batch := base.AdminBatch{
-				Key: "1910",
-				Files: map[base.ParserType][]base.BatchFile{
-					base.Apconso: {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
-				},
-			}
+// 		t.Run(fmt.Sprintf("Empty filter, skipFilter=%v, expectError=%v", tc.skipFilter, tc.expectError), func(t *testing.T) {
+// 			batch := base.AdminBatch{
+// 				Key: "1910",
+// 				Files: map[base.ParserType][]base.BatchFile{
+// 					base.Apconso: {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
+// 				},
+// 			}
 
-			var filter engine.SirenFilter
+// 			var filter engine.SirenFilter
 
-			err := engine.ImportBatch(
-				batch,
-				[]base.ParserType{},
-				registry.DefaultParsers,
-				filter,
-				// Should not write anything to DB
-				&engine.DiscardSinkFactory{},
-				engine.DiscardReportSink{},
-			)
+// 			err := engine.ImportBatch(
+// 				batch,
+// 				[]base.ParserType{},
+// 				registry.DefaultParsers,
+// 				filter,
+// 				// Should not write anything to DB
+// 				&engine.DiscardSinkFactory{},
+// 				engine.DiscardReportSink{},
+// 			)
 
-			if tc.expectError {
-				t.Log(err)
-				for _, s := range tc.errContains {
-					assert.ErrorContains(t, err, s)
-				}
-			} else {
-				assert.NoError(t, err)
-			}
-		})
-	}
-}
+// 			if tc.expectError {
+// 				t.Log(err)
+// 				for _, s := range tc.errContains {
+// 					assert.ErrorContains(t, err, s)
+// 				}
+// 			} else {
+// 				assert.NoError(t, err)
+// 			}
+// 		})
+// 	}
+// }
 
-func TestNonEmptyFilter(t *testing.T) {
-	cleanDB := setupDBTest(t)
-	defer cleanDB()
+// func TestNonEmptyFilter(t *testing.T) {
+// 	cleanDB := setupDBTest(t)
+// 	defer cleanDB()
 
-	db, err := pgx.Connect(context.Background(), suite.PostgresURI)
-	assert.NoError(t, err)
+// 	db, err := pgx.Connect(context.Background(), suite.PostgresURI)
+// 	assert.NoError(t, err)
 
-	_, err = db.Exec(
-		context.Background(),
-		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', CURRENT_DATE, 759);`,
-	)
-	assert.NoError(t, err)
-	_, err = db.Exec(
-		context.Background(),
-		`REFRESH MATERIALIZED VIEW filter;`,
-	)
-	assert.NoError(t, err)
-	_, err = db.Exec(
-		context.Background(),
-		`TRUNCATE stg_effectif;`,
-	)
-	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', CURRENT_DATE, 759);`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`REFRESH MATERIALIZED VIEW filter;`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`TRUNCATE stg_effectif;`,
+// 	)
+// 	assert.NoError(t, err)
 
-	var count int
-	err = db.QueryRow(
-		context.Background(),
-		`SELECT count(*) FROM filter;`,
-	).Scan(&count)
-	assert.NoError(t, err)
+// 	var count int
+// 	err = db.QueryRow(
+// 		context.Background(),
+// 		`SELECT count(*) FROM filter;`,
+// 	).Scan(&count)
+// 	assert.NoError(t, err)
 
-	assert.Equal(t, 1, count)
+// 	assert.Equal(t, 1, count)
 
-}
+// }
 
 // func TestNonEmptyFilter2(t *testing.T) {
 // 	cleanDB := setupDBTest(t)

@@ -1,8 +1,6 @@
 package parsing
 
 import (
-	"encoding/csv"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,8 +8,7 @@ import (
 
 func TestIndexColumnsFromCsvHeader(t *testing.T) {
 
-	reader := makeCsvReader("year", "2020")
-	idx, err := IndexColumnsFromCsvHeader(reader, struct{}{})
+	idx, err := HeaderIndexer{}.Index([]string{"year", "2020"}, true)
 
 	if assert.NoError(t, err) {
 		t.Run("permet de vérifier la présence de colonnes depuis un fichier CSV valide", func(t *testing.T) {
@@ -33,7 +30,7 @@ func TestIndexColumnsFromCsvHeader(t *testing.T) {
 
 func TestIndexedRow(t *testing.T) {
 
-	idx := ColIndex{"data": 0} // simule un fichier csv avec une colonne "data" à l'indice 0
+	idx := ColIndex{map[string]int{"data": 0}, true} // simule un fichier csv avec une colonne "data" à l'indice 0
 
 	t.Run("GetOptionalVal retourne la valeur ou une chaine vide, selon la présence de la colonne", func(t *testing.T) {
 		row := idx.IndexRow([]string{"2020"})
@@ -84,8 +81,4 @@ func TestIndexedRow(t *testing.T) {
 		assert.Equal(t, false, undefVal)
 		assert.EqualError(t, undefErr, "GetBool failed to find column: colonne_inexistante")
 	})
-}
-
-func makeCsvReader(headerRow string, dataRow string) *csv.Reader {
-	return csv.NewReader(strings.NewReader(headerRow + "\n" + dataRow))
 }

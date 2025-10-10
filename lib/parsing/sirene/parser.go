@@ -1,3 +1,5 @@
+// Package siren fournit les parser pour extraire les données des fichiers
+// Sirene
 package sirene
 
 import (
@@ -34,7 +36,7 @@ func (p *SireneParser) New(r io.Reader) engine.ParserInst {
 
 type sireneRowParser struct{}
 
-func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx engine.ColMapping) error {
+func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
 	var err error
 
 	idxRow := idx.IndexRow(row)
@@ -76,8 +78,8 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 
 	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
 		if idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement") == "NAFRev2" {
-			ape := strings.Replace(idxRow.GetVal("activitePrincipaleEtablissement"), ".", "", -1)
-			if matched, err := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); err == nil && matched {
+			ape := strings.ReplaceAll(idxRow.GetVal("activitePrincipaleEtablissement"), ".", "")
+			if matched, matchErr := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); matchErr == nil && matched {
 				sirene.APE = ape
 			}
 		} else {

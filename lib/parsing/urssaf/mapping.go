@@ -38,7 +38,7 @@ func (comptes *Comptes) GetSortedKeys() []string {
 	return keys
 }
 
-// GetSiretFromComptesMapping gets the siret related to a specific compte at a
+// GetSiret gets the siret related to a specific compte at a
 // given point in time
 func (comptes *Comptes) GetSiret(compte string, date *time.Time) (string, error) {
 	for _, sd := range (*comptes)[compte] {
@@ -102,7 +102,7 @@ func OpenAndReadSiretMapping(
 	}
 	defer file.Close()
 
-	addSiretMapping, err := readSiretMapping(bufio.NewReader(file), cache, batch, filter)
+	addSiretMapping, err := readSiretMapping(bufio.NewReader(file), filter)
 	slog.Debug("lecture du mapping des sirets", slog.Any("mapping", addSiretMapping))
 	if err != nil {
 		return nil, err
@@ -117,8 +117,6 @@ func OpenAndReadSiretMapping(
 // readSiretMapping reads a admin_urssaf file
 func readSiretMapping(
 	reader io.Reader,
-	cache engine.Cache,
-	batch *base.AdminBatch,
 	filter engine.SirenFilter,
 ) (Comptes, error) {
 
@@ -132,7 +130,7 @@ func readSiretMapping(
 	if err != nil {
 		return nil, err
 	}
-	idx, _ := parsing.HeaderIndexer{}.Index(parsing.LowercaseFields(fields))
+	idx, _ := parsing.HeaderIndexer{}.Index(parsing.LowercaseFields(fields), false)
 	requiredFields := []string{"compte", "siret", "date_disp_siret"}
 	if _, err := idx.HasFields(requiredFields); err != nil {
 		return nil, err

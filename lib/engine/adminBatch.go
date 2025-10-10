@@ -1,3 +1,6 @@
+// Package engine est la colonne vertebrale de l'import. Elle définit les
+// interfaces pour définer les parsers, le filtre, les sinks (vers lesquels
+// la donnée sera envoyée).
 package engine
 
 import (
@@ -45,6 +48,7 @@ func ImportBatch(
 
 	unsupported := checkUnsupportedFiletypes(registry, batchConfig)
 	for _, file := range unsupported {
+		fmt.Printf("Debug %v\n", file)
 		logger.Warn("Type de fichier non reconnu", "file", file)
 	}
 
@@ -60,7 +64,7 @@ func ImportBatch(
 		if len(batchConfig.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
-			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter)
 
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(

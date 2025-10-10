@@ -18,7 +18,7 @@ var update = flag.Bool("update", false, "update the expected test values in gold
 
 func makeCacheWithComptesMapping() engine.Cache {
 	cache := engine.NewEmptyCache()
-	cache.Set("comptes", engine.MockComptesMapping(
+	cache.Set("comptes", MockComptesMapping(
 		map[string]string{
 			"111982477292496174": "00000000000000",
 			"636043216536562844": "11111111111111",
@@ -59,15 +59,6 @@ func TestUrssaf(t *testing.T) {
 				engine.TestParserOutput(t, testCase.Parser, testCase.Cache, compressedFilePath, tmpGoldenFile.Name(), false)
 			})
 		}
-	})
-}
-
-func TestComptes(t *testing.T) {
-
-	t.Run("Le fichier de test Comptes est parsé comme d'habitude", func(t *testing.T) {
-		var golden = filepath.Join("testData", "expectedComptes.json")
-		var testData = base.NewBatchFile("testData", "comptesTestData.csv")
-		engine.TestParserOutput(t, NewComptesParser(), engine.NewEmptyCache(), testData, golden, *update)
 	})
 }
 
@@ -164,7 +155,7 @@ func TestCotisation(t *testing.T) {
 
 	t.Run("toute ligne de cotisation d'un établissement non inclus dans les comptes urssaf doit être sautée silencieusement", func(t *testing.T) {
 		cache := engine.NewEmptyCache()
-		cache.Set("comptes", engine.MockComptesMapping(
+		cache.Set("comptes", MockComptesMapping(
 			map[string]string{
 				"111982477292496174": "00000000000000",
 				// "636043216536562844": "11111111111111", // on retire volontairement ce mapping qui va être demandé par le parseur de cotisations
@@ -196,40 +187,7 @@ func TestProcol(t *testing.T) {
 	})
 
 	t.Run("est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewProcolParser(), []string{"dT_eFfeT;lIb_aCtx_stDx;sIret"})
-		assert.Len(t, engine.GetFatalErrors(output.Reports[0]), 0)
-	})
-}
-
-func TestEffectif(t *testing.T) {
-	var testData = base.NewBatchFile("testData", "effectifTestData.csv") // Données pour 3 établissements)
-
-	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
-		var golden = filepath.Join("testData", "expectedEffectif.json")
-		cache := engine.NewEmptyCache()
-		engine.TestParserOutput(t, NewEffectifParser(), cache, testData, golden, *update)
-	})
-
-	// t.Run("Effectif n'est importé que si inclus dans le filtre", func(t *testing.T) {
-	// 	allowedSiren := "149285238" // SIREN correspondant à un des 3 SIRETs mentionnés dans le fichier
-	// 	cache := engine.NewEmptyCache()
-	// 	cache.Set("filter", filter.SirenFilter{allowedSiren: true})
-	// 	output := engine.RunParser(NewEffectifParser(), cache, testData)
-	// 	// test: vérifier que tous les tuples retournés concernent ce SIREN
-	// 	for _, tuple := range output.Tuples {
-	// 		effectif, _ := tuple.(Effectif)
-	// 		assert.Equal(t, allowedSiren, effectif.Siret[0:9])
-	// 	}
-	// })
-
-	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewEffectifParser(), []string{"siret"}) // "compte" column is missing
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne compte non trouvée")
-	})
-
-	t.Run("Effectif est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewEffectifParser(), []string{"CoMpTe;SiReT"})
-		assert.Len(t, engine.GetFatalErrors(output.Reports[0]), 0)
+		output := engine.RunParserInlineEx(t, cache, NewProcolParser(), []string{"dT_eFfeT;lIb_aCtx_stDx;sIret"})
+		assert.Len(t, output.Reports[0].HeadFatal, 0)
 	})
 }

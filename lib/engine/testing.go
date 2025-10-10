@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"opensignauxfaibles/lib/base"
 	"os"
@@ -56,7 +57,7 @@ type tuplesAndReports = struct {
 // GetFatalError retourne le message d'erreur fatale obtenu suite à une
 // opération de parsing, ou une chaine vide.
 func GetFatalError(output tuplesAndReports) string {
-	headFatal := GetFatalErrors(output.Reports[0])
+	headFatal := output.Reports[0].HeadFatal
 	if headFatal == nil || len(headFatal) < 1 {
 		return ""
 	}
@@ -67,18 +68,11 @@ func GetFatalError(output tuplesAndReports) string {
 	return headFatal[0]
 }
 
-// GetFatalErrors retourne les messages d'erreurs fatales obtenus suite à une
-// opération de parsing, ou nil.
-func GetFatalErrors(report Report) []string {
-	return report.HeadFatal
-}
-
 // ConsumeFatalErrors récupère les erreurs fatales depuis un canal d'évènements
 func ConsumeFatalErrors(ch chan Report) []string {
 	var fatalErrors []string
-	for event := range ch {
-		headFatal := GetFatalErrors(event)
-		fatalErrors = append(fatalErrors, headFatal...)
+	for report := range ch {
+		fatalErrors = append(fatalErrors, report.HeadFatal...)
 	}
 	return fatalErrors
 }
@@ -136,7 +130,7 @@ func RunParser(
 ) (output tuplesAndReports) {
 	ctx := context.Background()
 	batch := base.MockBatch(parser.Type(), []base.BatchFile{inputFile})
-	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser, NoFilter{})
+	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser, NoFilter)
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
@@ -215,6 +209,31 @@ func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan Tuple) erro
 }
 
 // -----------------------------------------------------
+// Parser Mock implmentation
+// -----------------------------------------------------
+
+type dummyParser struct {
+	initError  error
+	parserType base.ParserType
+}
+
+func (parser *dummyParser) Type() base.ParserType      { return parser.parserType }
+func (parser *dummyParser) New(r io.Reader) ParserInst { return &dummyParserInst{r, parser.initError} }
+
+type dummyParserInst struct {
+	io.Reader
+	initError error
+}
+
+func (parser *dummyParserInst) Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error {
+	return parser.initError
+}
+
+func (parser *dummyParserInst) ReadNext(*ParsedLineResult) error {
+	return io.EOF
+}
+
+// -----------------------------------------------------
 // Test PacakgeRegistry mock implementation
 // -----------------------------------------------------
 
@@ -222,11 +241,3 @@ type EmptyRegistry struct{}
 
 func (r EmptyRegistry) Resolve(base.ParserType) Parser { return nil }
 func (r EmptyRegistry) All() []Parser                  { return []Parser{} }
-
-// -----------------------------------------------------
-// Test Filter skips nothing
-// -----------------------------------------------------
-
-type NoFilter struct{}
-
-func (f NoFilter) ShouldSkip(string) bool { return false }
