@@ -48,6 +48,6 @@ func (sirene Sirene) Type() base.ParserType {
 }
 
 // Scope de l'objet
-func (sirene Sirene) Scope() string {
-	return "etablissement"
+func (sirene Sirene) Scope() base.Scope {
+	return base.ScopeEtablissement
 }

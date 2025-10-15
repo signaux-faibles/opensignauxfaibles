@@ -31,6 +31,6 @@ func (sireneUL SireneUL) Type() base.ParserType {
 }
 
 // Scope de l'objet
-func (sireneUL SireneUL) Scope() string {
-	return "entreprise"
+func (sireneUL SireneUL) Scope() base.Scope {
+	return base.ScopeEntreprise
 }

@@ -17,7 +17,7 @@ func TestCompositeSink(t *testing.T) {
 	go func() {
 		ch <- MockTuple{
 			key:   "123456789",
-			scope: "entreprise",
+			scope: base.ScopeEntreprise,
 			tType: testType,
 			H1:    "value1",
 			H2:    "value2",
@@ -25,7 +25,7 @@ func TestCompositeSink(t *testing.T) {
 		}
 		ch <- MockTuple{
 			key:   "987654321",
-			scope: "entreprise",
+			scope: base.ScopeEntreprise,
 			tType: testType,
 			H1:    "value4",
 			H2:    "value5",
@@ -61,7 +61,7 @@ func TestCompositeSink_FailingSink(t *testing.T) {
 	go func() {
 		ch <- MockTuple{
 			key:   "123456789",
-			scope: "entreprise",
+			scope: base.ScopeEntreprise,
 			tType: "testtype",
 			H1:    "value1",
 			H2:    "value2",
@@ -69,7 +69,7 @@ func TestCompositeSink_FailingSink(t *testing.T) {
 		}
 		ch <- MockTuple{
 			key:   "987654321",
-			scope: "entreprise",
+			scope: base.ScopeEntreprise,
 			tType: "testtype",
 			H1:    "value4",
 			H2:    "value5",

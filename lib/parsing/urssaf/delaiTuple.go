@@ -28,8 +28,8 @@ func (delai Delai) Key() string {
 }
 
 // Scope de l'objet
-func (delai Delai) Scope() string {
-	return "etablissement"
+func (delai Delai) Scope() base.Scope {
+	return base.ScopeEtablissement
 }
 
 // Type de l'objet

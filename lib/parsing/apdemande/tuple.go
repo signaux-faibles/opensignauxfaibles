@@ -36,6 +36,6 @@ func (apdemande APDemande) Type() base.ParserType {
 }
 
 // Scope de l'objet
-func (apdemande APDemande) Scope() string {
-	return "etablissement"
+func (apdemande APDemande) Scope() base.Scope {
+	return base.ScopeEtablissement
 }

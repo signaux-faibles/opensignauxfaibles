@@ -177,7 +177,7 @@ type TestTuple struct {
 }
 
 func (TestTuple) Key() string           { return "" }
-func (TestTuple) Scope() string         { return "" }
+func (TestTuple) Scope() base.Scope     { return base.ScopeEtablissement }
 func (TestTuple) Type() base.ParserType { return "" }
 
 // -----------------------------------------------------

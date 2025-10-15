@@ -65,7 +65,7 @@ func (res *ParsedLineResult) SetFilterError(err error) {
 // Tuple spécifie les fonctions que chaque parseur doit implémenter pour ses tuples.
 type Tuple interface {
 	Key() string           // entité définie par le tuple: numéro SIRET ou SIREN
-	Scope() string         // type d'entité: "entreprise" ou "etablissement"
+	Scope() base.Scope     // type d'entité: "entreprise" ou "etablissement"
 	Type() base.ParserType // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
 }
 
@@ -199,12 +199,12 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 func isValid(tuple Tuple) (bool, error) {
 	scope := tuple.Scope()
 	key := tuple.Key()
-	if scope == "entreprise" {
+	if scope == base.ScopeEntreprise {
 		if !sfregexp.ValidSiren(key) {
 			return false, errors.New("siren invalide : " + key)
 		}
 		return true, nil
-	} else if scope == "etablissement" {
+	} else if scope == base.ScopeEtablissement {
 		if !sfregexp.ValidSiret(key) {
 			return false, errors.New("siret invalide : " + key)
 		}

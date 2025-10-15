@@ -20,8 +20,8 @@ func (procol Procol) Key() string {
 }
 
 // Scope de l'objet
-func (procol Procol) Scope() string {
-	return "etablissement"
+func (procol Procol) Scope() base.Scope {
+	return base.ScopeEtablissement
 }
 
 // Type de l'objet

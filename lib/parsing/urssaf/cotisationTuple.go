@@ -22,8 +22,8 @@ func (cotisation Cotisation) Key() string {
 }
 
 // Scope de l'objet
-func (cotisation Cotisation) Scope() string {
-	return "etablissement"
+func (cotisation Cotisation) Scope() base.Scope {
+	return base.ScopeEtablissement
 }
 
 // Type de l'objet

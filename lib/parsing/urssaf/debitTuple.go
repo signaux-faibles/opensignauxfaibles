@@ -30,8 +30,8 @@ func (debit Debit) Key() string {
 }
 
 // Scope de l'objet
-func (debit Debit) Scope() string {
-	return "etablissement"
+func (debit Debit) Scope() base.Scope {
+	return base.ScopeEtablissement
 }
 
 // Type de l'objet

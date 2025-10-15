@@ -97,6 +97,6 @@ func (sirene dummyTuple) Type() base.ParserType {
 }
 
 // Scope de l'objet
-func (sirene dummyTuple) Scope() string {
-	return "etablissement"
+func (sirene dummyTuple) Scope() base.Scope {
+	return base.ScopeEtablissement
 }

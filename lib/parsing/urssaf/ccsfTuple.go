@@ -21,8 +21,8 @@ func (ccsf CCSF) Key() string {
 }
 
 // Scope de l'objet
-func (ccsf CCSF) Scope() string {
-	return "etablissement"
+func (ccsf CCSF) Scope() base.Scope {
+	return base.ScopeEtablissement
 }
 
 // Type de l'objet

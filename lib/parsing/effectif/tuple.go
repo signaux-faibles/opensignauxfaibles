@@ -20,8 +20,8 @@ func (effectif Effectif) Key() string {
 }
 
 // Scope de l'objet
-func (effectif Effectif) Scope() string {
-	return "etablissement"
+func (effectif Effectif) Scope() base.Scope {
+	return base.ScopeEtablissement
 }
 
 // Type de l'objet

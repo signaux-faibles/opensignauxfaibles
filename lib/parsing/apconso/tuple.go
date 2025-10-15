@@ -27,6 +27,6 @@ func (apconso APConso) Type() base.ParserType {
 }
 
 // Scope de l'objet
-func (apconso APConso) Scope() string {
-	return "etablissement"
+func (apconso APConso) Scope() base.Scope {
+	return base.ScopeEtablissement
 }

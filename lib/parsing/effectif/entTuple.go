@@ -19,8 +19,8 @@ func (effectifEnt EffectifEnt) Key() string {
 }
 
 // Scope de l'objet
-func (effectifEnt EffectifEnt) Scope() string {
-	return "entreprise"
+func (effectifEnt EffectifEnt) Scope() base.Scope {
+	return base.ScopeEntreprise
 }
 
 // Type de l'objet
