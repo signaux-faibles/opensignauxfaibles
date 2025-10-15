@@ -3,7 +3,6 @@ package sinks
 import (
 	"bytes"
 	"context"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"testing"
 	"time"
@@ -18,13 +17,13 @@ type MockTuple struct {
 	H2    string `csv:"header2"`
 	H3    string `csv:"header3"`
 	key   string
-	scope base.Scope
-	tType base.ParserType
+	scope engine.Scope
+	tType engine.ParserType
 }
 
 func (m MockTuple) Key() string           { return m.key }
-func (m MockTuple) Scope() base.Scope     { return m.scope }
-func (m MockTuple) Type() base.ParserType { return m.tType }
+func (m MockTuple) Scope() engine.Scope     { return m.scope }
+func (m MockTuple) Type() engine.ParserType { return m.tType }
 
 func TestCSVSink_ProcessOutput(t *testing.T) {
 
@@ -40,7 +39,7 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 		H2:    "value2",
 		H3:    "value3",
 		key:   "123456789",
-		scope: base.ScopeEntreprise,
+		scope: engine.ScopeEntreprise,
 		tType: "testtype",
 	}
 	ch <- MockTuple{
@@ -48,7 +47,7 @@ func TestCSVSink_ProcessOutput(t *testing.T) {
 		H2:    "value5",
 		H3:    "value6",
 		key:   "987654321",
-		scope: base.ScopeEntreprise,
+		scope: engine.ScopeEntreprise,
 		tType: "testtype",
 	}
 	close(ch)

@@ -1,9 +1,8 @@
 package effectif
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // EffectifEnt Urssaf
@@ -19,11 +18,11 @@ func (effectifEnt EffectifEnt) Key() string {
 }
 
 // Scope de l'objet
-func (effectifEnt EffectifEnt) Scope() base.Scope {
-	return base.ScopeEntreprise
+func (effectifEnt EffectifEnt) Scope() engine.Scope {
+	return engine.ScopeEntreprise
 }
 
 // Type de l'objet
-func (effectifEnt EffectifEnt) Type() base.ParserType {
-	return base.EffectifEnt
+func (effectifEnt EffectifEnt) Type() engine.ParserType {
+	return engine.EffectifEnt
 }

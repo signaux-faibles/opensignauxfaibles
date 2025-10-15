@@ -1,9 +1,8 @@
 package apconso
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // APConso Consommation d'activité partielle
@@ -22,11 +21,11 @@ func (apconso APConso) Key() string {
 }
 
 // Type de données
-func (apconso APConso) Type() base.ParserType {
-	return base.Apconso
+func (apconso APConso) Type() engine.ParserType {
+	return engine.Apconso
 }
 
 // Scope de l'objet
-func (apconso APConso) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (apconso APConso) Scope() engine.Scope {
+	return engine.ScopeEtablissement
 }

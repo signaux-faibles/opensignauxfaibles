@@ -1,9 +1,8 @@
 package urssaf
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // Procol Procédures collectives, extraction URSSAF
@@ -20,11 +19,11 @@ func (procol Procol) Key() string {
 }
 
 // Scope de l'objet
-func (procol Procol) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (procol Procol) Scope() engine.Scope {
+	return engine.ScopeEtablissement
 }
 
 // Type de l'objet
-func (procol Procol) Type() base.ParserType {
-	return base.Procol
+func (procol Procol) Type() engine.ParserType {
+	return engine.Procol
 }

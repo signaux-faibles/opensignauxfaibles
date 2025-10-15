@@ -3,7 +3,6 @@ package urssaf
 import (
 	"io"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 )
@@ -14,7 +13,7 @@ func NewDebitParser() engine.Parser {
 	return &DebitParser{}
 }
 
-func (parser *DebitParser) Type() base.ParserType { return base.Debit }
+func (parser *DebitParser) Type() engine.ParserType { return engine.Debit }
 func (parser *DebitParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{

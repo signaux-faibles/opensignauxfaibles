@@ -4,7 +4,6 @@ import (
 	"io"
 	"strconv"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 	"opensignauxfaibles/lib/sfregexp"
@@ -16,7 +15,7 @@ func NewEffectifEntParser() engine.Parser {
 	return &EffectifEntParser{}
 }
 
-func (parser *EffectifEntParser) Type() base.ParserType { return base.EffectifEnt }
+func (parser *EffectifEntParser) Type() engine.ParserType { return engine.EffectifEnt }
 func (parser *EffectifEntParser) New(r io.Reader) engine.ParserInst {
 	return &EffectifParserInst{
 		parsing.CsvParserInst{

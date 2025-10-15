@@ -3,7 +3,6 @@ package parsing
 import (
 	"encoding/csv"
 	"io"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 )
 
@@ -30,7 +29,7 @@ type CsvParserInst struct {
 	header []string
 }
 
-func (p *CsvParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, batch *base.AdminBatch) error {
+func (p *CsvParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, batch *engine.AdminBatch) error {
 	p.csvReader = csv.NewReader(p)
 	p.csvReader.Comma = p.Comma
 	p.csvReader.LazyQuotes = p.LazyQuotes

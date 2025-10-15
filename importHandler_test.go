@@ -3,8 +3,8 @@ package main
 // func Test_ImportBatch(t *testing.T) {
 
 // 	err := ImportBatch(
-// 		base.AdminBatch{},
-// 		[]base.ParserType{},
+// 		engine.AdminBatch{},
+// 		[]engine.ParserType{},
 // 		EmptyRegistry{},
 // 		NoFilter,
 // 		TestSinkFactory{},
@@ -17,11 +17,11 @@ package main
 // }
 
 // func Test_ImportBatchWithUnreadableFilter(t *testing.T) {
-// 	batch := base.MockBatch("filter", []base.BatchFile{base.NewBatchFile("this_file_does_not_exist")})
+// 	batch := engine.MockBatch("filter", []engine.BatchFile{engine.NewBatchFile("this_file_does_not_exist")})
 
 // 	err := ImportBatch(
 // 		batch,
-// 		[]base.ParserType{},
+// 		[]engine.ParserType{},
 // 		// TODO check
 // 		nil,
 // 		NoFilter,

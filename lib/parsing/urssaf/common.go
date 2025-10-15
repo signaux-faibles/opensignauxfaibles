@@ -3,7 +3,6 @@
 package urssaf
 
 import (
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 )
@@ -27,7 +26,7 @@ type UrssafParserInst struct {
 	parsing.CsvParserInst
 }
 
-func (p *UrssafParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, batch *base.AdminBatch) error {
+func (p *UrssafParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, batch *engine.AdminBatch) error {
 	err := p.CsvParserInst.Init(cache, filter, batch)
 	if err != nil {
 		return err

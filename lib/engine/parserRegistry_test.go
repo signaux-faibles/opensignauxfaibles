@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"opensignauxfaibles/lib/base"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,10 +8,10 @@ import (
 
 // DummyRegistry stores parsers in a map, with keys associated with the type
 type DummyRegistry struct {
-	parsers map[base.ParserType]Parser
+	parsers map[ParserType]Parser
 }
 
-func (r DummyRegistry) Resolve(t base.ParserType) Parser {
+func (r DummyRegistry) Resolve(t ParserType) Parser {
 	return r.parsers[t]
 }
 
@@ -26,13 +25,13 @@ func (r DummyRegistry) All() []Parser {
 }
 
 func TestResolveParsers(t *testing.T) {
-	type1 := base.ParserType("one")
-	type2 := base.ParserType("two")
+	type1 := ParserType("one")
+	type2 := ParserType("two")
 	parser1 := &dummyParser{parserType: type1}
 	parser2 := &dummyParser{parserType: type2}
 
 	registry := DummyRegistry{
-		map[base.ParserType]Parser{
+		map[ParserType]Parser{
 			parser1.Type(): parser1,
 			parser2.Type(): parser2,
 		},
@@ -40,37 +39,37 @@ func TestResolveParsers(t *testing.T) {
 
 	testCases := []struct {
 		name              string
-		types             []base.ParserType
+		types             []ParserType
 		expectErr         bool
-		expectParserTypes []base.ParserType
+		expectParserTypes []ParserType
 	}{
 		{
 			"Aucun type renseigné (empty slice), tous les parsers sont retournés",
-			[]base.ParserType{},
+			[]ParserType{},
 			false,
-			[]base.ParserType{type1, type2},
+			[]ParserType{type1, type2},
 		},
 		{
 			"Aucun type renseigné (`nil`), tous les parsers sont retournés",
 			nil,
 			false,
-			[]base.ParserType{type1, type2},
+			[]ParserType{type1, type2},
 		},
 		{
 			"Type 1 renseigné, parser 1 retourné",
-			[]base.ParserType{type1},
+			[]ParserType{type1},
 			false,
-			[]base.ParserType{type1},
+			[]ParserType{type1},
 		},
 		{
 			"Types 1 et 2 renseignés, parsers 1 et 2 retournés",
-			[]base.ParserType{type1, type2},
+			[]ParserType{type1, type2},
 			false,
-			[]base.ParserType{type1, type2},
+			[]ParserType{type1, type2},
 		},
 		{
 			"Type inconnu renseigné, erreur retournée",
-			[]base.ParserType{"nonsense"},
+			[]ParserType{"nonsense"},
 			true,
 			nil,
 		},

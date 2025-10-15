@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"opensignauxfaibles/lib/base"
 	"os"
 	"strings"
 	"sync"
@@ -34,7 +33,7 @@ func (s *FailDataSink) ProcessOutput(ctx context.Context, ch chan Tuple) error {
 
 type FailSinkFactory struct{}
 
-func (FailSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+func (FailSinkFactory) CreateSink(parserType ParserType) (DataSink, error) {
 	return &FailDataSink{}, nil
 }
 
@@ -88,7 +87,7 @@ func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesA
 func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) (output tuplesAndReports) {
 	csvData := strings.Join(rows, "\n")
 	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
-	return RunParser(parser, cache, base.NewBatchFile(csvFile.Name()))
+	return RunParser(parser, cache, NewBatchFile(csvFile.Name()))
 }
 
 // TestParserOutput compares output Tuples and output Reports with JSON stored
@@ -97,7 +96,7 @@ func TestParserOutput(
 	t *testing.T,
 	parser Parser,
 	cache Cache,
-	inputFile base.BatchFile,
+	inputFile BatchFile,
 	goldenFile string,
 	update bool,
 ) {
@@ -126,10 +125,10 @@ func TestParserOutput(
 func RunParser(
 	parser Parser,
 	cache Cache,
-	inputFile base.BatchFile,
+	inputFile BatchFile,
 ) (output tuplesAndReports) {
 	ctx := context.Background()
-	batch := base.MockBatch(parser.Type(), []base.BatchFile{inputFile})
+	batch := MockBatch(parser.Type(), []BatchFile{inputFile})
 	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser, NoFilter)
 
 	// intercepter et afficher les évènements pendant l'importation
@@ -177,8 +176,8 @@ type TestTuple struct {
 }
 
 func (TestTuple) Key() string           { return "" }
-func (TestTuple) Scope() base.Scope     { return base.ScopeEtablissement }
-func (TestTuple) Type() base.ParserType { return "" }
+func (TestTuple) Scope() Scope     { return ScopeEtablissement }
+func (TestTuple) Type() ParserType { return "" }
 
 // -----------------------------------------------------
 // Test DataSinkFactory and Data Sink implementations
@@ -186,14 +185,14 @@ func (TestTuple) Type() base.ParserType { return "" }
 
 type TestSinkFactory struct{}
 
-func (TestSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+func (TestSinkFactory) CreateSink(parserType ParserType) (DataSink, error) {
 	return &DiscardDataSink{}, nil
 }
 
 // DiscardSinkFactory discards all data, regardless of the parser
 type DiscardSinkFactory struct{}
 
-func (f *DiscardSinkFactory) CreateSink(parserType base.ParserType) (DataSink, error) {
+func (f *DiscardSinkFactory) CreateSink(parserType ParserType) (DataSink, error) {
 	return &DiscardDataSink{}, nil
 }
 
@@ -214,10 +213,10 @@ func (s *DiscardDataSink) ProcessOutput(ctx context.Context, ch chan Tuple) erro
 
 type dummyParser struct {
 	initError  error
-	parserType base.ParserType
+	parserType ParserType
 }
 
-func (parser *dummyParser) Type() base.ParserType      { return parser.parserType }
+func (parser *dummyParser) Type() ParserType      { return parser.parserType }
 func (parser *dummyParser) New(r io.Reader) ParserInst { return &dummyParserInst{r, parser.initError} }
 
 type dummyParserInst struct {
@@ -225,7 +224,7 @@ type dummyParserInst struct {
 	initError error
 }
 
-func (parser *dummyParserInst) Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error {
+func (parser *dummyParserInst) Init(cache *Cache, filter SirenFilter, batch *AdminBatch) error {
 	return parser.initError
 }
 
@@ -239,5 +238,5 @@ func (parser *dummyParserInst) ReadNext(*ParsedLineResult) error {
 
 type EmptyRegistry struct{}
 
-func (r EmptyRegistry) Resolve(base.ParserType) Parser { return nil }
+func (r EmptyRegistry) Resolve(ParserType) Parser { return nil }
 func (r EmptyRegistry) All() []Parser                  { return []Parser{} }

@@ -1,9 +1,8 @@
 package urssaf
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // Cotisation Objet cotisation
@@ -22,11 +21,11 @@ func (cotisation Cotisation) Key() string {
 }
 
 // Scope de l'objet
-func (cotisation Cotisation) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (cotisation Cotisation) Scope() engine.Scope {
+	return engine.ScopeEtablissement
 }
 
 // Type de l'objet
-func (cotisation Cotisation) Type() base.ParserType {
-	return base.Cotisation
+func (cotisation Cotisation) Type() engine.ParserType {
+	return engine.Cotisation
 }

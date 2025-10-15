@@ -11,7 +11,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
 )
@@ -108,9 +107,9 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		compressedFileData := compressFileData(t, "../urssaf/testData/comptesTestData.csv")
 		compressedFile := engine.CreateTempFileWithContent(t, compressedFileData.Bytes())
 		cache := engine.NewEmptyCache()
-		batch := base.MockBatch(
+		batch := engine.MockBatch(
 			"admin_urssaf",
-			[]base.BatchFile{base.NewCompressedBatchFile(compressedFile.Name())},
+			[]engine.BatchFile{engine.NewCompressedBatchFile(compressedFile.Name())},
 		)
 		actual, err := GetCompteSiretMapping(cache, &batch, engine.NoFilter, OpenAndReadSiretMapping)
 		if assert.NoError(t, err) {
@@ -129,7 +128,7 @@ func TestGetCompteSiretMapping(t *testing.T) {
 		}
 
 		// When file is read, returnd stdExpected1
-		mockOpenFile := func(s1 string, s2 base.BatchFile, c Comptes, ca engine.Cache, ba *base.AdminBatch, filter engine.SirenFilter) (Comptes, error) {
+		mockOpenFile := func(s1 string, s2 engine.BatchFile, c Comptes, ca engine.Cache, ba *engine.AdminBatch, filter engine.SirenFilter) (Comptes, error) {
 			for key := range stdExpected1 {
 				c[key] = stdExpected1[key]
 			}
@@ -138,16 +137,16 @@ func TestGetCompteSiretMapping(t *testing.T) {
 
 		testCases := []struct {
 			cache       engine.Cache
-			batch       base.AdminBatch
+			batch       engine.AdminBatch
 			expectError bool
 			expected    Comptes
 		}{
 			// Basic reading from file
-			{engine.NewEmptyCache(), base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected1},
+			{engine.NewEmptyCache(), engine.MockBatch("admin_urssaf", []engine.BatchFile{engine.NewBatchFile("a")}), false, stdExpected1},
 			// Cache superseeds reading from file
-			{engine.NewCache(map[string]any{"comptes": stdExpected2}), base.MockBatch("admin_urssaf", []base.BatchFile{base.NewBatchFile("a")}), false, stdExpected2},
+			{engine.NewCache(map[string]any{"comptes": stdExpected2}), engine.MockBatch("admin_urssaf", []engine.BatchFile{engine.NewBatchFile("a")}), false, stdExpected2},
 			// No cache, no file = error
-			{engine.NewEmptyCache(), base.MockBatch("otherStuff", []base.BatchFile{base.NewBatchFile("a")}), true, nil},
+			{engine.NewEmptyCache(), engine.MockBatch("otherStuff", []engine.BatchFile{engine.NewBatchFile("a")}), true, nil},
 		}
 
 		for ind, tc := range testCases {

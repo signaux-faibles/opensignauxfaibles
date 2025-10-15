@@ -2,13 +2,12 @@ package engine
 
 import (
 	"context"
-	"opensignauxfaibles/lib/base"
 )
 
 // SinkFactory creates DataSink instances configured for specific parser types
 type SinkFactory interface {
 	// CreateSink returns a new DataSink instance configured for the given parser type
-	CreateSink(parserType base.ParserType) (DataSink, error)
+	CreateSink(parserType ParserType) (DataSink, error)
 }
 
 // A DataSink directs a stream of output data to the desired sink

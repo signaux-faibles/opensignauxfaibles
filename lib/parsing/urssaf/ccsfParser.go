@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 )
@@ -15,7 +14,7 @@ func NewCCSFParser() engine.Parser {
 	return &CCSFParser{}
 }
 
-func (parser *CCSFParser) Type() base.ParserType { return base.Ccsf }
+func (parser *CCSFParser) Type() engine.ParserType { return engine.Ccsf }
 func (parser *CCSFParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{

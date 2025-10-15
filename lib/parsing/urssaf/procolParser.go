@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 )
@@ -17,7 +16,7 @@ func NewProcolParser() engine.Parser {
 	return &ProcolParser{}
 }
 
-func (parser *ProcolParser) Type() base.ParserType { return base.Procol }
+func (parser *ProcolParser) Type() engine.ParserType { return engine.Procol }
 func (parser *ProcolParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{

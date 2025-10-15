@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"opensignauxfaibles/lib/base"
 	"time"
 )
 
@@ -71,22 +70,22 @@ func SetGitCommit(hash string) {
 }
 
 type Report struct {
-	Commit        string          `json:"commit"`
-	StartDate     time.Time       `json:"start_date"`
-	Parser        base.ParserType `json:"parser"`
-	BatchKey      base.BatchKey   `json:"batch_key"`
-	HeadFatal     []string        `json:"head_fatal"`
-	HeadRejected  []string        `json:"head_rejected"`
-	IsFatal       bool            `json:"is_fatal"`
-	LinesParsed   int64           `json:"lines_parsed"`
-	LinesRejected int64           `json:"lines_rejected"`
-	LinesSkipped  int64           `json:"lines_skipped"`
-	LinesValid    int64           `json:"lines_valid"`
-	Summary       string          `json:"summary"`
+	Commit        string     `json:"commit"`
+	StartDate     time.Time  `json:"start_date"`
+	Parser        ParserType `json:"parser"`
+	BatchKey      BatchKey   `json:"batch_key"`
+	HeadFatal     []string   `json:"head_fatal"`
+	HeadRejected  []string   `json:"head_rejected"`
+	IsFatal       bool       `json:"is_fatal"`
+	LinesParsed   int64      `json:"lines_parsed"`
+	LinesRejected int64      `json:"lines_rejected"`
+	LinesSkipped  int64      `json:"lines_skipped"`
+	LinesValid    int64      `json:"lines_valid"`
+	Summary       string     `json:"summary"`
 }
 
 // Report génère un rapport de parsing à partir des erreurs rapportées.
-func (tracker *ParsingTracker) Report(parser base.ParserType, batchKey base.BatchKey, filePath string) Report {
+func (tracker *ParsingTracker) Report(parser ParserType, batchKey BatchKey, filePath string) Report {
 	nbParsedLines := tracker.currentLine - 1 // -1 because we started counting at line number 1
 	nbValidLines := nbParsedLines - tracker.nbRejectedLines - tracker.nbSkippedLines
 

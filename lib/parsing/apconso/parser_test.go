@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 )
 
@@ -15,7 +14,7 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 
 func TestApconso(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedApconso.json")
-	var testData = base.NewBatchFile("testData", "apconsoTestData.csv")
+	var testData = engine.NewBatchFile("testData", "apconsoTestData.csv")
 	engine.TestParserOutput(t, NewApconsoParser(), engine.NewEmptyCache(), testData, golden, *update)
 
 	t.Run("doit détecter s'il manque des colonnes", func(t *testing.T) {

@@ -13,12 +13,10 @@ import (
 	"os"
 
 	"golang.org/x/sync/errgroup"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // Load charge les données d'un batch depuis du JSON
-func Load(batch *base.AdminBatch, reader io.Reader) error {
+func Load(batch *AdminBatch, reader io.Reader) error {
 	batchFileContent, err := io.ReadAll(reader)
 	if err != nil {
 		return err
@@ -30,8 +28,8 @@ func Load(batch *base.AdminBatch, reader io.Reader) error {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
-	batchConfig base.AdminBatch,
-	parserTypes []base.ParserType,
+	batchConfig AdminBatch,
+	parserTypes []ParserType,
 	registry ParserRegistry,
 	filter SirenFilter,
 	sinkFactory SinkFactory,
@@ -103,7 +101,7 @@ func ImportBatch(
 }
 
 // CheckBatchPaths checks if the filepaths of batch.Files exist
-func CheckBatchPaths(batch *base.AdminBatch) error {
+func CheckBatchPaths(batch *AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
 		for _, batchFile := range filepaths {
@@ -119,10 +117,10 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 
 }
 
-func checkUnsupportedFiletypes(registry ParserRegistry, batch base.AdminBatch) []base.ParserType {
-	var errFileTypes []base.ParserType
+func checkUnsupportedFiletypes(registry ParserRegistry, batch AdminBatch) []ParserType {
+	var errFileTypes []ParserType
 	for parserType := range batch.Files {
-		if parserType != base.Filter && registry.Resolve(parserType) == nil {
+		if parserType != Filter && registry.Resolve(parserType) == nil {
 			errFileTypes = append(errFileTypes, parserType)
 		}
 	}
@@ -130,15 +128,15 @@ func checkUnsupportedFiletypes(registry ParserRegistry, batch base.AdminBatch) [
 }
 
 // JSONBatchProvider reads an admin batch from a JSON file.
-// Implements base.BatchProvider interface.
+// Implements BatchProvider interface.
 type JSONBatchProvider struct {
 	Path string
 }
 
-func (p JSONBatchProvider) Get() (base.AdminBatch, error) {
+func (p JSONBatchProvider) Get() (AdminBatch, error) {
 	fileReader, err := os.Open(p.Path)
 
-	var batch = base.AdminBatch{}
+	var batch = AdminBatch{}
 
 	if err == nil {
 		err = Load(&batch, fileReader)

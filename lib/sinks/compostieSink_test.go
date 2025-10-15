@@ -2,7 +2,6 @@ package sinks
 
 import (
 	"context"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"testing"
 
@@ -13,11 +12,11 @@ func TestCompositeSink(t *testing.T) {
 
 	ch := make(chan engine.Tuple)
 
-	const testType base.ParserType = "testtype"
+	const testType engine.ParserType = "testtype"
 	go func() {
 		ch <- MockTuple{
 			key:   "123456789",
-			scope: base.ScopeEntreprise,
+			scope: engine.ScopeEntreprise,
 			tType: testType,
 			H1:    "value1",
 			H2:    "value2",
@@ -25,7 +24,7 @@ func TestCompositeSink(t *testing.T) {
 		}
 		ch <- MockTuple{
 			key:   "987654321",
-			scope: base.ScopeEntreprise,
+			scope: engine.ScopeEntreprise,
 			tType: testType,
 			H1:    "value4",
 			H2:    "value5",
@@ -61,7 +60,7 @@ func TestCompositeSink_FailingSink(t *testing.T) {
 	go func() {
 		ch <- MockTuple{
 			key:   "123456789",
-			scope: base.ScopeEntreprise,
+			scope: engine.ScopeEntreprise,
 			tType: "testtype",
 			H1:    "value1",
 			H2:    "value2",
@@ -69,7 +68,7 @@ func TestCompositeSink_FailingSink(t *testing.T) {
 		}
 		ch <- MockTuple{
 			key:   "987654321",
-			scope: base.ScopeEntreprise,
+			scope: engine.ScopeEntreprise,
 			tType: "testtype",
 			H1:    "value4",
 			H2:    "value5",

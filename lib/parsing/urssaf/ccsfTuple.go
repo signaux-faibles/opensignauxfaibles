@@ -1,9 +1,8 @@
 package urssaf
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // CCSF information urssaf ccsf
@@ -21,11 +20,11 @@ func (ccsf CCSF) Key() string {
 }
 
 // Scope de l'objet
-func (ccsf CCSF) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (ccsf CCSF) Scope() engine.Scope {
+	return engine.ScopeEtablissement
 }
 
 // Type de l'objet
-func (ccsf CCSF) Type() base.ParserType {
-	return base.Ccsf
+func (ccsf CCSF) Type() engine.ParserType {
+	return engine.Ccsf
 }

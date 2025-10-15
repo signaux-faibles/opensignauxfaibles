@@ -5,7 +5,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"os"
@@ -49,29 +48,29 @@ func TestImportEndToEnd(t *testing.T) {
 	})
 }
 
-const Dummy base.ParserType = "dummy"
+const Dummy engine.ParserType = "dummy"
 
 func createImportTestBatch(t *testing.T) {
 
-	batch := base.AdminBatch{
+	batch := engine.AdminBatch{
 		Key: "1910",
-		Files: map[base.ParserType][]base.BatchFile{
-			Dummy:            {},
-			base.Filter:      {},
-			base.Apconso:     {base.NewBatchFile("lib/parsing/apconso/testData/apconsoTestData.csv")},
-			base.Apdemande:   {base.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
-			base.Sirene:      {base.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
-			base.SireneUl:    {base.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
-			base.AdminUrssaf: {base.NewBatchFile("lib/parsing/urssaf/testData/comptesTestData.csv")},
-			base.Debit:       {base.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")},
-			base.Ccsf:        {base.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},
-			base.Cotisation:  {base.NewBatchFile("lib/parsing/urssaf/testData/cotisationTestData.csv")},
-			base.Delai:       {base.NewBatchFile("lib/parsing/urssaf/testData/delaiTestData.csv")},
-			base.Effectif:    {base.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")},
-			base.EffectifEnt: {base.NewBatchFile("lib/parsing/effectif/testData/effectifEntTestData.csv")},
-			base.Procol:      {base.NewBatchFile("lib/parsing/urssaf/testData/procolTestData.csv")},
+		Files: map[engine.ParserType][]engine.BatchFile{
+			Dummy:              {},
+			engine.Filter:      {},
+			engine.Apconso:     {engine.NewBatchFile("lib/parsing/apconso/testData/apconsoTestData.csv")},
+			engine.Apdemande:   {engine.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
+			engine.Sirene:      {engine.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
+			engine.SireneUl:    {engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
+			engine.AdminUrssaf: {engine.NewBatchFile("lib/parsing/urssaf/testData/comptesTestData.csv")},
+			engine.Debit:       {engine.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")},
+			engine.Ccsf:        {engine.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},
+			engine.Cotisation:  {engine.NewBatchFile("lib/parsing/urssaf/testData/cotisationTestData.csv")},
+			engine.Delai:       {engine.NewBatchFile("lib/parsing/urssaf/testData/delaiTestData.csv")},
+			engine.Effectif:    {engine.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")},
+			engine.EffectifEnt: {engine.NewBatchFile("lib/parsing/effectif/testData/effectifEntTestData.csv")},
+			engine.Procol:      {engine.NewBatchFile("lib/parsing/urssaf/testData/procolTestData.csv")},
 		},
-		Params: base.AdminBatchParams{
+		Params: engine.AdminBatchParams{
 			DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
 			DateFin:   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
 		},
@@ -275,10 +274,10 @@ func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 // 	for _, tc := range testCases {
 
 // 		t.Run(fmt.Sprintf("Empty filter, skipFilter=%v, expectError=%v", tc.skipFilter, tc.expectError), func(t *testing.T) {
-// 			batch := base.AdminBatch{
+// 			batch := engine.AdminBatch{
 // 				Key: "1910",
-// 				Files: map[base.ParserType][]base.BatchFile{
-// 					base.Apconso: {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
+// 				Files: map[engine.ParserType][]engine.BatchFile{
+// 					engine.Apconso: {engine.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
 // 				},
 // 			}
 
@@ -286,7 +285,7 @@ func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 
 // 			err := engine.ImportBatch(
 // 				batch,
-// 				[]base.ParserType{},
+// 				[]engine.ParserType{},
 // 				registry.DefaultParsers,
 // 				filter,
 // 				// Should not write anything to DB

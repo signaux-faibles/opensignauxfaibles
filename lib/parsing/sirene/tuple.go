@@ -3,9 +3,8 @@ package sirene
 import (
 	//"bufio"
 
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // Sirene informations sur les entreprises
@@ -43,11 +42,11 @@ func (sirene Sirene) Key() string {
 }
 
 // Type de données
-func (sirene Sirene) Type() base.ParserType {
-	return base.Sirene
+func (sirene Sirene) Type() engine.ParserType {
+	return engine.Sirene
 }
 
 // Scope de l'objet
-func (sirene Sirene) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (sirene Sirene) Scope() engine.Scope {
+	return engine.ScopeEtablissement
 }

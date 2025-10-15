@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 )
@@ -20,7 +19,7 @@ const (
 // 2. Database (fallback)
 //
 // This is a convenience wrapper that uses default dependencies.
-func Get(batch *base.AdminBatch) (engine.SirenFilter, error) {
+func Get(batch *engine.AdminBatch) (engine.SirenFilter, error) {
 	filterFile, _ := batch.Files.GetFilterFile()
 
 	readers := []engine.FilterReader{

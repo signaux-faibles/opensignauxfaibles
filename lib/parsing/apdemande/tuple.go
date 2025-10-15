@@ -1,9 +1,8 @@
 package apdemande
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // APDemande Demande d'activité partielle
@@ -31,11 +30,11 @@ func (apdemande APDemande) Key() string {
 }
 
 // Type de données
-func (apdemande APDemande) Type() base.ParserType {
-	return base.Apdemande
+func (apdemande APDemande) Type() engine.ParserType {
+	return engine.Apdemande
 }
 
 // Scope de l'objet
-func (apdemande APDemande) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (apdemande APDemande) Scope() engine.Scope {
+	return engine.ScopeEtablissement
 }

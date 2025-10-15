@@ -2,7 +2,6 @@ package effectif
 
 import (
 	"flag"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"path/filepath"
 	"testing"
@@ -15,7 +14,7 @@ var update = flag.Bool("update", false, "update the expected test values in gold
 func TestEffectifEnt(t *testing.T) {
 	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectifEntShort.json")
-		var testData = base.NewBatchFile("testData", "effectifEntTestDataShort.csv")
+		var testData = engine.NewBatchFile("testData", "effectifEntTestDataShort.csv")
 		cache := engine.NewEmptyCache()
 
 		engine.TestParserOutput(t, NewEffectifEntParser(), cache, testData, golden, *update)
@@ -23,7 +22,7 @@ func TestEffectifEnt(t *testing.T) {
 
 	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
-		var testData = base.NewBatchFile("testData", "effectifEntTestData.csv")
+		var testData = engine.NewBatchFile("testData", "effectifEntTestData.csv")
 		cache := engine.NewEmptyCache()
 
 		engine.TestParserOutput(t, NewEffectifEntParser(), cache, testData, golden, *update)
@@ -42,7 +41,7 @@ func TestEffectifEnt(t *testing.T) {
 }
 
 func TestEffectif(t *testing.T) {
-	var testData = base.NewBatchFile("testData", "effectifTestData.csv") // Données pour 3 établissements)
+	var testData = engine.NewBatchFile("testData", "effectifTestData.csv") // Données pour 3 établissements)
 
 	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectif.json")

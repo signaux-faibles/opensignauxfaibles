@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
@@ -24,22 +23,22 @@ func NewPostgresSinkFactory(conn db.Pool) engine.SinkFactory {
 	return &PostgresSinkFactory{conn}
 }
 
-func (f *PostgresSinkFactory) CreateSink(parserType base.ParserType) (engine.DataSink, error) {
+func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.DataSink, error) {
 	switch parserType {
-	case base.Apconso,
-		base.Apdemande,
-		base.Cotisation,
-		base.Debit,
-		base.Delai,
-		base.Effectif,
-		base.EffectifEnt,
-		base.Sirene,
-		base.SireneUl:
+	case engine.Apconso,
+		engine.Apdemande,
+		engine.Cotisation,
+		engine.Debit,
+		engine.Delai,
+		engine.Effectif,
+		engine.EffectifEnt,
+		engine.Sirene,
+		engine.SireneUl:
 
 		tableName := fmt.Sprintf("stg_%s", parserType)
 		materializedTableUpdate := ""
 
-		if parserType == base.Apdemande {
+		if parserType == engine.Apdemande {
 			materializedTableUpdate = "stg_apdemande_by_period"
 		}
 

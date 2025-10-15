@@ -1,4 +1,4 @@
-package base
+package engine
 
 // ParserType is the type used by all constants like ADMIN_URSSAF, APCONSO, etc...
 type ParserType string

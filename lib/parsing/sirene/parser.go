@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 )
@@ -23,7 +22,7 @@ func NewSireneParser() engine.Parser {
 	return &SireneParser{}
 }
 
-func (p *SireneParser) Type() base.ParserType { return base.Sirene }
+func (p *SireneParser) Type() engine.ParserType { return engine.Sirene }
 func (p *SireneParser) New(r io.Reader) engine.ParserInst {
 	return &parsing.CsvParserInst{
 		Reader:     r,

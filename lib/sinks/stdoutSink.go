@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"os"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 )
 
@@ -16,7 +15,7 @@ func NewStdoutSinkFactory() engine.SinkFactory {
 	return &StdoutSinkFactory{}
 }
 
-func (f *StdoutSinkFactory) CreateSink(parserType base.ParserType) (engine.DataSink, error) {
+func (f *StdoutSinkFactory) CreateSink(parserType engine.ParserType) (engine.DataSink, error) {
 	return &StdoutSink{}, nil
 }
 

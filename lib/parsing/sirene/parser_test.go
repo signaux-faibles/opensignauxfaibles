@@ -8,14 +8,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 )
 
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 var golden = filepath.Join("testData", "expectedSirene.json")
-var testData = base.NewBatchFile("testData", "sireneTestData.csv")
+var testData = engine.NewBatchFile("testData", "sireneTestData.csv")
 
 func TestSirene(t *testing.T) {
 	engine.TestParserOutput(t, NewSireneParser(), engine.NewEmptyCache(), testData, golden, *update)

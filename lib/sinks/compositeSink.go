@@ -3,7 +3,6 @@ package sinks
 import (
 	"context"
 	"fmt"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"reflect"
 
@@ -33,7 +32,7 @@ type compositeSinkFactory struct {
 	bufferSize int
 }
 
-func (f *compositeSinkFactory) CreateSink(parserType base.ParserType) (engine.DataSink, error) {
+func (f *compositeSinkFactory) CreateSink(parserType engine.ParserType) (engine.DataSink, error) {
 	var sinks []engine.DataSink
 	for _, factory := range f.factories {
 		sink, err := factory.CreateSink(parserType)

@@ -6,15 +6,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"opensignauxfaibles/lib/base"
 )
 
 func TestParseFilesFromBatch(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("interrompt le parsing en cas d'erreur d'initialisation", func(t *testing.T) {
-		batch := base.MockBatch("dummy", []base.BatchFile{base.NewMockBatchFile("")})
+		batch := MockBatch("dummy", []BatchFile{NewMockBatchFile("")})
 		_, reportChan := ParseFilesFromBatch(
 			ctx,
 			NewEmptyCache(),
@@ -27,7 +25,7 @@ func TestParseFilesFromBatch(t *testing.T) {
 	})
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
-		batch := base.MockBatch("dummy", []base.BatchFile{base.OpenFailsBatchFile{}})
+		batch := MockBatch("dummy", []BatchFile{OpenFailsBatchFile{}})
 		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{parserType: "dummy"}, NoFilter)
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)
@@ -92,11 +90,11 @@ func (sirene dummyTuple) Key() string {
 }
 
 // Type de données
-func (sirene dummyTuple) Type() base.ParserType {
+func (sirene dummyTuple) Type() ParserType {
 	return "dummy"
 }
 
 // Scope de l'objet
-func (sirene dummyTuple) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (sirene dummyTuple) Scope() Scope {
+	return ScopeEtablissement
 }

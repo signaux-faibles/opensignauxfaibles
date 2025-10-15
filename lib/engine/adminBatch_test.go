@@ -5,25 +5,23 @@ import (
 	"strings"
 	"testing"
 
-	"opensignauxfaibles/lib/base"
-
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_CheckBatchPaths(t *testing.T) {
 	testCases := []struct {
-		Filepath      base.BatchFile
+		Filepath      BatchFile
 		ErrorExpected bool
 	}{
 		// Really exists but is empty
-		{base.NewBatchFile("test_data/empty_file"), false},
+		{NewBatchFile("test_data/empty_file"), false},
 
 		// Does not exist
-		{base.NewBatchFile("test_data/missing_file"), true},
+		{NewBatchFile("test_data/missing_file"), true},
 	}
 
 	for _, tc := range testCases {
-		mockbatch := base.MockBatch("debit", []base.BatchFile{tc.Filepath})
+		mockbatch := MockBatch("debit", []BatchFile{tc.Filepath})
 		err := CheckBatchPaths(&mockbatch)
 		if (err == nil && tc.ErrorExpected) ||
 			(err != nil && !tc.ErrorExpected) {
@@ -35,7 +33,7 @@ func Test_CheckBatchPaths(t *testing.T) {
 
 func Test_ImportBatchDryRun(t *testing.T) {
 	// Set up import
-	adminBatch := base.MockBatch(base.Apdemande, []base.BatchFile{base.NewBatchFile("..", "parsing/apdemande/testData/apdemandeTestData.csv")})
+	adminBatch := MockBatch(Apdemande, []BatchFile{NewBatchFile("..", "parsing/apdemande/testData/apdemandeTestData.csv")})
 
 	dataSinkFactory := &DiscardSinkFactory{}
 	reportSink := &StdoutReportSink{}
@@ -53,7 +51,7 @@ func Test_ImportBatchDryRun(t *testing.T) {
 	// Run import
 	err := ImportBatch(
 		adminBatch,
-		[]base.ParserType{},
+		[]ParserType{},
 		EmptyRegistry{},
 		NoFilter,
 		dataSinkFactory,

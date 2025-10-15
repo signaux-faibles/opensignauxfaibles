@@ -14,7 +14,6 @@ import (
 
 	"github.com/spf13/viper"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 )
@@ -29,7 +28,7 @@ func NewCSVSinkFactory(relativeDirPath string) engine.SinkFactory {
 	return &CSVSinkFactory{relativeDirPath}
 }
 
-func (f *CSVSinkFactory) CreateSink(parserType base.ParserType) (engine.DataSink, error) {
+func (f *CSVSinkFactory) CreateSink(parserType engine.ParserType) (engine.DataSink, error) {
 
 	// resolve filename given parserType
 	rootDir := DefaultExportPath

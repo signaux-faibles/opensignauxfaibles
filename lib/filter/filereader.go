@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/sfregexp"
 	"os"
@@ -14,7 +13,7 @@ import (
 // FileReader reads the filter from a CSV file.
 // Implements filterReader
 type FileReader struct {
-	BatchFile base.BatchFile
+	BatchFile engine.BatchFile
 }
 
 func (f *FileReader) Read() (engine.SirenFilter, error) {

@@ -8,7 +8,6 @@ import (
 
 	"github.com/cosiner/flag"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
@@ -53,14 +52,14 @@ func (params importBatchHandler) Validate() error {
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
-	batchKey, err := base.NewBatchKey(params.BatchKey)
+	batchKey, err := engine.NewBatchKey(params.BatchKey)
 	if err != nil {
 		return err
 	}
 
 	// Étape 1
 	// On définit d'abord un ensemble de fichiers à importer (batchProvider)
-	var batch base.AdminBatch
+	var batch engine.AdminBatch
 	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
 		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
@@ -78,9 +77,9 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 2
 	// On définit les parsers à faire tourner
-	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
+	var parserTypes = make([]engine.ParserType, 0, len(params.Parsers))
 	for _, p := range params.Parsers {
-		parserTypes = append(parserTypes, base.ParserType(p))
+		parserTypes = append(parserTypes, engine.ParserType(p))
 	}
 
 	// Étape 3

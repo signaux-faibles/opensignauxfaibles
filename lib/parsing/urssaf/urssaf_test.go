@@ -10,7 +10,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 )
 
@@ -47,7 +46,7 @@ func TestUrssaf(t *testing.T) {
 				// Compression du fichier de données
 				err := exec.Command("gzip", "--keep", filepath.Join("testData", testCase.InputFile)).Run() // créée une version gzippée du fichier
 				assert.NoError(t, err)
-				compressedFilePath := base.NewBatchFile("testData", testCase.InputFile+".gz")
+				compressedFilePath := engine.NewBatchFile("testData", testCase.InputFile+".gz")
 				t.Cleanup(func() { os.Remove(compressedFilePath.Path()) })
 
 				// Création d'un fichier Golden temporaire mentionnant le nom du fichier compressé
@@ -64,7 +63,7 @@ func TestUrssaf(t *testing.T) {
 
 func TestDebit(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebit.json")
-	var testData = base.NewBatchFile("testData", "debitTestData.csv")
+	var testData = engine.NewBatchFile("testData", "debitTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 
 	engine.TestParserOutput(t, NewDebitParser(), cache, testData, golden, *update)
@@ -98,14 +97,14 @@ func TestDebit(t *testing.T) {
 
 func TestDebitCorrompu(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
-	var testData = base.NewBatchFile("testData", "debitCorrompuTestData.csv")
+	var testData = engine.NewBatchFile("testData", "debitCorrompuTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	engine.TestParserOutput(t, NewDebitParser(), cache, testData, golden, *update)
 }
 
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
-	var testData = base.NewBatchFile("testData", "delaiTestData.csv")
+	var testData = engine.NewBatchFile("testData", "delaiTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	engine.TestParserOutput(t, NewDelaiParser(), cache, testData, golden, *update)
 
@@ -118,7 +117,7 @@ func TestDelai(t *testing.T) {
 
 func TestCcsf(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCcsf.json")
-	var testData = base.NewBatchFile("testData", "ccsfTestData.csv")
+	var testData = engine.NewBatchFile("testData", "ccsfTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	engine.TestParserOutput(t, NewCCSFParser(), cache, testData, golden, *update)
 
@@ -131,7 +130,7 @@ func TestCcsf(t *testing.T) {
 
 func TestCotisation(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCotisation.json")
-	var testData = base.NewBatchFile("testData", "cotisationTestData.csv")
+	var testData = engine.NewBatchFile("testData", "cotisationTestData.csv")
 	var cache = makeCacheWithComptesMapping()
 	engine.TestParserOutput(t, NewCotisationParser(), cache, testData, golden, *update)
 
@@ -176,7 +175,7 @@ func TestProcol(t *testing.T) {
 
 	t.Run("Le fichier de test Procol est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedProcol.json")
-		var testData = base.NewBatchFile("testData", "procolTestData.csv")
+		var testData = engine.NewBatchFile("testData", "procolTestData.csv")
 		engine.TestParserOutput(t, NewProcolParser(), cache, testData, golden, *update)
 	})
 

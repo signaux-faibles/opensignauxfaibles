@@ -9,7 +9,6 @@ import (
 	"log/slog"
 	"time"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/sfregexp"
 )
 
@@ -17,7 +16,7 @@ import (
 // du `io.Reader`
 type Parser interface {
 	New(io.Reader) ParserInst
-	Type() base.ParserType
+	Type() ParserType
 }
 
 // ParserInst extrait des données structurées d'un contenu, lu via un
@@ -25,7 +24,7 @@ type Parser interface {
 type ParserInst interface {
 	io.Reader
 
-	Init(cache *Cache, filter SirenFilter, batch *base.AdminBatch) error
+	Init(cache *Cache, filter SirenFilter, batch *AdminBatch) error
 
 	// ReadNext extracts tuples from next line
 	// Any error definitely interrupts the parsing
@@ -64,16 +63,16 @@ func (res *ParsedLineResult) SetFilterError(err error) {
 
 // Tuple spécifie les fonctions que chaque parseur doit implémenter pour ses tuples.
 type Tuple interface {
-	Key() string           // entité définie par le tuple: numéro SIRET ou SIREN
-	Scope() base.Scope     // type d'entité: "entreprise" ou "etablissement"
-	Type() base.ParserType // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
+	Key() string      // entité définie par le tuple: numéro SIRET ou SIREN
+	Scope() Scope     // type d'entité: "entreprise" ou "etablissement"
+	Type() ParserType // identifiant du parseur qui a extrait ce tuple, ex: "apconso"
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
 func ParseFilesFromBatch(
 	ctx context.Context,
 	cache Cache,
-	batch *base.AdminBatch,
+	batch *AdminBatch,
 	parser Parser,
 	filter SirenFilter,
 ) (chan Tuple, chan Report) {
@@ -93,7 +92,7 @@ func ParseFilesFromBatch(
 }
 
 // ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
-func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *base.AdminBatch,
+func ParseFile(ctx context.Context, path BatchFile, parser Parser, batch *AdminBatch,
 	cache Cache, outputChannel chan Tuple, filter SirenFilter) Report {
 	logger := slog.With("batch", batch.Key, "parser", parser.Type(), "filename", path.Path())
 	logger.Debug("parsing file")
@@ -115,9 +114,9 @@ func ParseFile(ctx context.Context, path base.BatchFile, parser Parser, batch *b
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
 func runParserOnFile(
 	ctx context.Context,
-	filePath base.BatchFile,
+	filePath BatchFile,
 	parser Parser,
-	batch *base.AdminBatch,
+	batch *AdminBatch,
 	cache Cache,
 	tracker *ParsingTracker,
 	outputChannel chan Tuple,
@@ -190,7 +189,7 @@ func processTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, fil
 
 // LogProgress affiche le numéro de ligne en cours de parsing, toutes les 2s.
 func LogProgress(lineNumber *int) (stop context.CancelFunc) {
-	return base.Cron(time.Minute*1, func() {
+	return Cron(time.Minute*1, func() {
 		slog.Info("Lis une ligne du fichier csv", slog.Int("line", *lineNumber))
 	})
 }
@@ -199,12 +198,12 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 func isValid(tuple Tuple) (bool, error) {
 	scope := tuple.Scope()
 	key := tuple.Key()
-	if scope == base.ScopeEntreprise {
+	if scope == ScopeEntreprise {
 		if !sfregexp.ValidSiren(key) {
 			return false, errors.New("siren invalide : " + key)
 		}
 		return true, nil
-	} else if scope == base.ScopeEtablissement {
+	} else if scope == ScopeEtablissement {
 		if !sfregexp.ValidSiret(key) {
 			return false, errors.New("siret invalide : " + key)
 		}

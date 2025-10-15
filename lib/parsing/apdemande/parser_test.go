@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 )
 
@@ -15,7 +14,7 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 
 func TestApdemande(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedApdemande.json")
-	var testData = base.NewBatchFile("testData", "apdemandeTestData.csv")
+	var testData = engine.NewBatchFile("testData", "apdemandeTestData.csv")
 	engine.TestParserOutput(t, NewApdemandeParser(), engine.NewEmptyCache(), testData, golden, *update)
 
 	t.Run("should fail if one column misses", func(t *testing.T) {

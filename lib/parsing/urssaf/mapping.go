@@ -11,7 +11,6 @@ import (
 
 	"github.com/spf13/viper"
 
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 	"opensignauxfaibles/lib/sfregexp"
@@ -51,7 +50,7 @@ func (comptes *Comptes) GetSiret(compte string, date *time.Time) (string, error)
 
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache. Lazy loaded.
-func GetCompteSiretMapping(cache engine.Cache, batch *base.AdminBatch, filter engine.SirenFilter, mr mappingReader) (Comptes, error) {
+func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, filter engine.SirenFilter, mr mappingReader) (Comptes, error) {
 	value, err := cache.Get("comptes")
 	slog.Debug("associe les siret et les numéros de compte URSSAF", slog.Any("AdminBatch", *batch))
 	if err == nil {
@@ -83,16 +82,16 @@ func GetCompteSiretMapping(cache engine.Cache, batch *base.AdminBatch, filter en
 	return compteSiretMapping, nil
 }
 
-type mappingReader func(string, base.BatchFile, Comptes, engine.Cache,
-	*base.AdminBatch, engine.SirenFilter) (Comptes, error)
+type mappingReader func(string, engine.BatchFile, Comptes, engine.Cache,
+	*engine.AdminBatch, engine.SirenFilter) (Comptes, error)
 
 // OpenAndReadSiretMapping opens files and reads their content
 func OpenAndReadSiretMapping(
 	basePath string,
-	batchFile base.BatchFile,
+	batchFile engine.BatchFile,
 	compteSiretMapping Comptes,
 	cache engine.Cache,
-	batch *base.AdminBatch,
+	batch *engine.AdminBatch,
 	filter engine.SirenFilter,
 ) (Comptes, error) {
 

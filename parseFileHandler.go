@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/registry"
 	"opensignauxfaibles/lib/sinks"
@@ -41,12 +40,12 @@ func (params parseFileHandler) Validate() error {
 }
 
 func (params parseFileHandler) Run() error {
-	parserType := base.ParserType(params.Parser)
+	parserType := engine.ParserType(params.Parser)
 
-	file := base.NewBatchFile(params.File)
-	batch := base.AdminBatch{
+	file := engine.NewBatchFile(params.File)
+	batch := engine.AdminBatch{
 		Key:   "parseFile", // dummy batch key
-		Files: base.BatchFiles{parserType: []base.BatchFile{file}},
+		Files: engine.BatchFiles{parserType: []engine.BatchFile{file}},
 	}
 
 	// stdout csv data output

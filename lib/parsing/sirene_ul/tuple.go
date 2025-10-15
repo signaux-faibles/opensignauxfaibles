@@ -1,9 +1,8 @@
 package sireneul
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // SireneUL informations sur les entreprises
@@ -26,11 +25,11 @@ func (sireneUL SireneUL) Key() string {
 }
 
 // Type de données
-func (sireneUL SireneUL) Type() base.ParserType {
-	return base.SireneUl
+func (sireneUL SireneUL) Type() engine.ParserType {
+	return engine.SireneUl
 }
 
 // Scope de l'objet
-func (sireneUL SireneUL) Scope() base.Scope {
-	return base.ScopeEntreprise
+func (sireneUL SireneUL) Scope() engine.Scope {
+	return engine.ScopeEntreprise
 }

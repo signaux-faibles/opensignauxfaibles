@@ -1,9 +1,8 @@
 package urssaf
 
 import (
+	"opensignauxfaibles/lib/engine"
 	"time"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // Debit Débit – fichier Urssaf
@@ -30,11 +29,11 @@ func (debit Debit) Key() string {
 }
 
 // Scope de l'objet
-func (debit Debit) Scope() base.Scope {
-	return base.ScopeEtablissement
+func (debit Debit) Scope() engine.Scope {
+	return engine.ScopeEtablissement
 }
 
 // Type de l'objet
-func (debit Debit) Type() base.ParserType {
-	return base.Debit
+func (debit Debit) Type() engine.ParserType {
+	return engine.Debit
 }

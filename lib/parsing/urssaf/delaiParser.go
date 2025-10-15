@@ -2,7 +2,6 @@ package urssaf
 
 import (
 	"io"
-	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
 	"time"
@@ -14,7 +13,7 @@ func NewDelaiParser() engine.Parser {
 	return &DelaiParser{}
 }
 
-func (parser *DelaiParser) Type() base.ParserType { return base.Delai }
+func (parser *DelaiParser) Type() engine.ParserType { return engine.Delai }
 func (parser *DelaiParser) New(r io.Reader) engine.ParserInst {
 	return &UrssafParserInst{
 		parsing.CsvParserInst{

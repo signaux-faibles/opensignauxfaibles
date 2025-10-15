@@ -1,46 +1,46 @@
 package prepareimport
 
 import (
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"regexp"
 )
 
 // ExtractParserTypeFromFilename returns a file type from filename, or empty string for unsupported file names
-func ExtractParserTypeFromFilename(filename string) base.ParserType {
+func ExtractParserTypeFromFilename(filename string) engine.ParserType {
 	possiblyGzFilename := regexp.MustCompile(`^(.*)\.gz$`).ReplaceAllString(filename, `$1`)
 	switch {
 	case filename == "consommation_ap.csv":
-		return base.Apconso
+		return engine.Apconso
 	case filename == "demande_ap.csv":
-		return base.Apdemande
+		return engine.Apdemande
 	case possiblyGzFilename == "sigfaible_etablissement_utf8.csv":
-		return base.AdminUrssaf
+		return engine.AdminUrssaf
 	case possiblyGzFilename == "sigfaible_effectif_siren.csv":
-		return base.EffectifEnt
+		return engine.EffectifEnt
 	case possiblyGzFilename == "sigfaible_pcoll.csv":
-		return base.Procol
+		return engine.Procol
 	case possiblyGzFilename == "sigfaible_cotisdues.csv":
-		return base.Cotisation
+		return engine.Cotisation
 	case possiblyGzFilename == "sigfaible_delais.csv":
-		return base.Delai
+		return engine.Delai
 	case possiblyGzFilename == "sigfaible_ccsf.csv":
-		return base.Ccsf
+		return engine.Ccsf
 	case filename == "sireneUL.csv":
-		return base.SireneUl
+		return engine.SireneUl
 	case filename == "StockEtablissement_utf8_geo.csv":
-		return base.Sirene
+		return engine.Sirene
 	case mentionsDebits.MatchString(filename):
-		return base.Debit
+		return engine.Debit
 	case hasDianePrefix.MatchString(filename):
-		return base.Diane
+		return engine.Diane
 	case mentionsEffectif.MatchString(filename):
-		return base.Effectif
+		return engine.Effectif
 	case hasFilterPrefix.MatchString(filename):
-		return base.Filter
+		return engine.Filter
 	case isRetroPaydex.MatchString(filename):
-		return base.Paydex
+		return engine.Paydex
 	case isEllisphere.MatchString(filename):
-		return base.Ellisphere
+		return engine.Ellisphere
 	default:
 		return ""
 	}

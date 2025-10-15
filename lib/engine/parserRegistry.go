@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"opensignauxfaibles/lib/base"
 )
 
 // ParserRegistry est une interface pour accéder à l'ensemble des parsers supportés
@@ -13,7 +12,7 @@ type ParserRegistry interface {
 	// Resolve retourne le parser associé à un type donné
 	//
 	// Retourne `nil` si ce parser n'existe pas
-	Resolve(base.ParserType) Parser
+	Resolve(ParserType) Parser
 }
 
 // ResolveParsers récupère les parsers associés aux types donnés en entrée.
@@ -21,7 +20,7 @@ type ParserRegistry interface {
 // Si aucun type n'est renseigné, tous les parsers sont retournés.
 //
 // Si un type absent du registre est requêté, une erreur est retournée.
-func ResolveParsers(registry ParserRegistry, types []base.ParserType) ([]Parser, error) {
+func ResolveParsers(registry ParserRegistry, types []ParserType) ([]Parser, error) {
 	var parsers []Parser
 
 	if len(types) == 0 {

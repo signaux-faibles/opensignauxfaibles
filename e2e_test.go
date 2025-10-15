@@ -8,7 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"os"
 	"os/exec"
 	"path"
@@ -259,7 +259,7 @@ func deleteTempFolder() {
 	os.RemoveAll(suite.TmpDir)
 }
 
-func writeBatchConfig(t *testing.T, batch base.AdminBatch) {
+func writeBatchConfig(t *testing.T, batch engine.AdminBatch) {
 	t.Log("📝 Writing test batch config...")
 
 	bytes, err := json.Marshal(batch)

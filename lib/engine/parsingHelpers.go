@@ -5,12 +5,10 @@ import (
 	"compress/gzip"
 	"io"
 	"os"
-
-	"opensignauxfaibles/lib/base"
 )
 
 // OpenFileReader ouvre un fichier potentiellement gzippé et retourne un io.Reader.
-func OpenFileReader(batchFile base.BatchFile) (*os.File, io.Reader, error) {
+func OpenFileReader(batchFile BatchFile) (*os.File, io.Reader, error) {
 	// TODO duplicate with batchfile.Open
 	file, err := os.Open(batchFile.Path())
 	if err != nil {
