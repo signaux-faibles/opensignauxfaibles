@@ -1,3 +1,4 @@
-{"id_conso":"d363954866","heure_consomme":311.54,"montant":214,"effectif":0,"periode":"2004-12-01T00:00:00Z"}
-{"id_conso":"u90q913412","heure_consomme":44.11,"montant":659,"effectif":2,"periode":"2019-01-01T00:00:00Z"}
-{"id_conso":"p95a076375","heure_consomme":780,"montant":62,"effectif":16,"periode":"2020-12-30T00:00:00Z"}
+ID,Siret,HeureConsommee,Montant,Effectif,Periode
+d363954866,61433760225578,311.54,214,0,2004-12-01
+u90q913412,65272073959845,44.11,659,2,2019-01-01
+p95a076375,53312397597505,780,62,16,2020-12-30

@@ -1,15 +1,12 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
-	"log"
 	"opensignauxfaibles/lib/base"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/registry"
+	"opensignauxfaibles/lib/sinks"
 	"os"
-	"sync"
 
 	"github.com/cosiner/flag"
 )
@@ -45,43 +42,24 @@ func (params parseFileHandler) Validate() error {
 
 func (params parseFileHandler) Run() error {
 	parserType := base.ParserType(params.Parser)
-	parsers, err := engine.ResolveParsers(registry.DefaultParsers, []base.ParserType{parserType})
-	if err != nil {
-		return err
-	}
 
 	file := base.NewBatchFile(params.File)
-	batch := base.AdminBatch{Files: base.BatchFiles{parserType: []base.BatchFile{file}}}
-	cache := engine.NewEmptyCache()
-	parser := parsers[0]
-
-	// the following code is inspired from engine.ParseFilesFromBatch()
-	outputChannel := make(chan engine.Tuple)
-	reportChannel := make(chan engine.Report)
-	ctx := context.Background()
-	go func() {
-		reportChannel <- engine.ParseFile(ctx, file, parser, &batch, cache, outputChannel, nil)
-		close(outputChannel)
-		close(reportChannel)
-	}()
-
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for tuple := range outputChannel {
-			printJSON(tuple) // écriture du tuple dans la sortie standard
-		}
-	}()
-
-	for e := range reportChannel {
-		res, _ := json.MarshalIndent(e, "", "  ")
-		log.Println(string(res)) // écriture de l'événement dans stderr
+	batch := base.AdminBatch{
+		Key:   "parseFile", // dummy batch key
+		Files: base.BatchFiles{parserType: []base.BatchFile{file}},
 	}
 
-	// Only return once all channels are closed
-	wg.Wait()
+	// stdout csv data output
+	dataSinkFactory := sinks.NewStdoutSinkFactory()
+	// stdout json report output
+	reportSink := &engine.StdoutReportSink{}
 
-	return nil
+	return engine.ImportBatch(
+		batch,
+		nil, // do not filter any parser
+		registry.DefaultParsers,
+		engine.NoFilter,
+		dataSinkFactory,
+		reportSink,
+	)
 }
