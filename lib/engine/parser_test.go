@@ -19,7 +19,7 @@ func TestParseFilesFromBatch(t *testing.T) {
 			ctx,
 			NewEmptyCache(),
 			&batch,
-			&dummyParser{initError: errors.New("error from Init()")},
+			&dummyParser{initError: errors.New("error from Init()"), parserType: "dummy"},
 			NoFilter,
 		)
 		fatalErrors := ConsumeFatalErrors(reportChan)
@@ -28,7 +28,7 @@ func TestParseFilesFromBatch(t *testing.T) {
 
 	t.Run("ne rapporte pas d'erreur de fermeture en cas d'erreur d'ouverture", func(t *testing.T) {
 		batch := base.MockBatch("dummy", []base.BatchFile{base.OpenFailsBatchFile{}})
-		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{}, NoFilter)
+		_, eventChan := ParseFilesFromBatch(ctx, NewEmptyCache(), &batch, &dummyParser{parserType: "dummy"}, NoFilter)
 		fatalErrors := ConsumeFatalErrors(eventChan)
 		assert.Equal(t, []string{"Fatal: error from Open()"}, fatalErrors)
 	})
