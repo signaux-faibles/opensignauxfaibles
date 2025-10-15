@@ -48,7 +48,6 @@ func ImportBatch(
 
 	unsupported := checkUnsupportedFiletypes(registry, batchConfig)
 	for _, file := range unsupported {
-		fmt.Printf("Debug %v\n", file)
 		logger.Warn("Type de fichier non reconnu", "file", file)
 	}
 
