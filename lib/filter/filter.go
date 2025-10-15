@@ -10,10 +10,6 @@ import (
 	"opensignauxfaibles/lib/engine"
 )
 
-const (
-	cacheKeyFilter = "filter"
-)
-
 // Get retrieves the SIREN filter using a priority-based approach:
 // 1. Batch filter file (if available)
 // 2. Database (fallback)
