@@ -1,26 +1,26 @@
 package prepareimport
 
 import (
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"os"
 	"path"
 )
 
 // PopulateFilesProperty populates the "files" property of an Admin object, given a path.
-func PopulateFilesProperty(pathname string, batchKey base.BatchKey) (base.BatchFiles, []string) {
+func PopulateFilesProperty(pathname string, batchKey engine.BatchKey) (engine.BatchFiles, []string) {
 	batchPath := path.Join(pathname, batchKey.String())
 	filenames, _ := ReadFilenames(batchPath)
 
-	var batchFiles []base.BatchFile
+	var batchFiles []engine.BatchFile
 	for _, file := range filenames {
-		batchFiles = append(batchFiles, base.NewBatchFileFromBatch(pathname, batchKey, file))
+		batchFiles = append(batchFiles, engine.NewBatchFileFromBatch(pathname, batchKey, file))
 	}
 	return PopulateFilesPropertyFromDataFiles(batchFiles)
 }
 
 // PopulateFilesPropertyFromDataFiles populates the "files" property of an Admin object, given a list of Data files.
-func PopulateFilesPropertyFromDataFiles(files []base.BatchFile) (base.BatchFiles, []string) {
-	filesProperty := base.BatchFiles{}
+func PopulateFilesPropertyFromDataFiles(files []engine.BatchFile) (engine.BatchFiles, []string) {
+	filesProperty := engine.BatchFiles{}
 
 	unsupportedFiles := []string{}
 
@@ -32,7 +32,7 @@ func PopulateFilesPropertyFromDataFiles(files []base.BatchFile) (base.BatchFiles
 			continue
 		}
 		if _, exists := filesProperty[parserType]; !exists {
-			filesProperty[parserType] = []base.BatchFile{}
+			filesProperty[parserType] = []engine.BatchFile{}
 		}
 
 		filesProperty[parserType] = append(filesProperty[parserType], file)

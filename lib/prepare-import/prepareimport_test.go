@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"errors"
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"os"
 	"path"
 	"testing"
@@ -26,7 +26,7 @@ func TestReadFilenames(t *testing.T) {
 
 func TestPrepareImport(t *testing.T) {
 	t.Run("Should warn if the batch was not found in the specified directory", func(t *testing.T) {
-		wantedBatch := base.NewSafeBatchKey("1803") // different of dummyBatchKey
+		wantedBatch := engine.NewSafeBatchKey("1803") // different of dummyBatchKey
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
 		_, err := PrepareImport(parentDir, wantedBatch)
 		expected := "could not find directory 1803 in provided path"
@@ -53,17 +53,17 @@ func TestPrepareImport(t *testing.T) {
 		res, err := PrepareImport(dir, dummyBatchKey)
 
 		if assert.NoError(t, err) {
-			assert.Contains(t, res.Files, base.Filter)
-			assert.Len(t, res.Files[base.Filter], 1)
+			assert.Contains(t, res.Files, engine.Filter)
+			assert.Len(t, res.Files[engine.Filter], 1)
 
-			filterFile := res.Files[base.Filter][0]
+			filterFile := res.Files[engine.Filter][0]
 			assert.NotNil(t, filterFile)
-			assert.Equal(t, filterFile.Path(), base.NewBatchFileFromBatch(dir, dummyBatchKey, "filter_2002.csv").Path())
+			assert.Equal(t, filterFile.Path(), engine.NewBatchFileFromBatch(dir, dummyBatchKey, "filter_2002.csv").Path())
 		}
 	})
 
 	t.Run("Should include an id property", func(t *testing.T) {
-		batch := base.NewSafeBatchKey("1802")
+		batch := engine.NewSafeBatchKey("1802")
 		dir := CreateTempFiles(t, batch, []string{"filter_2002.csv"})
 		res, err := PrepareImport(dir, batch)
 
@@ -75,10 +75,10 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should associate the correct type given file name", func(t *testing.T) {
 		cases := []struct {
 			filename string
-			filetype base.ParserType
+			filetype engine.ParserType
 		}{
-			{"sigfaible_debits.csv", base.Debit},
-			{"StockEtablissement_utf8_geo.csv", base.Sirene},
+			{"sigfaible_debits.csv", engine.Debit},
+			{"StockEtablissement_utf8_geo.csv", engine.Sirene},
 		}
 
 		for _, testCase := range cases {
@@ -87,7 +87,7 @@ func TestPrepareImport(t *testing.T) {
 
 			res, err := PrepareImport(dir, dummyBatchKey)
 
-			expected := []base.BatchFile{base.NewBatchFileFromBatch(dir, dummyBatchKey, testCase.filename)}
+			expected := []engine.BatchFile{engine.NewBatchFileFromBatch(dir, dummyBatchKey, testCase.filename)}
 
 			if assert.NoError(t, err) {
 				assert.Equal(t, expected, res.Files[testCase.filetype])
@@ -118,12 +118,12 @@ func TestPrepareImport(t *testing.T) {
 
 		// check that the filter is listed in the "files" property
 		if assert.NoError(t, err) {
-			assert.Contains(t, adminObject.Files, base.Filter)
-			assert.Len(t, adminObject.Files[base.Filter], 1)
-			assert.Equal(t, adminObject.Files[base.Filter][0].Filename(), filterFileName)
+			assert.Contains(t, adminObject.Files, engine.Filter)
+			assert.Len(t, adminObject.Files[engine.Filter], 1)
+			assert.Equal(t, adminObject.Files[engine.Filter][0].Filename(), filterFileName)
 
 			// check that the filter file exists
-			filterFilePath := adminObject.Files[base.Filter][0].Path()
+			filterFilePath := adminObject.Files[engine.Filter][0].Path()
 			assert.True(t, fileExists(filterFilePath), "the filter file was not found: "+filterFilePath)
 		}
 
@@ -141,10 +141,10 @@ func TestPrepareImport(t *testing.T) {
 			"sireneUL.csv":                    ReadFileData(t, "./createfilter/test_uniteLegale.csv"),
 		})
 
-		expectedFiles := base.BatchFiles{
-			base.Effectif: {base.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sigfaible_effectif_siret.csv.gz")},
-			base.Filter:   {base.NewBatchFileFromBatch(batchDir, dummyBatchKey, filterFileName)},
-			base.SireneUl: {base.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sireneUL.csv")},
+		expectedFiles := engine.BatchFiles{
+			engine.Effectif: {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sigfaible_effectif_siret.csv.gz")},
+			engine.Filter:   {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, filterFileName)},
+			engine.SireneUl: {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sireneUL.csv")},
 		}
 
 		adminObject, err := PrepareImport(batchDir, dummyBatchKey)

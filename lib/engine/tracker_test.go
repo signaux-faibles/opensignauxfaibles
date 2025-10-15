@@ -1,0 +1,52 @@
+package engine
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestTracker(t *testing.T) {
+	t.Run("should not keep more than `MaxParsingErrors` parse errors in memory", func(t *testing.T) {
+		tracker := NewParsingTracker()
+		for i := range MaxParsingErrors + 1 {
+			tracker.AddParseError(fmt.Errorf("parse error %d", i))
+		}
+		assert.Equal(t, MaxParsingErrors, len(tracker.firstParseErrors))
+	})
+
+	t.Run("can report more than `MaxParsingErrors` parse errors", func(t *testing.T) {
+		expectedLinesRejected := MaxParsingErrors + 1
+		tracker := NewParsingTracker()
+		for i := range expectedLinesRejected {
+			tracker.AddParseError(fmt.Errorf("parse error %d", i))
+			tracker.Next()
+		}
+		report := tracker.Report("", "", "")
+		assert.Equal(t, int64(expectedLinesRejected), report.LinesRejected)
+	})
+
+	t.Run("should report just 1 rejected line, given 2 parse errors happened on that same line", func(t *testing.T) {
+		expectedLinesRejected := 1
+		errorsOnSameLine := 2
+		tracker := NewParsingTracker()
+		for i := range errorsOnSameLine {
+			tracker.AddParseError(fmt.Errorf("parse error %d", i))
+		}
+		report := tracker.Report("", "", "")
+		assert.Equal(t, int64(expectedLinesRejected), report.LinesRejected)
+	})
+
+	t.Run("should report just 1 skipped line, given 2 filter errors happened on that same line", func(t *testing.T) {
+		expectedLinesSkipped := 1
+		errorsOnSameLine := 2
+		tracker := NewParsingTracker()
+		for i := range errorsOnSameLine {
+			tracker.AddFilterError(fmt.Errorf("filter error %d", i))
+		}
+		report := tracker.Report("", "", "")
+		assert.Equal(t, int64(expectedLinesSkipped), report.LinesSkipped)
+	})
+
+}

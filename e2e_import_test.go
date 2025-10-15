@@ -5,7 +5,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"os"
 	"path"
@@ -20,6 +20,8 @@ import (
 )
 
 func TestImportEndToEnd(t *testing.T) {
+	cleanDB := setupDBTest(t)
+	defer cleanDB()
 
 	createImportTestBatch(t)
 	t.Run("Create batch and run import", func(t *testing.T) {
@@ -46,29 +48,29 @@ func TestImportEndToEnd(t *testing.T) {
 	})
 }
 
-const Dummy base.ParserType = "dummy"
+const Dummy engine.ParserType = "dummy"
 
 func createImportTestBatch(t *testing.T) {
 
-	batch := base.AdminBatch{
+	batch := engine.AdminBatch{
 		Key: "1910",
-		Files: map[base.ParserType][]base.BatchFile{
-			Dummy:            {},
-			base.Filter:      {},
-			base.Apconso:     {base.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
-			base.Apdemande:   {base.NewBatchFile("lib/apdemande/testData/apdemandeTestData.csv")},
-			base.Sirene:      {base.NewBatchFile("lib/sirene/testData/sireneTestData.csv")},
-			base.SireneUl:    {base.NewBatchFile("lib/sirene_ul/testData/sireneULTestData.csv")},
-			base.AdminUrssaf: {base.NewBatchFile("lib/urssaf/testData/comptesTestData.csv")},
-			base.Debit:       {base.NewBatchFile("lib/urssaf/testData/debitTestData.csv")},
-			base.Ccsf:        {base.NewBatchFile("lib/urssaf/testData/ccsfTestData.csv")},
-			base.Cotisation:  {base.NewBatchFile("lib/urssaf/testData/cotisationTestData.csv")},
-			base.Delai:       {base.NewBatchFile("lib/urssaf/testData/delaiTestData.csv")},
-			base.Effectif:    {base.NewBatchFile("lib/urssaf/testData/effectifTestData.csv")},
-			base.EffectifEnt: {base.NewBatchFile("lib/urssaf/testData/effectifEntTestData.csv")},
-			base.Procol:      {base.NewBatchFile("lib/urssaf/testData/procolTestData.csv")},
+		Files: map[engine.ParserType][]engine.BatchFile{
+			Dummy:              {},
+			engine.Filter:      {},
+			engine.Apconso:     {engine.NewBatchFile("lib/parsing/apconso/testData/apconsoTestData.csv")},
+			engine.Apdemande:   {engine.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
+			engine.Sirene:      {engine.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
+			engine.SireneUl:    {engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
+			engine.AdminUrssaf: {engine.NewBatchFile("lib/parsing/urssaf/testData/comptesTestData.csv")},
+			engine.Debit:       {engine.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")},
+			engine.Ccsf:        {engine.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},
+			engine.Cotisation:  {engine.NewBatchFile("lib/parsing/urssaf/testData/cotisationTestData.csv")},
+			engine.Delai:       {engine.NewBatchFile("lib/parsing/urssaf/testData/delaiTestData.csv")},
+			engine.Effectif:    {engine.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")},
+			engine.EffectifEnt: {engine.NewBatchFile("lib/parsing/effectif/testData/effectifEntTestData.csv")},
+			engine.Procol:      {engine.NewBatchFile("lib/parsing/urssaf/testData/procolTestData.csv")},
 		},
-		Params: base.AdminBatchParams{
+		Params: engine.AdminBatchParams{
 			DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
 			DateFin:   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
 		},
@@ -146,7 +148,7 @@ func verifyPostgresExport(t *testing.T) {
 	hasEventTable := false
 
 	for _, table := range tables {
-		if table == engine.VersionTable {
+		if table == db.VersionTable {
 			hasMigrationTable = true
 			continue
 		}
@@ -250,3 +252,123 @@ func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 
 	return tables
 }
+
+// func TestEmptyFilter(t *testing.T) {
+// 	testCases := []struct {
+// 		skipFilter  bool
+// 		expectError bool
+// 		errContains []string
+// 	}{
+// 		{
+// 			false,
+// 			true,
+// 			[]string{"n'a pas été initialisé", "import d'un fichier 'effectif'"},
+// 		},
+// 		{
+// 			true,
+// 			false,
+// 			nil,
+// 		},
+// 	}
+
+// 	for _, tc := range testCases {
+
+// 		t.Run(fmt.Sprintf("Empty filter, skipFilter=%v, expectError=%v", tc.skipFilter, tc.expectError), func(t *testing.T) {
+// 			batch := engine.AdminBatch{
+// 				Key: "1910",
+// 				Files: map[engine.ParserType][]engine.BatchFile{
+// 					engine.Apconso: {engine.NewBatchFile("lib/apconso/testData/apconsoTestData.csv")},
+// 				},
+// 			}
+
+// 			var filter engine.SirenFilter
+
+// 			err := engine.ImportBatch(
+// 				batch,
+// 				[]engine.ParserType{},
+// 				registry.DefaultParsers,
+// 				filter,
+// 				// Should not write anything to DB
+// 				&engine.DiscardSinkFactory{},
+// 				engine.DiscardReportSink{},
+// 			)
+
+// 			if tc.expectError {
+// 				t.Log(err)
+// 				for _, s := range tc.errContains {
+// 					assert.ErrorContains(t, err, s)
+// 				}
+// 			} else {
+// 				assert.NoError(t, err)
+// 			}
+// 		})
+// 	}
+// }
+
+// func TestNonEmptyFilter(t *testing.T) {
+// 	cleanDB := setupDBTest(t)
+// 	defer cleanDB()
+
+// 	db, err := pgx.Connect(context.Background(), suite.PostgresURI)
+// 	assert.NoError(t, err)
+
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', CURRENT_DATE, 759);`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`REFRESH MATERIALIZED VIEW filter;`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`TRUNCATE stg_effectif;`,
+// 	)
+// 	assert.NoError(t, err)
+
+// 	var count int
+// 	err = db.QueryRow(
+// 		context.Background(),
+// 		`SELECT count(*) FROM filter;`,
+// 	).Scan(&count)
+// 	assert.NoError(t, err)
+
+// 	assert.Equal(t, 1, count)
+
+// }
+
+// func TestNonEmptyFilter2(t *testing.T) {
+// 	cleanDB := setupDBTest(t)
+// 	defer cleanDB()
+
+// 	db, err := pgx.Connect(context.Background(), suite.PostgresURI)
+// 	assert.NoError(t, err)
+
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`INSERT INTO stg_effectif (siret, periode, effectif) VALUES('43362355000020', '2018-01-01', 9);`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`REFRESH MATERIALIZED VIEW filter;`,
+// 	)
+// 	assert.NoError(t, err)
+// 	_, err = db.Exec(
+// 		context.Background(),
+// 		`TRUNCATE stg_effectif;`,
+// 	)
+// 	assert.NoError(t, err)
+
+// 	var count int
+// 	err = db.QueryRow(
+// 		context.Background(),
+// 		`SELECT count(*) FROM filter;`,
+// 	).Scan(&count)
+// 	assert.NoError(t, err)
+
+// 	assert.Equal(t, 1, count)
+
+// }

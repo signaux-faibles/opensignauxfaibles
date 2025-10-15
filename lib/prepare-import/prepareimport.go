@@ -9,20 +9,20 @@ import (
 	"os"
 	"path"
 
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/prepare-import/createfilter"
 )
 
 // PrepareImport generates an Admin object from files found at given pathname,
 // in the "batchKey" directory, on the file system.
-func PrepareImport(basepath string, batchKey base.BatchKey) (base.AdminBatch, error) {
+func PrepareImport(basepath string, batchKey engine.BatchKey) (engine.AdminBatch, error) {
 
 	fmt.Println("Listing data files in " + batchKey + "/ ...")
 
 	batchPath := path.Join(basepath, batchKey.String())
 
 	if _, err := os.ReadDir(batchPath); err != nil {
-		return base.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchKey.String())
+		return engine.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchKey.String())
 	}
 
 	var err error
@@ -48,12 +48,12 @@ func PrepareImport(basepath string, batchKey base.BatchKey) (base.AdminBatch, er
 	}
 
 	if filterFile == nil && effectifFile == nil {
-		return base.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
+		return engine.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
 	}
 
 	// if needed, create a filter file from the effectif file
 	if filterFile == nil {
-		filterFile = base.NewBatchFileFromBatch(basepath, batchKey, "filter_siren.csv")
+		filterFile = engine.NewBatchFileFromBatch(basepath, batchKey, "filter_siren.csv")
 
 		fmt.Println("Generating filter file: " + filterFile.Path() + " ...")
 		if err = createFilterFromEffectifAndSirene(
@@ -61,21 +61,21 @@ func PrepareImport(basepath string, batchKey base.BatchKey) (base.AdminBatch, er
 			effectifFile.Path(),
 			sireneULFile.Path(),
 		); err != nil {
-			return base.AdminBatch{}, err
+			return engine.AdminBatch{}, err
 		}
 	}
 
 	// add the filter to filesProperty
 	if batchFiles["filter"] == nil && filterFile != nil {
 		fmt.Println("Adding filter file to batch ...")
-		batchFiles[base.Filter] = append(batchFiles[base.Filter], filterFile)
+		batchFiles[engine.Filter] = append(batchFiles[engine.Filter], filterFile)
 	}
 
 	if len(unsupportedFiles) > 0 {
 		err = UnsupportedFilesError{unsupportedFiles}
 	}
 
-	return base.AdminBatch{
+	return engine.AdminBatch{
 		Key:    batchKey,
 		Files:  batchFiles,
 		Params: populateParamProperty(batchKey),
@@ -133,11 +133,11 @@ func copy(src, dst string) error {
 // Implements BatchProvider interface
 type InferBatchProvider struct {
 	Path     string
-	BatchKey base.BatchKey
+	BatchKey engine.BatchKey
 }
 
-func (p InferBatchProvider) Get() (base.AdminBatch, error) {
-	var batch base.AdminBatch
+func (p InferBatchProvider) Get() (engine.AdminBatch, error) {
+	var batch engine.AdminBatch
 	batch, err := PrepareImport(p.Path, p.BatchKey)
 
 	if _, ok := err.(UnsupportedFilesError); ok {

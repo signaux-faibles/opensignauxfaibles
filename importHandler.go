@@ -8,9 +8,12 @@ import (
 
 	"github.com/cosiner/flag"
 
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/filter"
 	prepareimport "opensignauxfaibles/lib/prepare-import"
+	"opensignauxfaibles/lib/registry"
+	"opensignauxfaibles/lib/sinks"
 )
 
 type importBatchHandler struct {
@@ -49,32 +52,34 @@ func (params importBatchHandler) Validate() error {
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
-	batchKey, err := base.NewBatchKey(params.BatchKey)
+	batchKey, err := engine.NewBatchKey(params.BatchKey)
 	if err != nil {
 		return err
 	}
 
 	// Étape 1
 	// On définit d'abord un ensemble de fichiers à importer (batchProvider)
-	var batchProvider base.BatchProvider
-
+	var batch engine.AdminBatch
 	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
 		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
-		batchProvider = engine.JSONBatchProvider{Path: params.BatchConfigFile}
+		batch, err = engine.JSONBatchProvider{Path: params.BatchConfigFile}.Get()
 
 	} else {
 		// On devine le batch à partir des noms de fichiers
 		slog.Info("Batch non fourni en paramètre, tentative de déterminer les fichiers à importer")
-		batchProvider = prepareimport.InferBatchProvider{Path: params.Path, BatchKey: batchKey}
+		batch, err = prepareimport.InferBatchProvider{Path: params.Path, BatchKey: batchKey}.Get()
+	}
 
+	if err != nil {
+		return err
 	}
 
 	// Étape 2
 	// On définit les parsers à faire tourner
-	var parserTypes = make([]base.ParserType, 0, len(params.Parsers))
+	var parserTypes = make([]engine.ParserType, 0, len(params.Parsers))
 	for _, p := range params.Parsers {
-		parserTypes = append(parserTypes, base.ParserType(p))
+		parserTypes = append(parserTypes, engine.ParserType(p))
 	}
 
 	// Étape 3
@@ -84,19 +89,49 @@ func (params importBatchHandler) Run() error {
 	var reportSink engine.ReportSink
 
 	if !params.DryRun {
-		dataSinkFactory = engine.NewCompositeSinkFactory(
-			engine.NewCSVSinkFactory(batchKey.String()),
-			engine.NewPostgresSinkFactory(engine.Db.PostgresDB),
+		dataSinkFactory = sinks.Combine(
+			sinks.NewCSVSinkFactory(batchKey.String()),
+			sinks.NewPostgresSinkFactory(db.DB),
 		)
-		reportSink = engine.NewPostgresReportSink(engine.Db.PostgresDB)
+		reportSink = engine.NewPostgresReportSink(db.DB)
 	} else {
 		dataSinkFactory = &engine.DiscardSinkFactory{}
 		reportSink = &engine.StdoutReportSink{}
 	}
 
-	// Étape 4
+	// Étape 5 on récupère le périmètre d'import
+
+	var sirenFilter engine.SirenFilter
+
+	if params.NoFilter {
+		sirenFilter = engine.NoFilter
+	} else {
+		sirenFilter, err = filter.Get(&batch)
+		if err != nil {
+			return fmt.Errorf("unable to get filter: %w", err)
+		}
+
+		if sirenFilter == nil {
+			return errors.New(`
+      Le filtre est manquant ou n'a pas été initialisé.
+      Lorsque le filtre est manquant, il est nécessaire de l'initialiser via
+      l'import d'un fichier 'effectif', ou de placer le fichier filtre à
+      importer, préfixé par 'filter_' dans le dossier des données à importer.
+      Si vous souhaitez importer sans filtre, utilisez l'option "--no-filter".
+      `)
+		}
+	}
+
+	// Étape 5
 	// On réalise l'import
-	err = engine.ImportBatch(batchProvider, parserTypes, params.NoFilter, dataSinkFactory, reportSink)
+	err = engine.ImportBatch(
+		batch,
+		parserTypes,
+		registry.DefaultParsers,
+		sirenFilter,
+		dataSinkFactory,
+		reportSink,
+	)
 
 	if err != nil {
 		return err

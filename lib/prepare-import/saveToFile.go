@@ -2,12 +2,12 @@ package prepareimport
 
 import (
 	"encoding/json"
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"os"
 )
 
 // SaveToFile saves the AdminObject as a JSON object at filePath
-func SaveToFile(toSave base.AdminBatch, filePath string) error {
+func SaveToFile(toSave engine.AdminBatch, filePath string) error {
 	jsonData, err := json.Marshal(toSave)
 	if err != nil {
 		return err

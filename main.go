@@ -11,18 +11,12 @@ import (
 	cosFlag "github.com/cosiner/flag"
 	"github.com/spf13/viper"
 
+	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/marshal"
 )
 
 // GitCommit est le hash du dernier commit à inclure dans le binaire.
 var GitCommit string // (populé lors de la compilation, par `make build`)
-
-func connectDB() error {
-	var err error
-	engine.Db, err = engine.InitDB()
-	return err
-}
 
 // main Fonction Principale
 func main() {
@@ -37,7 +31,9 @@ func runCLI(args ...string) int {
 
 	cmdHandlerWithArgs := parseCommandFromArgs(args)
 	slog.Debug("run cli", slog.Any("args", args))
-	useDB := os.Getenv("NO_DB") != "1"
+
+	noDB := os.Getenv("NO_DB") == "1" || os.Getenv("NO_DB") == "true"
+
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
 		logger.Error("unrecognized command")
@@ -50,16 +46,16 @@ func runCLI(args ...string) int {
 		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(args, " "))
 		return 2
 	}
-	// execute the command
-	if useDB {
-		err := connectDB()
-		if err != nil {
-			logger.Error("error while connecting to db", "error", err)
-			fmt.Printf("\nErreur: %v\n", err)
-			return 4
-		}
-		defer engine.Db.PostgresDB.Close()
+
+	// Initialize database if necessary
+	err := db.Init(noDB)
+	if err != nil {
+		logger.Error("error while connecting to db", "error", err)
+		fmt.Printf("\nErreur: %v\n", err)
+		return 4
 	}
+	defer db.DB.Close()
+
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		logger.Error("error while executing command", "error", err)
 		fmt.Printf("\nErreur: %v\n", err)
@@ -92,7 +88,7 @@ func initConfig() {
 	if err != nil {
 		slog.Warn("aucun fichier de configuration n'a pu être trouvé", slog.Any("error", err))
 	}
-	marshal.SetGitCommit(GitCommit)
+	engine.SetGitCommit(GitCommit)
 }
 
 // Ask cosiner/flag to parse arguments

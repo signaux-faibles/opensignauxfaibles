@@ -1,3 +1,6 @@
+// Package engine est la colonne vertebrale de l'import. Elle définit les
+// interfaces pour définer les parsers, le filtre, les sinks (vers lesquels
+// la donnée sera envoyée).
 package engine
 
 import (
@@ -10,14 +13,10 @@ import (
 	"os"
 
 	"golang.org/x/sync/errgroup"
-
-	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/parsing"
 )
 
 // Load charge les données d'un batch depuis du JSON
-func Load(batch *base.AdminBatch, reader io.Reader) error {
+func Load(batch *AdminBatch, reader io.Reader) error {
 	batchFileContent, err := io.ReadAll(reader)
 	if err != nil {
 		return err
@@ -29,53 +28,40 @@ func Load(batch *base.AdminBatch, reader io.Reader) error {
 
 // ImportBatch lance tous les parsers sur le batch fourni
 func ImportBatch(
-	batchProvider base.BatchProvider,
-	parserTypes []base.ParserType,
-	skipFilter bool,
+	batchConfig AdminBatch,
+	parserTypes []ParserType,
+	registry ParserRegistry,
+	filter SirenFilter,
 	sinkFactory SinkFactory,
 	eventSink ReportSink,
 ) error {
 
-	batch, err := batchProvider.Get()
+	parsers, err := ResolveParsers(registry, parserTypes)
 	if err != nil {
 		return err
 	}
 
-	parsers, err := parsing.ResolveParsers(parserTypes)
-	if err != nil {
-		return err
-	}
-
-	logger := slog.With("batch", batch.Key)
+	logger := slog.With("batch", batchConfig.Key)
 	logger.Info("starting raw data import")
 
-	var cache = marshal.NewEmptyCache()
-
-	filter, err := marshal.GetSirenFilter(cache, &batch)
-	if err != nil {
-		return err
-	}
-	if !skipFilter && filter == nil {
-		return errors.New("veuillez inclure un filtre")
-	}
-
-	unsupported := checkUnsupportedFiletypes(batch)
+	unsupported := checkUnsupportedFiletypes(registry, batchConfig)
 	for _, file := range unsupported {
 		logger.Warn("Type de fichier non reconnu", "file", file)
 	}
 
 	var g errgroup.Group
 
+	var cache = NewEmptyCache()
 	for _, parser := range parsers {
 		// We create a parser-specific context. Any error will cancelParserProcess all
 		// parser-related operations
 		ctx, cancelParserProcess := context.WithCancelCause(context.Background())
 		defer cancelParserProcess(nil)
 
-		if len(batch.Files[parser.Type()]) > 0 {
+		if len(batchConfig.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
-			outputChannel, eventChannel := marshal.ParseFilesFromBatch(ctx, cache, &batch, parser) // appelle la fonction ParseFile() pour chaque type de fichier
+			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter)
 
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
@@ -115,7 +101,7 @@ func ImportBatch(
 }
 
 // CheckBatchPaths checks if the filepaths of batch.Files exist
-func CheckBatchPaths(batch *base.AdminBatch) error {
+func CheckBatchPaths(batch *AdminBatch) error {
 	var ErrorString string
 	for _, filepaths := range batch.Files {
 		for _, batchFile := range filepaths {
@@ -131,26 +117,26 @@ func CheckBatchPaths(batch *base.AdminBatch) error {
 
 }
 
-func checkUnsupportedFiletypes(batch base.AdminBatch) []base.ParserType {
-	var errFileTypes []base.ParserType
-	for fileType := range batch.Files {
-		if !parsing.IsSupportedParser(fileType) {
-			errFileTypes = append(errFileTypes, fileType)
+func checkUnsupportedFiletypes(registry ParserRegistry, batch AdminBatch) []ParserType {
+	var errFileTypes []ParserType
+	for parserType := range batch.Files {
+		if parserType != Filter && registry.Resolve(parserType) == nil {
+			errFileTypes = append(errFileTypes, parserType)
 		}
 	}
 	return errFileTypes
 }
 
 // JSONBatchProvider reads an admin batch from a JSON file.
-// Implements base.BatchProvider interface.
+// Implements BatchProvider interface.
 type JSONBatchProvider struct {
 	Path string
 }
 
-func (p JSONBatchProvider) Get() (base.AdminBatch, error) {
+func (p JSONBatchProvider) Get() (AdminBatch, error) {
 	fileReader, err := os.Open(p.Path)
 
-	var batch = base.AdminBatch{}
+	var batch = AdminBatch{}
 
 	if err == nil {
 		err = Load(&batch, fileReader)

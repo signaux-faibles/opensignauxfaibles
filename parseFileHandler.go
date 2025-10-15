@@ -1,15 +1,11 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
-	"log"
-	"opensignauxfaibles/lib/base"
-	"opensignauxfaibles/lib/marshal"
-	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/registry"
+	"opensignauxfaibles/lib/sinks"
 	"os"
-	"sync"
 
 	"github.com/cosiner/flag"
 )
@@ -44,44 +40,25 @@ func (params parseFileHandler) Validate() error {
 }
 
 func (params parseFileHandler) Run() error {
-	parserType := base.ParserType(params.Parser)
-	parsers, err := parsing.ResolveParsers([]base.ParserType{parserType})
-	if err != nil {
-		return err
+	parserType := engine.ParserType(params.Parser)
+
+	file := engine.NewBatchFile(params.File)
+	batch := engine.AdminBatch{
+		Key:   "parseFile", // dummy batch key
+		Files: engine.BatchFiles{parserType: []engine.BatchFile{file}},
 	}
 
-	file := base.NewBatchFile(params.File)
-	batch := base.AdminBatch{Files: base.BatchFiles{parserType: []base.BatchFile{file}}}
-	cache := marshal.NewEmptyCache()
-	parser := parsers[0]
+	// stdout csv data output
+	dataSinkFactory := sinks.NewStdoutSinkFactory()
+	// stdout json report output
+	reportSink := &engine.StdoutReportSink{}
 
-	// the following code is inspired from marshal.ParseFilesFromBatch()
-	outputChannel := make(chan marshal.Tuple)
-	reportChannel := make(chan marshal.Report)
-	ctx := context.Background()
-	go func() {
-		reportChannel <- marshal.ParseFile(ctx, file, parser, &batch, cache, outputChannel)
-		close(outputChannel)
-		close(reportChannel)
-	}()
-
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for tuple := range outputChannel {
-			printJSON(tuple) // écriture du tuple dans la sortie standard
-		}
-	}()
-
-	for e := range reportChannel {
-		res, _ := json.MarshalIndent(e, "", "  ")
-		log.Println(string(res)) // écriture de l'événement dans stderr
-	}
-
-	// Only return once all channels are closed
-	wg.Wait()
-
-	return nil
+	return engine.ImportBatch(
+		batch,
+		nil, // do not filter any parser
+		registry.DefaultParsers,
+		engine.NoFilter,
+		dataSinkFactory,
+		reportSink,
+	)
 }

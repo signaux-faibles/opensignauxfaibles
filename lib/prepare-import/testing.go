@@ -3,7 +3,7 @@ package prepareimport
 import (
 	"bytes"
 	"compress/gzip"
-	"opensignauxfaibles/lib/base"
+	"opensignauxfaibles/lib/engine"
 	"os"
 	"path/filepath"
 	"testing"
@@ -17,10 +17,10 @@ func init() {
 	fake = faker.New()
 }
 
-var dummyBatchKey = base.NewSafeBatchKey("1802")
+var dummyBatchKey = engine.NewSafeBatchKey("1802")
 
 // CreateTempFiles creates a temporary directory with a batch of files, and clean up after the execution of tests
-func CreateTempFiles(t *testing.T, batchkey base.BatchKey, filenames []string) string {
+func CreateTempFiles(t *testing.T, batchkey engine.BatchKey, filenames []string) string {
 	contentPerFile := map[string][]byte{}
 	for _, filename := range filenames {
 		contentPerFile[filename] = []byte{}
@@ -29,7 +29,7 @@ func CreateTempFiles(t *testing.T, batchkey base.BatchKey, filenames []string) s
 }
 
 // CreateTempFilesWithContent creates a temporary directory with a batch of files, and clean up after the execution of tests
-func CreateTempFilesWithContent(t *testing.T, batchkey base.BatchKey, contentPerFile map[string][]byte) string {
+func CreateTempFilesWithContent(t *testing.T, batchkey engine.BatchKey, contentPerFile map[string][]byte) string {
 	t.Helper()
 	parentDir, err := os.MkdirTemp(os.TempDir(), "example")
 	if err != nil {
