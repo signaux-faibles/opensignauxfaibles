@@ -18,16 +18,14 @@ type SirenFilter interface {
 // 	return nil
 // }
 
-// FilterReader defines the interface for reading SIREN filters from various sources.
-type FilterReader interface {
-	Read() (SirenFilter, error)
-
-	// SuccessStr returns a string to be displayed to the user in case of success
-	SuccessStr() string
-}
-
 type FilterWriter interface {
 	Write(SirenFilter) error
+}
+
+// FilterProvider retrieves a SirenFilter for a given batch.
+// Implementations may read from files, databases, or other sources.
+type FilterProvider interface {
+	Get(*AdminBatch) (SirenFilter, error)
 }
 
 var NoFilter SirenFilter = noFilter{}
