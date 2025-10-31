@@ -11,14 +11,14 @@ import (
 	"os"
 	"path"
 
+	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
 )
 
 // PrepareImport generates an Admin object from files found at given pathname,
 // in the "batchKey" directory, on the file system.
-// func PrepareImport(basepath string, batchKey engine.BatchKey, filterWriter engine.FilterWriter) (engine.AdminBatch, error) {
-func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWriter) (engine.AdminBatch, error) {
+func PrepareImport(basepath string, batchKey engine.BatchKey, r engine.FilterReader, w engine.FilterWriter) (engine.AdminBatch, error) {
 
 	slog.Debug(string("Listing data files in " + batchKey + "/ ..."))
 
@@ -35,27 +35,31 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 	// - a filter file (created from an effectif file, at the batch/parent level)
 
 	effectifFile, _ := batchFiles.GetEffectifFile()
-	filterFile, _ := batchFiles.GetFilterFile()
 	sireneULFile, _ := batchFiles.GetSireneULFile()
+
+	explicitFilterFile, _ := batchFiles.GetFilterFile()
 
 	if effectifFile != nil {
 		slog.Debug("Found effectif file: " + effectifFile.Path())
 	}
 
-	if filterFile != nil {
-		slog.Debug("Found filter file: " + filterFile.Path())
+	if explicitFilterFile != nil {
+		slog.Debug("Found filter file: " + explicitFilterFile.Path())
 	}
 
 	if sireneULFile != nil {
 		slog.Debug("Found sireneUL file: " + sireneULFile.Path())
 	}
 
-	if filterFile == nil && effectifFile == nil {
+	// check if a filter can be read
+	_, err = r.Read()
+
+	if explicitFilterFile == nil && effectifFile == nil {
 		return engine.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
 	}
 
 	// if needed, create a filter file from the effectif file
-	if filterFile == nil {
+	if explicitFilterFile == nil {
 		slog.Debug("Writing filter file")
 		if err = createFilterFromEffectifAndSirene(
 			w,
@@ -67,9 +71,9 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 	}
 
 	// add the filter to filesProperty
-	if batchFiles["filter"] == nil && filterFile != nil {
+	if batchFiles["filter"] == nil && explicitFilterFile != nil {
 		slog.Debug("Adding filter file to batch ...")
-		batchFiles[engine.Filter] = append(batchFiles[engine.Filter], filterFile)
+		batchFiles[engine.Filter] = append(batchFiles[engine.Filter], explicitFilterFile)
 	}
 
 	if len(unsupportedFiles) > 0 {
@@ -136,7 +140,9 @@ func (p InferBatchProvider) Get() (engine.AdminBatch, error) {
 	var w = &filter.MemoryFilterWriter{}
 	//
 
-	batch, err := PrepareImport(p.Path, p.BatchKey, w)
+	r := &filter.Reader{Batch: &batch, DB: db.DB}
+
+	batch, err := PrepareImport(p.Path, p.BatchKey, r, w)
 	if _, ok := err.(UnsupportedFilesError); ok {
 		slog.Warn(fmt.Sprintf("Des fichiers non-identifiés sont présents : %v", err))
 	} else if err != nil {

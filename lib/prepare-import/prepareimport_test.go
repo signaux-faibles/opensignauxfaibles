@@ -14,7 +14,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var mockFilterWriter = &filter.MemoryFilterWriter{}
+var (
+	mockFilterWriter = &filter.MemoryFilterWriter{}
+
+	// A filter can be read
+	mockFilterReader = &filter.MemoryFilterReader{Filter: engine.NoFilter}
+
+	// No filter can be read
+	errFilterReader = &filter.MemoryFilterReader{Filter: nil}
+)
 
 const (
 	filterFilename         = "filter.csv"
@@ -38,21 +46,21 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should warn if the batch was not found in the specified directory", func(t *testing.T) {
 		wantedBatch := engine.NewSafeBatchKey("1803") // different of dummyBatchKey
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
-		_, err := PrepareImport(parentDir, wantedBatch, mockFilterWriter)
+		_, err := PrepareImport(parentDir, wantedBatch, mockFilterReader, mockFilterWriter)
 		expected := "could not find directory 1803 in provided path"
 		assert.Equal(t, expected, err.Error())
 	})
 
 	t.Run("Should warn if no filter is provided", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{debitsFilename})
-		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+		_, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
 		expected := "filter is missing: batch should include a filter or one effectif file"
 		assert.Equal(t, expected, err.Error())
 	})
 
 	t.Run("Should warn if 2 effectif files are provided", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{effectifFilename, "sigfaible_effectif_siret2.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+		_, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
 		expected := "filter is missing: batch should include a filter or one effectif file"
 		assert.Equal(t, expected, err.Error())
 	})
@@ -60,7 +68,7 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should identify single filter file", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"filter_2002.csv"})
 
-		res, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+		res, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
 
 		if assert.NoError(t, err) {
 			assert.Contains(t, res.Files, engine.Filter)
@@ -75,7 +83,7 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should include an id property", func(t *testing.T) {
 		batch := engine.NewSafeBatchKey("1802")
 		dir := CreateTempFiles(t, batch, []string{"filter_2002.csv"})
-		res, err := PrepareImport(dir, batch, mockFilterWriter)
+		res, err := PrepareImport(dir, batch, mockFilterReader, mockFilterWriter)
 
 		if assert.NoError(t, err) {
 			assert.Equal(t, batch, res.Key)
@@ -95,7 +103,7 @@ func TestPrepareImport(t *testing.T) {
 
 			dir := CreateTempFiles(t, dummyBatchKey, []string{testCase.filename, "filter_2002.csv"})
 
-			res, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+			res, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
 
 			expected := []engine.BatchFile{engine.NewBatchFileFromBatch(dir, dummyBatchKey, testCase.filename)}
 
@@ -107,7 +115,7 @@ func TestPrepareImport(t *testing.T) {
 
 	t.Run("should return list of unsupported files", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"unsupported-file.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+		_, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
 		var e *UnsupportedFilesError
 		if assert.Error(t, err) && errors.As(err, &e) {
 			assert.Equal(t, []string{path.Join(dummyBatchKey.String(), "unsupported-file.csv")}, e.UnsupportedFiles)
@@ -122,7 +130,7 @@ func TestPrepareImport(t *testing.T) {
 		})
 
 		w := &filter.MemoryFilterWriter{}
-		adminObject, err := PrepareImport(tmpDir, dummyBatchKey, w)
+		adminObject, err := PrepareImport(tmpDir, dummyBatchKey, mockFilterReader, w)
 
 		if assert.NoError(t, err) {
 			// Filter only appears in adminObject.Files if it has been provided by
@@ -148,7 +156,7 @@ func TestPrepareImport(t *testing.T) {
 		})
 
 		w := &filter.MemoryFilterWriter{}
-		adminObject, err := PrepareImport(batchDir, dummyBatchKey, w)
+		adminObject, err := PrepareImport(batchDir, dummyBatchKey, mockFilterReader, w)
 
 		if assert.NoError(t, err) {
 			// Filter only appears in adminObject.Files if it has been provided by
@@ -167,13 +175,15 @@ func TestPrepareImport(t *testing.T) {
 func TestFilterErrors(t *testing.T) {
 
 	testCases := []struct {
-		name        string
-		files       map[string][]byte
-		expectError bool
+		name         string
+		files        map[string][]byte
+		filterReader engine.FilterReader
+		expectError  bool
 	}{
 		{
 			"Filtre explicitement fourni par l'utilisateur -> OK",
 			map[string][]byte{filterFilename: nil},
+			errFilterReader,
 			false,
 		},
 		{
@@ -181,6 +191,7 @@ func TestFilterErrors(t *testing.T) {
 			map[string][]byte{
 				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
 			},
+			errFilterReader,
 			false,
 		},
 		{
@@ -188,14 +199,23 @@ func TestFilterErrors(t *testing.T) {
 			map[string][]byte{
 				debitsFilename: nil,
 			},
+			errFilterReader,
 			true,
+		},
+		{
+			"Pas de fichier filtre ou effectif mais filtre en base -> OK",
+			map[string][]byte{
+				debitsFilename: nil,
+			},
+			mockFilterReader, // provides a valid filter
+			false,
 		},
 	}
 
 	for _, testCase := range testCases {
 		dir := CreateTempFilesWithContent(t, dummyBatchKey, testCase.files)
 
-		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+		_, err := PrepareImport(dir, dummyBatchKey, testCase.filterReader, mockFilterWriter)
 
 		if testCase.expectError {
 			assert.Error(t, err)

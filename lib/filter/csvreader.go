@@ -5,6 +5,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
+	"log/slog"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/sfregexp"
 	"os"
@@ -34,11 +35,9 @@ func (f *CsvReader) Read() (engine.SirenFilter, error) {
 	if err != nil {
 		return nil, errors.New("Erreur à la lecture du fichier, " + err.Error())
 	}
-	return filter, nil
-}
 
-func (f *CsvReader) SuccessStr() string {
-	return "Filter retrieved from file"
+	slog.Debug("Filter retrieved from csv")
+	return filter, nil
 }
 
 // parseCSVFilter reads the content of a io.Reader and adds it to an existing

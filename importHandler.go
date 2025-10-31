@@ -107,8 +107,8 @@ func (params importBatchHandler) Run() error {
 		sirenFilter = engine.NoFilter
 	} else {
 		// Create filter provider with database dependency
-		filterProvider := &filter.Provider{DB: db.DB}
-		sirenFilter, err = filterProvider.Get(&batch)
+		filterProvider := &filter.Reader{Batch: &batch, DB: db.DB}
+		sirenFilter, err = filterProvider.Read()
 		if err != nil {
 			return fmt.Errorf("unable to get filter: %w", err)
 		}

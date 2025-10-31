@@ -3,6 +3,7 @@ package filter
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 )
@@ -33,9 +34,6 @@ func (f *DBReader) Read() (engine.SirenFilter, error) {
 		return nil, fmt.Errorf("error reading \"filter\" from DB, rows iteration failed: %w", err)
 	}
 
+	slog.Debug("Filter retrieved from DB")
 	return filter, nil
-}
-
-func (f *DBReader) SuccessStr() string {
-	return "Filter retrieved from DB"
 }

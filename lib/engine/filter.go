@@ -22,10 +22,10 @@ type FilterWriter interface {
 	Write(SirenFilter) error
 }
 
-// FilterProvider retrieves a SirenFilter for a given batch.
+// FilterReader retrieves a SirenFilter for a given batch.
 // Implementations may read from files, databases, or other sources.
-type FilterProvider interface {
-	Get(*AdminBatch) (SirenFilter, error)
+type FilterReader interface {
+	Read() (SirenFilter, error)
 }
 
 var NoFilter SirenFilter = noFilter{}
