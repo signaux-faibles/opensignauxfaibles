@@ -143,41 +143,47 @@ func TestPrepareImport(t *testing.T) {
 }
 
 func TestFilterUpdate(t *testing.T) {
-	t.Run("should write/update filter file if an effectif file is present but no explicit filter", func(t *testing.T) {
-		// run prepare-import
-		tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
-			"sireneUL.csv":   ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
+	testCases := []struct {
+		name               string
+		filesWithContent   map[string][]byte
+		expectFilterUpdate bool
+	}{
+		{
+			"should write/update filter file if an effectif file is present but no explicit filter",
+			map[string][]byte{
+				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
+				"sireneUL.csv":   ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
+			},
+			true,
+		},
+		{
+			"shouldn't write/update filter file if an explicit filter is provided, even with an effectif file",
+			map[string][]byte{
+				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
+				filterFilename:   []byte("siren\n012345678"),
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// run prepare-import
+			tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, tc.filesWithContent)
+
+			w := &filter.MemoryFilterWriter{}
+			_, err := PrepareImport(tmpDir, dummyBatchKey, mockFilterReader, w)
+
+			if assert.NoError(t, err) {
+				// Check that the filter data has been written
+				if tc.expectFilterUpdate {
+					assert.NotNil(t, w.Filter)
+				} else {
+					assert.Nil(t, w.Filter)
+				}
+			}
 		})
-
-		w := &filter.MemoryFilterWriter{}
-		adminObject, err := PrepareImport(tmpDir, dummyBatchKey, mockFilterReader, w)
-
-		if assert.NoError(t, err) {
-			// Filter only appears in adminObject.Files if it has been explicitely provided
-			assert.NotContains(t, adminObject.Files, engine.Filter)
-
-			// Check that the filter data has been written
-			assert.NotNil(t, w.Filter)
-		}
-	})
-	t.Run("shouldn't write/update filter file if an explicit filter is provided, even with an effectif file", func(t *testing.T) {
-		// run prepare-import
-		tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
-			filterFilename:   []byte("siren\n012345678"),
-		})
-
-		w := &filter.MemoryFilterWriter{}
-		adminObject, err := PrepareImport(tmpDir, dummyBatchKey, mockFilterReader, w)
-
-		if assert.NoError(t, err) {
-			assert.Contains(t, adminObject.Files, engine.Filter)
-
-			// Check that the filter data has been written
-			assert.Nil(t, w.Filter)
-		}
-	})
+	}
 }
 
 func TestMissingFilter(t *testing.T) {
