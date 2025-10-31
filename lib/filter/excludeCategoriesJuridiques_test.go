@@ -11,7 +11,7 @@ func TestExclusionList(t *testing.T) {
 	ass := assert.New(t)
 
 	// GIVEN
-	sireneULPath := "./test_uniteLegale.csv"
+	sireneULPath := "./testData/test_uniteLegale.csv"
 
 	// WHEN
 	excludedSirens := readExcludedSirens(sireneULPath)
@@ -31,7 +31,7 @@ func TestCategorieJuridiqueFilter(t *testing.T) {
 	ass := assert.New(t)
 
 	// GIVEN
-	sireneULPath := "./test_uniteLegale.csv"
+	sireneULPath := "./testData/test_uniteLegale.csv"
 	testFilter := CategorieJuridiqueFilter(sireneULPath)
 	initialPerimeter := map[string]struct{}{
 		"111111111": {},

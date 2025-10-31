@@ -14,8 +14,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var outGoldenFile = "test_golden.txt"
-var errGoldenFile = "test_golden_err.txt"
+var outGoldenFile = "testData/test_golden.txt"
+var errGoldenFile = "testData/test_golden_err.txt"
 
 var updateGoldenFile = flag.Bool("update", false, "Update the expected test values in golden file")
 
@@ -25,8 +25,8 @@ func TestCreateFilter(t *testing.T) {
 		var cmdOutput bytes.Buffer
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
-		categorieJuridiqueFilter := CategorieJuridiqueFilter("./test_uniteLegale.csv")
-		err := Create(&cmdOutput, "test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
+		categorieJuridiqueFilter := CategorieJuridiqueFilter("./testData/test_uniteLegale.csv")
+		err := Create(&cmdOutput, "testData/test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
 		}
