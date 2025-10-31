@@ -16,6 +16,12 @@ import (
 
 var mockFilterWriter = &filter.MemoryFilterWriter{}
 
+const (
+	filterFilename         = "filter.csv"
+	effectifFilename       = "sigfaible_effectif_siret.csv"
+	zippedEffectifFilename = "sigfaible_effectif_siret.csv.gz"
+)
+
 func TestReadFilenames(t *testing.T) {
 	t.Run("Should return filenames in a directory", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"tmpfile"})
@@ -44,7 +50,7 @@ func TestPrepareImport(t *testing.T) {
 	})
 
 	t.Run("Should warn if 2 effectif files are provided", func(t *testing.T) {
-		dir := CreateTempFiles(t, dummyBatchKey, []string{"sigfaible_effectif_siret.csv", "sigfaible_effectif_siret2.csv"})
+		dir := CreateTempFiles(t, dummyBatchKey, []string{effectifFilename, "sigfaible_effectif_siret2.csv"})
 		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 		expected := "filter is missing: batch should include a filter or one effectif file"
 		assert.Equal(t, expected, err.Error())
@@ -110,8 +116,8 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("should create filter file if an effectif file is present", func(t *testing.T) {
 		// run prepare-import
 		tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			"sigfaible_effectif_siret.csv": ReadFileData(t, "../filter/testData/test_data.csv"),
-			"sireneUL.csv":                 ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
+			effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
+			"sireneUL.csv":   ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
 		})
 
 		w := &filter.MemoryFilterWriter{}
@@ -136,8 +142,8 @@ func TestPrepareImport(t *testing.T) {
 
 		// run prepare-import
 		batchDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			"sigfaible_effectif_siret.csv.gz": compressedEffectifData.Bytes(),
-			"sireneUL.csv":                    ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
+			zippedEffectifFilename: compressedEffectifData.Bytes(),
+			"sireneUL.csv":         ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
 		})
 
 		w := &filter.MemoryFilterWriter{}
@@ -155,6 +161,26 @@ func TestPrepareImport(t *testing.T) {
 			assert.False(t, w.Filter.ShouldSkip("555555555"))
 		}
 	})
+}
+
+func TestFilterErrors(t *testing.T) {
+
+	dir := CreateTempFiles(t, dummyBatchKey, []string{filterFilename})
+
+	_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+
+	assert.NoError(t, err)
+}
+
+func TestFilterErrors2(t *testing.T) {
+
+	dir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
+		effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
+	})
+
+	_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+
+	assert.NoError(t, err)
 }
 
 func makeDayDate(year, month, day int) time.Time {
