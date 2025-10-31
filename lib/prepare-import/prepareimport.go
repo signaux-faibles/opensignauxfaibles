@@ -59,8 +59,8 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 		slog.Debug("Writing filter file")
 		if err = createFilterFromEffectifAndSirene(
 			w,
-			effectifFile.Path(),
-			sireneULFile.Path(),
+			effectifFile,
+			sireneULFile,
 		); err != nil {
 			return engine.AdminBatch{}, err
 		}
@@ -83,28 +83,43 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 	}, err
 }
 
-func createFilterFromEffectifAndSirene(filterWriter engine.FilterWriter, effectifFilePath string, sireneULFilePath string) error {
-	categoriesJuridiqueFilter := filter.CategorieJuridiqueFilter(sireneULFilePath)
+// effectifFile is mandatory
+// sireneULFile is optional
+func createFilterFromEffectifAndSirene(
+	filterWriter engine.FilterWriter,
+	effectifFile engine.BatchFile,
+	sireneULFile engine.BatchFile,
+) error {
+	var sirenFilter engine.SirenFilter
+	var err error
 
-	// Create the filter
-	sirenFilter, err := filter.Create(
-		effectifFilePath, // input: the effectif file
-		filter.DefaultNbMois,
-		filter.DefaultMinEffectif,
-		filter.DefaultNbIgnoredCols,
-		categoriesJuridiqueFilter,
-	)
+	if sireneULFile != nil {
+		categoriesJuridiqueFilter := filter.CategorieJuridiqueFilter(sireneULFile.Path())
+
+		// Create the filter
+		sirenFilter, err = filter.Create(
+			effectifFile.Path(), // input: the effectif file
+			filter.DefaultNbMois,
+			filter.DefaultMinEffectif,
+			filter.DefaultNbIgnoredCols,
+			categoriesJuridiqueFilter,
+		)
+	} else {
+		// Create the filter
+		sirenFilter, err = filter.Create(
+			effectifFile.Path(), // input: the effectif file
+			filter.DefaultNbMois,
+			filter.DefaultMinEffectif,
+			filter.DefaultNbIgnoredCols,
+		)
+	}
+
 	if err != nil {
 		return err
 	}
 
 	// Write the filter
 	return filterWriter.Write(sirenFilter)
-}
-
-func fileExists(filename string) bool {
-	_, err := os.Stat(filename)
-	return !os.IsNotExist(err)
 }
 
 // InferBatchProvider infers the batch imports given the filenames
