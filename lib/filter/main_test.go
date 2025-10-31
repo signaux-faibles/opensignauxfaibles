@@ -26,7 +26,7 @@ func TestCreateFilter(t *testing.T) {
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
 		categorieJuridiqueFilter := CategorieJuridiqueFilter("./testData/test_uniteLegale.csv")
-		csvWriter := NewCsvFilterWriter(&cmdOutput)
+		csvWriter := NewCsvWriter(&cmdOutput)
 		err := Create(csvWriter, "testData/test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())

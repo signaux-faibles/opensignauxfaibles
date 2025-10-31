@@ -19,7 +19,7 @@ func Get(batch *engine.AdminBatch) (engine.SirenFilter, error) {
 	filterFile, _ := batch.Files.GetFilterFile()
 
 	readers := []engine.FilterReader{
-		&FileReader{filterFile},
+		&CsvReader{filterFile},
 		&DBReader{db.DB},
 	}
 

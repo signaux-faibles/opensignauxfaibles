@@ -10,13 +10,13 @@ import (
 	"os"
 )
 
-// FileReader reads the filter from a CSV file.
+// CsvReader reads the filter from a CSV file.
 // Implements filterReader
-type FileReader struct {
+type CsvReader struct {
 	BatchFile engine.BatchFile
 }
 
-func (f *FileReader) Read() (engine.SirenFilter, error) {
+func (f *CsvReader) Read() (engine.SirenFilter, error) {
 	if f.BatchFile == nil {
 		return nil, nil
 	}
@@ -37,7 +37,7 @@ func (f *FileReader) Read() (engine.SirenFilter, error) {
 	return filter, nil
 }
 
-func (f *FileReader) SuccessStr() string {
+func (f *CsvReader) SuccessStr() string {
 	return "Filter retrieved from file"
 }
 

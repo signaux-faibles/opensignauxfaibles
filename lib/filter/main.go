@@ -31,26 +31,6 @@ const NbLeadingColsToSkip = 5 // column names: "compte", "siret", "rais_soc", "a
 
 type filter func(string) bool
 
-// CsvFilterWriter implements engine.FilterWriter to output filters as CSV.
-type CsvFilterWriter struct {
-	w io.Writer
-}
-
-// NewCsvFilterWriter creates a new CsvFilterWriter.
-func NewCsvFilterWriter(w io.Writer) *CsvFilterWriter {
-	return &CsvFilterWriter{w: w}
-}
-
-// Write outputs the filter as CSV to the writer.
-func (c *CsvFilterWriter) Write(f engine.SirenFilter) error {
-	sirens := f.All()
-	fmt.Fprintln(c.w, "siren")
-	for siren := range sirens {
-		fmt.Fprintln(c.w, siren)
-	}
-	return nil
-}
-
 // Implementation of the create_filter command.
 func main() {
 
@@ -73,7 +53,7 @@ func main() {
 	flag.Parse()
 
 	// create filter
-	csvWriter := NewCsvFilterWriter(os.Stdout)
+	csvWriter := NewCsvWriter(os.Stdout)
 	err := Create(csvWriter, *path, *nbMois, *minEffectif, *nIgnoredCols)
 	if err != nil {
 		log.Panic(err)
