@@ -3,6 +3,7 @@ package filter
 import (
 	"bytes"
 	"log"
+	"opensignauxfaibles/lib/engine"
 	"os"
 
 	"github.com/pkg/errors"
@@ -28,4 +29,15 @@ func ReadGoldenFile(filename string) string {
 		log.Fatal(errors.Wrap(err, "Erreur de lecture du Golden File"))
 	}
 	return string(expected)
+}
+
+// MemoryFilterWriter implements engine.FilterWriter.
+// It stores the filter as a property
+type MemoryFilterWriter struct {
+	Filter engine.SirenFilter
+}
+
+func (m *MemoryFilterWriter) Write(f engine.SirenFilter) error {
+	m.Filter = f
+	return nil
 }

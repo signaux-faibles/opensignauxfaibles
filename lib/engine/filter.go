@@ -18,7 +18,13 @@ type SirenFilter interface {
 // FilterReader defines the interface for reading SIREN filters from various sources.
 type FilterReader interface {
 	Read() (SirenFilter, error)
+
+	// SuccessStr returns a string to be displayed to the user in case of success
 	SuccessStr() string
+}
+
+type FilterWriter interface {
+	Write(SirenFilter) error
 }
 
 var NoFilter SirenFilter = noFilter{}

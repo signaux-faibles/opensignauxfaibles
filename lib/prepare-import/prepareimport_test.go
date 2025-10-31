@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"errors"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/filter"
 	"os"
 	"path"
 	"testing"
@@ -105,26 +106,25 @@ func TestPrepareImport(t *testing.T) {
 	})
 
 	t.Run("should create filter file if an effectif file is present", func(t *testing.T) {
-		// setup expectations
-		filterFileName := "filter_siren.csv"
-
 		// run prepare-import
 		tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
 			"sigfaible_effectif_siret.csv": ReadFileData(t, "../filter/testData/test_data.csv"),
 			"sireneUL.csv":                 ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
 		})
 
-		adminObject, err := PrepareImport(tmpDir, dummyBatchKey)
+		w := filter.MemoryFilterWriter{}
+		adminObject, err := PrepareImport(tmpDir, dummyBatchKey, w)
 
-		// check that the filter is listed in the "files" property
 		if assert.NoError(t, err) {
-			assert.Contains(t, adminObject.Files, engine.Filter)
-			assert.Len(t, adminObject.Files[engine.Filter], 1)
-			assert.Equal(t, adminObject.Files[engine.Filter][0].Filename(), filterFileName)
+			// Filter only appears in adminObject.Files if it has been provided by
+			// the user..
+			assert.NotContains(t, adminObject.Files, engine.Filter)
 
-			// check that the filter file exists
-			filterFilePath := adminObject.Files[engine.Filter][0].Path()
-			assert.True(t, fileExists(filterFilePath), "the filter file was not found: "+filterFilePath)
+			// check that the filter data has been written
+			assert.NotNil(t, w.Filter)
+			assert.True(t, w.Filter.ShouldSkip("000000000"))
+			assert.False(t, w.Filter.ShouldSkip("444444444"))
+			assert.False(t, w.Filter.ShouldSkip("555555555"))
 		}
 
 	})

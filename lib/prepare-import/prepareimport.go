@@ -17,6 +17,7 @@ import (
 
 // PrepareImport generates an Admin object from files found at given pathname,
 // in the "batchKey" directory, on the file system.
+// func PrepareImport(basepath string, batchKey engine.BatchKey, filterWriter engine.FilterWriter) (engine.AdminBatch, error) {
 func PrepareImport(basepath string, batchKey engine.BatchKey) (engine.AdminBatch, error) {
 
 	fmt.Println("Listing data files in " + batchKey + "/ ...")
