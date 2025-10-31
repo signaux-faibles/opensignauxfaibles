@@ -165,22 +165,36 @@ func TestPrepareImport(t *testing.T) {
 
 func TestFilterErrors(t *testing.T) {
 
-	dir := CreateTempFiles(t, dummyBatchKey, []string{filterFilename})
+	testCases := []struct {
+		name        string
+		files       map[string][]byte
+		expectError bool
+	}{
+		{
+			"Filtre explicitement fourni par l'utilisateur -> OK",
+			map[string][]byte{filterFilename: nil},
+			false,
+		},
+		{
+			"Fichier effectif valide -> on crée le filtre",
+			map[string][]byte{
+				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
+			},
+			false,
+		},
+	}
 
-	_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
+	for _, testCase := range testCases {
+		dir := CreateTempFilesWithContent(t, dummyBatchKey, testCase.files)
 
-	assert.NoError(t, err)
-}
+		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 
-func TestFilterErrors2(t *testing.T) {
-
-	dir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-		effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
-	})
-
-	_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
-
-	assert.NoError(t, err)
+		if testCase.expectError {
+			assert.Error(t, err)
+		} else {
+			assert.NoError(t, err)
+		}
+	}
 }
 
 func makeDayDate(year, month, day int) time.Time {
