@@ -1,9 +1,10 @@
-package createfilter
+package filter
 
 import (
 	"context"
-	"github.com/signaux-faibles/goSirene"
 	"strings"
+
+	"github.com/signaux-faibles/goSirene"
 )
 
 func isExcludedCategorieJuridique(categorieJuridique string) bool {

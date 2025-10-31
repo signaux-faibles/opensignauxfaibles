@@ -1,9 +1,10 @@
-package createfilter
+package filter
 
 import (
-	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestExclusionList(t *testing.T) {

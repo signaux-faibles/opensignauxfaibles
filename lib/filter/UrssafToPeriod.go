@@ -1,4 +1,4 @@
-package createfilter
+package filter
 
 import (
 	"errors"
@@ -61,13 +61,4 @@ func UrssafToPeriod(urssaf string) (Periode, error) {
 		}
 	}
 	return period, nil
-}
-
-func effectifColNameToDate(colName string) (time.Time, error) {
-	if colName[0:3] != "eff" {
-		return time.Time{}, errors.New("this column is not a valid period: " + colName)
-	}
-	urssafPeriode := colName[3:9]
-	periode, err := UrssafToPeriod(urssafPeriode)
-	return periode.Start, err
 }

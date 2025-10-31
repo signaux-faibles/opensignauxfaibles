@@ -1,16 +1,18 @@
+// Package prepareimport deals with all operations that need to be
+// performed before the import runs, e.g. defining exactly which files will be
+// imported and their type.
 package prepareimport
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log/slog"
 	"os"
 	"path"
 
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/prepare-import/createfilter"
+	"opensignauxfaibles/lib/filter"
 )
 
 // PrepareImport generates an Admin object from files found at given pathname,
@@ -90,14 +92,14 @@ func createFilterFromEffectifAndSirene(filterFilePath string, effectifFilePath s
 	if err != nil {
 		return err
 	}
-	categoriesJuridiqueFilter := createfilter.CategorieJuridiqueFilter(sireneULFilePath)
+	categoriesJuridiqueFilter := filter.CategorieJuridiqueFilter(sireneULFilePath)
 
-	return createfilter.CreateFilter(
+	return filter.Create(
 		filterWriter,     // output: the filter file
 		effectifFilePath, // input: the effectif file
-		createfilter.DefaultNbMois,
-		createfilter.DefaultMinEffectif,
-		createfilter.DefaultNbIgnoredCols,
+		filter.DefaultNbMois,
+		filter.DefaultMinEffectif,
+		filter.DefaultNbIgnoredCols,
 		categoriesJuridiqueFilter,
 	)
 }
@@ -105,28 +107,6 @@ func createFilterFromEffectifAndSirene(filterFilePath string, effectifFilePath s
 func fileExists(filename string) bool {
 	_, err := os.Stat(filename)
 	return !os.IsNotExist(err)
-}
-
-// Copy the src file to dst. Any existing file will be overwritten and will not
-// copy file attributes. Source: https://stackoverflow.com/a/21061062/592254
-func copy(src, dst string) error {
-	in, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, in)
-	if err != nil {
-		return err
-	}
-	return out.Close()
 }
 
 // InferBatchProvider infers the batch imports given the filenames

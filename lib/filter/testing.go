@@ -1,4 +1,4 @@
-package createfilter
+package filter
 
 import (
 	"bytes"

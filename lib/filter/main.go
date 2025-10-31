@@ -1,4 +1,4 @@
-package createfilter
+package filter
 
 import (
 	"bufio"
@@ -22,7 +22,7 @@ const DefaultNbMois = 100
 // DefaultMinEffectif is the default effectif threshold, expressed in number of employees.
 const DefaultMinEffectif = 10
 
-// DefaultN thebIgnoredCols is the default number of rightmost columns that don't contain effectif data.
+// DefaultNbIgnoredCols is the default number of rightmost columns that don't contain effectif data.
 const DefaultNbIgnoredCols = 2
 
 // NbLeadingColsToSkip is the number of leftmost columns that don't contain effectif data.
@@ -51,14 +51,15 @@ func main() {
 	)
 	flag.Parse()
 
-	err := CreateFilter(os.Stdout, *path, *nbMois, *minEffectif, *nIgnoredCols)
+	// create filter
+	err := Create(os.Stdout, *path, *nbMois, *minEffectif, *nIgnoredCols)
 	if err != nil {
 		log.Panic(err)
 	}
 }
 
-// CreateFilter generates a "filter" from an "effectif" file.
-func CreateFilter(writer io.Writer, effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) error {
+// Create generates a "filter" from an "effectif" file.
+func Create(writer io.Writer, effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) error {
 	last := guessLastNMissing(effectifFileName, nIgnoredCols)
 	r, f, err := makeEffectifReaderFromFile(effectifFileName)
 	if err != nil {
@@ -67,12 +68,12 @@ func CreateFilter(writer io.Writer, effectifFileName string, nbMois, minEffectif
 
 	perimeter := getInitialPerimeter(r, nbMois, minEffectif, nIgnoredCols+last)
 
-	for _, f := range filters {
-		perimeter = applyFilter(perimeter, f)
+	for _, filter := range filters {
+		perimeter = applyFilter(perimeter, filter)
 	}
 
 	fmt.Fprintln(writer, "siren")
-	for siren, _ := range perimeter {
+	for siren := range perimeter {
 		fmt.Fprintln(writer, siren)
 	}
 	return f.Close()
@@ -80,7 +81,7 @@ func CreateFilter(writer io.Writer, effectifFileName string, nbMois, minEffectif
 
 func applyFilter(perimeter map[string]struct{}, f filter) map[string]struct{} {
 	newPerimeter := make(map[string]struct{})
-	for siren, _ := range perimeter {
+	for siren := range perimeter {
 		if f(siren) {
 			newPerimeter[siren] = struct{}{}
 		}

@@ -110,8 +110,8 @@ func TestPrepareImport(t *testing.T) {
 
 		// run prepare-import
 		tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			"sigfaible_effectif_siret.csv": ReadFileData(t, "./createfilter/test_data.csv"),
-			"sireneUL.csv":                 ReadFileData(t, "./createfilter/test_uniteLegale.csv"),
+			"sigfaible_effectif_siret.csv": ReadFileData(t, "../filter/test_data.csv"),
+			"sireneUL.csv":                 ReadFileData(t, "../filter/test_uniteLegale.csv"),
 		})
 
 		adminObject, err := PrepareImport(tmpDir, dummyBatchKey)
@@ -130,7 +130,7 @@ func TestPrepareImport(t *testing.T) {
 	})
 
 	t.Run("should create filter file even if effectif file is compressed", func(t *testing.T) {
-		compressedEffectifData := compressFileData(t, "./createfilter/test_data.csv")
+		compressedEffectifData := compressFileData(t, "../filter/test_data.csv")
 
 		// setup expectations
 		filterFileName := "filter_siren.csv"
@@ -138,7 +138,7 @@ func TestPrepareImport(t *testing.T) {
 		// run prepare-import
 		batchDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
 			"sigfaible_effectif_siret.csv.gz": compressedEffectifData.Bytes(),
-			"sireneUL.csv":                    ReadFileData(t, "./createfilter/test_uniteLegale.csv"),
+			"sireneUL.csv":                    ReadFileData(t, "../filter/test_uniteLegale.csv"),
 		})
 
 		expectedFiles := engine.BatchFiles{

@@ -1,4 +1,4 @@
-package createfilter
+package filter
 
 import (
 	"bufio"
@@ -26,7 +26,7 @@ func TestCreateFilter(t *testing.T) {
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
 		categorieJuridiqueFilter := CategorieJuridiqueFilter("./test_uniteLegale.csv")
-		err := CreateFilter(&cmdOutput, "test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
+		err := Create(&cmdOutput, "test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
 		}
@@ -97,7 +97,7 @@ func getOutputPerimeter(csvLines []string, nbMois, minEffectif, nbIgnoredCols in
 	reader.Comma = ';'
 	writer := bufio.NewWriter(&output)
 	perimeter := getInitialPerimeter(reader, nbMois, minEffectif, nbIgnoredCols)
-	for siren, _ := range perimeter {
+	for siren := range perimeter {
 		fmt.Fprintln(writer, siren)
 	}
 	writer.Flush()
