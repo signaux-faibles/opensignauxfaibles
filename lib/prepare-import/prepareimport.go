@@ -20,7 +20,7 @@ import (
 // func PrepareImport(basepath string, batchKey engine.BatchKey, filterWriter engine.FilterWriter) (engine.AdminBatch, error) {
 func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWriter) (engine.AdminBatch, error) {
 
-	fmt.Println("Listing data files in " + batchKey + "/ ...")
+	slog.Debug(string("Listing data files in " + batchKey + "/ ..."))
 
 	batchPath := path.Join(basepath, batchKey.String())
 
@@ -39,15 +39,15 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 	sireneULFile, _ := batchFiles.GetSireneULFile()
 
 	if effectifFile != nil {
-		fmt.Println("Found effectif file: " + effectifFile.Path())
+		slog.Debug("Found effectif file: " + effectifFile.Path())
 	}
 
 	if filterFile != nil {
-		fmt.Println("Found filter file: " + filterFile.Path())
+		slog.Debug("Found filter file: " + filterFile.Path())
 	}
 
 	if sireneULFile != nil {
-		fmt.Println("Found sireneUL file: " + sireneULFile.Path())
+		slog.Debug("Found sireneUL file: " + sireneULFile.Path())
 	}
 
 	if filterFile == nil && effectifFile == nil {
@@ -56,7 +56,7 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 
 	// if needed, create a filter file from the effectif file
 	if filterFile == nil {
-		fmt.Println("Writing filter file")
+		slog.Debug("Writing filter file")
 		if err = createFilterFromEffectifAndSirene(
 			w,
 			effectifFile.Path(),
@@ -68,7 +68,7 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 
 	// add the filter to filesProperty
 	if batchFiles["filter"] == nil && filterFile != nil {
-		fmt.Println("Adding filter file to batch ...")
+		slog.Debug("Adding filter file to batch ...")
 		batchFiles[engine.Filter] = append(batchFiles[engine.Filter], filterFile)
 	}
 
