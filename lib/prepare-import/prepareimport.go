@@ -37,14 +37,8 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, r engine.FilterRea
 	effectifFile, _ := batchFiles.GetEffectifFile()
 	sireneULFile, _ := batchFiles.GetSireneULFile()
 
-	explicitFilterFile, _ := batchFiles.GetFilterFile()
-
 	if effectifFile != nil {
 		slog.Debug("Found effectif file: " + effectifFile.Path())
-	}
-
-	if explicitFilterFile != nil {
-		slog.Debug("Found filter file: " + explicitFilterFile.Path())
 	}
 
 	if sireneULFile != nil {
@@ -54,12 +48,17 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, r engine.FilterRea
 	// check if a filter can be read
 	_, err = r.Read()
 
-	if explicitFilterFile == nil && effectifFile == nil {
+	if err != nil && effectifFile == nil {
 		return engine.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
 	}
 
-	// if needed, create a filter file from the effectif file
-	if explicitFilterFile == nil {
+	// Check if filter has been explicitely provided in the batch
+	_, err = batchFiles.GetFilterFile()
+	filterIsExplicit := (err == nil)
+
+	// If effectif file is provided, and filter file is not explicitely provided
+	// by the user, update the filter
+	if !filterIsExplicit && effectifFile != nil {
 		slog.Debug("Writing filter file")
 		if err = createFilterFromEffectifAndSirene(
 			w,
@@ -70,21 +69,16 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, r engine.FilterRea
 		}
 	}
 
-	// add the filter to filesProperty
-	if batchFiles["filter"] == nil && explicitFilterFile != nil {
-		slog.Debug("Adding filter file to batch ...")
-		batchFiles[engine.Filter] = append(batchFiles[engine.Filter], explicitFilterFile)
-	}
-
+	var unsupportedFilesErr error
 	if len(unsupportedFiles) > 0 {
-		err = UnsupportedFilesError{unsupportedFiles}
+		unsupportedFilesErr = UnsupportedFilesError{unsupportedFiles}
 	}
 
 	return engine.AdminBatch{
 		Key:    batchKey,
 		Files:  batchFiles,
 		Params: populateParamProperty(batchKey),
-	}, err
+	}, unsupportedFilesErr
 }
 
 // effectifFile is mandatory

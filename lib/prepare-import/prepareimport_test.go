@@ -51,17 +51,11 @@ func TestPrepareImport(t *testing.T) {
 		assert.Equal(t, expected, err.Error())
 	})
 
-	t.Run("Should warn if no filter is provided", func(t *testing.T) {
-		dir := CreateTempFiles(t, dummyBatchKey, []string{debitsFilename})
-		_, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
-		expected := "filter is missing: batch should include a filter or one effectif file"
-		assert.Equal(t, expected, err.Error())
-	})
-
 	t.Run("Should warn if 2 effectif files are provided", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{effectifFilename, "sigfaible_effectif_siret2.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
+		_, err := PrepareImport(dir, dummyBatchKey, errFilterReader, mockFilterWriter)
 		expected := "filter is missing: batch should include a filter or one effectif file"
+		assert.Error(t, err)
 		assert.Equal(t, expected, err.Error())
 	})
 
@@ -122,7 +116,7 @@ func TestPrepareImport(t *testing.T) {
 		}
 	})
 
-	t.Run("should create filter file if an effectif file is present", func(t *testing.T) {
+	t.Run("should write/update filter file if an effectif file is present", func(t *testing.T) {
 		// run prepare-import
 		tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
 			effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
@@ -133,11 +127,10 @@ func TestPrepareImport(t *testing.T) {
 		adminObject, err := PrepareImport(tmpDir, dummyBatchKey, mockFilterReader, w)
 
 		if assert.NoError(t, err) {
-			// Filter only appears in adminObject.Files if it has been provided by
-			// the user..
+			// Filter only appears in adminObject.Files if it has been explicitely provided
 			assert.NotContains(t, adminObject.Files, engine.Filter)
 
-			// check that the filter data has been written
+			// Check that the filter data has been written
 			assert.NotNil(t, w.Filter)
 			assert.True(t, w.Filter.ShouldSkip("000000000"))
 			assert.False(t, w.Filter.ShouldSkip("444444444"))
@@ -181,9 +174,9 @@ func TestFilterErrors(t *testing.T) {
 		expectError  bool
 	}{
 		{
-			"Filtre explicitement fourni par l'utilisateur -> OK",
+			"Filtre valid explicitement fourni par l'utilisateur -> OK",
 			map[string][]byte{filterFilename: nil},
-			errFilterReader,
+			mockFilterReader, // valid filter provided, no error
 			false,
 		},
 		{
@@ -212,16 +205,18 @@ func TestFilterErrors(t *testing.T) {
 		},
 	}
 
-	for _, testCase := range testCases {
-		dir := CreateTempFilesWithContent(t, dummyBatchKey, testCase.files)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := CreateTempFilesWithContent(t, dummyBatchKey, tc.files)
 
-		_, err := PrepareImport(dir, dummyBatchKey, testCase.filterReader, mockFilterWriter)
+			_, err := PrepareImport(dir, dummyBatchKey, tc.filterReader, mockFilterWriter)
 
-		if testCase.expectError {
-			assert.Error(t, err)
-		} else {
-			assert.NoError(t, err)
-		}
+			if tc.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
 	}
 }
 
