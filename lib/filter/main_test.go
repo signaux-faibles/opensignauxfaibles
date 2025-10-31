@@ -26,10 +26,15 @@ func TestCreateFilter(t *testing.T) {
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
 		categorieJuridiqueFilter := CategorieJuridiqueFilter("./testData/test_uniteLegale.csv")
-		csvWriter := NewCsvWriter(&cmdOutput)
-		err := Create(csvWriter, "testData/test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
+		filter, err := Create("testData/test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
+		} else {
+			csvWriter := NewCsvWriter(&cmdOutput)
+			err = csvWriter.Write(filter)
+			if err != nil {
+				cmdError = *bytes.NewBufferString(err.Error())
+			}
 		}
 		expectedOutput := DiffWithGoldenFile(outGoldenFile, *updateGoldenFile, cmdOutput)
 		expectedError := DiffWithGoldenFile(errGoldenFile, *updateGoldenFile, cmdError)

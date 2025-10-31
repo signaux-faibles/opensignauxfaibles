@@ -86,14 +86,20 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWri
 func createFilterFromEffectifAndSirene(filterWriter engine.FilterWriter, effectifFilePath string, sireneULFilePath string) error {
 	categoriesJuridiqueFilter := filter.CategorieJuridiqueFilter(sireneULFilePath)
 
-	return filter.Create(
-		filterWriter,     // output
+	// Create the filter
+	sirenFilter, err := filter.Create(
 		effectifFilePath, // input: the effectif file
 		filter.DefaultNbMois,
 		filter.DefaultMinEffectif,
 		filter.DefaultNbIgnoredCols,
 		categoriesJuridiqueFilter,
 	)
+	if err != nil {
+		return err
+	}
+
+	// Write the filter
+	return filterWriter.Write(sirenFilter)
 }
 
 func fileExists(filename string) bool {

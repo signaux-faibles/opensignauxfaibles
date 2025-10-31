@@ -53,20 +53,26 @@ func main() {
 	flag.Parse()
 
 	// create filter
-	csvWriter := NewCsvWriter(os.Stdout)
-	err := Create(csvWriter, *path, *nbMois, *minEffectif, *nIgnoredCols)
+	filter, err := Create(*path, *nbMois, *minEffectif, *nIgnoredCols)
 	if err != nil {
+		log.Panic(err)
+	}
+
+	// write filter
+	csvWriter := NewCsvWriter(os.Stdout)
+	if err := csvWriter.Write(filter); err != nil {
 		log.Panic(err)
 	}
 }
 
 // Create generates a "filter" from an "effectif" file.
-func Create(writer engine.FilterWriter, effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) error {
+func Create(effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) (engine.SirenFilter, error) {
 	last := guessLastNMissing(effectifFileName, nIgnoredCols)
 	r, f, err := makeEffectifReaderFromFile(effectifFileName)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	defer f.Close()
 
 	perimeter := getInitialPerimeter(r, nbMois, minEffectif, nIgnoredCols+last)
 
@@ -80,10 +86,7 @@ func Create(writer engine.FilterWriter, effectifFileName string, nbMois, minEffe
 		mapFilter[siren] = true
 	}
 
-	if err := writer.Write(mapFilter); err != nil {
-		return err
-	}
-	return f.Close()
+	return mapFilter, nil
 }
 
 func applyFilter(perimeter map[string]struct{}, f filter) map[string]struct{} {
