@@ -14,6 +14,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var mockFilterWriter = &filter.MemoryFilterWriter{}
+
 func TestReadFilenames(t *testing.T) {
 	t.Run("Should return filenames in a directory", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"tmpfile"})
@@ -29,21 +31,21 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should warn if the batch was not found in the specified directory", func(t *testing.T) {
 		wantedBatch := engine.NewSafeBatchKey("1803") // different of dummyBatchKey
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
-		_, err := PrepareImport(parentDir, wantedBatch)
+		_, err := PrepareImport(parentDir, wantedBatch, mockFilterWriter)
 		expected := "could not find directory 1803 in provided path"
 		assert.Equal(t, expected, err.Error())
 	})
 
 	t.Run("Should warn if no filter is provided", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"sigfaibles_debits.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey)
+		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 		expected := "filter is missing: batch should include a filter or one effectif file"
 		assert.Equal(t, expected, err.Error())
 	})
 
 	t.Run("Should warn if 2 effectif files are provided", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"sigfaible_effectif_siret.csv", "sigfaible_effectif_siret2.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey)
+		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 		expected := "filter is missing: batch should include a filter or one effectif file"
 		assert.Equal(t, expected, err.Error())
 	})
@@ -51,7 +53,7 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should identify single filter file", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"filter_2002.csv"})
 
-		res, err := PrepareImport(dir, dummyBatchKey)
+		res, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 
 		if assert.NoError(t, err) {
 			assert.Contains(t, res.Files, engine.Filter)
@@ -66,7 +68,7 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should include an id property", func(t *testing.T) {
 		batch := engine.NewSafeBatchKey("1802")
 		dir := CreateTempFiles(t, batch, []string{"filter_2002.csv"})
-		res, err := PrepareImport(dir, batch)
+		res, err := PrepareImport(dir, batch, mockFilterWriter)
 
 		if assert.NoError(t, err) {
 			assert.Equal(t, batch, res.Key)
@@ -86,7 +88,7 @@ func TestPrepareImport(t *testing.T) {
 
 			dir := CreateTempFiles(t, dummyBatchKey, []string{testCase.filename, "filter_2002.csv"})
 
-			res, err := PrepareImport(dir, dummyBatchKey)
+			res, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 
 			expected := []engine.BatchFile{engine.NewBatchFileFromBatch(dir, dummyBatchKey, testCase.filename)}
 
@@ -98,7 +100,7 @@ func TestPrepareImport(t *testing.T) {
 
 	t.Run("should return list of unsupported files", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"unsupported-file.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey)
+		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 		var e *UnsupportedFilesError
 		if assert.Error(t, err) && errors.As(err, &e) {
 			assert.Equal(t, []string{path.Join(dummyBatchKey.String(), "unsupported-file.csv")}, e.UnsupportedFiles)
@@ -112,7 +114,7 @@ func TestPrepareImport(t *testing.T) {
 			"sireneUL.csv":                 ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
 		})
 
-		w := filter.MemoryFilterWriter{}
+		w := &filter.MemoryFilterWriter{}
 		adminObject, err := PrepareImport(tmpDir, dummyBatchKey, w)
 
 		if assert.NoError(t, err) {
@@ -132,29 +134,26 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("should create filter file even if effectif file is compressed", func(t *testing.T) {
 		compressedEffectifData := compressFileData(t, "../filter/testData/test_data.csv")
 
-		// setup expectations
-		filterFileName := "filter_siren.csv"
-
 		// run prepare-import
 		batchDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
 			"sigfaible_effectif_siret.csv.gz": compressedEffectifData.Bytes(),
 			"sireneUL.csv":                    ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
 		})
 
-		expectedFiles := engine.BatchFiles{
-			engine.Effectif: {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sigfaible_effectif_siret.csv.gz")},
-			engine.Filter:   {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, filterFileName)},
-			engine.SireneUl: {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sireneUL.csv")},
-		}
+		w := &filter.MemoryFilterWriter{}
+		adminObject, err := PrepareImport(batchDir, dummyBatchKey, w)
 
-		adminObject, err := PrepareImport(batchDir, dummyBatchKey)
-		// check that the filter is listed in the "files" property
 		if assert.NoError(t, err) {
-			assert.Equal(t, expectedFiles, adminObject.Files)
+			// Filter only appears in adminObject.Files if it has been provided by
+			// the user, not when generated from effectif
+			assert.NotContains(t, adminObject.Files, engine.Filter)
+
+			// check that the filter data has been written
+			assert.NotNil(t, w.Filter)
+			assert.True(t, w.Filter.ShouldSkip("000000000"))
+			assert.False(t, w.Filter.ShouldSkip("444444444"))
+			assert.False(t, w.Filter.ShouldSkip("555555555"))
 		}
-		// check that the filter file exists
-		filterFilePath := path.Join(batchDir, dummyBatchKey.String(), filterFileName)
-		assert.True(t, fileExists(filterFilePath), "the filter file was not found: "+filterFilePath)
 	})
 }
 

@@ -31,3 +31,14 @@ func (f MapFilter) ShouldSkip(siretOrSiren string) bool {
 
 	return !f[siren]
 }
+
+// All returns all SIRENs in the filter as a set.
+func (f MapFilter) All() map[string]struct{} {
+	result := make(map[string]struct{}, len(f))
+	for siren := range f {
+		if f[siren] { // Only include true values
+			result[siren] = struct{}{}
+		}
+	}
+	return result
+}

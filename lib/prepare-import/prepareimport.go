@@ -18,7 +18,7 @@ import (
 // PrepareImport generates an Admin object from files found at given pathname,
 // in the "batchKey" directory, on the file system.
 // func PrepareImport(basepath string, batchKey engine.BatchKey, filterWriter engine.FilterWriter) (engine.AdminBatch, error) {
-func PrepareImport(basepath string, batchKey engine.BatchKey) (engine.AdminBatch, error) {
+func PrepareImport(basepath string, batchKey engine.BatchKey, w engine.FilterWriter) (engine.AdminBatch, error) {
 
 	fmt.Println("Listing data files in " + batchKey + "/ ...")
 
@@ -56,11 +56,9 @@ func PrepareImport(basepath string, batchKey engine.BatchKey) (engine.AdminBatch
 
 	// if needed, create a filter file from the effectif file
 	if filterFile == nil {
-		filterFile = engine.NewBatchFileFromBatch(basepath, batchKey, "filter_siren.csv")
-
-		fmt.Println("Generating filter file: " + filterFile.Path() + " ...")
+		fmt.Println("Writing filter file")
 		if err = createFilterFromEffectifAndSirene(
-			filterFile.Path(),
+			w,
 			effectifFile.Path(),
 			sireneULFile.Path(),
 		); err != nil {
@@ -85,18 +83,11 @@ func PrepareImport(basepath string, batchKey engine.BatchKey) (engine.AdminBatch
 	}, err
 }
 
-func createFilterFromEffectifAndSirene(filterFilePath string, effectifFilePath string, sireneULFilePath string) error {
-	if fileExists(filterFilePath) {
-		return errors.New("about to overwrite existing filter file: " + filterFilePath)
-	}
-	filterWriter, err := os.Create(filterFilePath)
-	if err != nil {
-		return err
-	}
+func createFilterFromEffectifAndSirene(filterWriter engine.FilterWriter, effectifFilePath string, sireneULFilePath string) error {
 	categoriesJuridiqueFilter := filter.CategorieJuridiqueFilter(sireneULFilePath)
 
 	return filter.Create(
-		filterWriter,     // output: the filter file
+		filterWriter,     // output
 		effectifFilePath, // input: the effectif file
 		filter.DefaultNbMois,
 		filter.DefaultMinEffectif,
@@ -119,8 +110,12 @@ type InferBatchProvider struct {
 
 func (p InferBatchProvider) Get() (engine.AdminBatch, error) {
 	var batch engine.AdminBatch
-	batch, err := PrepareImport(p.Path, p.BatchKey)
 
+	// TODO only temp
+	var w = &filter.MemoryFilterWriter{}
+	//
+
+	batch, err := PrepareImport(p.Path, p.BatchKey, w)
 	if _, ok := err.(UnsupportedFilesError); ok {
 		slog.Warn(fmt.Sprintf("Des fichiers non-identifiés sont présents : %v", err))
 	} else if err != nil {

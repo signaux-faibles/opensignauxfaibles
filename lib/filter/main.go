@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"opensignauxfaibles/lib/engine"
 	"os"
 	"regexp"
 	"strconv"
@@ -29,6 +30,26 @@ const DefaultNbIgnoredCols = 2
 const NbLeadingColsToSkip = 5 // column names: "compte", "siret", "rais_soc", "ape_ins" and "dep"
 
 type filter func(string) bool
+
+// CsvFilterWriter implements engine.FilterWriter to output filters as CSV.
+type CsvFilterWriter struct {
+	w io.Writer
+}
+
+// NewCsvFilterWriter creates a new CsvFilterWriter.
+func NewCsvFilterWriter(w io.Writer) *CsvFilterWriter {
+	return &CsvFilterWriter{w: w}
+}
+
+// Write outputs the filter as CSV to the writer.
+func (c *CsvFilterWriter) Write(f engine.SirenFilter) error {
+	sirens := f.All()
+	fmt.Fprintln(c.w, "siren")
+	for siren := range sirens {
+		fmt.Fprintln(c.w, siren)
+	}
+	return nil
+}
 
 // Implementation of the create_filter command.
 func main() {
@@ -52,14 +73,15 @@ func main() {
 	flag.Parse()
 
 	// create filter
-	err := Create(os.Stdout, *path, *nbMois, *minEffectif, *nIgnoredCols)
+	csvWriter := NewCsvFilterWriter(os.Stdout)
+	err := Create(csvWriter, *path, *nbMois, *minEffectif, *nIgnoredCols)
 	if err != nil {
 		log.Panic(err)
 	}
 }
 
 // Create generates a "filter" from an "effectif" file.
-func Create(writer io.Writer, effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) error {
+func Create(writer engine.FilterWriter, effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) error {
 	last := guessLastNMissing(effectifFileName, nIgnoredCols)
 	r, f, err := makeEffectifReaderFromFile(effectifFileName)
 	if err != nil {
@@ -72,9 +94,14 @@ func Create(writer io.Writer, effectifFileName string, nbMois, minEffectif int, 
 		perimeter = applyFilter(perimeter, filter)
 	}
 
-	fmt.Fprintln(writer, "siren")
+	// Convert to MapFilter
+	mapFilter := make(MapFilter)
 	for siren := range perimeter {
-		fmt.Fprintln(writer, siren)
+		mapFilter[siren] = true
+	}
+
+	if err := writer.Write(mapFilter); err != nil {
+		return err
 	}
 	return f.Close()
 }

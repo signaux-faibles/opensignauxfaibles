@@ -5,6 +5,9 @@ package engine
 // Seules les clés présentes et dont la valeur est `true` sont dans le périmètre.
 type SirenFilter interface {
 	ShouldSkip(string) bool
+
+	// Retourne tous les sirets du périmètre
+	All() map[string]struct{}
 }
 
 // func (f SirenFilter) Add(siren string) error {
@@ -32,3 +35,5 @@ var NoFilter SirenFilter = noFilter{}
 type noFilter struct{}
 
 func (f noFilter) ShouldSkip(string) bool { return false }
+
+func (f noFilter) All() map[string]struct{} { return nil }
