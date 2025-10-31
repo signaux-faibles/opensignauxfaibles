@@ -116,6 +116,7 @@ func initializeEffectifReader(reader io.Reader) *csv.Reader {
 	return r
 }
 
+// getInitialPerimeter makes a perimeter on effectif criterias alone
 func getInitialPerimeter(r *csv.Reader, nbMois, minEffectif, nIgnoredCols int) map[string]struct{} {
 	detectedSirens := map[string]struct{}{} // smaller memory footprint than map[string]bool
 	_, err := r.Read()                      // en tête
