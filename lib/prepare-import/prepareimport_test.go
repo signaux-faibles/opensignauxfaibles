@@ -20,6 +20,7 @@ const (
 	filterFilename         = "filter.csv"
 	effectifFilename       = "sigfaible_effectif_siret.csv"
 	zippedEffectifFilename = "sigfaible_effectif_siret.csv.gz"
+	debitsFilename         = "sigfaibles_debits.csv"
 )
 
 func TestReadFilenames(t *testing.T) {
@@ -43,7 +44,7 @@ func TestPrepareImport(t *testing.T) {
 	})
 
 	t.Run("Should warn if no filter is provided", func(t *testing.T) {
-		dir := CreateTempFiles(t, dummyBatchKey, []string{"sigfaibles_debits.csv"})
+		dir := CreateTempFiles(t, dummyBatchKey, []string{debitsFilename})
 		_, err := PrepareImport(dir, dummyBatchKey, mockFilterWriter)
 		expected := "filter is missing: batch should include a filter or one effectif file"
 		assert.Equal(t, expected, err.Error())
@@ -86,7 +87,7 @@ func TestPrepareImport(t *testing.T) {
 			filename string
 			filetype engine.ParserType
 		}{
-			{"sigfaible_debits.csv", engine.Debit},
+			{debitsFilename, engine.Debit},
 			{"StockEtablissement_utf8_geo.csv", engine.Sirene},
 		}
 
@@ -181,6 +182,13 @@ func TestFilterErrors(t *testing.T) {
 				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
 			},
 			false,
+		},
+		{
+			"Pas de fichier filtre ou effectif ou filtre en base -> échec",
+			map[string][]byte{
+				debitsFilename: nil,
+			},
+			true,
 		},
 	}
 
