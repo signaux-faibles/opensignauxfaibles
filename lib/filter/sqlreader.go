@@ -10,13 +10,14 @@ import (
 
 // DBReader reads the filter from the database "filter" table.
 type DBReader struct {
-	Conn db.Pool
+	Conn      db.Pool
+	TableName string
 }
 
 func (f *DBReader) Read() (engine.SirenFilter, error) {
 	var filter = make(MapFilter)
 
-	rows, err := f.Conn.Query(context.Background(), "SELECT siren FROM filter")
+	rows, err := f.Conn.Query(context.Background(), fmt.Sprintf("SELECT siren FROM %s", f.TableName))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving \"filter\" from DB, query failed: %w", err)
 	}
