@@ -29,8 +29,6 @@ const DefaultNbIgnoredCols = 2
 // NbLeadingColsToSkip is the number of leftmost columns that don't contain effectif data.
 const NbLeadingColsToSkip = 5 // column names: "compte", "siret", "rais_soc", "ape_ins" and "dep"
 
-type filter func(string) bool
-
 // Implementation of the create_filter command.
 func main() {
 
@@ -66,7 +64,7 @@ func main() {
 }
 
 // Create generates a "filter" from an "effectif" file.
-func Create(effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, filters ...filter) (engine.SirenFilter, error) {
+func Create(effectifFileName string, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
 	last := guessLastNMissing(effectifFileName, nIgnoredCols)
 	r, f, err := makeEffectifReaderFromFile(effectifFileName)
 	if err != nil {
@@ -76,10 +74,6 @@ func Create(effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, 
 
 	perimeter := getInitialPerimeter(r, nbMois, minEffectif, nIgnoredCols+last)
 
-	for _, filter := range filters {
-		perimeter = applyFilter(perimeter, filter)
-	}
-
 	// Convert to MapFilter
 	mapFilter := make(MapFilter)
 	for siren := range perimeter {
@@ -87,16 +81,6 @@ func Create(effectifFileName string, nbMois, minEffectif int, nIgnoredCols int, 
 	}
 
 	return mapFilter, nil
-}
-
-func applyFilter(perimeter map[string]struct{}, f filter) map[string]struct{} {
-	newPerimeter := make(map[string]struct{})
-	for siren := range perimeter {
-		if f(siren) {
-			newPerimeter[siren] = struct{}{}
-		}
-	}
-	return newPerimeter
 }
 
 // If the effectif file has a ".gz" suffix, it will be decompressed on the fly.

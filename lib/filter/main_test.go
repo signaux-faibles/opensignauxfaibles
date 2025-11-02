@@ -25,8 +25,7 @@ func TestCreateFilter(t *testing.T) {
 		var cmdOutput bytes.Buffer
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
-		categorieJuridiqueFilter := CategorieJuridiqueFilter("./testData/test_uniteLegale.csv")
-		filter, err := Create("testData/test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
+		filter, err := Create("testData/test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
 		} else {
