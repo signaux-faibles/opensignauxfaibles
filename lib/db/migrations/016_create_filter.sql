@@ -2,6 +2,9 @@ CREATE TABLE IF NOT EXISTS filter_partial (
     siren VARCHAR(9) PRIMARY KEY
 );
 
+CREATE UNIQUE INDEX filter_partial_siren_index
+    ON filter_partial(siren);
+
 CREATE MATERIALIZED VIEW IF NOT EXISTS filter AS
   WITH excluded_categories AS (
     -- Excluded Catégories Juridiques:

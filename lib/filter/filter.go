@@ -12,7 +12,8 @@ import (
 // Reader implements engine.FilterReader
 // It retrieves SIREN filters using a priority-based approach:
 // 1. Batch filter file (if available, e.g. provided by user)
-// 2. Database (fallback)
+// 2. Database "filter" view
+// 3. Database "filter_partial" table
 type Reader struct {
 	Batch *engine.AdminBatch
 	DB    db.Pool
@@ -24,7 +25,8 @@ func (p *Reader) Read() (engine.SirenFilter, error) {
 
 	readers := []engine.FilterReader{
 		&CsvReader{filterFile},
-		&DBReader{p.DB},
+		&DBReader{p.DB, "filter"},
+		&DBReader{p.DB, "filter_partial"},
 	}
 
 	return trySeveralReaders(readers)
