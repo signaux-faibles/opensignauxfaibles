@@ -13,7 +13,7 @@ import (
 // DBWriter writes the filter to the database table.
 // Existing data is truncated before inserting new data.
 type DBWriter struct {
-	Conn      db.Pool
+	DB        db.Pool
 	TableName string
 }
 
@@ -22,7 +22,7 @@ func (f *DBWriter) Write(filter engine.SirenFilter) error {
 	ctx := context.Background()
 
 	// Truncate existing data
-	_, err := f.Conn.Exec(ctx, fmt.Sprintf("TRUNCATE %s", f.TableName))
+	_, err := f.DB.Exec(ctx, fmt.Sprintf("TRUNCATE %s", f.TableName))
 	if err != nil {
 		return fmt.Errorf("failed to truncate table %s: %w", f.TableName, err)
 	}
@@ -43,7 +43,7 @@ func (f *DBWriter) Write(filter engine.SirenFilter) error {
 	}
 
 	// Bulk insert using CopyFrom
-	_, err = f.Conn.CopyFrom(
+	_, err = f.DB.CopyFrom(
 		ctx,
 		pgx.Identifier{f.TableName},
 		[]string{"siren"},
