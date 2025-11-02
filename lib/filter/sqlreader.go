@@ -35,6 +35,10 @@ func (f *DBReader) Read() (engine.SirenFilter, error) {
 		return nil, fmt.Errorf("error reading \"filter\" from DB, rows iteration failed: %w", err)
 	}
 
+	if len(filter) == 0 {
+		return nil, fmt.Errorf("error reading \"filter\" from DB: table %s is empty", f.TableName)
+	}
+
 	slog.Debug("Filter retrieved from DB")
 	return filter, nil
 }
