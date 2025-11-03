@@ -14,7 +14,7 @@ import (
 // Reader implements engine.FilterReader
 // It retrieves SIREN filters using a priority-based approach:
 // 1. Batch filter file (if available, e.g. provided by user)
-// 3. Database "stg_filter_import" table
+// 2. Database "stg_filter_import" table
 type Reader struct {
 	Batch *engine.AdminBatch
 	DB    db.Pool

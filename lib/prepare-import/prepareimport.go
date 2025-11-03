@@ -5,7 +5,6 @@ package prepareimport
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -28,45 +27,7 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, r engine.FilterRea
 		return engine.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchKey.String())
 	}
 
-	var err error
 	batchFiles, unsupportedFiles := PopulateFilesProperty(basepath, batchKey)
-
-	// To complete the FilesProperty, we need:
-	// - a filter file (created from an effectif file, at the batch/parent level)
-
-	effectifFile, _ := batchFiles.GetEffectifFile()
-	sireneULFile, _ := batchFiles.GetSireneULFile()
-
-	if effectifFile != nil {
-		slog.Debug("Found effectif file: " + effectifFile.Path())
-	}
-
-	if sireneULFile != nil {
-		slog.Debug("Found sireneUL file: " + sireneULFile.Path())
-	}
-
-	// check if a filter can be read
-	_, err = r.Read()
-
-	if err != nil && effectifFile == nil {
-		return engine.AdminBatch{}, errors.New("filter is missing: batch should include a filter or one effectif file")
-	}
-
-	// Check if filter has been explicitely provided in the batch
-	_, err = batchFiles.GetFilterFile()
-	filterIsExplicit := (err == nil)
-
-	// If effectif file is provided, and filter file is not explicitely provided
-	// by the user, update the filter
-	if !filterIsExplicit && effectifFile != nil {
-		slog.Debug("Writing filter file")
-		if err = createFilterFromEffectif(
-			w,
-			effectifFile,
-		); err != nil {
-			return engine.AdminBatch{}, err
-		}
-	}
 
 	var unsupportedFilesErr error
 	if len(unsupportedFiles) > 0 {
@@ -78,30 +39,6 @@ func PrepareImport(basepath string, batchKey engine.BatchKey, r engine.FilterRea
 		Files:  batchFiles,
 		Params: populateParamProperty(batchKey),
 	}, unsupportedFilesErr
-}
-
-// effectifFile is mandatory
-func createFilterFromEffectif(
-	filterWriter engine.FilterWriter,
-	effectifFile engine.BatchFile,
-) error {
-	var sirenFilter engine.SirenFilter
-	var err error
-
-	// Create the filter
-	sirenFilter, err = filter.Create(
-		effectifFile.Path(), // input: the effectif file
-		filter.DefaultNbMois,
-		filter.DefaultMinEffectif,
-		filter.DefaultNbIgnoredCols,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	// Write the filter
-	return filterWriter.Write(sirenFilter)
 }
 
 // InferBatchProvider infers the batch imports given the filenames

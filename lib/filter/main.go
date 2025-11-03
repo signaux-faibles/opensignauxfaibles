@@ -1,18 +1,17 @@
 package filter
 
 import (
-	"bufio"
-	"compress/gzip"
 	"encoding/csv"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 	"opensignauxfaibles/lib/engine"
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 )
 
 // Usage: $ ./create_filter --path testData/test_data.csv
@@ -51,7 +50,7 @@ func main() {
 	flag.Parse()
 
 	// create filter
-	filter, err := Create(*path, *nbMois, *minEffectif, *nIgnoredCols)
+	filter, err := Create(engine.NewBatchFile(*path), *nbMois, *minEffectif, *nIgnoredCols)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -64,15 +63,16 @@ func main() {
 }
 
 // Create generates a "filter" from an "effectif" file.
-func Create(effectifFileName string, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
-	last := guessLastNMissing(effectifFileName, nIgnoredCols)
-	r, f, err := makeEffectifReaderFromFile(effectifFileName)
+func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
+	last, err := guessLastNMissing(effectifFile, nIgnoredCols)
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
 
-	perimeter := getInitialPerimeter(r, nbMois, minEffectif, nIgnoredCols+last)
+	perimeter, err := getImportPerimeter(effectifFile, nbMois, minEffectif, nIgnoredCols+last)
+	if err != nil {
+		return nil, err
+	}
 
 	// Convert to MapFilter
 	mapFilter := make(MapFilter)
@@ -83,40 +83,93 @@ func Create(effectifFileName string, nbMois, minEffectif int, nIgnoredCols int) 
 	return mapFilter, nil
 }
 
-// If the effectif file has a ".gz" suffix, it will be decompressed on the fly.
-func makeEffectifReaderFromFile(effectifFileName string) (*csv.Reader, *os.File, error) {
-	var fileReader io.Reader
-	compressed := strings.HasSuffix(effectifFileName, "csv.gz")
+// CheckAndUpdate checks if the conditions for efficient filtering are met and
+// updates the filter if needed.
+//
+// It checks whether :
+// - a  non-empty filter can be read from the provided reader
+// - OR an "effectif" file is provided.
+//
+// It updates (or creates if none exists) the filter if the following conditions are met :
+// - An "effectif" file is provided
+// - AND the filter is not explicitely provided in the batchfile
+//
+// The rationale behind this last point is that a user-provided filter is
+// usually used solely for tests and should not affect the saved perimeter in
+// the database.
+func CheckAndUpdate(r engine.FilterReader, w engine.FilterWriter, batchFiles engine.BatchFiles) error {
 
-	file, err := os.Open(effectifFileName)
-	if err != nil {
-		return nil, nil, err
+	var err error
+
+	effectifFile, _ := batchFiles.GetEffectifFile()
+	if effectifFile != nil {
+		slog.Debug("Found effectif file: " + effectifFile.Path())
 	}
-	if compressed {
-		fileReader, err = gzip.NewReader(file)
+
+	// check if a filter can be read
+	_, err = r.Read()
+
+	validFiltering := (err == nil || effectifFile != nil)
+
+	if !validFiltering {
+		return errors.New("filter is missing: a filter or one effectif file should be provided")
+	}
+
+	// Check if filter has been explicitely provided in the batch
+	_, err = batchFiles.GetFilterFile()
+	filterIsExplicit := (err == nil)
+
+	// If effectif file is provided, and filter file is not explicitely provided
+	// by the user, update the filter
+	if effectifFile != nil && !filterIsExplicit {
+		slog.Debug("Writing filter file")
+
+		// Create the filter
+		sirenFilter, err := Create(
+			effectifFile, // input: the effectif file
+			DefaultNbMois,
+			DefaultMinEffectif,
+			DefaultNbIgnoredCols,
+		)
+
 		if err != nil {
-			return nil, nil, err
+			return err
 		}
-	} else {
-		fileReader = bufio.NewReader(file)
+
+		// Write the filter
+		err = w.Write(sirenFilter)
+
+		if err != nil {
+			return err
+		}
 	}
-	return initializeEffectifReader(fileReader), file, err
+	return nil
 }
 
-func initializeEffectifReader(reader io.Reader) *csv.Reader {
+func newCsvReader(reader io.Reader) *csv.Reader {
 	r := csv.NewReader(reader)
 	r.LazyQuotes = true
 	r.Comma = ';'
 	return r
 }
 
-// getInitialPerimeter makes a perimeter on effectif criterias alone
-func getInitialPerimeter(r *csv.Reader, nbMois, minEffectif, nIgnoredCols int) map[string]struct{} {
-	detectedSirens := map[string]struct{}{} // smaller memory footprint than map[string]bool
-	_, err := r.Read()                      // en tête
+// getImportPerimeter makes a perimeter on effectif criterias alone
+// This perimeter is used for efficient imports, and is further refined with
+// SQL for the "clean_data" layer
+func getImportPerimeter(effectifFile engine.BatchFile, nbMois, minEffectif, nIgnoredCols int) (map[string]struct{}, error) {
+	f, err := effectifFile.Open()
 	if err != nil {
-		log.Panic(err)
+		return nil, err
 	}
+	defer f.Close()
+
+	r := newCsvReader(f)
+
+	detectedSirens := map[string]struct{}{} // smaller memory footprint than map[string]bool
+	if _, err = r.Read(); err != nil {      // en tête
+		return nil, err
+	}
+
 	lineNumber, skippedLines := 0, 0
 	for {
 		lineNumber++
@@ -126,7 +179,7 @@ func getInitialPerimeter(r *csv.Reader, nbMois, minEffectif, nIgnoredCols int) m
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			log.Panic(err)
+			return nil, err
 		}
 		siret := record[1]
 		shouldKeep := len(siret) == 14 &&
@@ -147,7 +200,7 @@ func getInitialPerimeter(r *csv.Reader, nbMois, minEffectif, nIgnoredCols int) m
 	if skippedLines > 0 {
 		fmt.Printf("%d lines with bad siret/siren skipped :( \n", skippedLines)
 	}
-	return detectedSirens
+	return detectedSirens, nil
 }
 
 func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
@@ -161,7 +214,7 @@ func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
 		}
 		effectif, err := strconv.Atoi(reg.ReplaceAllString(record[i], ""))
 		if err != nil {
-			fmt.Println(record)
+			slog.Error(fmt.Sprintf("%v", record))
 			log.Panic(err)
 		}
 		if effectif >= minEffectif {
@@ -171,21 +224,21 @@ func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
 	return false
 }
 
-func guessLastNMissing(path string, nIgnoredCols int) int {
-	r, f, err := makeEffectifReaderFromFile(path)
-	if err != nil {
-		log.Panic(err)
-	}
-	defer f.Close()
-	if _, err = r.Read(); err != nil { // en tête
-		log.Panic(err)
-	}
-	return guessLastNMissingFromReader(r, nIgnoredCols)
-}
-
 // guessLastNMissingFromReader returns the number of rightmost columns
 // (on top of nIgnoredCols columns) that never have a value.
-func guessLastNMissingFromReader(r *csv.Reader, nIgnoredCols int) int {
+func guessLastNMissing(file engine.BatchFile, nIgnoredCols int) (int, error) {
+	f, err := file.Open()
+	if err != nil {
+		return 0, err
+	}
+	defer f.Close()
+
+	r := newCsvReader(f)
+
+	if _, err = r.Read(); err != nil { // en tête
+		return 0, err
+	}
+
 	var lastConsideredCol int // index of the rightmost column of the last read row
 	lastColWithValue := -1    // index of the rightmost column which had a value at least once
 	for {
@@ -193,7 +246,7 @@ func guessLastNMissingFromReader(r *csv.Reader, nIgnoredCols int) int {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			log.Panic(err)
+			return 0, err
 		}
 		lastConsideredCol = len(record) - 1 - nIgnoredCols
 		for i := lastConsideredCol; i > lastColWithValue; i-- {
@@ -202,5 +255,5 @@ func guessLastNMissingFromReader(r *csv.Reader, nIgnoredCols int) int {
 			}
 		}
 	}
-	return lastConsideredCol - lastColWithValue
+	return lastConsideredCol - lastColWithValue, nil
 }

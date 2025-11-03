@@ -3,9 +3,9 @@ package filter
 import (
 	"bufio"
 	"bytes"
-	"encoding/csv"
 	"flag"
 	"fmt"
+	"opensignauxfaibles/lib/engine"
 	"sort"
 	"strconv"
 	"strings"
@@ -25,7 +25,7 @@ func TestCreateFilter(t *testing.T) {
 		var cmdOutput bytes.Buffer
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
-		filter, err := Create("testData/test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols)
+		filter, err := Create(engine.NewBatchFile("testData/test_data.csv"), DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
 		} else {
@@ -97,11 +97,13 @@ func TestOutputPerimeter(t *testing.T) {
 // wrapper to run outputPerimeter() on a slice of csv lines
 func getOutputPerimeter(csvLines []string, nbMois, minEffectif, nbIgnoredCols int) (actualSirens []string) {
 	effectifData := strings.Join(csvLines, "\n")
+	mockFile := engine.NewMockBatchFile(effectifData)
 	var output bytes.Buffer
-	reader := csv.NewReader(strings.NewReader(effectifData))
-	reader.Comma = ';'
 	writer := bufio.NewWriter(&output)
-	perimeter := getInitialPerimeter(reader, nbMois, minEffectif, nbIgnoredCols)
+	perimeter, err := getImportPerimeter(mockFile, nbMois, minEffectif, nbIgnoredCols)
+	if err != nil {
+		panic(err)
+	}
 	for siren := range perimeter {
 		fmt.Fprintln(writer, siren)
 	}
@@ -137,19 +139,20 @@ func TestGuessLastNonMissing(t *testing.T) {
 		inputCsv string
 		expected int
 	}{
-		{"1,", 1},
-		{",1", 0},
-		{"1,1", 0},
-		{",", 2},
-		{",\n,1", 0},
-		{"1,\n,", 1},
-		{"1,\n1,", 1},
+		{"h;h\n1;", 1},
+		{"h;h\n;1", 0},
+		{"h;h\n1;1", 0},
+		{"h;h\n;", 2},
+		{"h;h\n;\n;1", 0},
+		{"h;h\n1;\n;", 1},
+		{"h;h\n1;\n1;", 1},
 	}
 
 	for i, tc := range testCases {
 		t.Run("Test case without ignored "+strconv.Itoa(i), func(t *testing.T) {
-			reader := csv.NewReader(strings.NewReader(tc.inputCsv))
-			lastNonMissing := guessLastNMissingFromReader(reader, 0)
+			mockFile := engine.NewMockBatchFile(tc.inputCsv)
+			lastNonMissing, err := guessLastNMissing(mockFile, 0)
+			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, lastNonMissing)
 		})
 	}
@@ -158,19 +161,20 @@ func TestGuessLastNonMissing(t *testing.T) {
 		inputCsv string
 		expected int
 	}{
-		{"1,,1", 1},
-		{",1,1", 0},
-		{"1,1,1", 0},
-		{",,1", 2},
-		{",,1\n,1,1", 0},
-		{"1,,1\n,,1", 1},
-		{"1,,1\n1,,1", 1},
+		{"h;h;h\n1;;1", 1},
+		{"h;h;h\n;1;1", 0},
+		{"h;h;h\n1;1;1", 0},
+		{"h;h;h\n;;1", 2},
+		{"h;h;h\n;;1\n;1;1", 0},
+		{"h;h;h\n1;;1\n;;1", 1},
+		{"h;h;h\n1;;1\n1;;1", 1},
 	}
 
 	for i, tc := range testCasesIgnore {
 		t.Run("Test case without ignored "+strconv.Itoa(i), func(t *testing.T) {
-			reader := csv.NewReader(strings.NewReader(tc.inputCsv))
-			lastNonMissing := guessLastNMissingFromReader(reader, 1)
+			mockFile := engine.NewMockBatchFile(tc.inputCsv)
+			lastNonMissing, err := guessLastNMissing(mockFile, 1)
+			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, lastNonMissing)
 		})
 	}

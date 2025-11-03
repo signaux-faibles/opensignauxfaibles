@@ -45,7 +45,7 @@ func TestFilter(t *testing.T) {
 
 		// Create a batch with Debit file and an explicit filter file
 		batch := engine.AdminBatch{
-			Key: "1903",
+			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
 				engine.Debit:  {Debit},
 				engine.Filter: {mockFilter},
@@ -68,5 +68,16 @@ func TestFilter(t *testing.T) {
 		)
 
 		assert.NoError(t, err, "should succeed to import when an explicit filter file is provided")
+	})
+
+	t.Run("Import with explicit filter file should succeed", func(t *testing.T) {
+		// Create a batch with Debit file and an explicit filter file
+		batch := engine.AdminBatch{
+			Key: "1902",
+			Files: map[engine.ParserType][]engine.BatchFile{
+				engine.Effectif: {Effectif},
+			},
+		}
+
 	})
 }
