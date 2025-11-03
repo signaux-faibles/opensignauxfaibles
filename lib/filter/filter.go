@@ -26,7 +26,7 @@ func (p *Reader) Read() (engine.SirenFilter, error) {
 
 	readers := []engine.FilterReader{
 		&CsvReader{filterFile},
-		&DBReader{p.DB, "stg_filter_import"},
+		&DBReader{p.DB, db.TableStgFilterImport},
 	}
 
 	return trySeveralReaders(readers)

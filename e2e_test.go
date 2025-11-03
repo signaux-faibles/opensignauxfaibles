@@ -129,24 +129,8 @@ func setupDBTest(t *testing.T) func() {
 		assert.NoError(t, err)
 		defer conn.Close(ctx)
 
-		tables := []string{
-			"import_logs",
-			"labels_motif_recours",
-			"migrations",
-			"stg_apconso",
-			"stg_apdemande",
-			"stg_cotisation",
-			"stg_debit",
-			"stg_delai",
-			"stg_effectif",
-			"stg_effectif_ent",
-			"stg_sirene",
-			"stg_sirene_ul",
-		}
-		materializedViews := []string{
-			"stg_apdemande_by_period",
-			"clean_filter",
-		}
+		tables := db.AllTables()
+		materializedViews := db.AllMaterializedViews()
 
 		// Teardown: truncate tables
 		_, err = conn.Exec(
