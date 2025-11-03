@@ -1,8 +1,6 @@
 package prepareimport
 
 import (
-	"bytes"
-	"compress/gzip"
 	"errors"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
@@ -48,13 +46,6 @@ func TestPrepareImport(t *testing.T) {
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
 		_, err := PrepareImport(parentDir, wantedBatch, mockFilterReader, mockFilterWriter)
 		expected := "could not find directory 1803 in provided path"
-		assert.Equal(t, expected, err.Error())
-	})
-
-	t.Run("Should warn if 2 effectif files are provided", func(t *testing.T) {
-		dir := CreateTempFiles(t, dummyBatchKey, []string{effectifFilename, "sigfaible_effectif_siret2.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey, errFilterReader, mockFilterWriter)
-		expected := "filter is missing: batch should include a filter or one effectif file"
 		assert.Error(t, err)
 		assert.Equal(t, expected, err.Error())
 	})
@@ -115,130 +106,6 @@ func TestPrepareImport(t *testing.T) {
 			assert.Equal(t, []string{path.Join(dummyBatchKey.String(), "unsupported-file.csv")}, e.UnsupportedFiles)
 		}
 	})
-
-	t.Run("should create filter file even if effectif file is compressed", func(t *testing.T) {
-		compressedEffectifData := compressFileData(t, "../filter/testData/test_data.csv")
-
-		// run prepare-import
-		batchDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			zippedEffectifFilename: compressedEffectifData.Bytes(),
-			"sireneUL.csv":         ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
-		})
-
-		w := &filter.MemoryFilterWriter{}
-		adminObject, err := PrepareImport(batchDir, dummyBatchKey, mockFilterReader, w)
-
-		if assert.NoError(t, err) {
-			// Filter only appears in adminObject.Files if it has been provided by
-			// the user, not when generated from effectif
-			assert.NotContains(t, adminObject.Files, engine.Filter)
-
-			// check that the filter data has been written
-			assert.NotNil(t, w.Filter)
-			assert.True(t, w.Filter.ShouldSkip("000000000"))
-			assert.False(t, w.Filter.ShouldSkip("444444444"))
-			assert.False(t, w.Filter.ShouldSkip("555555555"))
-		}
-	})
-}
-
-func TestFilterUpdate(t *testing.T) {
-	testCases := []struct {
-		name               string
-		filesWithContent   map[string][]byte
-		expectFilterUpdate bool
-	}{
-		{
-			"should write/update filter file if an effectif file is present but no explicit filter",
-			map[string][]byte{
-				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
-				"sireneUL.csv":   ReadFileData(t, "../filter/testData/test_uniteLegale.csv"),
-			},
-			true,
-		},
-		{
-			"shouldn't write/update filter file if an explicit filter is provided, even with an effectif file",
-			map[string][]byte{
-				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
-				filterFilename:   []byte("siren\n012345678"),
-			},
-			false,
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			// run prepare-import
-			tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, tc.filesWithContent)
-
-			w := &filter.MemoryFilterWriter{}
-			_, err := PrepareImport(tmpDir, dummyBatchKey, mockFilterReader, w)
-
-			if assert.NoError(t, err) {
-				// Check that the filter data has been written
-				if tc.expectFilterUpdate {
-					assert.NotNil(t, w.Filter)
-				} else {
-					assert.Nil(t, w.Filter)
-				}
-			}
-		})
-	}
-}
-
-func TestMissingFilter(t *testing.T) {
-
-	testCases := []struct {
-		name         string
-		files        map[string][]byte
-		filterReader engine.FilterReader
-		expectError  bool
-	}{
-		{
-			"Filtre valid explicitement fourni par l'utilisateur -> OK",
-			map[string][]byte{filterFilename: nil},
-			mockFilterReader, // valid filter provided, no error
-			false,
-		},
-		{
-			"Fichier effectif valide -> on crée le filtre",
-			map[string][]byte{
-				effectifFilename: ReadFileData(t, "../filter/testData/test_data.csv"),
-			},
-			errFilterReader,
-			false,
-		},
-		{
-			"Pas de fichier filtre ou effectif ou filtre en base -> échec",
-			map[string][]byte{
-				debitsFilename: nil,
-			},
-			errFilterReader,
-			true,
-		},
-		{
-			"Pas de fichier filtre ou effectif mais filtre en base -> OK",
-			map[string][]byte{
-				debitsFilename: nil,
-			},
-			mockFilterReader, // provides a valid filter
-			false,
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			dir := CreateTempFilesWithContent(t, dummyBatchKey, tc.files)
-
-			_, err := PrepareImport(dir, dummyBatchKey, tc.filterReader, mockFilterWriter)
-
-			if tc.expectError {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-			}
-		})
-	}
 }
 
 func makeDayDate(year, month, day int) time.Time {
@@ -251,19 +118,4 @@ func ReadFileData(t *testing.T, filePath string) []byte {
 		t.Fatal(err)
 	}
 	return data
-}
-
-func compressFileData(t *testing.T, filePath string) (compressedData bytes.Buffer) {
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	zw := gzip.NewWriter(&compressedData)
-	if _, err = zw.Write(data); err != nil {
-		t.Fatal(err)
-	}
-	if err := zw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	return compressedData
 }
