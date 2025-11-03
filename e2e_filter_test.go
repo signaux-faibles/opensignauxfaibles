@@ -8,7 +8,6 @@ import (
 	"opensignauxfaibles/lib/filter"
 	"opensignauxfaibles/lib/registry"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -29,10 +28,6 @@ func TestFilter(t *testing.T) {
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
 				engine.Debit: {Debit},
-			},
-			Params: engine.AdminBatchParams{
-				DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
-				DateFin:   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
 			},
 		}
 
@@ -55,10 +50,6 @@ func TestFilter(t *testing.T) {
 				engine.Debit:  {Debit},
 				engine.Filter: {mockFilter},
 			},
-			Params: engine.AdminBatchParams{
-				DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
-				DateFin:   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
-			},
 		}
 
 		// Get filter from the explicit filter file
@@ -79,47 +70,3 @@ func TestFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import when an explicit filter file is provided")
 	})
 }
-
-// func createImportTestBatch(t *testing.T) {
-
-// 	batch := engine.AdminBatch{
-// 		Key: "1910",
-// 		Files: map[engine.ParserType][]engine.BatchFile{
-// 			Dummy:              {},
-// 			engine.Filter:      {},
-// 			engine.Apconso:     {engine.NewBatchFile("lib/parsing/apconso/testData/apconsoTestData.csv")},
-// 			engine.Apdemande:   {engine.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
-// 			engine.Sirene:      {engine.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
-// 			engine.SireneUl:    {engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
-// 			engine.AdminUrssaf: {engine.NewBatchFile("lib/parsing/urssaf/testData/comptesTestData.csv")},
-// 			engine.Debit:       {engine.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")},
-// 			engine.Ccsf:        {engine.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},
-// 			engine.Cotisation:  {engine.NewBatchFile("lib/parsing/urssaf/testData/cotisationTestData.csv")},
-// 			engine.Delai:       {engine.NewBatchFile("lib/parsing/urssaf/testData/delaiTestData.csv")},
-// 			engine.Effectif:    {engine.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")},
-// 			engine.EffectifEnt: {engine.NewBatchFile("lib/parsing/effectif/testData/effectifEntTestData.csv")},
-// 			engine.Procol:      {engine.NewBatchFile("lib/parsing/urssaf/testData/procolTestData.csv")},
-// 		},
-// 		Params: engine.AdminBatchParams{
-// 			DateDebut: time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC),
-// 			DateFin:   time.Date(2019, time.February, 1, 0, 0, 0, 0, time.UTC),
-// 		},
-// 	}
-// 	writeBatchConfig(t, batch)
-// }
-
-// func verifyReports(t *testing.T) {
-// 	t.Log("💎 Verifying exported reports...")
-
-// 	conn, err := pgxpool.New(context.Background(), suite.PostgresURI)
-// 	if err != nil {
-// 		t.Errorf("Unable to connect to test database: %s", err)
-// 	}
-
-// 	table := engine.ReportTable
-// 	query := fmt.Sprintf("SELECT * FROM %s ORDER BY parser", table)
-// 	output := getTableContents(t, conn, query)
-// 	goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
-// 	tmpOutputFile := fmt.Sprintf("test-import.sql.%s.output.txt", table)
-// 	compareWithGoldenFileOrUpdate(t, goldenFile, output, tmpOutputFile)
-// }
