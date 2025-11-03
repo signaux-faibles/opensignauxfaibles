@@ -114,7 +114,7 @@ type InferBatchProvider struct {
 func (p InferBatchProvider) Get() (engine.AdminBatch, error) {
 	var batch engine.AdminBatch
 
-	w := &filter.DBWriter{DB: db.DB, TableName: "filter_partial"}
+	w := &filter.DBWriter{DB: db.DB}
 	r := &filter.Reader{Batch: &batch, DB: db.DB}
 
 	batch, err := PrepareImport(p.Path, p.BatchKey, r, w)

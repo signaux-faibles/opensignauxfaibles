@@ -15,6 +15,11 @@ type DBReader struct {
 }
 
 func (f *DBReader) Read() (engine.SirenFilter, error) {
+
+	if f.Conn == nil {
+		return nil, fmt.Errorf("database connection is nil")
+	}
+
 	var filter = make(MapFilter)
 
 	rows, err := f.Conn.Query(context.Background(), fmt.Sprintf("SELECT siren FROM %s", f.TableName))

@@ -1,11 +1,17 @@
-CREATE TABLE IF NOT EXISTS filter_partial (
+-- filter_import est le périmètre de l'import des données.
+-- Ce n'est pas le filtrage définitif, qui croise plusieurs données, mais
+-- un filtrage sur la seule donnée de l'effectif qui limite déjà
+-- considérablement le volume des données importées.
+--
+-- Un filtrage plus fin sera réalisé via la vue ci-dessous pour la couche de
+-- données propres "clean_xxx"
+CREATE TABLE IF NOT EXISTS stg_filter_import (
     siren VARCHAR(9) PRIMARY KEY
 );
 
-CREATE UNIQUE INDEX filter_partial_siren_index
-    ON filter_partial(siren);
-
-CREATE MATERIALIZED VIEW IF NOT EXISTS filter AS
+-- clean_filter est le périmètre définitif des données distribuées par la
+-- couche de données propres "clean_xxx"
+CREATE MATERIALIZED VIEW IF NOT EXISTS clean_filter AS
   WITH excluded_categories AS (
     -- Excluded Catégories Juridiques:
     SELECT ARRAY[
@@ -29,7 +35,7 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS filter AS
     ] AS categories
   )
   SELECT fp.siren
-  FROM filter_partial fp
+  FROM stg_filter_import fp
   INNER JOIN stg_sirene_ul sirene_ul ON sirene_ul.siren = fp.siren
   CROSS JOIN excluded_categories ec
   WHERE
@@ -40,10 +46,10 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS filter AS
     -- 85.XX: Enseignement
     AND NOT (sirene_ul.activite_principale LIKE '84%' OR sirene_ul.activite_principale LIKE '85%');
 
-CREATE UNIQUE INDEX filter_siren_index
-    ON filter(siren);
+CREATE UNIQUE INDEX clean_filter_siren_index
+    ON clean_filter(siren);
 
 ---- create above / drop below ----
 
-DROP TABLE IF EXISTS filter_partial;
-DROP MATERIALIZED VIEW IF EXISTS filter;
+DROP TABLE IF EXISTS stg_filter_import;
+DROP MATERIALIZED VIEW IF EXISTS clean_filter;

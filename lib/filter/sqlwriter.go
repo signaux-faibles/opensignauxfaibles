@@ -10,11 +10,14 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+const (
+	TableName = "stg_filter_import"
+)
+
 // DBWriter writes the filter to the database table.
 // Existing data is truncated before inserting new data.
 type DBWriter struct {
-	DB        db.Pool
-	TableName string
+	DB db.Pool
 }
 
 // Write implements engine.FilterWriter
@@ -22,17 +25,17 @@ func (f *DBWriter) Write(filter engine.SirenFilter) error {
 	ctx := context.Background()
 
 	// Truncate existing data
-	_, err := f.DB.Exec(ctx, fmt.Sprintf("TRUNCATE %s", f.TableName))
+	_, err := f.DB.Exec(ctx, fmt.Sprintf("TRUNCATE %s", TableName))
 	if err != nil {
-		return fmt.Errorf("failed to truncate table %s: %w", f.TableName, err)
+		return fmt.Errorf("failed to truncate table %s: %w", TableName, err)
 	}
 
-	slog.Debug("Truncated filter table", "table", f.TableName)
+	slog.Debug("Truncated filter table", "table", TableName)
 
 	// Get all SIRENs from the filter
 	sirens := filter.All()
 	if len(sirens) == 0 {
-		slog.Warn("No SIRENs in filter to write", "table", f.TableName)
+		slog.Warn("No SIRENs in filter to write", "table", TableName)
 		return nil
 	}
 
@@ -45,14 +48,14 @@ func (f *DBWriter) Write(filter engine.SirenFilter) error {
 	// Bulk insert using CopyFrom
 	_, err = f.DB.CopyFrom(
 		ctx,
-		pgx.Identifier{f.TableName},
+		pgx.Identifier{TableName},
 		[]string{"siren"},
 		pgx.CopyFromRows(values),
 	)
 	if err != nil {
-		return fmt.Errorf("failed to insert into table %s: %w", f.TableName, err)
+		return fmt.Errorf("failed to insert into table %s: %w", TableName, err)
 	}
 
-	slog.Debug("Filter written to DB", "table", f.TableName, "n_sirens", len(sirens))
+	slog.Debug("Filter written to DB", "table", TableName, "n_sirens", len(sirens))
 	return nil
 }

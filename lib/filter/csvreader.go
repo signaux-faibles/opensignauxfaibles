@@ -8,7 +8,6 @@ import (
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/sfregexp"
-	"os"
 )
 
 // CsvReader reads the filter from a CSV file.
@@ -22,9 +21,7 @@ func (f *CsvReader) Read() (engine.SirenFilter, error) {
 		return nil, nil
 	}
 
-	p := f.BatchFile.Path()
-
-	file, err := os.Open(p)
+	file, err := f.BatchFile.Open()
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}

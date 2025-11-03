@@ -1,10 +1,7 @@
 package engine
 
 import (
-	"fmt"
-	"io"
 	"log"
-	"strings"
 	"time"
 )
 
@@ -28,30 +25,3 @@ func MockBatch(filetype ParserType, batchFiles []BatchFile) AdminBatch {
 	return batch
 }
 
-// -----------------------------------------------------
-
-type MockBatchFile struct {
-	content string
-}
-
-func (MockBatchFile) Filename() string   { return "mockfile" }
-func (MockBatchFile) Path() string       { return "./mockfile" }
-func (MockBatchFile) IsCompressed() bool { return false }
-
-func (m MockBatchFile) Open() (io.ReadCloser, error) {
-	return io.NopCloser(strings.NewReader(m.content)), nil
-}
-
-func NewMockBatchFile(content string) BatchFile {
-	return MockBatchFile{content}
-}
-
-// -----------------------------------------------------
-
-type OpenFailsBatchFile struct {
-	MockBatchFile
-}
-
-func (m OpenFailsBatchFile) Open() (io.ReadCloser, error) {
-	return nil, fmt.Errorf("error from Open()")
-}

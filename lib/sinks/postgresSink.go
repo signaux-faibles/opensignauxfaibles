@@ -42,7 +42,7 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 		case engine.Apdemande:
 			materializedTableUpdate = "stg_apdemande_by_period"
 		case engine.SireneUl:
-			materializedTableUpdate = "filter"
+			materializedTableUpdate = "clean_filter"
 		}
 
 		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil

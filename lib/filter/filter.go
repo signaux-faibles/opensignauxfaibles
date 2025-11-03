@@ -5,15 +5,16 @@ package filter
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
+	"reflect"
 )
 
 // Reader implements engine.FilterReader
 // It retrieves SIREN filters using a priority-based approach:
 // 1. Batch filter file (if available, e.g. provided by user)
-// 2. Database "filter" view
-// 3. Database "filter_partial" table
+// 3. Database "stg_filter_import" table
 type Reader struct {
 	Batch *engine.AdminBatch
 	DB    db.Pool
@@ -25,8 +26,7 @@ func (p *Reader) Read() (engine.SirenFilter, error) {
 
 	readers := []engine.FilterReader{
 		&CsvReader{filterFile},
-		&DBReader{p.DB, "filter"},
-		&DBReader{p.DB, "filter_partial"},
+		&DBReader{p.DB, "stg_filter_import"},
 	}
 
 	return trySeveralReaders(readers)
@@ -44,6 +44,7 @@ func trySeveralReaders(readers []engine.FilterReader) (engine.SirenFilter, error
 
 		if err != nil {
 			// try next source
+			slog.Debug("filter reader attempt failed", "reader_type", reflect.TypeOf(reader).String(), "error", err)
 			lastErr = err
 			continue
 		}
