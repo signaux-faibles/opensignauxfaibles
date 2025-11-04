@@ -1,15 +1,35 @@
+// Package filter manages the import perimeter for Signaux Faibles data.
+//
+// The perimeter is stored as state between successive imports, to avoid
+// the requirement of importing files together every time.
+//
+// This package provides utilities to create and maintain SIREN filters that
+// determine which companies should be included in the data import. Filters
+// are typically derived from effectif (employee count) data, selecting
+// companies that meet minimum employee thresholds over a specified time
+// period.
+//
+// Note that a subsequent more fine-grained filtering (e.g. on juridic nature)
+// happens at a later stage, thanks to SQL queries, between the "stg_..." and
+// the "clean_..." layers.
+//
+// The package provides functions to:
+// - Create filters from effectif files based on configurable criteria
+// - Check if valid filtering conditions are met before import
+// - Read filters from multiple sources (files, database). Filters provided as
+// an explicit file has precedence over the database stored filter.
+// - Update filter state in the database when appropriate (effectif file
+// is present, and no explicit filter has been provided in the batch).
 package filter
 
 import (
 	"encoding/csv"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log"
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
-	"os"
 	"regexp"
 	"strconv"
 )
@@ -27,41 +47,6 @@ const DefaultNbIgnoredCols = 2
 
 // NbLeadingColsToSkip is the number of leftmost columns that don't contain effectif data.
 const NbLeadingColsToSkip = 5 // column names: "compte", "siret", "rais_soc", "ape_ins" and "dep"
-
-// Implementation of the create_filter command.
-func main() {
-
-	var path = flag.String("path", "", "Chemin d'accès au fichier effectif")
-	var nbMois = flag.Int(
-		"nbMois",
-		DefaultNbMois,
-		"Nombre de mois observés (avec effectif connu) pour déterminer si l'entreprise dépasse 10 salariés",
-	)
-	var minEffectif = flag.Int(
-		"minEffectif",
-		DefaultMinEffectif,
-		"Si une entreprise atteint ou dépasse 'minEffectif' dans les 'nbMois' derniers mois, elle est inclue dans le périmètre du filtre.",
-	)
-	var nIgnoredCols = flag.Int(
-		"nIgnoredCols",
-		DefaultNbIgnoredCols,
-		"Nombre de colonnes à ignorer à la fin du fichier effectif",
-	)
-	flag.Parse()
-
-	// create filter
-	filter, err := Create(engine.NewBatchFile(*path), *nbMois, *minEffectif, *nIgnoredCols)
-	if err != nil {
-		log.Panic(err)
-	}
-
-	// write filter
-	csvWriter := NewCsvWriter(os.Stdout)
-	if err := csvWriter.Write(filter); err != nil {
-		log.Panic(err)
-	}
-}
-
 // Create generates a "filter" from an "effectif" file.
 func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
 	last, err := guessLastNMissing(effectifFile, nIgnoredCols)

@@ -1,5 +1,3 @@
-// Package filter provides helper functions for providing a Filter, defining
-// the perimeter of the import
 package filter
 
 import (
