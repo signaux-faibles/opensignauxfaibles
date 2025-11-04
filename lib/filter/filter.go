@@ -21,20 +21,25 @@ type Reader struct {
 }
 
 // Read implements engine.FilterReader
-func (p *Reader) Read() (engine.SirenFilter, error) {
-	if p == nil {
+func (r *Reader) Read() (engine.SirenFilter, error) {
+	if r == nil {
 		return engine.NoFilter, nil
 	}
 
-	filterFile := p.Batch.Files.GetFilterFile()
+	filterFile := r.Batch.Files.GetFilterFile()
 
 	readers := []engine.FilterReader{
 		&CsvReader{filterFile},
-		&DBReader{p.DB, db.TableStgFilterImport},
+		&DBReader{r.DB, db.TableStgFilterImport},
 	}
 
 	return trySeveralReaders(readers)
 }
+
+// A NoReader provides a NoFilter, with no filtering
+type NoReader struct{}
+
+func (r *NoReader) Read() (engine.SirenFilter, error) { return engine.NoFilter, nil }
 
 // trySeveralReaders tries each reader in order until one succeeds.
 // The first successful filter is returned.

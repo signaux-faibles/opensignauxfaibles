@@ -181,14 +181,16 @@ func TestGuessLastNonMissing(t *testing.T) {
 	}
 }
 
-func TestCheckAndUpdate(t *testing.T) {
+func TestCheck(t *testing.T) {
 	// Helper to read test effectif data
 	effectifData := readTestData(t, "testData/test_data.csv")
 
-	// Mock readers/writers
-	mockFilterWriter := &MemoryFilterWriter{}
+	// Mock readers
 	validFilterReader := &MemoryFilterReader{Filter: engine.NoFilter}
 	invalidFilterReader := &MemoryFilterReader{Filter: nil}
+
+	var nilInterfaceReader engine.FilterReader
+	var nilPointerReader *Reader
 
 	testCases := []struct {
 		name         string
@@ -205,7 +207,7 @@ func TestCheckAndUpdate(t *testing.T) {
 			false,
 		},
 		{
-			"Fichier effectif valide -> on crée le filtre",
+			"Fichier effectif valide -> OK",
 			engine.BatchFiles{
 				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
 			},
@@ -213,7 +215,7 @@ func TestCheckAndUpdate(t *testing.T) {
 			false,
 		},
 		{
-			"Pas de fichier filtre ou effectif ou filtre en base -> échec",
+			"Pas de fichier filtre ou effectif ou filtre en base -> NOK",
 			engine.BatchFiles{
 				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
 			},
@@ -228,20 +230,89 @@ func TestCheckAndUpdate(t *testing.T) {
 			validFilterReader,
 			false,
 		},
+		{
+			// Si r = nil.(*Reader), r.Read() retourne NoFilter
+			"Pointeur de Reader nil -> OK",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			nilPointerReader,
+			false,
+		},
+		{
+			// Si r = nil.(engine.FilterReader), r.Read() est illicite
+			"Pointeur d'interface nil -> NOK",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			nilInterfaceReader,
+			true,
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// First check if filtering conditions are met
 			err := Check(tc.filterReader, tc.batchFiles)
 
 			if tc.expectError {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				// If check passed, update the filter state
-				err = UpdateState(mockFilterWriter, tc.batchFiles)
-				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestUpdateState(t *testing.T) {
+	// Helper to read test effectif data
+	effectifData := readTestData(t, "testData/test_data.csv")
+
+	testCases := []struct {
+		name        string
+		batchFiles  engine.BatchFiles
+		expectWrite bool
+	}{
+		{
+			"Effectif file present -> filter should be written",
+			engine.BatchFiles{
+				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+			},
+			true,
+		},
+		{
+			"Explicit filter file present -> filter should NOT be written",
+			engine.BatchFiles{
+				"filter": []engine.BatchFile{engine.NewMockBatchFile("siren\n012345678")},
+			},
+			false,
+		},
+		{
+			"No effectif or filter file -> filter should NOT be written",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			false,
+		},
+		{
+			"Both effectif and filter files present -> filter should NOT be written",
+			engine.BatchFiles{
+				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+				"filter":   []engine.BatchFile{engine.NewMockBatchFile("siren\n012345678")},
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mockFilterWriter := &MemoryFilterWriter{}
+			err := UpdateState(mockFilterWriter, tc.batchFiles)
+			assert.NoError(t, err)
+
+			if tc.expectWrite {
+				assert.NotNil(t, mockFilterWriter.Filter, "Expected filter to be written")
+			} else {
+				assert.Nil(t, mockFilterWriter.Filter, "Expected filter NOT to be written")
 			}
 		})
 	}
@@ -254,56 +325,4 @@ func readTestData(t *testing.T, filePath string) string {
 		t.Fatal(err)
 	}
 	return string(data)
-}
-
-func TestFilterUpdate(t *testing.T) {
-	// Load test data
-	effectifData := readTestData(t, "testData/test_data.csv")
-
-	// Mock filter reader that doesn't provide a filter from database
-	noFilterReader := &MemoryFilterReader{Filter: nil}
-
-	testCases := []struct {
-		name               string
-		batchFiles         engine.BatchFiles
-		expectFilterUpdate bool
-	}{
-		{
-			"should write/update filter file if an effectif file is present but no explicit filter",
-			engine.BatchFiles{
-				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
-				"sireneUL": []engine.BatchFile{engine.NewMockBatchFile("")}, // sireneUL file can be present
-			},
-			true,
-		},
-		{
-			"shouldn't write/update filter file if an explicit filter is provided, even with an effectif file",
-			engine.BatchFiles{
-				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
-				"filter":   []engine.BatchFile{engine.NewMockBatchFile("siren\n012345678")},
-			},
-			false,
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			w := &MemoryFilterWriter{}
-			// First check if filtering conditions are met
-			err := Check(noFilterReader, tc.batchFiles)
-
-			if assert.NoError(t, err) {
-				// Then update the filter state
-				err = UpdateState(w, tc.batchFiles)
-				assert.NoError(t, err)
-
-				// Check that the filter data has been written
-				if tc.expectFilterUpdate {
-					assert.NotNil(t, w.Filter, "Expected filter to be written")
-				} else {
-					assert.Nil(t, w.Filter, "Expected filter NOT to be written")
-				}
-			}
-		})
-	}
 }

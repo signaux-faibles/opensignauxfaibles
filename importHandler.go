@@ -101,8 +101,9 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 5 on récupère le périmètre d'import
 
-	var filterReader engine.FilterReader
-	var filterWriter engine.FilterWriter
+	// Par défaut, ne filtre pas (retourne engine.NoFilter)
+	var filterReader engine.FilterReader = &filter.NoReader{} // No filtering
+	var filterWriter engine.FilterWriter                      // No filter update
 
 	if !params.NoFilter {
 		// Create filter provider with database dependency

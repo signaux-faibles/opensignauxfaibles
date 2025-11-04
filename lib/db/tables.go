@@ -26,10 +26,7 @@ const (
 // AllTables returns all table names that should be truncated during test cleanup
 func AllTables() []string {
 	return []string{
-		VersionTable, // migrations table
-
 		TableImportLogs,
-		TableLabelsMotif,
 		TableStgApconso,
 		TableStgApdemande,
 		TableStgCotisation,
@@ -39,6 +36,7 @@ func AllTables() []string {
 		TableStgEffectifEnt,
 		TableStgSirene,
 		TableStgSireneUl,
+		TableStgFilterImport,
 	}
 }
 

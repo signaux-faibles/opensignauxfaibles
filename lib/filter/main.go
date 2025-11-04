@@ -89,10 +89,17 @@ func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols
 // It checks whether :
 // - a  non-empty filter can be read from the provided reader
 // - OR an "effectif" file is provided.
+//
+// If a nil interface is provided fails.
+// Note however that a nil *Reader pointer is properly handled and accepted.
 func Check(r engine.FilterReader, batchFiles engine.BatchFiles) error {
 	var err error
 
 	effectifFile := batchFiles.GetEffectifFile()
+
+	if r == nil {
+		return errors.New("please provided a supported filter : nil interface is not supported")
+	}
 
 	// check if a filter can be read
 	_, err = r.Read()
@@ -138,6 +145,7 @@ func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
 
 	// Guard clause 3: if no writer is provided, don't update
 	if w == nil {
+		slog.Debug("No filter writer provided, filter is not updated")
 		return nil
 	}
 
