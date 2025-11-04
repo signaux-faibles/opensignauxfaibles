@@ -113,7 +113,16 @@ func (params importBatchHandler) Run() error {
 		if !params.DryRun {
 			filterWriter = &filter.DBWriter{DB: db.DB}
 		}
-		filter.CheckAndUpdate(filterReader, filterWriter, batch.Files)
+
+		// Check if filtering conditions are met
+		if err := filter.Check(filterReader, batch.Files); err != nil {
+			return fmt.Errorf("filter check failed: %w", err)
+		}
+
+		// Update the filter state if needed
+		if err := filter.UpdateState(filterWriter, batch.Files); err != nil {
+			return fmt.Errorf("filter update failed: %w", err)
+		}
 
 		sirenFilter, err = filterReader.Read()
 		if err != nil {

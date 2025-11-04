@@ -232,11 +232,15 @@ func TestCheckAndUpdate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := CheckAndUpdate(tc.filterReader, mockFilterWriter, tc.batchFiles)
+			// First check if filtering conditions are met
+			err := Check(tc.filterReader, tc.batchFiles)
 
 			if tc.expectError {
 				assert.Error(t, err)
 			} else {
+				assert.NoError(t, err)
+				// If check passed, update the filter state
+				err = UpdateState(mockFilterWriter, tc.batchFiles)
 				assert.NoError(t, err)
 			}
 		})
@@ -285,9 +289,14 @@ func TestFilterUpdate(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			w := &MemoryFilterWriter{}
-			err := CheckAndUpdate(noFilterReader, w, tc.batchFiles)
+			// First check if filtering conditions are met
+			err := Check(noFilterReader, tc.batchFiles)
 
 			if assert.NoError(t, err) {
+				// Then update the filter state
+				err = UpdateState(w, tc.batchFiles)
+				assert.NoError(t, err)
+
 				// Check that the filter data has been written
 				if tc.expectFilterUpdate {
 					assert.NotNil(t, w.Filter, "Expected filter to be written")
