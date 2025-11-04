@@ -22,6 +22,10 @@ type Reader struct {
 
 // Read implements engine.FilterReader
 func (p *Reader) Read() (engine.SirenFilter, error) {
+	if p == nil {
+		return engine.NoFilter, nil
+	}
+
 	filterFile := p.Batch.Files.GetFilterFile()
 
 	readers := []engine.FilterReader{
