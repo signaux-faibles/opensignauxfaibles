@@ -7,8 +7,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"opensignauxfaibles/lib/misc"
 )
 
 type HeaderIndexer struct {
@@ -114,7 +112,7 @@ func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	if !ok {
 		return nil, fmt.Errorf("GetFloat64 failed to find column: %v", colName)
 	}
-	return misc.ParsePFloat(indexedRow.row[index])
+	return ParsePFloat(indexedRow.row[index])
 }
 
 // GetCommaFloat64 retourne la valeur décimale avec virgule associée à la colonne donnée, sur la ligne en cours.
@@ -125,7 +123,7 @@ func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
 		return nil, fmt.Errorf("GetCommaFloat64 failed to find column: %v", colName)
 	}
 	normalizedDecimalVal := strings.Replace(indexedRow.row[index], ",", ".", -1)
-	return misc.ParsePFloat(normalizedDecimalVal)
+	return ParsePFloat(normalizedDecimalVal)
 }
 
 // GetInt retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
@@ -135,7 +133,7 @@ func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 	if !ok {
 		return nil, fmt.Errorf("GetInt failed to find column: %v", colName)
 	}
-	return misc.ParsePInt(indexedRow.row[index])
+	return ParsePInt(indexedRow.row[index])
 }
 
 // GetIntFromFloat retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
@@ -145,7 +143,7 @@ func (indexedRow IndexedRow) GetIntFromFloat(colName string) (*int, error) {
 	if !ok {
 		return nil, fmt.Errorf("GetIntFromFloat failed to find column: %v", colName)
 	}
-	return misc.ParsePIntFromFloat(indexedRow.row[index])
+	return ParsePIntFromFloat(indexedRow.row[index])
 }
 
 // GetBool retourne la valeur booléenne associée à la colonne donnée, sur la ligne en cours.
