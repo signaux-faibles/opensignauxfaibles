@@ -83,28 +83,16 @@ func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols
 	return mapFilter, nil
 }
 
-// CheckAndUpdate checks if the conditions for efficient filtering are met and
-// updates the filter if needed.
+// Check checks whether the conditions for filtering are met, as we
+// do not want to import all data by accident.
 //
 // It checks whether :
 // - a  non-empty filter can be read from the provided reader
 // - OR an "effectif" file is provided.
-//
-// It updates (or creates if none exists) the filter if the following conditions are met :
-// - An "effectif" file is provided
-// - AND the filter is not explicitely provided in the batchfile
-//
-// The rationale behind this last point is that a user-provided filter is
-// usually used solely for tests and should not affect the saved perimeter in
-// the database.
-func CheckAndUpdate(r engine.FilterReader, w engine.FilterWriter, batchFiles engine.BatchFiles) error {
-
+func Check(r engine.FilterReader, batchFiles engine.BatchFiles) error {
 	var err error
 
-	effectifFile, _ := batchFiles.GetEffectifFile()
-	if effectifFile != nil {
-		slog.Debug("Found effectif file: " + effectifFile.Path())
-	}
+	effectifFile := batchFiles.GetEffectifFile()
 
 	// check if a filter can be read
 	_, err = r.Read()
@@ -113,37 +101,62 @@ func CheckAndUpdate(r engine.FilterReader, w engine.FilterWriter, batchFiles eng
 
 	if !validFiltering {
 		return errors.New("filter is missing: a filter or one effectif file should be provided")
+	} else {
+		slog.Debug("filter can be retrieved or created from effectif file")
 	}
 
-	// Check if filter has been explicitely provided in the batch
-	_, err = batchFiles.GetFilterFile()
-	filterIsExplicit := (err == nil)
-
-	// If effectif file is provided, and filter file is not explicitely provided
-	// by the user, update the filter
-	if effectifFile != nil && !filterIsExplicit {
-		slog.Debug("Writing filter file")
-
-		// Create the filter
-		sirenFilter, err := Create(
-			effectifFile, // input: the effectif file
-			DefaultNbMois,
-			DefaultMinEffectif,
-			DefaultNbIgnoredCols,
-		)
-
-		if err != nil {
-			return err
-		}
-
-		// Write the filter
-		err = w.Write(sirenFilter)
-
-		if err != nil {
-			return err
-		}
-	}
 	return nil
+}
+
+// UpdateState udpates (or creates) the filter if appropriate.
+// Providing a `nil` writer will result in no update.
+//
+// It updates (or creates if none exists) the filter if the following conditions are met :
+// - An "effectif" file is provided
+// - AND the filter is not explicitely provided in the batchfile
+//
+// The rationale behind this last point is that a user-provided filter is
+// usually used solely for tests and should not affect the saved perimeter in
+// the database.
+func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
+	// Guard clause 1: the import filter is based uniquely on the effectif file.
+	// If no effectif file is provided, there is nothing to update.
+	effectifFile := batchFiles.GetEffectifFile()
+
+	if effectifFile == nil {
+		return nil
+	}
+
+	// Guard clause 2: Check if filter has been explicitely provided in the batch
+	// In this case, we do not update the filter state.
+	filterFile := batchFiles.GetFilterFile()
+	filterIsExplicit := (filterFile != nil)
+
+	if filterIsExplicit {
+		return nil
+	}
+
+	// Guard clause 3: if no writer is provided, don't update
+	if w == nil {
+		return nil
+	}
+
+	slog.Debug("Writing filter file")
+
+	// Create the filter
+	sirenFilter, err := Create(
+		effectifFile, // input: the effectif file
+		DefaultNbMois,
+		DefaultMinEffectif,
+		DefaultNbIgnoredCols,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	// Write the filter
+	return w.Write(sirenFilter)
 }
 
 func newCsvReader(reader io.Reader) *csv.Reader {

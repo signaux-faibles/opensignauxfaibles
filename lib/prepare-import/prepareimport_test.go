@@ -3,8 +3,6 @@ package prepareimport
 import (
 	"errors"
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/filter"
-	"os"
 	"path"
 	"testing"
 	"time"
@@ -12,21 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	mockFilterWriter = &filter.MemoryFilterWriter{}
-
-	// A filter can be read
-	mockFilterReader = &filter.MemoryFilterReader{Filter: engine.NoFilter}
-
-	// No filter can be read
-	errFilterReader = &filter.MemoryFilterReader{Filter: nil}
-)
-
 const (
-	filterFilename         = "filter.csv"
-	effectifFilename       = "sigfaible_effectif_siret.csv"
-	zippedEffectifFilename = "sigfaible_effectif_siret.csv.gz"
-	debitsFilename         = "sigfaibles_debits.csv"
+	debitsFilename = "sigfaibles_debits.csv"
 )
 
 func TestReadFilenames(t *testing.T) {
@@ -44,7 +29,7 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should warn if the batch was not found in the specified directory", func(t *testing.T) {
 		wantedBatch := engine.NewSafeBatchKey("1803") // different of dummyBatchKey
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
-		_, err := PrepareImport(parentDir, wantedBatch, mockFilterReader, mockFilterWriter)
+		_, err := PrepareImport(parentDir, wantedBatch)
 		expected := "could not find directory 1803 in provided path"
 		assert.Error(t, err)
 		assert.Equal(t, expected, err.Error())
@@ -53,7 +38,7 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should identify single filter file", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"filter_2002.csv"})
 
-		res, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
+		res, err := PrepareImport(dir, dummyBatchKey)
 
 		if assert.NoError(t, err) {
 			assert.Contains(t, res.Files, engine.Filter)
@@ -68,7 +53,7 @@ func TestPrepareImport(t *testing.T) {
 	t.Run("Should include an id property", func(t *testing.T) {
 		batch := engine.NewSafeBatchKey("1802")
 		dir := CreateTempFiles(t, batch, []string{"filter_2002.csv"})
-		res, err := PrepareImport(dir, batch, mockFilterReader, mockFilterWriter)
+		res, err := PrepareImport(dir, batch)
 
 		if assert.NoError(t, err) {
 			assert.Equal(t, batch, res.Key)
@@ -88,7 +73,7 @@ func TestPrepareImport(t *testing.T) {
 
 			dir := CreateTempFiles(t, dummyBatchKey, []string{testCase.filename, "filter_2002.csv"})
 
-			res, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
+			res, err := PrepareImport(dir, dummyBatchKey)
 
 			expected := []engine.BatchFile{engine.NewBatchFileFromBatch(dir, dummyBatchKey, testCase.filename)}
 
@@ -100,7 +85,7 @@ func TestPrepareImport(t *testing.T) {
 
 	t.Run("should return list of unsupported files", func(t *testing.T) {
 		dir := CreateTempFiles(t, dummyBatchKey, []string{"unsupported-file.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey, mockFilterReader, mockFilterWriter)
+		_, err := PrepareImport(dir, dummyBatchKey)
 		var e *UnsupportedFilesError
 		if assert.Error(t, err) && errors.As(err, &e) {
 			assert.Equal(t, []string{path.Join(dummyBatchKey.String(), "unsupported-file.csv")}, e.UnsupportedFiles)
@@ -110,12 +95,4 @@ func TestPrepareImport(t *testing.T) {
 
 func makeDayDate(year, month, day int) time.Time {
 	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-}
-
-func ReadFileData(t *testing.T, filePath string) []byte {
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return data
 }

@@ -58,7 +58,7 @@ func (params importBatchHandler) Run() error {
 	}
 
 	// Étape 1
-	// On définit d'abord un ensemble de fichiers à importer (batchProvider)
+	// On définit d'abord un ensemble de fichiers à importer (batch)
 	var batch engine.AdminBatch
 	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
@@ -107,8 +107,15 @@ func (params importBatchHandler) Run() error {
 		sirenFilter = engine.NoFilter
 	} else {
 		// Create filter provider with database dependency
-		filterProvider := &filter.Reader{Batch: &batch, DB: db.DB}
-		sirenFilter, err = filterProvider.Read()
+		filterReader := &filter.Reader{Batch: &batch, DB: db.DB}
+
+		var filterWriter engine.FilterWriter
+		if !params.DryRun {
+			filterWriter = &filter.DBWriter{DB: db.DB}
+		}
+		filter.CheckAndUpdate(filterReader, filterWriter, batch.Files)
+
+		sirenFilter, err = filterReader.Read()
 		if err != nil {
 			return fmt.Errorf("unable to get filter: %w", err)
 		}

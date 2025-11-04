@@ -22,7 +22,7 @@ type Reader struct {
 
 // Read implements engine.FilterReader
 func (p *Reader) Read() (engine.SirenFilter, error) {
-	filterFile, _ := p.Batch.Files.GetFilterFile()
+	filterFile := p.Batch.Files.GetFilterFile()
 
 	readers := []engine.FilterReader{
 		&CsvReader{filterFile},

@@ -10,14 +10,12 @@ import (
 	"os"
 	"path"
 
-	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/filter"
 )
 
 // PrepareImport generates an Admin object from files found at given pathname,
 // in the "batchKey" directory, on the file system.
-func PrepareImport(basepath string, batchKey engine.BatchKey, r engine.FilterReader, w engine.FilterWriter) (engine.AdminBatch, error) {
+func PrepareImport(basepath string, batchKey engine.BatchKey) (engine.AdminBatch, error) {
 
 	slog.Debug(string("Listing data files in " + batchKey + "/ ..."))
 
@@ -51,10 +49,7 @@ type InferBatchProvider struct {
 func (p InferBatchProvider) Get() (engine.AdminBatch, error) {
 	var batch engine.AdminBatch
 
-	w := &filter.DBWriter{DB: db.DB}
-	r := &filter.Reader{Batch: &batch, DB: db.DB}
-
-	batch, err := PrepareImport(p.Path, p.BatchKey, r, w)
+	batch, err := PrepareImport(p.Path, p.BatchKey)
 	if _, ok := err.(UnsupportedFilesError); ok {
 		slog.Warn(fmt.Sprintf("Des fichiers non-identifiés sont présents : %v", err))
 	} else if err != nil {

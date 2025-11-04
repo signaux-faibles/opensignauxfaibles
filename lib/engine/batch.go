@@ -29,11 +29,13 @@ type AdminBatchParams struct {
 // BatchFiles fichiers mappés par type
 type BatchFiles map[ParserType][]BatchFile
 
-func (files BatchFiles) GetFilterFile() (BatchFile, error) {
+// GetFilterFile returns the explicitely provided filter file if there is only one.
+// Returns nil if there is none or several ones.
+func (files BatchFiles) GetFilterFile() BatchFile {
 	if files["filter"] == nil || len(files["filter"]) != 1 {
-		return nil, fmt.Errorf("batch requires just 1 filter file, found: %s", files["filter"])
+		return nil
 	}
-	return files["filter"][0], nil
+	return files["filter"][0]
 }
 
 func (files BatchFiles) GetSireneULFile() (BatchFile, error) {
@@ -43,12 +45,13 @@ func (files BatchFiles) GetSireneULFile() (BatchFile, error) {
 	return files[SireneUl][0], nil
 }
 
-// GetEffectifFile returns the effectif file.
-func (files BatchFiles) GetEffectifFile() (BatchFile, error) {
+// GetEffectifFile returns the effectif file if there is only one.
+// Returns nil if there is none or several ones.
+func (files BatchFiles) GetEffectifFile() BatchFile {
 	if files["effectif"] == nil || len(files["effectif"]) != 1 {
-		return nil, fmt.Errorf("batch requires just 1 effectif file, found: %s", files["effectif"])
+		return nil
 	}
-	return files["effectif"][0], nil
+	return files["effectif"][0]
 }
 
 func (files *BatchFiles) UnmarshalJSON(data []byte) error {
@@ -152,3 +155,4 @@ func NewCompressedBatchFile(path string) BatchFile {
 func NewBatchFileFromBatch(basepath string, batch BatchKey, filename string) BatchFile {
 	return NewBatchFile(basepath, batch.String(), filename)
 }
+
