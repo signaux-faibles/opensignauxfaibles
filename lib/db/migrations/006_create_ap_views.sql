@@ -38,7 +38,7 @@ CREATE INDEX IF NOT EXISTS idx_stg_apdemande_by_period_siren ON stg_apdemande_by
 --
 -- Contrairement à la demande, cette vue bénéficie déjà des bons indexes, et
 -- ne nécessite pas d'être matérialisée
-CREATE OR  REPLACE VIEW stg_apconso_by_period AS
+CREATE OR REPLACE VIEW stg_apconso_by_period AS
 SELECT
     c.siret,
     periode::date,
@@ -54,7 +54,7 @@ WHERE c.siret   IS NOT NULL
 
 
 -- Finalement, on agrége par siret x période les consommations et les demandes
-CREATE OR REPLACE VIEW clean_ap AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS clean_ap AS
 SELECT
     siret,
     LEFT(siret, 9) as siren,
