@@ -1,11 +1,8 @@
 package filter
 
 import (
-	"flag"
 	"testing"
 )
-
-var _ = flag.Bool("update", false, "Update the expected test values in golden file") // please keep this line until https://github.com/kubernetes-sigs/service-catalog/issues/2319#issuecomment-425200065 is fixed
 
 func TestIncludes(t *testing.T) {
 

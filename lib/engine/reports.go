@@ -13,7 +13,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const ReportTable string = "import_logs"
+// ReportTable is the name of the table where import reports are stored
+const ReportTable string = db.TableImportLogs
 
 type ReportSink interface {
 	Process(ch chan Report) error

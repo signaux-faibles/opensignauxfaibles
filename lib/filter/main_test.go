@@ -1,11 +1,12 @@
-package createfilter
+package filter
 
 import (
 	"bufio"
 	"bytes"
-	"encoding/csv"
 	"flag"
 	"fmt"
+	"opensignauxfaibles/lib/engine"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,8 +15,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var outGoldenFile = "test_golden.txt"
-var errGoldenFile = "test_golden_err.txt"
+var outGoldenFile = "testData/test_golden.txt"
+var errGoldenFile = "testData/test_golden_err.txt"
 
 var updateGoldenFile = flag.Bool("update", false, "Update the expected test values in golden file")
 
@@ -25,10 +26,15 @@ func TestCreateFilter(t *testing.T) {
 		var cmdOutput bytes.Buffer
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
-		categorieJuridiqueFilter := CategorieJuridiqueFilter("./test_uniteLegale.csv")
-		err := CreateFilter(&cmdOutput, "test_data.csv", DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols, categorieJuridiqueFilter)
+		filter, err := Create(engine.NewBatchFile("testData/test_data.csv"), DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
+		} else {
+			csvWriter := NewCsvWriter(&cmdOutput)
+			err = csvWriter.Write(filter)
+			if err != nil {
+				cmdError = *bytes.NewBufferString(err.Error())
+			}
 		}
 		expectedOutput := DiffWithGoldenFile(outGoldenFile, *updateGoldenFile, cmdOutput)
 		expectedError := DiffWithGoldenFile(errGoldenFile, *updateGoldenFile, cmdError)
@@ -92,12 +98,14 @@ func TestOutputPerimeter(t *testing.T) {
 // wrapper to run outputPerimeter() on a slice of csv lines
 func getOutputPerimeter(csvLines []string, nbMois, minEffectif, nbIgnoredCols int) (actualSirens []string) {
 	effectifData := strings.Join(csvLines, "\n")
+	mockFile := engine.NewMockBatchFile(effectifData)
 	var output bytes.Buffer
-	reader := csv.NewReader(strings.NewReader(effectifData))
-	reader.Comma = ';'
 	writer := bufio.NewWriter(&output)
-	perimeter := getInitialPerimeter(reader, nbMois, minEffectif, nbIgnoredCols)
-	for siren, _ := range perimeter {
+	perimeter, err := getImportPerimeter(mockFile, nbMois, minEffectif, nbIgnoredCols)
+	if err != nil {
+		panic(err)
+	}
+	for siren := range perimeter {
 		fmt.Fprintln(writer, siren)
 	}
 	writer.Flush()
@@ -132,19 +140,20 @@ func TestGuessLastNonMissing(t *testing.T) {
 		inputCsv string
 		expected int
 	}{
-		{"1,", 1},
-		{",1", 0},
-		{"1,1", 0},
-		{",", 2},
-		{",\n,1", 0},
-		{"1,\n,", 1},
-		{"1,\n1,", 1},
+		{"h;h\n1;", 1},
+		{"h;h\n;1", 0},
+		{"h;h\n1;1", 0},
+		{"h;h\n;", 2},
+		{"h;h\n;\n;1", 0},
+		{"h;h\n1;\n;", 1},
+		{"h;h\n1;\n1;", 1},
 	}
 
 	for i, tc := range testCases {
 		t.Run("Test case without ignored "+strconv.Itoa(i), func(t *testing.T) {
-			reader := csv.NewReader(strings.NewReader(tc.inputCsv))
-			lastNonMissing := guessLastNMissingFromReader(reader, 0)
+			mockFile := engine.NewMockBatchFile(tc.inputCsv)
+			lastNonMissing, err := guessLastNMissing(mockFile, 0)
+			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, lastNonMissing)
 		})
 	}
@@ -153,20 +162,167 @@ func TestGuessLastNonMissing(t *testing.T) {
 		inputCsv string
 		expected int
 	}{
-		{"1,,1", 1},
-		{",1,1", 0},
-		{"1,1,1", 0},
-		{",,1", 2},
-		{",,1\n,1,1", 0},
-		{"1,,1\n,,1", 1},
-		{"1,,1\n1,,1", 1},
+		{"h;h;h\n1;;1", 1},
+		{"h;h;h\n;1;1", 0},
+		{"h;h;h\n1;1;1", 0},
+		{"h;h;h\n;;1", 2},
+		{"h;h;h\n;;1\n;1;1", 0},
+		{"h;h;h\n1;;1\n;;1", 1},
+		{"h;h;h\n1;;1\n1;;1", 1},
 	}
 
 	for i, tc := range testCasesIgnore {
 		t.Run("Test case without ignored "+strconv.Itoa(i), func(t *testing.T) {
-			reader := csv.NewReader(strings.NewReader(tc.inputCsv))
-			lastNonMissing := guessLastNMissingFromReader(reader, 1)
+			mockFile := engine.NewMockBatchFile(tc.inputCsv)
+			lastNonMissing, err := guessLastNMissing(mockFile, 1)
+			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, lastNonMissing)
 		})
 	}
+}
+
+func TestCheck(t *testing.T) {
+	// Helper to read test effectif data
+	effectifData := readTestData(t, "testData/test_data.csv")
+
+	// Mock readers
+	validFilterReader := &MemoryFilterReader{Filter: engine.NoFilter}
+	invalidFilterReader := &MemoryFilterReader{Filter: nil}
+
+	var nilInterfaceReader engine.FilterReader
+	var nilPointerReader *Reader
+
+	testCases := []struct {
+		name         string
+		batchFiles   engine.BatchFiles
+		filterReader engine.FilterReader
+		expectError  bool
+	}{
+		{
+			"Filtre valide explicitement fourni par l'utilisateur -> OK",
+			engine.BatchFiles{
+				"filter": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			validFilterReader,
+			false,
+		},
+		{
+			"Fichier effectif valide -> OK",
+			engine.BatchFiles{
+				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+			},
+			invalidFilterReader,
+			false,
+		},
+		{
+			"Pas de fichier filtre ou effectif ou filtre en base -> NOK",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			invalidFilterReader,
+			true,
+		},
+		{
+			"Pas de fichier filtre ou effectif mais filtre en base -> OK",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			validFilterReader,
+			false,
+		},
+		{
+			// Si r = nil.(*Reader), r.Read() retourne NoFilter
+			"Pointeur de Reader nil -> OK",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			nilPointerReader,
+			false,
+		},
+		{
+			// Si r = nil.(engine.FilterReader), r.Read() est illicite
+			"Pointeur d'interface nil -> NOK",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			nilInterfaceReader,
+			true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := Check(tc.filterReader, tc.batchFiles)
+
+			if tc.expectError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestUpdateState(t *testing.T) {
+	// Helper to read test effectif data
+	effectifData := readTestData(t, "testData/test_data.csv")
+
+	testCases := []struct {
+		name        string
+		batchFiles  engine.BatchFiles
+		expectWrite bool
+	}{
+		{
+			"Effectif file present -> filter should be written",
+			engine.BatchFiles{
+				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+			},
+			true,
+		},
+		{
+			"Explicit filter file present -> filter should NOT be written",
+			engine.BatchFiles{
+				"filter": []engine.BatchFile{engine.NewMockBatchFile("siren\n012345678")},
+			},
+			false,
+		},
+		{
+			"No effectif or filter file -> filter should NOT be written",
+			engine.BatchFiles{
+				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
+			},
+			false,
+		},
+		{
+			"Both effectif and filter files present -> filter should NOT be written",
+			engine.BatchFiles{
+				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+				"filter":   []engine.BatchFile{engine.NewMockBatchFile("siren\n012345678")},
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mockFilterWriter := &MemoryFilterWriter{}
+			err := UpdateState(mockFilterWriter, tc.batchFiles)
+			assert.NoError(t, err)
+
+			if tc.expectWrite {
+				assert.NotNil(t, mockFilterWriter.Filter, "Expected filter to be written")
+			} else {
+				assert.Nil(t, mockFilterWriter.Filter, "Expected filter NOT to be written")
+			}
+		})
+	}
+}
+
+// readTestData reads test data from a file
+func readTestData(t *testing.T, filePath string) string {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(data)
 }

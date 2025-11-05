@@ -1,5 +1,3 @@
-// Package filter provides helper functions for providing a Filter, defining
-// the perimeter of the import
 package filter
 
 import (
@@ -8,27 +6,42 @@ import (
 	"log/slog"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
+	"reflect"
 )
 
-// Get retrieves the SIREN filter using a priority-based approach:
-// 1. Batch filter file (if available)
-// 2. Database (fallback)
-//
-// This is a convenience wrapper that uses default dependencies.
-func Get(batch *engine.AdminBatch) (engine.SirenFilter, error) {
-	filterFile, _ := batch.Files.GetFilterFile()
-
-	readers := []engine.FilterReader{
-		&FileReader{filterFile},
-		&DBReader{db.DB},
-	}
-
-	return GetFromReaders(readers)
+// Reader implements engine.FilterReader
+// It retrieves SIREN filters using a priority-based approach:
+// 1. Batch filter file (if available, e.g. provided by user)
+// 2. Database "stg_filter_import" table
+type Reader struct {
+	Batch *engine.AdminBatch
+	DB    db.Pool
 }
 
-// GetFromReaders tries each reader in order until one succeeds.
-// The first successful filter is cached and returned.
-func GetFromReaders(readers []engine.FilterReader) (engine.SirenFilter, error) {
+// Read implements engine.FilterReader
+func (r *Reader) Read() (engine.SirenFilter, error) {
+	if r == nil {
+		return engine.NoFilter, nil
+	}
+
+	filterFile := r.Batch.Files.GetFilterFile()
+
+	readers := []engine.FilterReader{
+		&CsvReader{filterFile},
+		&DBReader{r.DB, db.TableStgFilterImport},
+	}
+
+	return trySeveralReaders(readers)
+}
+
+// A NoReader provides a NoFilter, with no filtering
+type NoReader struct{}
+
+func (r *NoReader) Read() (engine.SirenFilter, error) { return engine.NoFilter, nil }
+
+// trySeveralReaders tries each reader in order until one succeeds.
+// The first successful filter is returned.
+func trySeveralReaders(readers []engine.FilterReader) (engine.SirenFilter, error) {
 	var filter engine.SirenFilter
 	var lastErr error
 
@@ -38,12 +51,12 @@ func GetFromReaders(readers []engine.FilterReader) (engine.SirenFilter, error) {
 
 		if err != nil {
 			// try next source
+			slog.Debug("filter reader attempt failed", "reader_type", reflect.TypeOf(reader).String(), "error", err)
 			lastErr = err
 			continue
 		}
 
 		if filter != nil {
-			slog.Debug(reader.SuccessStr())
 			return filter, nil
 		}
 	}

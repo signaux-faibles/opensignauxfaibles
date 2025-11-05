@@ -38,8 +38,13 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 		tableName := fmt.Sprintf("stg_%s", parserType)
 		materializedTableUpdate := ""
 
-		if parserType == engine.Apdemande {
-			materializedTableUpdate = "stg_apdemande_by_period"
+		switch parserType {
+		case engine.Apdemande:
+			materializedTableUpdate = db.ViewStgApdemandePeriod
+		case engine.SireneUl:
+			materializedTableUpdate = db.ViewCleanFilter
+		case engine.Effectif:
+			materializedTableUpdate = db.ViewCleanFilter
 		}
 
 		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil

@@ -175,7 +175,7 @@ type TestTuple struct {
 	Test4 *time.Time `csv:"test4" sql:"test4"`
 }
 
-func (TestTuple) Key() string           { return "" }
+func (TestTuple) Key() string      { return "" }
 func (TestTuple) Scope() Scope     { return ScopeEtablissement }
 func (TestTuple) Type() ParserType { return "" }
 
@@ -216,7 +216,7 @@ type dummyParser struct {
 	parserType ParserType
 }
 
-func (parser *dummyParser) Type() ParserType      { return parser.parserType }
+func (parser *dummyParser) Type() ParserType           { return parser.parserType }
 func (parser *dummyParser) New(r io.Reader) ParserInst { return &dummyParserInst{r, parser.initError} }
 
 type dummyParserInst struct {
@@ -239,4 +239,32 @@ func (parser *dummyParserInst) ReadNext(*ParsedLineResult) error {
 type EmptyRegistry struct{}
 
 func (r EmptyRegistry) Resolve(ParserType) Parser { return nil }
-func (r EmptyRegistry) All() []Parser                  { return []Parser{} }
+func (r EmptyRegistry) All() []Parser             { return []Parser{} }
+
+// -----------------------------------------------------
+// Mock BatchFile implementations
+// -----------------------------------------------------
+
+type MockBatchFile struct {
+	content string
+}
+
+func (MockBatchFile) Filename() string   { return "mockfile" }
+func (MockBatchFile) Path() string       { return "./mockfile" }
+func (MockBatchFile) IsCompressed() bool { return false }
+
+func (m MockBatchFile) Open() (io.ReadCloser, error) {
+	return io.NopCloser(strings.NewReader(m.content)), nil
+}
+
+func NewMockBatchFile(content string) BatchFile {
+	return MockBatchFile{content}
+}
+
+type OpenFailsBatchFile struct {
+	MockBatchFile
+}
+
+func (m OpenFailsBatchFile) Open() (io.ReadCloser, error) {
+	return nil, fmt.Errorf("error from Open()")
+}

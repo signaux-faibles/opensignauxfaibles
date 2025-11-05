@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"os"
 	"os/exec"
@@ -109,36 +110,30 @@ func setupSuite() (*TestSuite, error) {
 	}, nil
 }
 
-// setupDBTest returns a cleaner function that truncates tables and reset
-// materialized views.
+// setupDBTest initializes the database connection, runs migrations, and returns
+// a cleanup function that truncates tables and refreshes materialized views.
 func setupDBTest(t *testing.T) func() {
 	t.Helper()
+
+	// Initialize db.DB if not already done
+	if db.DB == nil {
+		err := db.Init(false)
+		assert.NoError(t, err)
+	}
+
 	postgresURI := suite.PostgresURI
 
 	return func() {
-		db, err := pgx.Connect(context.Background(), postgresURI)
+		ctx := context.Background()
+		conn, err := pgx.Connect(ctx, postgresURI)
 		assert.NoError(t, err)
-		tables := []string{
-			"import_logs",
-			"labels_motif_recours",
-			"migrations",
-			"stg_apconso",
-			"stg_apdemande",
-			"stg_cotisation",
-			"stg_debit",
-			"stg_delai",
-			"stg_effectif",
-			"stg_effectif_ent",
-			"stg_sirene",
-			"stg_sirene_ul",
-		}
-		materializedViews := []string{
-			"stg_apdemande_by_period",
-			"filter",
-		}
+		defer conn.Close(ctx)
+
+		tables := db.AllTables()
+		materializedViews := db.AllMaterializedViews()
 
 		// Teardown: truncate tables
-		_, err = db.Exec(
+		_, err = conn.Exec(
 			context.Background(),
 			fmt.Sprintf(
 				"TRUNCATE %s CASCADE;",
@@ -149,7 +144,7 @@ func setupDBTest(t *testing.T) func() {
 
 		// Teardown: refresh views
 		for _, view := range materializedViews {
-			_, err = db.Exec(
+			_, err = conn.Exec(
 				context.Background(),
 				fmt.Sprintf("REFRESH MATERIALIZED VIEW %s;", view),
 			)

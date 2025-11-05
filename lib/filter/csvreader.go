@@ -5,25 +5,23 @@ import (
 	"encoding/csv"
 	"errors"
 	"io"
+	"log/slog"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/sfregexp"
-	"os"
 )
 
-// FileReader reads the filter from a CSV file.
+// CsvReader reads the filter from a CSV file.
 // Implements filterReader
-type FileReader struct {
+type CsvReader struct {
 	BatchFile engine.BatchFile
 }
 
-func (f *FileReader) Read() (engine.SirenFilter, error) {
+func (f *CsvReader) Read() (engine.SirenFilter, error) {
 	if f.BatchFile == nil {
 		return nil, nil
 	}
 
-	p := f.BatchFile.Path()
-
-	file, err := os.Open(p)
+	file, err := f.BatchFile.Open()
 	if err != nil {
 		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
 	}
@@ -34,11 +32,9 @@ func (f *FileReader) Read() (engine.SirenFilter, error) {
 	if err != nil {
 		return nil, errors.New("Erreur à la lecture du fichier, " + err.Error())
 	}
-	return filter, nil
-}
 
-func (f *FileReader) SuccessStr() string {
-	return "Filter retrieved from file"
+	slog.Debug("Filter retrieved from csv")
+	return filter, nil
 }
 
 // parseCSVFilter reads the content of a io.Reader and adds it to an existing

@@ -3,19 +3,26 @@ package filter
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 )
 
 // DBReader reads the filter from the database "filter" table.
 type DBReader struct {
-	Conn db.Pool
+	Conn      db.Pool
+	TableName string
 }
 
 func (f *DBReader) Read() (engine.SirenFilter, error) {
+
+	if f.Conn == nil {
+		return nil, fmt.Errorf("database connection is nil")
+	}
+
 	var filter = make(MapFilter)
 
-	rows, err := f.Conn.Query(context.Background(), "SELECT siren FROM filter")
+	rows, err := f.Conn.Query(context.Background(), fmt.Sprintf("SELECT siren FROM %s", f.TableName))
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving \"filter\" from DB, query failed: %w", err)
 	}
@@ -33,9 +40,10 @@ func (f *DBReader) Read() (engine.SirenFilter, error) {
 		return nil, fmt.Errorf("error reading \"filter\" from DB, rows iteration failed: %w", err)
 	}
 
-	return filter, nil
-}
+	if len(filter) == 0 {
+		return nil, fmt.Errorf("error reading \"filter\" from DB: table %s is empty", f.TableName)
+	}
 
-func (f *DBReader) SuccessStr() string {
-	return "Filter retrieved from DB"
+	slog.Debug("Filter retrieved from DB")
+	return filter, nil
 }

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/misc"
 	"opensignauxfaibles/lib/parsing"
 )
 
@@ -57,7 +56,7 @@ func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineR
 	res.AddRegularError(err)
 	apdemande.HTA, err = idxRow.GetFloat64("HTA")
 	res.AddRegularError(err)
-	apdemande.MTA, err = misc.ParsePFloat(strings.ReplaceAll(idxRow.GetVal("MTA"), ",", "."))
+	apdemande.MTA, err = parsing.ParsePFloat(strings.ReplaceAll(idxRow.GetVal("MTA"), ",", "."))
 	res.AddRegularError(err)
 	apdemande.EffectifAutorise, err = idxRow.GetIntFromFloat("EFF_AUTO")
 	res.AddRegularError(err)
@@ -76,7 +75,7 @@ func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineR
 	res.AddRegularError(err)
 	apdemande.EffectifConsomme, err = idxRow.GetIntFromFloat("S_EFF_CONSOM_TOT")
 	res.AddRegularError(err)
-	apdemande.MontantConsomme, err = misc.ParsePFloat(strings.ReplaceAll(idxRow.GetVal("S_MONTANT_CONSOM_TOT"), ",", "."))
+	apdemande.MontantConsomme, err = parsing.ParsePFloat(strings.ReplaceAll(idxRow.GetVal("S_MONTANT_CONSOM_TOT"), ",", "."))
 	res.AddRegularError(err)
 	apdemande.Perimetre, err = idxRow.GetInt("PERIMETRE_AP")
 	res.AddRegularError(err)

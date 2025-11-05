@@ -1,16 +1,17 @@
 package prepareimport
 
 import (
-	"bytes"
-	"compress/gzip"
 	"errors"
 	"opensignauxfaibles/lib/engine"
-	"os"
 	"path"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+)
+
+const (
+	debitsFilename = "sigfaibles_debits.csv"
 )
 
 func TestReadFilenames(t *testing.T) {
@@ -30,20 +31,7 @@ func TestPrepareImport(t *testing.T) {
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
 		_, err := PrepareImport(parentDir, wantedBatch)
 		expected := "could not find directory 1803 in provided path"
-		assert.Equal(t, expected, err.Error())
-	})
-
-	t.Run("Should warn if no filter is provided", func(t *testing.T) {
-		dir := CreateTempFiles(t, dummyBatchKey, []string{"sigfaibles_debits.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey)
-		expected := "filter is missing: batch should include a filter or one effectif file"
-		assert.Equal(t, expected, err.Error())
-	})
-
-	t.Run("Should warn if 2 effectif files are provided", func(t *testing.T) {
-		dir := CreateTempFiles(t, dummyBatchKey, []string{"sigfaible_effectif_siret.csv", "sigfaible_effectif_siret2.csv"})
-		_, err := PrepareImport(dir, dummyBatchKey)
-		expected := "filter is missing: batch should include a filter or one effectif file"
+		assert.Error(t, err)
 		assert.Equal(t, expected, err.Error())
 	})
 
@@ -77,7 +65,7 @@ func TestPrepareImport(t *testing.T) {
 			filename string
 			filetype engine.ParserType
 		}{
-			{"sigfaible_debits.csv", engine.Debit},
+			{debitsFilename, engine.Debit},
 			{"StockEtablissement_utf8_geo.csv", engine.Sirene},
 		}
 
@@ -103,84 +91,8 @@ func TestPrepareImport(t *testing.T) {
 			assert.Equal(t, []string{path.Join(dummyBatchKey.String(), "unsupported-file.csv")}, e.UnsupportedFiles)
 		}
 	})
-
-	t.Run("should create filter file if an effectif file is present", func(t *testing.T) {
-		// setup expectations
-		filterFileName := "filter_siren.csv"
-
-		// run prepare-import
-		tmpDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			"sigfaible_effectif_siret.csv": ReadFileData(t, "./createfilter/test_data.csv"),
-			"sireneUL.csv":                 ReadFileData(t, "./createfilter/test_uniteLegale.csv"),
-		})
-
-		adminObject, err := PrepareImport(tmpDir, dummyBatchKey)
-
-		// check that the filter is listed in the "files" property
-		if assert.NoError(t, err) {
-			assert.Contains(t, adminObject.Files, engine.Filter)
-			assert.Len(t, adminObject.Files[engine.Filter], 1)
-			assert.Equal(t, adminObject.Files[engine.Filter][0].Filename(), filterFileName)
-
-			// check that the filter file exists
-			filterFilePath := adminObject.Files[engine.Filter][0].Path()
-			assert.True(t, fileExists(filterFilePath), "the filter file was not found: "+filterFilePath)
-		}
-
-	})
-
-	t.Run("should create filter file even if effectif file is compressed", func(t *testing.T) {
-		compressedEffectifData := compressFileData(t, "./createfilter/test_data.csv")
-
-		// setup expectations
-		filterFileName := "filter_siren.csv"
-
-		// run prepare-import
-		batchDir := CreateTempFilesWithContent(t, dummyBatchKey, map[string][]byte{
-			"sigfaible_effectif_siret.csv.gz": compressedEffectifData.Bytes(),
-			"sireneUL.csv":                    ReadFileData(t, "./createfilter/test_uniteLegale.csv"),
-		})
-
-		expectedFiles := engine.BatchFiles{
-			engine.Effectif: {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sigfaible_effectif_siret.csv.gz")},
-			engine.Filter:   {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, filterFileName)},
-			engine.SireneUl: {engine.NewBatchFileFromBatch(batchDir, dummyBatchKey, "sireneUL.csv")},
-		}
-
-		adminObject, err := PrepareImport(batchDir, dummyBatchKey)
-		// check that the filter is listed in the "files" property
-		if assert.NoError(t, err) {
-			assert.Equal(t, expectedFiles, adminObject.Files)
-		}
-		// check that the filter file exists
-		filterFilePath := path.Join(batchDir, dummyBatchKey.String(), filterFileName)
-		assert.True(t, fileExists(filterFilePath), "the filter file was not found: "+filterFilePath)
-	})
 }
 
 func makeDayDate(year, month, day int) time.Time {
 	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
-}
-
-func ReadFileData(t *testing.T, filePath string) []byte {
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return data
-}
-
-func compressFileData(t *testing.T, filePath string) (compressedData bytes.Buffer) {
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	zw := gzip.NewWriter(&compressedData)
-	if _, err = zw.Write(data); err != nil {
-		t.Fatal(err)
-	}
-	if err := zw.Close(); err != nil {
-		t.Fatal(err)
-	}
-	return compressedData
 }

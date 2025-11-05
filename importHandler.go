@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -58,7 +57,7 @@ func (params importBatchHandler) Run() error {
 	}
 
 	// Étape 1
-	// On définit d'abord un ensemble de fichiers à importer (batchProvider)
+	// On définit d'abord un ensemble de fichiers à importer (batch)
 	var batch engine.AdminBatch
 	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
@@ -101,47 +100,76 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 5 on récupère le périmètre d'import
 
-	var sirenFilter engine.SirenFilter
+	// Par défaut, ne filtre pas (retourne engine.NoFilter)
+	var filterReader engine.FilterReader = &filter.NoReader{} // No filtering
+	var filterWriter engine.FilterWriter                      // No filter update
 
-	if params.NoFilter {
-		sirenFilter = engine.NoFilter
-	} else {
-		sirenFilter, err = filter.Get(&batch)
-		if err != nil {
-			return fmt.Errorf("unable to get filter: %w", err)
+	if !params.NoFilter {
+		// Create filter provider with database dependency
+		filterReader = &filter.Reader{Batch: &batch, DB: db.DB}
+		if !params.DryRun {
+			filterWriter = &filter.DBWriter{DB: db.DB}
 		}
+	}
 
-		if sirenFilter == nil {
-			return errors.New(`
+	// Étape 5
+	// On réalise l'import
+	return executeBatchImport(
+		batch,
+		parserTypes,
+		registry.DefaultParsers,
+		filterReader,
+		filterWriter,
+		dataSinkFactory,
+		reportSink,
+	)
+}
+
+// executeBatchImport resolves and updates the filter, and imports data
+//
+// This function is factored out to facilitate testing the filter state
+// changes.
+func executeBatchImport(
+	batch engine.AdminBatch,
+	parserTypes []engine.ParserType,
+	registry engine.ParserRegistry,
+	filterReader engine.FilterReader,
+	filterWriter engine.FilterWriter,
+	sinkFactory engine.SinkFactory,
+	reportSink engine.ReportSink,
+) error {
+	// Check if filtering conditions are met
+	if err := filter.Check(filterReader, batch.Files); err != nil {
+		return fmt.Errorf("filter check failed: %w", err)
+	}
+
+	// Update the filter state if needed
+	if err := filter.UpdateState(filterWriter, batch.Files); err != nil {
+		return fmt.Errorf("filter update failed: %w", err)
+	}
+
+	sirenFilter, err := filterReader.Read()
+	if err != nil {
+		return fmt.Errorf("unable to get filter: %w", err)
+	}
+
+	if sirenFilter == nil {
+		return errors.New(`
       Le filtre est manquant ou n'a pas été initialisé.
       Lorsque le filtre est manquant, il est nécessaire de l'initialiser via
       l'import d'un fichier 'effectif', ou de placer le fichier filtre à
       importer, préfixé par 'filter_' dans le dossier des données à importer.
       Si vous souhaitez importer sans filtre, utilisez l'option "--no-filter".
       `)
-		}
 	}
-
-	// Étape 5
-	// On réalise l'import
 	err = engine.ImportBatch(
 		batch,
 		parserTypes,
-		registry.DefaultParsers,
+		registry,
 		sirenFilter,
-		dataSinkFactory,
+		sinkFactory,
 		reportSink,
 	)
-
-	if err != nil {
-		return err
-	}
-
-	printJSON("Import terminé")
-	return nil
-}
-
-func printJSON(object any) {
-	res, _ := json.Marshal(object)
-	fmt.Println(string(res))
+	slog.Info("Import terminé")
+	return err
 }

@@ -45,6 +45,7 @@ func TestExtractParserTypeFromFilename(t *testing.T) {
 		{"diane_req_2002.csv", engine.Diane},
 		{"diane_req_dom_2002.csv", engine.Diane},
 		{"effectif_dom.csv", engine.Effectif},
+		{"filter.csv", engine.Filter},
 		{"filter_siren_2002.csv", engine.Filter},
 		{"sireneUL.csv", engine.SireneUl},
 		{"StockEtablissement_utf8_geo.csv", engine.Sirene},
