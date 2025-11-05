@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -173,9 +172,4 @@ func executeBatchImport(
 	)
 	slog.Info("Import terminé")
 	return err
-}
-
-func printJSON(object any) {
-	res, _ := json.Marshal(object)
-	fmt.Println(string(res))
 }
