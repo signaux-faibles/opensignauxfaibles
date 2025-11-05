@@ -65,6 +65,7 @@ SELECT
     STRING_AGG(DISTINCT motif_recours, '; ' ORDER BY motif_recours) as motif_recours
 
 FROM (SELECT * FROM stg_apdemande_by_period UNION ALL SELECT * FROM stg_apconso_by_period) tmp
+WHERE LEFT(siret, 9) IN (SELECT siren FROM clean_filter)
 GROUP BY siret, periode;
 
 ---- create above / drop below ----

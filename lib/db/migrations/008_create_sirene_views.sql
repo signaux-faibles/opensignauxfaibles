@@ -25,7 +25,8 @@ CREATE OR REPLACE VIEW clean_sirene AS
     date_creation,
     longitude,
     latitude
-FROM stg_sirene;
+  FROM stg_sirene
+  WHERE siren IN (SELECT siren FROM clean_filter);
 
 CREATE OR REPLACE VIEW clean_sirene_ul AS
   SELECT
@@ -33,7 +34,8 @@ CREATE OR REPLACE VIEW clean_sirene_ul AS
     raison_sociale,
     statut_juridique,
     creation
-  FROM stg_sirene_ul;
+  FROM stg_sirene_ul
+  WHERE siren IN (SELECT siren FROM clean_filter);
 
 ---- create above / drop below ----
 
