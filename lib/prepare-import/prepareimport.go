@@ -22,7 +22,7 @@ func PrepareImport(basepath string, batchKey engine.BatchKey) (engine.AdminBatch
 	batchPath := path.Join(basepath, batchKey.String())
 
 	if _, err := os.ReadDir(batchPath); err != nil {
-		return engine.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchKey.String())
+		return engine.AdminBatch{}, fmt.Errorf("could not find directory %s in provided path", batchPath)
 	}
 
 	batchFiles, unsupportedFiles := PopulateFilesProperty(basepath, batchKey)

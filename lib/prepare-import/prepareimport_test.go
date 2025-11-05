@@ -30,9 +30,9 @@ func TestPrepareImport(t *testing.T) {
 		wantedBatch := engine.NewSafeBatchKey("1803") // different of dummyBatchKey
 		parentDir := CreateTempFiles(t, dummyBatchKey, []string{})
 		_, err := PrepareImport(parentDir, wantedBatch)
-		expected := "could not find directory 1803 in provided path"
+		expected := "could not find directory"
 		assert.Error(t, err)
-		assert.Equal(t, expected, err.Error())
+		assert.Contains(t, err.Error(), expected)
 	})
 
 	t.Run("Should identify single filter file", func(t *testing.T) {
