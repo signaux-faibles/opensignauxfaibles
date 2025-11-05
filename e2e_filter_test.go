@@ -206,28 +206,133 @@ func TestCleanFilter(t *testing.T) {
 111111111,O,,2000-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2000-01-01,A,,,ENTREPRISE PUBLIQUE,,,,4110,62.01Z,NAFRev2,00001,,O
 222222222,O,,2010-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2010-01-01,A,,,ENTREPRISE PRIVEE,,,,5499,62.02A,NAFRev2,00001,,O`
 
-		batch := engine.AdminBatch{
-			Key: "1903",
-			Files: map[engine.ParserType][]engine.BatchFile{
-				engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
-				engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+		testCases := []struct {
+			name         string
+			batches      []engine.AdminBatch
+			company111in bool
+			company222in bool
+		}{
+			{
+				name: "effectif and sireneul simultanous import",
+				batches: []engine.AdminBatch{
+					{
+						Key: "1902",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+						},
+					},
+				},
+				company111in: false,
+				company222in: true,
+			},
+			{
+				name: "effectif import, then sireneul import",
+				batches: []engine.AdminBatch{
+					{
+						Key: "1902",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+						},
+					},
+					{
+						Key: "1903",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+						},
+					},
+				},
+				company111in: false,
+				company222in: true,
+			},
+			{
+				name: "new company appears in effectif : it is not included right away",
+				batches: []engine.AdminBatch{
+					{
+						Key: "1902",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							// Another effectif file to initialize the filter
+							engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+						},
+					},
+					{
+						Key: "1903",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+						},
+					},
+					{
+						Key: "1902",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+						},
+					},
+				},
+				company111in: false,
+				company222in: false,
+			},
+			{
+				name: "new company appears in effectif : after a full new batch import, the company is included",
+				batches: []engine.AdminBatch{
+					{
+						Key: "1902",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							// Another effectif file to initialize the filter
+							engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+						},
+					},
+					{
+						Key: "1903",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+						},
+					},
+					{
+						Key: "1904",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+						},
+					},
+					{
+						Key: "1905",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+						},
+					},
+				},
+				company111in: false,
+				company222in: true,
 			},
 		}
-		err := importWithDB(t, batch)
-		assert.NoError(t, err)
 
-		// Vérifier que 222222222 (entreprise privée) est présent dans clean_effectif
-		rows, err := db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '222222222'")
-		assert.NoError(t, err)
-		siretsFor222, err := pgx.CollectRows(rows, pgx.RowTo[string])
-		assert.NoError(t, err)
-		assert.Greater(t, len(siretsFor222), 0, "L'entreprise 222222222 (privée) devrait être présente dans clean_effectif")
+		for _, tc := range testCases {
 
-		// Vérifier que 111111111 (organisation publique) n'est PAS présent dans clean_effectif
-		rows, err = db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '111111111'")
-		assert.NoError(t, err)
-		siretsFor111, err := pgx.CollectRows(rows, pgx.RowTo[string])
-		assert.NoError(t, err)
-		assert.Equal(t, 0, len(siretsFor111), "L'entreprise 111111111 (publique) ne devrait PAS être présente dans clean_effectif")
+			for _, batch := range tc.batches {
+				err := importWithDB(t, batch)
+				assert.NoError(t, err)
+			}
+
+			// Vérifier que 222222222 (entreprise privée) est présent dans clean_effectif
+			rows, err := db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '222222222'")
+			assert.NoError(t, err)
+			siretsFor222, err := pgx.CollectRows(rows, pgx.RowTo[string])
+			assert.NoError(t, err)
+			if tc.company222in {
+				assert.Greater(t, len(siretsFor222), 0, "L'entreprise 222222222 (privée) devrait être présente dans clean_effectif")
+			} else {
+				assert.Equal(t, len(siretsFor222), 0)
+			}
+
+			// Vérifier que 111111111 (organisation publique) n'est PAS présent dans clean_effectif
+			rows, err = db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '111111111'")
+			assert.NoError(t, err)
+			siretsFor111, err := pgx.CollectRows(rows, pgx.RowTo[string])
+			assert.NoError(t, err)
+			if tc.company111in {
+				assert.Greater(t, len(siretsFor111), 0)
+			} else {
+				assert.Equal(t, len(siretsFor111), 0, "L'entreprise 111111111 (publique) ne devrait PAS être présente dans clean_effectif")
+			}
+		}
 	})
 }
