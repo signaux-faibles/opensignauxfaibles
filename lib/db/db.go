@@ -1,4 +1,15 @@
-// Package db defines an interface for Database operations.
+// Package db défini toutes les interfaces nécessaires pour l'écriture et la
+// lecture dans la base Postgresql.
+//
+// Il définit également l'ensemble des tables et vues sous la forme de
+// migrations.
+//
+// La base de données a une architecture en deux couches :
+// - Les tables préfixées par `stg_` représentent les données importées, plutôt brutes
+// (même si un certain nombre d'opérations de mise en qualité sont déjà
+// réalisées au moment de l'import).
+// - Les tables et vues préfixées par `clean_` sont les tables enrichies et
+// nettoyées.
 package db
 
 import (
