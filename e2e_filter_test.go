@@ -97,6 +97,39 @@ func TestFilter(t *testing.T) {
 		assert.True(t, filter.ShouldSkip(sirenOut))
 		assert.False(t, filter.ShouldSkip(sirenIn))
 	})
+	t.Run("When filter exists, new import with effectif updates the filter", func(t *testing.T) {
+
+		// Create a batch with Debit file and an explicit filter file
+		batch1 := engine.AdminBatch{
+			Key: "1902",
+			Files: map[engine.ParserType][]engine.BatchFile{
+				engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+			},
+		}
+		newEffectifContent := `compte;siret;rais_soc;ape_ins;dep;eff202501;eff202502;base;UR_EMET
+000000000000000000;00000000000000;ENTREPRISE_A;1234Z;75;5;20;116;075077
+111111111111111111;11111111111111;ENTREPRISE_B;5678Z;92;20;20;116;075077`
+
+		batch2 := engine.AdminBatch{
+			Key: "1903",
+			Files: map[engine.ParserType][]engine.BatchFile{
+				engine.Effectif: {engine.NewMockBatchFile(newEffectifContent)},
+			},
+		}
+
+		err := importWithDefaults(t, batch1)
+		assert.NoError(t, err, "should succeed to import when an effectif file is provided")
+
+		err = importWithDefaults(t, batch2)
+		assert.NoError(t, err, "should succeed to import again when filter exists")
+
+		// Check that the filter has been properly updated
+		filter, err := defaultFilterReader(batch2).Read()
+		assert.NoError(t, err)
+		// The new effectif should include former "sirenOut" inside the perimeter.
+		assert.False(t, filter.ShouldSkip(sirenOut))
+		assert.False(t, filter.ShouldSkip(sirenIn))
+	})
 
 	t.Run("Filter created in first import is saved to be reused in subsequent imports", func(t *testing.T) {
 
