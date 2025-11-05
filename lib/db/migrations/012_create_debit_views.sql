@@ -1,5 +1,4 @@
-
-CREATE MATERIALIZED VIEW clean_debit AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS clean_debit AS
 WITH calendar AS (
     SELECT date_trunc('month', current_date) - generate_series(1, 24) * '1 month'::interval AS periode
 ),
