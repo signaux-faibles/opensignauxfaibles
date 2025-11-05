@@ -43,12 +43,12 @@ func importWithDefaults(t *testing.T, batch engine.AdminBatch) error {
 	)
 }
 
-func TestFilter(t *testing.T) {
+func TestImportFilter(t *testing.T) {
 	cleanDB := setupDBTest(t)
-	defer cleanDB()
 
 	t.Run("Import without filter should fail when filter tables are empty, and no explicit filter is provided", func(t *testing.T) {
 		// Create a batch with only Debit file, no explicitely filter provided
+		defer cleanDB()
 		batch := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
@@ -63,6 +63,7 @@ func TestFilter(t *testing.T) {
 
 	t.Run("Import with explicit filter file should succeed", func(t *testing.T) {
 		// Create a batch with Debit file and an explicit filter file
+		defer cleanDB()
 		batch := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
@@ -78,6 +79,7 @@ func TestFilter(t *testing.T) {
 	})
 
 	t.Run("Import with effectif file should succeed", func(t *testing.T) {
+		defer cleanDB()
 
 		// Create a batch with Debit file and an explicit filter file
 		batch := engine.AdminBatch{
@@ -97,7 +99,9 @@ func TestFilter(t *testing.T) {
 		assert.True(t, filter.ShouldSkip(sirenOut))
 		assert.False(t, filter.ShouldSkip(sirenIn))
 	})
+
 	t.Run("When filter exists, new import with effectif updates the filter", func(t *testing.T) {
+		defer cleanDB()
 
 		// Create a batch with Debit file and an explicit filter file
 		batch1 := engine.AdminBatch{
@@ -132,6 +136,7 @@ func TestFilter(t *testing.T) {
 	})
 
 	t.Run("Filter created in first import is saved to be reused in subsequent imports", func(t *testing.T) {
+		defer cleanDB()
 
 		// A first batch creates the filter
 		batch1 := engine.AdminBatch{
@@ -172,3 +177,8 @@ func defaultFilterReader(batch engine.AdminBatch) engine.FilterReader {
 func defaultFilterWriter() engine.FilterWriter {
 	return &filter.DBWriter{DB: db.DB}
 }
+
+// func TestCleanFilter(t *testing.T) {
+// 	cleanDB := setupDBTest(t)
+// 	defer cleanDB()
+// }
