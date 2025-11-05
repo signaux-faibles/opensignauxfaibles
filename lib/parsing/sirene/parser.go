@@ -5,7 +5,6 @@ package sirene
 import (
 	//"bufio"
 
-	"errors"
 	"io"
 	"regexp"
 	"strconv"
@@ -61,18 +60,30 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	sirene.CodePaysEtranger = idxRow.GetVal("codePaysEtrangerEtablissement")
 	sirene.PaysEtranger = idxRow.GetVal("libellePaysEtrangerEtablissement")
 
-	if len(idxRow.GetVal("codePostalEtablissement")) > 2 {
-		sirene.CodePostal = idxRow.GetVal("codePostalEtablissement")
-		departement := idxRow.GetVal("codePostalEtablissement")[0:2]
-		// traitement pour les départements de Corse
-		if idxRow.GetVal("codePostalEtablissement")[0:3] == "201" || idxRow.GetVal("codePostalEtablissement")[0:3] == "200" {
-			departement = "2A"
-		} else if idxRow.GetVal("codePostalEtablissement")[0:2] == "20" {
-			departement = "2B"
+	codePostal := idxRow.GetVal("codePostalEtablissement")
+
+	// Si le code postal a le format attendu de code à 5 chiffres, on extrait le
+	// département.
+	if matched, _ := regexp.MatchString(`^\d{5}`, codePostal); matched {
+		sirene.CodePostal = codePostal
+		departement := ""
+
+		// Départements et territoires d'outre-mer (codes à 3 chiffres)
+		if codePostal[0:2] == "97" || codePostal[0:2] == "98" {
+			departement = codePostal[0:3]
+		} else {
+			// Départements de métropole (codes à 2 chiffres)
+			departement = codePostal[0:2]
+
+			// Traitement spécial pour la Corse
+			if codePostal[0:3] == "200" || codePostal[0:3] == "201" {
+				departement = "2A" // Corse-du-Sud
+			} else if codePostal[0:2] == "20" {
+				departement = "2B" // Haute-Corse
+			}
 		}
+
 		sirene.Departement = departement
-	} else {
-		res.AddRegularError(errors.New("code postal est manquant ou de format incorrect"))
 	}
 
 	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
