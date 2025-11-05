@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS stg_debit (
 );
 
 CREATE INDEX IF NOT EXISTS idx_stg_debit_siret ON stg_debit(siret);
+CREATE INDEX IF NOT EXISTS idx_stg_debit_siren ON stg_debit(LEFT(siret, 9));
 CREATE INDEX IF NOT EXISTS idx_stg_debit_date_traitement ON stg_debit(date_traitement);
 CREATE INDEX IF NOT EXISTS idx_stg_debit_periode_debut ON stg_debit(periode_debut);
 
