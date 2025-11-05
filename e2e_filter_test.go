@@ -3,12 +3,15 @@
 package main
 
 import (
+	"context"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
 	"opensignauxfaibles/lib/registry"
+	"opensignauxfaibles/lib/sinks"
 	"testing"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,9 +31,9 @@ var (
 	Effectif = engine.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")
 )
 
-// importWithDefaults is a test helper that executes an import with default
+// importWithDiscardData is a test helper that executes an import with default
 // behaviors for a given batch
-func importWithDefaults(t *testing.T, batch engine.AdminBatch) error {
+func importWithDiscardData(t *testing.T, batch engine.AdminBatch) error {
 	t.Helper()
 	return executeBatchImport(
 		batch,
@@ -40,6 +43,19 @@ func importWithDefaults(t *testing.T, batch engine.AdminBatch) error {
 		defaultFilterWriter(),
 		&engine.DiscardSinkFactory{},
 		&engine.DiscardReportSink{},
+	)
+}
+
+func importWithDB(t *testing.T, batch engine.AdminBatch) error {
+	t.Helper()
+	return executeBatchImport(
+		batch,
+		[]engine.ParserType{}, // empty means all parsers
+		registry.DefaultParsers,
+		defaultFilterReader(batch),
+		defaultFilterWriter(),
+		sinks.NewPostgresSinkFactory(db.DB),
+		engine.NewPostgresReportSink(db.DB),
 	)
 }
 
@@ -56,7 +72,7 @@ func TestImportFilter(t *testing.T) {
 			},
 		}
 
-		err := importWithDefaults(t, batch)
+		err := importWithDiscardData(t, batch)
 
 		assert.Error(t, err, "should fail to import when filter tables are empty and no explicit filter is provided")
 	})
@@ -73,7 +89,7 @@ func TestImportFilter(t *testing.T) {
 		}
 
 		// Run import with the filter
-		err := importWithDefaults(t, batch)
+		err := importWithDiscardData(t, batch)
 
 		assert.NoError(t, err, "should succeed to import when an explicit filter file is provided")
 	})
@@ -89,7 +105,7 @@ func TestImportFilter(t *testing.T) {
 			},
 		}
 
-		err := importWithDefaults(t, batch)
+		err := importWithDiscardData(t, batch)
 
 		assert.NoError(t, err, "should succeed to import when an effectif file is provided")
 
@@ -121,10 +137,10 @@ func TestImportFilter(t *testing.T) {
 			},
 		}
 
-		err := importWithDefaults(t, batch1)
+		err := importWithDiscardData(t, batch1)
 		assert.NoError(t, err, "should succeed to import when an effectif file is provided")
 
-		err = importWithDefaults(t, batch2)
+		err = importWithDiscardData(t, batch2)
 		assert.NoError(t, err, "should succeed to import again when filter exists")
 
 		// Check that the filter has been properly updated
@@ -146,7 +162,7 @@ func TestImportFilter(t *testing.T) {
 			},
 		}
 
-		err := importWithDefaults(t, batch1)
+		err := importWithDiscardData(t, batch1)
 		assert.NoError(t, err) // tested in test above already
 
 		// A second batch has no effectif or filter file, but should reuse
@@ -178,7 +194,40 @@ func defaultFilterWriter() engine.FilterWriter {
 	return &filter.DBWriter{DB: db.DB}
 }
 
-// func TestCleanFilter(t *testing.T) {
-// 	cleanDB := setupDBTest(t)
-// 	defer cleanDB()
-// }
+func TestCleanFilter(t *testing.T) {
+	cleanDB := setupDBTest(t)
+	t.Run("Après l'import d'effectif et de sirene_ul, les vues préfixées par \"clean_\" sont correctement filtrées", func(t *testing.T) {
+		defer cleanDB()
+
+		effectifContentTwoIns := effectifContent + "\n" +
+			"222222222222222222;22222222222222;ENTREPRISE_C;5678Z;95;20;116;075077`"
+
+		sireneUlContent := `siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale
+111111111,O,,2000-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2000-01-01,A,,,ENTREPRISE PUBLIQUE,,,,4110,62.01Z,NAFRev2,00001,,O
+222222222,O,,2010-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2010-01-01,A,,,ENTREPRISE PRIVEE,,,,5499,62.02A,NAFRev2,00001,,O`
+
+		batch := engine.AdminBatch{
+			Key: "1903",
+			Files: map[engine.ParserType][]engine.BatchFile{
+				engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+				engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+			},
+		}
+		err := importWithDB(t, batch)
+		assert.NoError(t, err)
+
+		// Vérifier que 222222222 (entreprise privée) est présent dans clean_effectif
+		rows, err := db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '222222222'")
+		assert.NoError(t, err)
+		siretsFor222, err := pgx.CollectRows(rows, pgx.RowTo[string])
+		assert.NoError(t, err)
+		assert.Greater(t, len(siretsFor222), 0, "L'entreprise 222222222 (privée) devrait être présente dans clean_effectif")
+
+		// Vérifier que 111111111 (organisation publique) n'est PAS présent dans clean_effectif
+		rows, err = db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '111111111'")
+		assert.NoError(t, err)
+		siretsFor111, err := pgx.CollectRows(rows, pgx.RowTo[string])
+		assert.NoError(t, err)
+		assert.Equal(t, 0, len(siretsFor111), "L'entreprise 111111111 (publique) ne devrait PAS être présente dans clean_effectif")
+	})
+}
