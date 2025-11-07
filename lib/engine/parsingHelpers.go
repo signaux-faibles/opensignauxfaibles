@@ -5,12 +5,14 @@ import (
 )
 
 // ParseLines appelle la fonction parseLine() sur chaque ligne du fichier CSV pour transmettre les tuples et/ou erreurs dans parsedLineChan.
-func ParseLines(parserInst ParserInst, parsedLineChan chan ParsedLineResult) {
+//
+// "filename" is used for logging purposes.
+func ParseLines(parserInst ParserInst, parsedLineChan chan ParsedLineResult, filename string) {
 	defer close(parsedLineChan)
 
 	var lineNumber = 0 // starting with the header
 
-	stopProgressLogger := LogProgress(&lineNumber)
+	stopProgressLogger := LogProgress(&lineNumber, filename)
 	defer stopProgressLogger()
 
 	for {
