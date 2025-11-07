@@ -5,14 +5,16 @@
       "raison_sociale": "",
       "prenom1_unite_legale": "cuhgjdp",
       "nom_unite_legale": "jjqcmkg",
-      "statut_juridique": "5465"
+      "statut_juridique": "5465",
+      "activite_principale": "41.19A"
     },
     {
       "siren": "789211558",
       "raison_sociale": "",
       "prenom1_unite_legale": "ajfwprw-qmxobv",
       "nom_unite_legale": "fvxmjl",
-      "statut_juridique": "5258"
+      "statut_juridique": "5258",
+      "activite_principale": "71.06B"
     },
     {
       "siren": "238307776",
@@ -20,13 +22,15 @@
       "prenom1_unite_legale": "wwdsrst",
       "nom_unite_legale": "nduxdzbou",
       "statut_juridique": "4263",
-      "date_creation": "1964-01-01T00:00:00Z"
+      "date_creation": "1964-01-01T00:00:00Z",
+      "activite_principale": "97.90"
     },
     {
       "siren": "112233445",
       "raison_sociale": "companyname",
       "statut_juridique": "5422",
-      "date_creation": "1967-01-01T00:00:00Z"
+      "date_creation": "1967-01-01T00:00:00Z",
+      "activite_principale": "68.01Z"
     }
   ],
   "reports": [
