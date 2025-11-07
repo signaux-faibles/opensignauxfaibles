@@ -262,7 +262,7 @@ func TestCleanFilter(t *testing.T) {
 						},
 					},
 					{
-						Key: "1902",
+						Key: "1904",
 						Files: map[engine.ParserType][]engine.BatchFile{
 							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
 						},
