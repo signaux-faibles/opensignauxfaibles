@@ -43,6 +43,7 @@ func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 	sireneul.NomUniteLegale = idxRow.GetVal("nomUniteLegale")
 	sireneul.NomUsageUniteLegale = idxRow.GetVal("nomUsageUniteLegale")
 	sireneul.CodeStatutJuridique = idxRow.GetVal("categorieJuridiqueUniteLegale")
+	sireneul.ActivitePrincipale = idxRow.GetVal("activitePrincipaleUniteLegale")
 
 	creation, err := time.Parse("2006-01-02", idxRow.GetVal("dateCreationUniteLegale")) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
