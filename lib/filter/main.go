@@ -182,7 +182,7 @@ func newCsvReader(reader io.Reader) *csv.Reader {
 
 // getImportPerimeter makes a perimeter on effectif criterias alone
 // This perimeter is used for efficient imports, and is further refined with
-// SQL for the "clean_data" layer
+// SQL for the "clean_data" layer (see the "clean_filter" materialized view)
 func getImportPerimeter(effectifFile engine.BatchFile, nbMois, minEffectif, nIgnoredCols int) (map[string]struct{}, error) {
 	f, err := effectifFile.Open()
 	if err != nil {
@@ -221,11 +221,10 @@ func getImportPerimeter(effectifFile engine.BatchFile, nbMois, minEffectif, nIgn
 			}
 		} else {
 			skippedLines++
-			fmt.Printf("%d digit siret encountered, skipping line %d \n", len(siret), lineNumber)
 		}
 	}
 	if skippedLines > 0 {
-		fmt.Printf("%d lines with bad siret/siren skipped :( \n", skippedLines)
+		slog.Info(fmt.Sprintf("%d lines with bad siret/siren skipped in the effectif file at filter creation", skippedLines))
 	}
 	return detectedSirens, nil
 }
