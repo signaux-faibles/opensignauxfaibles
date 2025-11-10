@@ -161,8 +161,6 @@ func (params importBatchHandler) Run() error {
 			Reader: reader,
 			Writer: writer,
 		}
-	} else {
-		slog.Info("no-filter mode: any filter is ignored and all data will be imported")
 	}
 
 	// Étape 6: Execute import
