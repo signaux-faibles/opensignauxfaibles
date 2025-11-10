@@ -6,5 +6,5 @@ Flags:
 
 Commands:
     parseFile    Parse un fichier vers la sortie standard
-    import       Importe des fichiers de données
+    import       Import data files
 ---

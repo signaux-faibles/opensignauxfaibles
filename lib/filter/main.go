@@ -169,7 +169,7 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 		return err
 	}
 
-	slog.Debug("updated filter written with success")
+	slog.Info("updated filter written with success")
 	return nil
 }
 

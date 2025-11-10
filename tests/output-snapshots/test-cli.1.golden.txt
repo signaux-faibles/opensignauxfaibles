@@ -1,3 +1,3 @@
 $ ./sfdata 
-Commande non reconnue. Utilisez ./sfdata --help pour lister les commandes.
+Unrecognized command. Use ./sfdata --help to list available commands.
 ---
