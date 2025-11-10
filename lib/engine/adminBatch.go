@@ -60,7 +60,7 @@ func ImportBatch(
 		defer cancelParserProcess(nil)
 
 		if len(batchConfig.Files[parser.Type()]) > 0 {
-			logger.Info("parse raw data", "parser", parser.Type())
+			logger.Info("parse raw data...", "parser", parser.Type())
 
 			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter)
 
