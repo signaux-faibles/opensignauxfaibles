@@ -116,6 +116,7 @@ func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
 	effectifFile := batchFiles.GetEffectifFile()
 
 	if effectifFile == nil {
+		slog.Info("no effectif file provided, filter is not updated")
 		return nil
 	}
 
@@ -125,16 +126,17 @@ func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
 	filterIsExplicit := (filterFile != nil)
 
 	if filterIsExplicit {
+		slog.Info("explicit effectif file provided, filter is not update")
 		return nil
 	}
 
 	// Guard clause 3: if no writer is provided, don't update
 	if w == nil {
-		slog.Debug("No filter writer provided, filter is not updated")
+		slog.Warn("no filter writer provided, filter is not updated")
 		return nil
 	}
 
-	slog.Debug("Writing filter file")
+	slog.Info("update filter...")
 
 	// Create the filter
 	sirenFilter, err := Create(
@@ -149,7 +151,14 @@ func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
 	}
 
 	// Write the filter
-	return w.Write(sirenFilter)
+	err = w.Write(sirenFilter)
+
+	if err != nil {
+		return err
+	}
+
+	slog.Debug("updated filter written with success")
+	return nil
 }
 
 func newCsvReader(reader io.Reader) *csv.Reader {

@@ -39,8 +39,7 @@ func importWithDiscardData(t *testing.T, batch engine.AdminBatch) error {
 		batch,
 		[]engine.ParserType{}, // empty means all parsers
 		registry.DefaultParsers,
-		defaultFilterReader(batch),
-		defaultFilterWriter(),
+		defaultFilterResolver(batch),
 		&engine.DiscardSinkFactory{},
 		&engine.DiscardReportSink{},
 	)
@@ -52,8 +51,7 @@ func importWithDB(t *testing.T, batch engine.AdminBatch) error {
 		batch,
 		[]engine.ParserType{}, // empty means all parsers
 		registry.DefaultParsers,
-		defaultFilterReader(batch),
-		defaultFilterWriter(),
+		defaultFilterResolver(batch),
 		sinks.NewPostgresSinkFactory(db.DB),
 		engine.NewPostgresReportSink(db.DB),
 	)
@@ -110,7 +108,7 @@ func TestImportFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import when an effectif file is provided")
 
 		// Check that the filter has been properly updated
-		filter, err := defaultFilterReader(batch).Read()
+		filter, err := readFilterFromDB(batch)
 		assert.NoError(t, err)
 		assert.True(t, filter.ShouldSkip(sirenOut))
 		assert.False(t, filter.ShouldSkip(sirenIn))
@@ -144,7 +142,7 @@ func TestImportFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import again when filter exists")
 
 		// Check that the filter has been properly updated
-		filter, err := defaultFilterReader(batch2).Read()
+		filter, err := readFilterFromDB(batch2)
 		assert.NoError(t, err)
 		// The new effectif should include former "sirenOut" inside the perimeter.
 		assert.False(t, filter.ShouldSkip(sirenOut))
@@ -177,21 +175,25 @@ func TestImportFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import when a filter has been created in DB")
 
 		// Check that the filter has been left unchanged
-		filter, err := defaultFilterReader(batch2).Read()
+		filter, err := readFilterFromDB(batch2)
 		assert.NoError(t, err)
 		assert.True(t, filter.ShouldSkip("000000000"))
 		assert.False(t, filter.ShouldSkip("111111111"))
 	})
 }
 
-// Default FilterReader (without the --no-filter option)
-func defaultFilterReader(batch engine.AdminBatch) engine.FilterReader {
-	return &filter.Reader{Batch: &batch, DB: db.DB}
+// defaultFilterResolver creates a StandardFilterResolver for testing (without --no-filter flag)
+func defaultFilterResolver(batch engine.AdminBatch) engine.FilterResolver {
+	return &filter.StandardFilterResolver{
+		Reader: &filter.Reader{Batch: &batch, DB: db.DB},
+		Writer: &filter.DBWriter{DB: db.DB},
+	}
 }
 
-// Default FilterWriter (without the --no-filter and --dry-run options)
-func defaultFilterWriter() engine.FilterWriter {
-	return &filter.DBWriter{DB: db.DB}
+// readFilterFromDB reads the current filter from the database for a given batch
+func readFilterFromDB(batch engine.AdminBatch) (engine.SirenFilter, error) {
+	reader := &filter.Reader{Batch: &batch, DB: db.DB}
+	return reader.Read()
 }
 
 func TestCleanFilter(t *testing.T) {
