@@ -59,7 +59,7 @@ func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, id
 		}
 		ccsf.NumeroCompte = idxRow.GetVal("Compte")
 	} else {
-		res.AddRegularError(errors.New("ligne non conforme, moins de 4 champs"))
+		res.AddRegularError(errors.New("invalid line, fewer than 4 fields"))
 	}
 	if len(res.Errors) == 0 {
 		res.AddTuple(ccsf)

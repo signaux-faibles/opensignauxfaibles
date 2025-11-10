@@ -17,20 +17,33 @@ import (
 type importBatchHandler struct {
 	Enable          bool     // set to true by cosiner/flag if the user is running this command
 	Path            string   `names:"--path" env:"APP_DATA" desc:"Directory where raw data can be found. If the batch is not explicitly defined via \"--batch-config\", then it is expected to be in a subfolder named after the batchkey provided with \"--batch\""`
-	BatchKey        string   `names:"--batch" arglist:"batch_key" desc:"Identifiant du batch à importer (ex: 1802, pour Février 2018)"`
-	Parsers         []string `names:"--parsers" desc:"Parseurs à employer (ex: apconso, cotisation)"` // TODO: tester la population de ce paramètre
-	NoFilter        bool     `names:"--no-filter" desc:"Pour procéder à l'import même si aucun filtre n'est fourni"`
-	BatchConfigFile string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA."`
-	DryRun          bool     `names:"--dry-run" desc:"Pour parser les fichiers sans créer de fichiers CSV / imports en base"`
+	BatchKey        string   `names:"--batch" arglist:"batch_key" desc:"Batch identifier to import (e.g., 1802 for February 2018)"`
+	Parsers         []string `names:"--parsers" desc:"Parsers to use (e.g., apconso, cotisation). Consult documentation with --help for full list of available parsers."` // TODO: tester la population de ce paramètre
+	NoFilter        bool     `names:"--no-filter" desc:"Proceed with import without filtering input data, and without updating the filter stored in DB."`
+	BatchConfigFile string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Path to batch definition file. If not provided, files are inferred from their naming in the data directory (defined by \"APP_DATA\" environment variable or --path option."`
+	DryRun          bool     `names:"--dry-run" desc:"Parse files without creating CSV files / database imports. Import report is printed to stdout."`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
 	return flag.Flag{
-		Usage: "Importe des fichiers de données",
+		Usage: "Import data files",
 		Desc: `
-		Effectue l'import de tous les fichiers du batch donné en paramètre.
-		Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
-		Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+		Handles the import and cleaning of input files.
+
+    All imported data is expected to be found in a single directory, that can be defined via "--path" and "--batch" options.
+
+    The imported files are either explicitely provided via a batch configuration file, or by default, inferred from their naming.
+
+    As the import perimeter is usually a fraction of the raw data, the
+    pipeline will use either an explicitely provided filter (as part of the
+    batch coniguration file), or a filter stored in database (table
+    "stg_filter_import"). If an "effectif" file is provided, the filter will
+    be updated (or created if none exists).
+
+
+    The cleaned data is then send to two sinks : one writing CSV files, the other one storing data inside a Postgresql database.
+
+		It is possible to limit execution to certain parsers by specifying the list with the "--parsers" flag.
 	`,
 	}
 }
@@ -41,12 +54,12 @@ func (params importBatchHandler) IsEnabled() bool {
 
 func (params importBatchHandler) Validate() error {
 	if params.BatchKey == "" {
-		return errors.New("paramètre `batch` obligatoire")
+		return errors.New("`batch` parameter is required")
 	}
 	return nil
 }
 
-// Run importBatchHandler traite les demandes d'import par l'API
+// Run importBatchHandler processes import requests from the API
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
@@ -60,12 +73,12 @@ func (params importBatchHandler) Run() error {
 	var batch engine.AdminBatch
 	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
-		slog.Info("Batch fourni en paramètre, lecture de la configuration du batch")
+		slog.Info("batch parameter provided, reading batch configuration")
 		batch, err = engine.JSONBatchProvider{Path: params.BatchConfigFile}.Get()
 
 	} else {
 		// On devine le batch à partir des noms de fichiers
-		slog.Info("Batch non fourni en paramètre, tentative de déterminer les fichiers à importer")
+		slog.Info("batch parameter not provided, attempting to determine files to import")
 		batch, err = prepareimport.InferBatchProvider{Path: params.Path, BatchKey: batchKey}.Get()
 	}
 
@@ -144,6 +157,15 @@ func executeBatchImport(
 		return err
 	}
 
+	if sirenFilter == nil {
+		return errors.New(`
+      The filter is missing or has not been initialized.
+      When the filter is missing, it must be initialized by importing an 'effectif' file,
+      or by placing a filter file (prefixed with 'filter_') in the data import directory.
+      If you wish to import without a filter, use the "--no-filter" option.
+      `)
+	}
+
 	// Import with the resolved filter
 	err = engine.ImportBatch(
 		batch,
@@ -153,6 +175,6 @@ func executeBatchImport(
 		sinkFactory,
 		reportSink,
 	)
-	slog.Info("Import terminé")
+	slog.Info("import completed")
 	return err
 }

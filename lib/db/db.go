@@ -1,15 +1,15 @@
-// Package db défini toutes les interfaces nécessaires pour l'écriture et la
-// lecture dans la base Postgresql.
+// Package db defines all necessary interfaces for writing to and
+// reading from the PostgreSQL database.
 //
-// Il définit également l'ensemble des tables et vues sous la forme de
+// It also defines all tables and views in the form of
 // migrations.
 //
-// La base de données a une architecture en deux couches :
-// - Les tables préfixées par `stg_` représentent les données importées, plutôt brutes
-// (même si un certain nombre d'opérations de mise en qualité sont déjà
-// réalisées au moment de l'import).
-// - Les tables et vues préfixées par `clean_` sont les tables enrichies et
-// nettoyées.
+// The database has a two-layer architecture :
+// - Tables prefixed with `stg_` represent imported data, relatively raw
+// (although a number of quality operations are already
+// performed at import time).
+// - Tables and views prefixed with `clean_` are enriched and
+// cleaned tables.
 package db
 
 import (
@@ -53,19 +53,19 @@ func Init(noDB bool) error {
 	conn, err := pgxpool.New(ctx, viper.GetString("POSTGRES_DB_URL"))
 
 	if err != nil {
-		return fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
+		return fmt.Errorf("failed to connect to PostgreSQL: %w", err)
 	}
 
 	// Test connectivity with postgreSQL database
 	err = conn.Ping(ctx)
 
 	if err != nil {
-		return fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
+		return fmt.Errorf("failed to connect to PostgreSQL: %w", err)
 	}
 
 	// Run database migrations
 	if err := runMigrations(ctx, conn); err != nil {
-		return fmt.Errorf("erreur lors de l'exécution des migrations : %w", err)
+		return fmt.Errorf("failed to execute migrations: %w", err)
 	}
 
 	DB = conn

@@ -22,11 +22,11 @@ func DiffWithGoldenFile(filename string, updateGoldenFile bool, cmdOutput bytes.
 	return expected
 }
 
-// ReadGoldenFile retourne le fichier passé en paramètre sous forme de chaine de caractère
+// ReadGoldenFile returns the file passed as parameter as a string
 func ReadGoldenFile(filename string) string {
 	expected, err := os.ReadFile(filename)
 	if err != nil {
-		log.Fatal(errors.Wrap(err, "Erreur de lecture du Golden File"))
+		log.Fatal(errors.Wrap(err, "error reading golden file"))
 	}
 	return string(expected)
 }

@@ -1,6 +1,6 @@
-// Package engine est la colonne vertebrale de l'import. Elle définit les
-// interfaces pour définer les parsers, le filtre, les sinks (vers lesquels
-// la donnée sera envoyée).
+// Package engine is the backbone of the import. It defines the
+// interfaces for defining parsers, the filter, and sinks (to which
+// data will be sent).
 package engine
 
 import (
@@ -15,7 +15,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// Load charge les données d'un batch depuis du JSON
+// Load loads batch data from JSON
 func Load(batch *AdminBatch, reader io.Reader) error {
 	batchFileContent, err := io.ReadAll(reader)
 	if err != nil {
@@ -26,7 +26,7 @@ func Load(batch *AdminBatch, reader io.Reader) error {
 	return err
 }
 
-// ImportBatch lance tous les parsers sur le batch fourni
+// ImportBatch runs all parsers on the provided batch
 func ImportBatch(
 	batchConfig AdminBatch,
 	parserTypes []ParserType,
@@ -143,7 +143,7 @@ func (p JSONBatchProvider) Get() (AdminBatch, error) {
 	}
 
 	if err != nil {
-		return batch, fmt.Errorf("impossible de charger la configuration du batch : %w", err)
+		return batch, fmt.Errorf("unable to load batch configuration : %w", err)
 	}
 
 	return batch, nil

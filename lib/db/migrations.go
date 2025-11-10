@@ -24,29 +24,29 @@ func runMigrations(ctx context.Context, pool Pool) error {
 
 	conn, err := pool.Acquire(ctx)
 	if err != nil {
-		return fmt.Errorf("impossible d'acquérir une connexion du pool : %w", err)
+		return fmt.Errorf("unable to acquire connection from pool: %w", err)
 	}
 	defer conn.Release()
 
 	migrator, err := migrate.NewMigrator(ctx, conn.Conn(), VersionTable)
 	if err != nil {
-		return fmt.Errorf("impossible d'initialiser les migrations : %w", err)
+		return fmt.Errorf("unable to initialize migrations: %w", err)
 	}
 
 	if err := migrator.LoadMigrations(MigrationFS); err != nil {
-		return fmt.Errorf("impossible de charger les migrations : %w", err)
+		return fmt.Errorf("unable to load migrations: %w", err)
 	}
 
 	currentVersion, errCV := migrator.GetCurrentVersion(ctx)
 
 	if err := migrator.Migrate(ctx); err != nil {
-		return fmt.Errorf("échec de la migration : %w", err)
+		return fmt.Errorf("migration failed: %w", err)
 	}
 
 	newVersion, errNV := migrator.GetCurrentVersion(ctx)
 
 	if newVersion != currentVersion && errCV == nil && errNV == nil {
-		slog.Info("Migrations exécutées", "version initiale", currentVersion, "nouvelle version", newVersion)
+		slog.Info("migrations executed", "initial version", currentVersion, "new version", newVersion)
 	}
 
 	return nil

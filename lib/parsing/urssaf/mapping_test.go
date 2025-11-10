@@ -17,19 +17,19 @@ import (
 
 func TestReadSiretMapping(t *testing.T) {
 
-	t.Run("readSiretMapping doit être insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
+	t.Run("readSiretMapping should be case-insensitive for column headers", func(t *testing.T) {
 		csvHeader := `UrsSaf_geStion;DEp;ComptE;Etat_Compte;SIren;Siret;Date_creA_siret;DatE_disp_sirEt;Cle_mD5`
 		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NoFilter)
 		assert.NoError(t, err)
 	})
 
-	t.Run("readSiretMapping doit rapporter une erreur s'il manque une colonne", func(t *testing.T) {
+	t.Run("readSiretMapping should report error when column is missing", func(t *testing.T) {
 		csvHeader := `UrsSaf_geStion`
 		_, err := readSiretMapping(strings.NewReader(csvHeader), engine.NoFilter)
 		assert.Error(t, err, "Colonne Compte non trouvée.")
 	})
 
-	t.Run("readSiretMapping doit produire les mêmes tuples que d'habitude", func(t *testing.T) {
+	t.Run("readSiretMapping should produce the same tuples as usual", func(t *testing.T) {
 
 		stdTime1, _ := time.Parse("2006-01-02", "2899-01-01")
 		stdTime2, _ := time.Parse("2006-01-02", "2015-01-01")

@@ -51,12 +51,12 @@ func (p InferBatchProvider) Get() (engine.AdminBatch, error) {
 
 	batch, err := PrepareImport(p.Path, p.BatchKey)
 	if _, ok := err.(UnsupportedFilesError); ok {
-		slog.Warn(fmt.Sprintf("Des fichiers non-identifiés sont présents : %v", err))
+		slog.Warn(fmt.Sprintf("unidentified files are present : %v", err))
 	} else if err != nil {
-		return batch, fmt.Errorf("une erreur est survenue en préparant l'import : %w", err)
+		return batch, fmt.Errorf("error occurred while preparing import : %w", err)
 	}
 
-	slog.Info("Batch inféré avec succès")
+	slog.Info("batch successfully inferred")
 
 	batchJSON, _ := json.MarshalIndent(batch, "", "  ")
 	if batchJSON != nil {

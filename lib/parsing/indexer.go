@@ -17,7 +17,7 @@ type HeaderIndexer struct {
 	Dest any
 }
 
-// Index valide puis indexe les colonnes trouvées
+// Index validates then indexes the found columns
 // en en-tête d'un fichier csv, à partir des noms de colonnes spécifiés dans le
 // tag "input"  annotant les propriétés du type de destination du parseur.
 //
@@ -42,7 +42,7 @@ func (i HeaderIndexer) Index(headers []string, caseSensitive bool) (ColIndex, er
 	return colIndex, err
 }
 
-// ColIndex fournit l'indice de chaque colonne.
+// ColIndex provides the index of each column.
 type ColIndex struct {
 	mapping       map[string]int
 	caseSensitive bool
@@ -64,29 +64,29 @@ func (idx ColIndex) Get(name string) (int, bool) {
 	return pos, found
 }
 
-// HasFields vérifie la présence d'un ensemble de colonnes.
+// HasFields checks the presence of a set of columns.
 func (idx ColIndex) HasFields(requiredFields []string) (bool, error) {
 	for _, name := range requiredFields {
 		if _, found := idx.Get(name); !found {
-			return false, errors.New("Colonne " + name + " non trouvée. Abandon.")
+			return false, errors.New("column " + name + " not found, aborting")
 		}
 	}
 	return true, nil
 }
 
-// IndexRow retourne une structure pour faciliter la lecture de données.
+// IndexRow returns a structure to facilitate data reading.
 func (idx ColIndex) IndexRow(row []string) IndexedRow {
 	return IndexedRow{idx, row}
 }
 
-// IndexedRow facilite la lecture de données par colonnes, dans une ligne.
+// IndexedRow facilitates reading data by columns, within a row.
 type IndexedRow struct {
 	idx ColIndex
 	row []string
 }
 
-// GetVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
-// Dans le cas où la colonne n'existe pas, une erreur fatale est déclenchée.
+// GetVal returns the value associated with the given column, on the current row.
+// If the column does not exist, a fatal error is triggered.
 func (indexedRow IndexedRow) GetVal(colName string) string {
 	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
@@ -95,8 +95,8 @@ func (indexedRow IndexedRow) GetVal(colName string) string {
 	return indexedRow.row[index]
 }
 
-// GetOptionalVal retourne la valeur associée à la colonne donnée, sur la ligne en cours.
-// Dans le cas où la colonne n'existe pas, le booléen sera faux.
+// GetOptionalVal returns the value associated with the given column, on the current row.
+// If the column does not exist, the boolean will be false.
 func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
@@ -105,8 +105,8 @@ func (indexedRow IndexedRow) GetOptionalVal(colName string) (string, bool) {
 	return indexedRow.row[index], true
 }
 
-// GetFloat64 retourne la valeur décimale associée à la colonne donnée, sur la ligne en cours.
-// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+// GetFloat64 returns the decimal value associated with the given column, on the current row.
+// A nil pointer is returned if the column does not exist or the value is an empty string.
 func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
@@ -115,8 +115,8 @@ func (indexedRow IndexedRow) GetFloat64(colName string) (*float64, error) {
 	return ParsePFloat(indexedRow.row[index])
 }
 
-// GetCommaFloat64 retourne la valeur décimale avec virgule associée à la colonne donnée, sur la ligne en cours.
-// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+// GetCommaFloat64 returns the decimal value with comma associated with the given column, on the current row.
+// A nil pointer is returned if the column does not exist or the value is an empty string.
 func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
 	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
@@ -126,8 +126,8 @@ func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
 	return ParsePFloat(normalizedDecimalVal)
 }
 
-// GetInt retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
-// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+// GetInt returns the integer value associated with the given column, on the current row.
+// A nil pointer is returned if the column does not exist or the value is an empty string.
 func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
@@ -136,8 +136,8 @@ func (indexedRow IndexedRow) GetInt(colName string) (*int, error) {
 	return ParsePInt(indexedRow.row[index])
 }
 
-// GetIntFromFloat retourne la valeur entière associée à la colonne donnée, sur la ligne en cours.
-// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+// GetIntFromFloat returns the integer value associated with the given column, on the current row.
+// A nil pointer is returned if the column does not exist or the value is an empty string.
 func (indexedRow IndexedRow) GetIntFromFloat(colName string) (*int, error) {
 	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
@@ -146,8 +146,8 @@ func (indexedRow IndexedRow) GetIntFromFloat(colName string) (*int, error) {
 	return ParsePIntFromFloat(indexedRow.row[index])
 }
 
-// GetBool retourne la valeur booléenne associée à la colonne donnée, sur la ligne en cours.
-// Un pointeur nil est retourné si la colonne n'existe pas ou la valeur est une chaine vide.
+// GetBool returns the boolean value associated with the given column, on the current row.
+// A nil pointer is returned if the column does not exist or the value is an empty string.
 func (indexedRow IndexedRow) GetBool(colName string) (bool, error) {
 	index, ok := indexedRow.idx.Get(colName)
 	if !ok {
@@ -156,7 +156,7 @@ func (indexedRow IndexedRow) GetBool(colName string) (bool, error) {
 	return strconv.ParseBool(indexedRow.row[index])
 }
 
-// LowercaseFields normalise les noms de colonnes en minuscules.
+// LowercaseFields normalizes column names to lowercase.
 func LowercaseFields(headerFields []string) []string {
 	var normalizedHeaderFields = make([]string, len(headerFields))
 	for i, name := range headerFields {
@@ -165,7 +165,7 @@ func LowercaseFields(headerFields []string) []string {
 	return normalizedHeaderFields
 }
 
-// ExtractInputHeaders extrait les en-têtes des fichiers d'entrée via le tag "input"
+// ExtractInputHeaders extracts input file headers via the "input" tag
 func ExtractInputHeaders(object any) []string {
 	return ExtractFieldsByTags(object, "input")
 }

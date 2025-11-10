@@ -15,10 +15,10 @@ import (
 	"opensignauxfaibles/lib/engine"
 )
 
-// GitCommit est le hash du dernier commit à inclure dans le binaire.
-var GitCommit string // (populé lors de la compilation, par `make build`)
+// GitCommit is the hash of the last commit to include in the binary.
+var GitCommit string // (populated during compilation, by `make build`)
 
-// main Fonction Principale
+// main is the main function
 func main() {
 	initConfig()
 	exitCode := runCLI(os.Args...)
@@ -37,13 +37,13 @@ func runCLI(args ...string) int {
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
 		logger.Error("unrecognized command")
-		fmt.Printf("Commande non reconnue. Utilisez %v --help pour lister les commandes.\n", strings.Join(args, " "))
+		fmt.Printf("Unrecognized command. Use %v --help to list available commands.\n", strings.Join(args, " "))
 		return 1
 	}
 	// validate command parameters
 	if err := cmdHandlerWithArgs.Validate(); err != nil {
 		logger.Error("invalid command arguments", "error", err)
-		fmt.Printf("Erreur: %v. Utilisez %v --help pour consulter la documentation.", err, strings.Join(args, " "))
+		fmt.Printf("Error: %v. Use %v --help to view documentation.", err, strings.Join(args, " "))
 		return 2
 	}
 
@@ -51,14 +51,14 @@ func runCLI(args ...string) int {
 	err := db.Init(noDB)
 	if err != nil {
 		logger.Error("error while connecting to db", "error", err)
-		fmt.Printf("\nErreur: %v\n", err)
+		fmt.Printf("\nError: %v\n", err)
 		return 4
 	}
 	defer db.DB.Close()
 
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		logger.Error("error while executing command", "error", err)
-		fmt.Printf("\nErreur: %v\n", err)
+		fmt.Printf("\nError: %v\n", err)
 		return 3
 	}
 	return 0
@@ -86,7 +86,7 @@ func initConfig() {
 	initLogger()
 
 	if err != nil {
-		slog.Warn("aucun fichier de configuration n'a pu être trouvé", slog.Any("error", err))
+		slog.Warn("no configuration file found", slog.Any("error", err))
 	}
 	engine.SetGitCommit(GitCommit)
 }
