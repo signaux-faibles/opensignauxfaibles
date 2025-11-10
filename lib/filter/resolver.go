@@ -11,8 +11,8 @@ import (
 // It orchestrates the complete filter lifecycle: checking requirements, updating state
 // based on effectif files, and loading the final filter.
 type StandardFilterResolver struct {
-	Reader engine.FilterReader
-	Writer engine.FilterWriter
+	Reader Reader
+	Writer Writer
 }
 
 // Resolve implements engine.FilterResolver.

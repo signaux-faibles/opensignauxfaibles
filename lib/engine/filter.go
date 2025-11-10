@@ -18,16 +18,6 @@ type SirenFilter interface {
 // 	return nil
 // }
 
-type FilterWriter interface {
-	Write(SirenFilter) error
-}
-
-// FilterReader retrieves a SirenFilter for a given batch.
-// Implementations may read from files, databases, or other sources.
-type FilterReader interface {
-	Read() (SirenFilter, error)
-}
-
 // FilterResolver encapsulates the complete filter resolution logic:
 // checking requirements, updating state, and reading the filter.
 // This abstraction simplifies handling the --no-filter flag and

@@ -185,14 +185,14 @@ func TestImportFilter(t *testing.T) {
 // defaultFilterResolver creates a StandardFilterResolver for testing (without --no-filter flag)
 func defaultFilterResolver(batch engine.AdminBatch) engine.FilterResolver {
 	return &filter.StandardFilterResolver{
-		Reader: &filter.Reader{Batch: &batch, DB: db.DB},
+		Reader: &filter.StandardReader{Batch: &batch, DB: db.DB},
 		Writer: &filter.DBWriter{DB: db.DB},
 	}
 }
 
 // readFilterFromDB reads the current filter from the database for a given batch
 func readFilterFromDB(batch engine.AdminBatch) (engine.SirenFilter, error) {
-	reader := &filter.Reader{Batch: &batch, DB: db.DB}
+	reader := &filter.StandardReader{Batch: &batch, DB: db.DB}
 	return reader.Read()
 }
 

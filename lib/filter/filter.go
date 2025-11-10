@@ -9,24 +9,24 @@ import (
 	"reflect"
 )
 
-// Reader implements engine.FilterReader
+// StandardReader implements engine.FilterReader
 // It retrieves SIREN filters using a priority-based approach:
 // 1. Batch filter file (if available, e.g. provided by user)
 // 2. Database "stg_filter_import" table
-type Reader struct {
+type StandardReader struct {
 	Batch *engine.AdminBatch
 	DB    db.Pool
 }
 
 // Read implements engine.FilterReader
-func (r *Reader) Read() (engine.SirenFilter, error) {
+func (r *StandardReader) Read() (engine.SirenFilter, error) {
 	if r == nil {
 		return engine.NoFilter, nil
 	}
 
 	filterFile := r.Batch.Files.GetFilterFile()
 
-	readers := []engine.FilterReader{
+	readers := []Reader{
 		&CsvReader{filterFile},
 		&DBReader{r.DB, db.TableStgFilterImport},
 	}
@@ -36,7 +36,7 @@ func (r *Reader) Read() (engine.SirenFilter, error) {
 
 // trySeveralReaders tries each reader in order until one succeeds.
 // The first successful filter is returned.
-func trySeveralReaders(readers []engine.FilterReader) (engine.SirenFilter, error) {
+func trySeveralReaders(readers []Reader) (engine.SirenFilter, error) {
 	var filter engine.SirenFilter
 	var lastErr error
 

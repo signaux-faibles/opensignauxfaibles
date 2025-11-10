@@ -103,8 +103,8 @@ func (params importBatchHandler) Run() error {
 	if params.NoFilter {
 		filterResolver = &filter.NoFilterResolver{}
 	} else {
-		reader := &filter.Reader{Batch: &batch, DB: db.DB}
-		var writer engine.FilterWriter
+		reader := &filter.StandardReader{Batch: &batch, DB: db.DB}
+		var writer filter.Writer
 		if !params.DryRun {
 			writer = &filter.DBWriter{DB: db.DB}
 		}
