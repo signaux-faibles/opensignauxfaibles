@@ -34,11 +34,6 @@ func (r *Reader) Read() (engine.SirenFilter, error) {
 	return trySeveralReaders(readers)
 }
 
-// A NoReader provides a NoFilter, with no filtering
-type NoReader struct{}
-
-func (r *NoReader) Read() (engine.SirenFilter, error) { return engine.NoFilter, nil }
-
 // trySeveralReaders tries each reader in order until one succeeds.
 // The first successful filter is returned.
 func trySeveralReaders(readers []engine.FilterReader) (engine.SirenFilter, error) {
