@@ -28,22 +28,45 @@ func (params importBatchHandler) Documentation() flag.Flag {
 	return flag.Flag{
 		Usage: "Import data files",
 		Desc: `
-		Handles the import and cleaning of input files.
+    Handles the import and cleaning of input data files for a specific batch.
 
-    All imported data is expected to be found in a single directory, that can be defined via "--path" and "--batch" options.
+    DATA LOCATION:
+    All imported data is expected to be relative to a base directory defined via
+    "--path". If a "--batch-config" option is provided, the relative paths of
+    the data files are explicitely given. Otherwise, data files are expected
+    to be in a directory with the same name as the "--batch" option.
 
-    The imported files are either explicitely provided via a batch configuration file, or by default, inferred from their naming.
-
-    As the import perimeter is usually a fraction of the raw data, the
-    pipeline will use either an explicitely provided filter (as part of the
-    batch coniguration file), or a filter stored in database (table
-    "stg_filter_import"). If an "effectif" file is provided, the filter will
-    be updated (or created if none exists).
+    BATCH CONFIGURATION:
+    The imported files are either explicitly provided via a batch configuration file
+    (--batch-config), or inferred from their naming in the data directory.
 
 
-    The cleaned data is then send to two sinks : one writing CSV files, the other one storing data inside a Postgresql database.
+    FILTERING:
+    As the import perimeter is usually a fraction of the raw data, the pipeline uses
+    a SIREN filter with the following priority:
+      1. Explicitly provided filter (in batch configuration or "filter_..." file)
+      2. Filter stored in database (table "stg_filter_import")
 
-		It is possible to limit execution to certain parsers by specifying the list with the "--parsers" flag.
+    If an "effectif" file is provided, the filter will be updated (or created if none
+    exists). If no filter is available and no effectif file is provided, the import
+    will fail, unless the "--no-filter" flag is provided.
+
+    OUTPUT:
+    The cleaned data is sent to two sinks:
+      - CSV files (written to disk)
+      - PostgreSQL database (table inserts)
+
+    Import logs can be consulted in the "import_logs" table in PostgreSQL.
+
+    DRY RUN:
+    The "--dry-run" flag will discard the data instead of sending it to sinks.
+    Import logs are printed to stdout, and no write operations are performed in
+    the database (though a filter can still be read from the database if available).
+
+    SELECTIVE PARSING:
+    Limit imports to specific parsers using the "--parsers" flag. Note: This only
+    limits data import, but does not affect filter updates if an effectif file is
+    provided. Use an explicit batch configuration to completely ignore certain files.
 	`,
 	}
 }
