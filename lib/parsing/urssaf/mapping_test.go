@@ -175,7 +175,7 @@ func TestGetSiretFromComptesMapping(t *testing.T) {
 		date := time.Now()
 		siret, err := comptes.GetSiret(compteManquant, &date)
 		assert.Equal(t, "", siret)
-		assert.Equal(t, "Pas de siret associé au compte "+compteManquant+" à la période "+date.String(), err.Error())
+		assert.Equal(t, "no SIRET associated with account "+compteManquant+" at date "+date.String(), err.Error())
 	})
 
 	t.Run("doit retourner une erreur si un compte n'est pas associé à un numéro de SIRET, à une date passée", func(t *testing.T) {
@@ -185,7 +185,7 @@ func TestGetSiretFromComptesMapping(t *testing.T) {
 		date := time.Time{}
 		siret, err := comptes.GetSiret(compteManquant, &date)
 		assert.Equal(t, "", siret)
-		assert.Equal(t, "Pas de siret associé au compte "+compteManquant+" à la période "+date.String(), err.Error())
+		assert.Equal(t, "no SIRET associated with account "+compteManquant+" at date "+date.String(), err.Error())
 	})
 }
 

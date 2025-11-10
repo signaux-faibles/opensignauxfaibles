@@ -31,7 +31,7 @@ func TestEffectifEnt(t *testing.T) {
 	t.Run("EffectifEnt ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
 		output := engine.RunParserInline(t, NewEffectifEntParser(), []string{"siret"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne siren non trouvée")
+		assert.Contains(t, engine.GetFatalError(output), "column siren not found")
 	})
 
 	t.Run("EffectifEnt est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestEffectif(t *testing.T) {
 	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
 		output := engine.RunParserInline(t, NewEffectifParser(), []string{"siret"}) // "compte" column is missing
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne compte non trouvée")
+		assert.Contains(t, engine.GetFatalError(output), "column compte not found")
 	})
 
 	t.Run("Effectif est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {

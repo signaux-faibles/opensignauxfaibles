@@ -22,7 +22,7 @@ func TestSirene(t *testing.T) {
 	t.Run("should fail if a required column is missing", func(t *testing.T) {
 		output := engine.RunParserInline(t, NewSireneParser(), []string{"siren"}) // many columns are missing
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Regexp(t, regexp.MustCompile("Colonne [^ ]+ non trouvée"), engine.GetFatalError(output))
+		assert.Regexp(t, regexp.MustCompile("column [^ ]+ not found"), engine.GetFatalError(output))
 	})
 }
 

@@ -11,12 +11,12 @@ func TestUrssafToDate(t *testing.T) {
 
 	t.Run("échoue si la date fournie n'est pas un nombre", func(t *testing.T) {
 		_, err := UrssafToDate("11A0203")
-		assert.EqualError(t, err, "valeur non autorisée pour une conversion en date: 11A0203")
+		assert.EqualError(t, err, "invalid value for date conversion: 11A0203")
 	})
 
 	t.Run("échoue si la date obtenue n'est pas valide", func(t *testing.T) {
 		_, err := UrssafToDate("0000000")
-		assert.EqualError(t, err, "valeur non autorisée pour une conversion en date: 0000000")
+		assert.EqualError(t, err, "invalid value for date conversion: 0000000")
 	})
 
 	t.Run("reconnait 1180203 comme représentant le 3 février 2018", func(t *testing.T) {
