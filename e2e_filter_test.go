@@ -108,7 +108,7 @@ func TestImportFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import when an effectif file is provided")
 
 		// Check that the filter has been properly updated
-		filter, err := readFilterFromDB(batch)
+		filter, err := readFilter(batch)
 		assert.NoError(t, err)
 		assert.True(t, filter.ShouldSkip(sirenOut))
 		assert.False(t, filter.ShouldSkip(sirenIn))
@@ -142,7 +142,7 @@ func TestImportFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import again when filter exists")
 
 		// Check that the filter has been properly updated
-		filter, err := readFilterFromDB(batch2)
+		filter, err := readFilter(batch2)
 		assert.NoError(t, err)
 		// The new effectif should include former "sirenOut" inside the perimeter.
 		assert.False(t, filter.ShouldSkip(sirenOut))
@@ -175,7 +175,7 @@ func TestImportFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import when a filter has been created in DB")
 
 		// Check that the filter has been left unchanged
-		filter, err := readFilterFromDB(batch2)
+		filter, err := readFilter(batch2)
 		assert.NoError(t, err)
 		assert.True(t, filter.ShouldSkip("000000000"))
 		assert.False(t, filter.ShouldSkip("111111111"))
@@ -190,8 +190,8 @@ func defaultFilterResolver(batch engine.AdminBatch) engine.FilterResolver {
 	}
 }
 
-// readFilterFromDB reads the current filter from the database for a given batch
-func readFilterFromDB(batch engine.AdminBatch) (engine.SirenFilter, error) {
+// readFilter reproduces the default filter reading strategyg strategy
+func readFilter(batch engine.AdminBatch) (engine.SirenFilter, error) {
 	reader := &filter.StandardReader{Batch: &batch, DB: db.DB}
 	return reader.Read()
 }
