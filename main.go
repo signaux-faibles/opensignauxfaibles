@@ -30,9 +30,6 @@ func runCLI(args ...string) int {
 	logger.Info("running cli command")
 
 	cmdHandlerWithArgs := parseCommandFromArgs(args)
-	slog.Debug("run cli", slog.Any("args", args))
-
-	noDB := os.Getenv("NO_DB") == "1" || os.Getenv("NO_DB") == "true"
 
 	// exit if no command was recognized in args
 	if cmdHandlerWithArgs == nil {
@@ -46,6 +43,8 @@ func runCLI(args ...string) int {
 		fmt.Printf("Error: %v. Use %v --help to view documentation.", err, strings.Join(args, " "))
 		return 2
 	}
+
+	noDB := os.Getenv("NO_DB") == "1" || os.Getenv("NO_DB") == "true"
 
 	// Initialize database if necessary
 	err := db.Init(noDB)
@@ -82,13 +81,14 @@ func initConfig() {
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	viper.AutomaticEnv()
 
+	engine.SetGitCommit(GitCommit)
+
 	// init logger before first log
 	initLogger()
 
 	if err != nil {
-		slog.Warn("no configuration file found", slog.Any("error", err))
+		slog.Warn("no configuration file found", "error", err)
 	}
-	engine.SetGitCommit(GitCommit)
 }
 
 // Ask cosiner/flag to parse arguments

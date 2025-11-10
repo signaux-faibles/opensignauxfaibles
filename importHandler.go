@@ -60,7 +60,7 @@ func (params importBatchHandler) Documentation() flag.Flag {
 
     DRY RUN:
     The "--dry-run" flag will discard the data instead of sending it to sinks.
-    Import logs are printed to stdout, and no write operations are performed in
+    Import logs are printed to stdout, and no write operations are performed i
     the database (though a filter can still be read from the database if available).
 
     SELECTIVE PARSING:
@@ -86,6 +86,8 @@ func (params importBatchHandler) Validate() error {
 // on peut demander l'exécution de tous les parsers sans fournir d'option
 // ou demander l'exécution de parsers particuliers en fournissant une liste de leurs codes.
 func (params importBatchHandler) Run() error {
+	slog.Info("executing import command")
+
 	batchKey, err := engine.NewBatchKey(params.BatchKey)
 	if err != nil {
 		return err
@@ -96,12 +98,12 @@ func (params importBatchHandler) Run() error {
 	var batch engine.AdminBatch
 	if params.BatchConfigFile != "" {
 		// On lit le batch depuis un fichier json
-		slog.Info("batch parameter provided, reading batch configuration")
+		slog.Info("--batch-config provided, reading batch configuration")
 		batch, err = engine.JSONBatchProvider{Path: params.BatchConfigFile}.Get()
 
 	} else {
 		// On devine le batch à partir des noms de fichiers
-		slog.Info("batch parameter not provided, attempting to determine files to import")
+		slog.Info("no --batch-config provided, attempting to infer files to import from filenames")
 		batch, err = prepareimport.InferBatchProvider{Path: params.Path, BatchKey: batchKey}.Get()
 	}
 
@@ -111,6 +113,10 @@ func (params importBatchHandler) Run() error {
 
 	// Étape 2
 	// On définit les parsers à faire tourner
+	if len(params.Parsers) >= 1 {
+		slog.Info("import restricted to provided parsers", "parsers", params.Parsers)
+	}
+
 	var parserTypes = make([]engine.ParserType, 0, len(params.Parsers))
 	for _, p := range params.Parsers {
 		parserTypes = append(parserTypes, engine.ParserType(p))
@@ -123,13 +129,20 @@ func (params importBatchHandler) Run() error {
 	var reportSink engine.ReportSink
 
 	if !params.DryRun {
+		slog.Info("data will be written as CSV and to Postgresql tables")
 		dataSinkFactory = sinks.Combine(
 			sinks.NewCSVSinkFactory(batchKey.String()),
 			sinks.NewPostgresSinkFactory(db.DB),
 		)
+
+		slog.Info("import logs will be written to Postgresql")
 		reportSink = engine.NewPostgresReportSink(db.DB)
 	} else {
+		slog.Info("dry-run mode: no writing to the database")
+
+		slog.Info("data will be discarded")
 		dataSinkFactory = &engine.DiscardSinkFactory{}
+		slog.Info("import logs will be written to stdout")
 		reportSink = &engine.StdoutReportSink{}
 	}
 
@@ -148,6 +161,8 @@ func (params importBatchHandler) Run() error {
 			Reader: reader,
 			Writer: writer,
 		}
+	} else {
+		slog.Info("no-filter mode: any filter is ignored and all data will be imported")
 	}
 
 	// Étape 6: Execute import
@@ -198,6 +213,5 @@ func executeBatchImport(
 		sinkFactory,
 		reportSink,
 	)
-	slog.Info("import completed")
 	return err
 }

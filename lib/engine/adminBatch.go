@@ -42,11 +42,12 @@ func ImportBatch(
 	}
 
 	logger := slog.With("batch", batchConfig.Key)
-	logger.Info("starting raw data import")
+
+	logger.Info("importing raw data...")
 
 	unsupported := checkUnsupportedFiletypes(registry, batchConfig)
 	for _, file := range unsupported {
-		logger.Warn("Type de fichier non reconnu", "file", file)
+		logger.Warn("unrecognized filetype, skipped", "file", file)
 	}
 
 	var g errgroup.Group
@@ -66,25 +67,25 @@ func ImportBatch(
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
 				func() error {
-					err := eventSink.Process(eventChannel)
-					return err
+					eventErr := eventSink.Process(eventChannel)
+					return eventErr
 				},
 			)
 
 			// Stream data to the output sink(s)
 			g.Go(
 				func() error {
-					dataSink, err := sinkFactory.CreateSink(parser.Type())
-					if err != nil {
-						return err
+					dataSink, sinkErr := sinkFactory.CreateSink(parser.Type())
+					if sinkErr != nil {
+						return sinkErr
 					}
 
-					err = dataSink.ProcessOutput(ctx, outputChannel)
-					if err != nil {
-						cancelParserProcess(err)
+					sinkErr = dataSink.ProcessOutput(ctx, outputChannel)
+					if sinkErr != nil {
+						cancelParserProcess(sinkErr)
 					}
 
-					return err
+					return sinkErr
 				},
 			)
 		}
@@ -94,8 +95,9 @@ func ImportBatch(
 	if err != nil {
 		return err
 	}
-	logger.Info("raw data parsing ended")
-	logger.Info("inspect the \"Journal\" database to consult parsing errors.")
+
+	logger.Info("raw data import ended")
+	logger.Info("inspect the import logs to consult any parsing errors")
 
 	return nil
 }

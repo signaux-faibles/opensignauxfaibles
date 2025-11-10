@@ -202,16 +202,19 @@ func LogProgress(lineNumber *int, filename string) (stop context.CancelFunc) {
 func isValid(tuple Tuple) (bool, error) {
 	scope := tuple.Scope()
 	key := tuple.Key()
-	if scope == ScopeEntreprise {
+	switch scope {
+	case ScopeEntreprise:
 		if !sfregexp.ValidSiren(key) {
 			return false, errors.New("siren invalide : " + key)
 		}
 		return true, nil
-	} else if scope == ScopeEtablissement {
+
+	case ScopeEtablissement:
 		if !sfregexp.ValidSiret(key) {
 			return false, errors.New("siret invalide : " + key)
 		}
 		return true, nil
 	}
+
 	return false, errors.New("tuple sans scope")
 }
