@@ -1,3 +1,4 @@
+// Package parsing provide tools to create a new parser
 package parsing
 
 import (
@@ -11,7 +12,7 @@ type RowParser interface {
 	ParseRow(row []string, result *engine.ParsedLineResult, idx ColIndex) error
 }
 
-// CsvParserInstance provides a CSV Parser implementation base
+// CsvParserInst provides a CSV Parser implementation base
 // Assumes the CSV has a header row
 type CsvParserInst struct {
 	io.Reader

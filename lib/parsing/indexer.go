@@ -122,7 +122,7 @@ func (indexedRow IndexedRow) GetCommaFloat64(colName string) (*float64, error) {
 	if !ok {
 		return nil, fmt.Errorf("GetCommaFloat64 failed to find column: %v", colName)
 	}
-	normalizedDecimalVal := strings.Replace(indexedRow.row[index], ",", ".", -1)
+	normalizedDecimalVal := strings.ReplaceAll(indexedRow.row[index], ",", ".")
 	return ParsePFloat(normalizedDecimalVal)
 }
 
