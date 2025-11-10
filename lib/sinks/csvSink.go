@@ -68,7 +68,7 @@ type CSVSink struct {
 // configuration, or by default the `DefaultExportPath` constant)
 func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) error {
 	logger := slog.With("sink", "csv", "file", s.file)
-	logger.Debug("stream data to CSV file")
+	logger.Info("streaming data to CSV file...")
 
 	var w *csv.Writer
 
@@ -103,7 +103,7 @@ func (s *CSVSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) error
 	}
 	w.Flush()
 
-	logger.Debug("output streaming to CSV file ended successfully", "n_written", nWritten)
+	logger.Info("output streaming to CSV file ended successfully", "n_written", nWritten)
 	return nil
 }
 
