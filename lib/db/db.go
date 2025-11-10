@@ -36,18 +36,8 @@ type Pool interface {
 	Close()
 }
 
-// Init set Db global variable to a connection pool, or a mock pool if noDB is
-// set to true
-func Init(noDB bool) error {
-
-	if noDB {
-		slog.Info("NO_DB mode : no reading from and writing to the database")
-		mockPool, _ := pgxmock.NewPool()
-
-		DB = mockPool
-
-		return nil
-	}
+// Init set Db global variable to a connection pool
+func Init(shouldMigrate bool) error {
 
 	connStr := viper.GetString("POSTGRES_DB_URL")
 
@@ -79,13 +69,23 @@ func Init(noDB bool) error {
 	logger.Info("database connexion established")
 
 	// Run database migrations
-	logger.Info("running database migrations...")
+	if shouldMigrate {
+		logger.Info("running database migrations...")
 
-	if err := runMigrations(ctx, conn); err != nil {
-		return fmt.Errorf("failed to execute database migrations: %w", err)
+		if err := runMigrations(ctx, conn); err != nil {
+			return fmt.Errorf("failed to execute database migrations: %w", err)
+		}
+		logger.Info("database migrated with success")
 	}
-	logger.Info("database migrated with success")
 
 	DB = conn
 	return nil
+}
+
+func InitMock() {
+
+	slog.Info("NO DB mode : no reading from and writing to the database")
+	mockPool, _ := pgxmock.NewPool()
+
+	DB = mockPool
 }

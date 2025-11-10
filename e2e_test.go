@@ -115,9 +115,9 @@ func setupSuite() (*TestSuite, error) {
 func setupDBTest(t *testing.T) func() {
 	t.Helper()
 
-	// Initialize db.DB if not already done
+	// Initialize db.DB if not already done, with migrations
 	if db.DB == nil {
-		err := db.Init(false)
+		err := db.Init(true)
 		assert.NoError(t, err)
 	}
 

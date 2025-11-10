@@ -11,7 +11,6 @@ import (
 	cosFlag "github.com/cosiner/flag"
 	"github.com/spf13/viper"
 
-	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 )
 
@@ -43,17 +42,6 @@ func runCLI(args ...string) int {
 		fmt.Printf("Error: %v. Use %v --help to view documentation.", err, strings.Join(args, " "))
 		return 2
 	}
-
-	noDB := os.Getenv("NO_DB") == "1" || os.Getenv("NO_DB") == "true"
-
-	// Initialize database if necessary
-	err := db.Init(noDB)
-	if err != nil {
-		logger.Error("error while connecting to db", "error", err)
-		fmt.Printf("\nError: %v\n", err)
-		return 4
-	}
-	defer db.DB.Close()
 
 	if err := cmdHandlerWithArgs.Run(); err != nil {
 		logger.Error("error while executing command", "error", err)
