@@ -189,13 +189,13 @@ func TestCheck(t *testing.T) {
 	validFilterReader := &MemoryFilterReader{Filter: engine.NoFilter}
 	invalidFilterReader := &MemoryFilterReader{Filter: nil}
 
-	var nilInterfaceReader engine.FilterReader
-	var nilPointerReader *Reader
+	var nilInterfaceReader Reader
+	var nilPointerReader *StandardReader
 
 	testCases := []struct {
 		name         string
 		batchFiles   engine.BatchFiles
-		filterReader engine.FilterReader
+		filterReader Reader
 		expectError  bool
 	}{
 		{

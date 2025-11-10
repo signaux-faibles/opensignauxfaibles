@@ -34,6 +34,18 @@ import (
 	"strconv"
 )
 
+// Writer writes a filter
+// Implementations may write to e.g. a file, a database table.
+type Writer interface {
+	Write(engine.SirenFilter) error
+}
+
+// Reader retrieves a SirenFilter for a given batch.
+// Implementations may read from files, databases, or other sources.
+type Reader interface {
+	Read() (engine.SirenFilter, error)
+}
+
 // Usage: $ ./create_filter --path testData/test_data.csv
 
 // DefaultNbMois is the default number of the most recent months during which the effectif of the company must reach the threshold.
@@ -77,7 +89,7 @@ func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols
 //
 // If a nil interface is provided fails.
 // Note however that a nil *Reader pointer is properly handled and accepted.
-func Check(r engine.FilterReader, batchFiles engine.BatchFiles) error {
+func Check(r Reader, batchFiles engine.BatchFiles) error {
 	var err error
 
 	effectifFile := batchFiles.GetEffectifFile()
@@ -110,12 +122,13 @@ func Check(r engine.FilterReader, batchFiles engine.BatchFiles) error {
 // The rationale behind this last point is that a user-provided filter is
 // usually used solely for tests and should not affect the saved perimeter in
 // the database.
-func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
+func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 	// Guard clause 1: the import filter is based uniquely on the effectif file.
 	// If no effectif file is provided, there is nothing to update.
 	effectifFile := batchFiles.GetEffectifFile()
 
 	if effectifFile == nil {
+		slog.Info("no effectif file provided, filter is not updated")
 		return nil
 	}
 
@@ -125,16 +138,17 @@ func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
 	filterIsExplicit := (filterFile != nil)
 
 	if filterIsExplicit {
+		slog.Info("explicit effectif file provided, filter is not update")
 		return nil
 	}
 
 	// Guard clause 3: if no writer is provided, don't update
 	if w == nil {
-		slog.Debug("No filter writer provided, filter is not updated")
+		slog.Warn("no filter writer provided, filter is not updated")
 		return nil
 	}
 
-	slog.Debug("Writing filter file")
+	slog.Info("update filter...")
 
 	// Create the filter
 	sirenFilter, err := Create(
@@ -149,7 +163,14 @@ func UpdateState(w engine.FilterWriter, batchFiles engine.BatchFiles) error {
 	}
 
 	// Write the filter
-	return w.Write(sirenFilter)
+	err = w.Write(sirenFilter)
+
+	if err != nil {
+		return err
+	}
+
+	slog.Debug("updated filter written with success")
+	return nil
 }
 
 func newCsvReader(reader io.Reader) *csv.Reader {

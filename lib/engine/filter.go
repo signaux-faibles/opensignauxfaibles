@@ -18,14 +18,15 @@ type SirenFilter interface {
 // 	return nil
 // }
 
-type FilterWriter interface {
-	Write(SirenFilter) error
-}
-
-// FilterReader retrieves a SirenFilter for a given batch.
-// Implementations may read from files, databases, or other sources.
-type FilterReader interface {
-	Read() (SirenFilter, error)
+// FilterResolver encapsulates the complete filter resolution logic:
+// checking requirements, updating state, and reading the filter.
+// This abstraction simplifies handling the --no-filter flag and
+// maintains clean separation between filter orchestration and
+// individual read/write operations
+type FilterResolver interface {
+	// Resolve performs all filter operations (check, update, read) and
+	// returns the final SirenFilter to use for the import
+	Resolve(batchFiles BatchFiles) (SirenFilter, error)
 }
 
 var NoFilter SirenFilter = noFilter{}
