@@ -30,7 +30,7 @@ func initLogger() {
 
 	level, err := parseLogLevel(viper.GetString("log.level"))
 	if err != nil {
-		slog.Warn("erreur de log level", slog.Any("error", err))
+		slog.Warn("invalid log level", slog.Any("error", err))
 	}
 	loglevel.Set(level)
 
@@ -54,14 +54,14 @@ func parseLogLevel(logLevel string) (slog.Level, error) {
 	case "ERROR":
 		return slog.LevelError, nil
 	default:
-		return slog.LevelInfo, errors.New("log level inconnu : '" + logLevel + "'")
+		return slog.LevelInfo, errors.New("unknown log level: '" + logLevel + "'")
 	}
 }
 
 func ConfigureLogLevel(logLevel string) {
 	var level, err = parseLogLevel(logLevel)
 	if err != nil {
-		slog.Warn("Erreur de configuration sur le loglevel", slog.String("cause", err.Error()))
+		slog.Warn("log level configuration error", "error", err)
 		return
 	}
 	loglevel.Set(level)

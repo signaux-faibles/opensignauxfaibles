@@ -11,7 +11,7 @@ type BatchKey string
 // NewBatchKey constructs a valid batch key
 func NewBatchKey(key string) (BatchKey, error) {
 	if !validBatchKey.MatchString(key) {
-		return "", fmt.Errorf("la clé du batch doit respecter le format requis AAMM. Reçu : %s", key)
+		return "", fmt.Errorf("batch key must follow required format YYMM. Received: %s", key)
 	}
 	return BatchKey(key), nil
 }
@@ -22,7 +22,7 @@ func (b BatchKey) String() string {
 	return string(b)
 }
 
-// IsBatchKey retourne `true` si `batchID` est un identifiant de Batch.
+// IsBatchKey returns `true` if `batchID` is a Batch identifier.
 func IsBatchKey(batchKey string) bool {
 	if len(batchKey) < 4 {
 		return false

@@ -114,7 +114,7 @@ func ParseFile(ctx context.Context, path BatchFile, parser Parser, batch *AdminB
 // runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
 func runParserOnFile(
 	ctx context.Context,
-	filePath BatchFile,
+	batchFile BatchFile,
 	parser Parser,
 	batch *AdminBatch,
 	cache Cache,
@@ -123,7 +123,7 @@ func runParserOnFile(
 	filter SirenFilter,
 ) error {
 
-	file, err := filePath.Open()
+	file, err := batchFile.Open()
 	if err != nil {
 		return err
 	}
@@ -136,14 +136,14 @@ func runParserOnFile(
 	}
 
 	parsedLineChan := make(chan ParsedLineResult)
-	go ParseLines(parserInst, parsedLineChan)
+	go ParseLines(parserInst, parsedLineChan, batchFile.Filename())
 
 	for lineResult := range parsedLineChan {
 		err := processTuplesFromLine(ctx, lineResult, filter, tracker, outputChannel)
 		if err != nil {
 			// Do not proceed with parsing if fatal error
 			tracker.AddFatalError(err)
-			slog.Error("Fatal error while parsing line: " + err.Error())
+			slog.Error("Fatal error while parsing line", "error", err)
 			break
 		}
 
@@ -188,9 +188,13 @@ func processTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, fil
 }
 
 // LogProgress affiche le numéro de ligne en cours de parsing, toutes les 2s.
-func LogProgress(lineNumber *int) (stop context.CancelFunc) {
+func LogProgress(lineNumber *int, filename string) (stop context.CancelFunc) {
 	return Cron(time.Minute*1, func() {
-		slog.Info("Lis une ligne du fichier csv", slog.Int("line", *lineNumber))
+		slog.Info(
+			"Lis une ligne du fichier csv",
+			slog.String("filename", filename),
+			slog.Int("line", *lineNumber),
+		)
 	})
 }
 
@@ -198,16 +202,19 @@ func LogProgress(lineNumber *int) (stop context.CancelFunc) {
 func isValid(tuple Tuple) (bool, error) {
 	scope := tuple.Scope()
 	key := tuple.Key()
-	if scope == ScopeEntreprise {
+	switch scope {
+	case ScopeEntreprise:
 		if !sfregexp.ValidSiren(key) {
 			return false, errors.New("siren invalide : " + key)
 		}
 		return true, nil
-	} else if scope == ScopeEtablissement {
+
+	case ScopeEtablissement:
 		if !sfregexp.ValidSiret(key) {
 			return false, errors.New("siret invalide : " + key)
 		}
 		return true, nil
 	}
+
 	return false, errors.New("tuple sans scope")
 }

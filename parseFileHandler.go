@@ -12,13 +12,13 @@ import (
 
 type parseFileHandler struct {
 	Enable bool   // set to true by cosiner/flag if the user is running this command
-	Parser string `names:"--parser" desc:"Parseur à employer (ex: cotisation)"`
-	File   string `names:"--file"   desc:"Nom du fichier à parser. Contrairement à l'import, le chemin du fichier doit être complet et ne tient pas compte de la variable d'environnement APP_DATA"`
+	Parser string `names:"--parser" desc:"Parser to use (ex: cotisation)"`
+	File   string `names:"--file"   desc:"Path to the file to parse. Unlike import, the file path must be complete and does not take into account the APP_DATA environment variable.`
 }
 
 func (params parseFileHandler) Documentation() flag.Flag {
 	return flag.Flag{
-		Usage: "Parse un fichier vers la sortie standard",
+		Usage: "Parses a file to stdout",
 	}
 }
 
@@ -28,10 +28,10 @@ func (params parseFileHandler) IsEnabled() bool {
 
 func (params parseFileHandler) Validate() error {
 	if params.Parser == "" {
-		return errors.New("paramètre `parser` obligatoire")
+		return errors.New("required `parser` parameter")
 	}
 	if params.File == "" {
-		return errors.New("paramètre `file` obligatoire")
+		return errors.New("required `file` parameter")
 	}
 	if _, err := os.Stat(params.File); err != nil {
 		return errors.New("Can't find " + params.File + ": " + err.Error())

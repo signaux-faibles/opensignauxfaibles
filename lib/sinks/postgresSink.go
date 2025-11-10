@@ -73,7 +73,7 @@ type PostgresSink struct {
 func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
-	logger.Debug("stream output to PostgreSQL")
+	logger.Info("streaming output to PostgreSQL...")
 
 	var currentBatch []engine.Tuple
 	var headers []string
@@ -118,7 +118,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 		nInserted += len(currentBatch)
 	}
 
-	logger.Debug("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
+	logger.Info("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 
 	if s.viewToRefresh != "" {
 		_, err = s.conn.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", s.viewToRefresh))
@@ -126,7 +126,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 			return fmt.Errorf("failed to refresh materialized view %s: %w", s.viewToRefresh, err)
 		}
 
-		logger.Debug("Materialized View updated", "view", s.viewToRefresh)
+		logger.Debug("materialized view updated", "view", s.viewToRefresh)
 	}
 
 	return nil

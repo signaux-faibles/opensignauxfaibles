@@ -28,7 +28,7 @@ func makeCacheWithComptesMapping() engine.Cache {
 }
 
 func TestUrssaf(t *testing.T) {
-	t.Run("Les fichiers urssaf gzippés peuvent être décompressés à la volée", func(t *testing.T) {
+	t.Run("URSSAF gzipped files can be decompressed on the fly", func(t *testing.T) {
 		type TestCase struct {
 			Parser     engine.Parser
 			InputFile  string
@@ -68,10 +68,10 @@ func TestDebit(t *testing.T) {
 
 	engine.TestParserOutput(t, NewDebitParser(), cache, testData, golden, *update)
 
-	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewDebitParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne num_cpte non trouvée")
+		assert.Contains(t, engine.GetFatalError(output), "column num_cpte not found")
 	})
 
 	// t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
@@ -108,10 +108,10 @@ func TestDelai(t *testing.T) {
 	var cache = makeCacheWithComptesMapping()
 	engine.TestParserOutput(t, NewDelaiParser(), cache, testData, golden, *update)
 
-	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewDelaiParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne Numero_compte_externe non trouvée")
+		assert.Contains(t, engine.GetFatalError(output), "column Numero_compte_externe not found")
 	})
 }
 
@@ -121,10 +121,10 @@ func TestCcsf(t *testing.T) {
 	var cache = makeCacheWithComptesMapping()
 	engine.TestParserOutput(t, NewCCSFParser(), cache, testData, golden, *update)
 
-	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewCCSFParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne Compte non trouvée")
+		assert.Contains(t, engine.GetFatalError(output), "column Compte not found")
 	})
 }
 
@@ -134,10 +134,10 @@ func TestCotisation(t *testing.T) {
 	var cache = makeCacheWithComptesMapping()
 	engine.TestParserOutput(t, NewCotisationParser(), cache, testData, golden, *update)
 
-	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewCotisationParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Colonne Compte non trouvée")
+		assert.Contains(t, engine.GetFatalError(output), "column Compte not found")
 	})
 
 	// t.Run("toute ligne de cotisation d'un établissement hors périmètre doit être sautée silencieusement", func(t *testing.T) {
@@ -179,10 +179,10 @@ func TestProcol(t *testing.T) {
 		engine.TestParserOutput(t, NewProcolParser(), cache, testData, golden, *update)
 	})
 
-	t.Run("doit rapporter une erreur fatale s'il manque une colonne", func(t *testing.T) {
+	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewProcolParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "non trouvée")
+		assert.Contains(t, engine.GetFatalError(output), "not found")
 	})
 
 	t.Run("est insensible à la casse des en-têtes de colonnes", func(t *testing.T) {

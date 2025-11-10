@@ -1,11 +1,10 @@
 $ ./sfdata parseFile --help
-Parse un fichier vers la sortie standard
+Parses a file to stdout
 
 Usage: parseFile [FLAG]...
 
 Flags:
     --parser        (type: string)
-                Parseur à employer (ex: cotisation)
+                Parser to use (ex: cotisation)
     --file          (type: string)
-                Nom du fichier à parser. Contrairement à l'import, le chemin du fichier doit être complet et ne tient pas compte de la variable d'environnement APP_DATA
 ---

@@ -17,7 +17,7 @@ func TestIndexColumnsFromCsvHeader(t *testing.T) {
 			assert.Equal(t, nil, err)
 			hasBothFields, err := idx.HasFields([]string{"year", "dummy"})
 			assert.Equal(t, false, hasBothFields)
-			assert.EqualError(t, err, "Colonne dummy non trouvée. Abandon.")
+			assert.EqualError(t, err, "column dummy not found, aborting")
 		})
 
 		t.Run("permet d'indexer chaque ligne depuis un fichier CSV valide", func(t *testing.T) {

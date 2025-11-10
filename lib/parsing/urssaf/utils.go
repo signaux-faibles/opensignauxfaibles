@@ -6,25 +6,25 @@ import (
 	"time"
 )
 
-// UrssafToDate convertit le format de date urssaf en type Date.
+// UrssafToDate converts the URSSAF date format to Date type.
 // Les dates urssaf sont au format YYYMMJJ tels que YYY = YYYY - 1900 (e.g: 118 signifie
 // 2018)
 func UrssafToDate(urssaf string) (time.Time, error) {
 
 	intUrsaff, err := strconv.Atoi(urssaf)
 	if err != nil {
-		return time.Time{}, errors.New("valeur non autorisée pour une conversion en date: " + urssaf)
+		return time.Time{}, errors.New("invalid value for date conversion: " + urssaf)
 	}
 	strDate := strconv.Itoa(intUrsaff + 19000000)
 	date, err := time.Parse("20060102", strDate)
 	if err != nil {
-		return time.Time{}, errors.New("valeur non autorisée pour une conversion en date: " + urssaf)
+		return time.Time{}, errors.New("invalid value for date conversion: " + urssaf)
 	}
 
 	return date, nil
 }
 
-// UrssafToPeriod convertit le format de période urssaf en type Periode. On trouve ces
+// UrssafToPeriod converts the URSSAF period format to Period type. On trouve ces
 // périodes formatées en 4 ou 6 caractère (YYQM ou YYYYQM).
 // si YY < 50 alors YYYY = 20YY sinon YYYY = 19YY.
 // si QM == 62 alors période annuelle sur YYYY.
@@ -41,12 +41,12 @@ func UrssafToPeriod(urssaf string) (start time.Time, end time.Time, err error) {
 	}
 
 	if len(urssaf) != 6 {
-		return start, end, errors.New("valeur non autorisée")
+		return start, end, errors.New("invalid value")
 	}
 
 	year, err := strconv.Atoi(urssaf[0:4])
 	if err != nil {
-		return start, end, errors.New("valeur non autorisée")
+		return start, end, errors.New("invalid value")
 	}
 
 	if urssaf[4:6] == "62" {

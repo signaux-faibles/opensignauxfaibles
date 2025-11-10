@@ -23,14 +23,14 @@ func (f *CsvReader) Read() (engine.SirenFilter, error) {
 
 	file, err := f.BatchFile.Open()
 	if err != nil {
-		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
+		return nil, errors.New("error opening file: " + err.Error())
 	}
 	defer file.Close()
 
 	filter := make(MapFilter)
 	err = parseCSVFilter(bufio.NewReader(file), filter)
 	if err != nil {
-		return nil, errors.New("Erreur à la lecture du fichier, " + err.Error())
+		return nil, errors.New("error reading file: " + err.Error())
 	}
 
 	slog.Debug("Filter retrieved from csv")
@@ -63,7 +63,7 @@ func parseCSVFilter(reader io.Reader, filter MapFilter) error {
 		if sfregexp.RegexpDict["siren"].MatchString(siren) {
 			filter[siren] = true
 		} else {
-			return errors.New("Format de siren incorrect trouvé : " + siren)
+			return errors.New("invalid SIREN format found: " + siren)
 		}
 	}
 	return nil

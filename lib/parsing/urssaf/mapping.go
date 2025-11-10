@@ -25,7 +25,7 @@ type SiretDate struct {
 // Comptes associates a SiretDate to an urssaf account number
 type Comptes map[string][]SiretDate
 
-// GetSortedKeys retourne la liste classée des numéros de Comptes.
+// GetSortedKeys returns the sorted list of Account numbers.
 func (comptes *Comptes) GetSortedKeys() []string {
 	keys := make([]string, len(*comptes))
 	i := 0
@@ -45,14 +45,14 @@ func (comptes *Comptes) GetSiret(compte string, date *time.Time) (string, error)
 			return sd.Siret, nil
 		}
 	}
-	return "", errors.New("Pas de siret associé au compte " + compte + " à la période " + date.String())
+	return "", errors.New("no SIRET associated with account " + compte + " at date " + date.String())
 }
 
 // GetCompteSiretMapping returns the siret mapping in cache if available, else
 // reads the file and save it in cache. Lazy loaded.
 func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, filter engine.SirenFilter, mr mappingReader) (Comptes, error) {
 	value, err := cache.Get("comptes")
-	slog.Debug("associe les siret et les numéros de compte URSSAF", slog.Any("AdminBatch", *batch))
+	slog.Debug("mapping SIRET to URSSAF account numbers", slog.Any("AdminBatch", *batch))
 	if err == nil {
 		comptes, ok := value.(Comptes)
 		if ok {
@@ -72,13 +72,13 @@ func GetCompteSiretMapping(cache engine.Cache, batch *engine.AdminBatch, filter 
 	for _, p := range path {
 		compteSiretMapping, err = mr(basePath, p, compteSiretMapping, cache, batch, filter)
 		if err != nil {
-			slog.Error("erreur pendant le mapping siret <-> compte", slog.Any("error", err))
+			slog.Error("error during SIRET <-> account mapping", slog.Any("error", err))
 			return nil, err
 		}
 		slog.Debug("mapping siret <-> compte", slog.Any("comptes", compteSiretMapping.GetSortedKeys()))
 	}
 	cache.Set("comptes", compteSiretMapping)
-	slog.Debug("Chargement des comptes URSSAF terminé", slog.Any("comptesValue", value))
+	slog.Debug("finished loading URSSAF accounts", slog.Any("comptesValue", value))
 	return compteSiretMapping, nil
 }
 
@@ -97,7 +97,7 @@ func OpenAndReadSiretMapping(
 
 	file, err := batchFile.Open()
 	if err != nil {
-		return nil, errors.New("Erreur à l'ouverture du fichier, " + err.Error())
+		return nil, errors.New("error opening file: " + err.Error())
 	}
 	defer file.Close()
 

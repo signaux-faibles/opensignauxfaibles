@@ -67,7 +67,7 @@ func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineR
 		if *motifRecoursSE >= 1 && *motifRecoursSE <= 7 {
 			apdemande.MotifRecoursSE = motifRecoursSE
 		} else {
-			res.AddRegularError(fmt.Errorf("property \"MOTIF_RECOURS_SE\" a une valeur invalide : %d. Valeur ignorée", *motifRecoursSE))
+			res.AddRegularError(fmt.Errorf("property \"MOTIF_RECOURS_SE\" has invalid value : %d. Value ignored", *motifRecoursSE))
 		}
 	}
 

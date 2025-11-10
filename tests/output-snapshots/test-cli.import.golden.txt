@@ -1,24 +1,60 @@
 $ ./sfdata import --help
-Importe des fichiers de données
+Import data files
 
 Usage: import [FLAG]...
 
 Description:
-    Effectue l'import de tous les fichiers du batch donné en paramètre.
-    Il est possible de limiter l'exécution à certains parsers en spécifiant la liste dans le flag "--parsers".
-    Répond "ok" dans la sortie standard, si le traitement s'est bien déroulé.
+    Handles the import and cleaning of input data files for a specific batch.
+    
+    DATA LOCATION:
+    All imported data is expected to be relative to a base directory defined via
+    "--path". If a "--batch-config" option is provided, the relative paths of
+    the data files are explicitely given. Otherwise, data files are expected
+    to be in a directory with the same name as the "--batch" option.
+    
+    BATCH CONFIGURATION:
+    The imported files are either explicitly provided via a batch configuration file
+    (--batch-config), or inferred from their naming in the data directory.
+    
+    
+    FILTERING:
+    As the import perimeter is usually a fraction of the raw data, the pipeline uses
+    a SIREN filter with the following priority:
+      1. Explicitly provided filter (in batch configuration or "filter_..." file)
+      2. Filter stored in database (table "stg_filter_import")
+    
+    If an "effectif" file is provided, the filter will be updated (or created if none
+    exists). If no filter is available and no effectif file is provided, the import
+    will fail, unless the "--no-filter" flag is provided.
+    
+    OUTPUT:
+    The cleaned data is sent to two sinks:
+      - CSV files (written to disk)
+      - PostgreSQL database (table inserts)
+    
+    Import logs can be consulted in the "import_logs" table in PostgreSQL.
+    
+    DRY RUN:
+    The "--dry-run" flag will discard the data instead of sending it to sinks.
+    Import logs are printed to stdout, and no write operations are performed i
+    the database (though a filter can still be read from the database if available).
+    
+    SELECTIVE PARSING:
+    Limit imports to specific parsers using the "--parsers" flag. Note: This only
+    limits data import, but does not affect filter updates if an effectif file is
+    provided. Use an explicit batch configuration to completely ignore certain files.
 
 Flags:
     --path                   (type: string; env: APP_DATA)
                          Directory where raw data can be found. If the batch is not explicitly defined via "--batch-config", then it is expected to be in a subfolder named after the batchkey provided with "--batch"
     --batch batch_key        (type: string)
-                         Identifiant du batch à importer (ex: 1802, pour Février 2018)
+                         Batch identifier to import (e.g., 1802 for February 2018)
     --parsers                (type: []string)
-                         Parseurs à employer (ex: apconso, cotisation)
+                         Parsers to use (e.g., apconso, cotisation). Consult documentation with --help for full list of available parsers.
     --no-filter              (type: bool)
-                         Pour procéder à l'import même si aucun filtre n'est fourni
+                         Proceed with import without filtering input data, and without updating the filter stored in DB.
     --batch-config           (type: string; env: BATCH_CONFIG_FILE)
-                         Chemin de définition de l'ensemble des fichiers à importer (batch). À défaut, ces fichiers sont devinés par rapport à leur nommage, dans le répertoire de la variable d'environnement APP_DATA.
+                         Path to batch definition file. If not provided, files are inferred from their naming in the data directory (defined by "APP_DATA" environment variable or --path option.
     --dry-run                (type: bool)
-                         Pour parser les fichiers sans créer de fichiers CSV / imports en base
+                         Parse files without creating CSV files / database imports. Import report is printed to stdout.
 ---

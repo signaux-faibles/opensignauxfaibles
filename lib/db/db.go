@@ -1,21 +1,21 @@
-// Package db défini toutes les interfaces nécessaires pour l'écriture et la
-// lecture dans la base Postgresql.
+// Package db defines all necessary interfaces for writing to and
+// reading from the PostgreSQL database.
 //
-// Il définit également l'ensemble des tables et vues sous la forme de
+// It also defines all tables and views in the form of
 // migrations.
 //
-// La base de données a une architecture en deux couches :
-// - Les tables préfixées par `stg_` représentent les données importées, plutôt brutes
-// (même si un certain nombre d'opérations de mise en qualité sont déjà
-// réalisées au moment de l'import).
-// - Les tables et vues préfixées par `clean_` sont les tables enrichies et
-// nettoyées.
+// The database has a two-layer architecture :
+// - Tables prefixed with `stg_` represent imported data, relatively raw
+// (although a number of quality operations are already
+// performed at import time).
+// - Tables and views prefixed with `clean_` are enriched and
+// cleaned tables.
 package db
 
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -41,7 +41,7 @@ type Pool interface {
 func Init(noDB bool) error {
 
 	if noDB {
-		log.Println("Mode NO_DB: pas de lecture et d'écriture de la base de données")
+		slog.Info("NO_DB mode : no reading from and writing to the database")
 		mockPool, _ := pgxmock.NewPool()
 
 		DB = mockPool
@@ -49,24 +49,42 @@ func Init(noDB bool) error {
 		return nil
 	}
 
+	connStr := viper.GetString("POSTGRES_DB_URL")
+
+	conf, err := pgx.ParseConfig(connStr)
+	if err != nil {
+		// Do not log connexion string as it can contain user / password
+		// information
+		slog.Error("could not properly parse connexion string provided by POSTGRES_DB_URL environment variable")
+		return err
+	}
+
+	logger := slog.With("host", conf.Host, "port", conf.Port, "database", conf.Database)
+	logger.Info("connecting to database...")
+
 	ctx := context.Background()
 	conn, err := pgxpool.New(ctx, viper.GetString("POSTGRES_DB_URL"))
 
 	if err != nil {
-		return fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
+		return fmt.Errorf("failed to connect to PostgreSQL: %w", err)
 	}
 
 	// Test connectivity with postgreSQL database
 	err = conn.Ping(ctx)
 
 	if err != nil {
-		return fmt.Errorf("erreur de connexion à PostgreSQL : %w", err)
+		return fmt.Errorf("failed to connect to PostgreSQL: %w", err)
 	}
 
+	logger.Info("database connexion established")
+
 	// Run database migrations
+	logger.Info("running database migrations...")
+
 	if err := runMigrations(ctx, conn); err != nil {
-		return fmt.Errorf("erreur lors de l'exécution des migrations : %w", err)
+		return fmt.Errorf("failed to execute database migrations: %w", err)
 	}
+	logger.Info("database migrated with success")
 
 	DB = conn
 	return nil

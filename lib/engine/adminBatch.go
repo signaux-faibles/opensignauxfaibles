@@ -1,6 +1,6 @@
-// Package engine est la colonne vertebrale de l'import. Elle définit les
-// interfaces pour définer les parsers, le filtre, les sinks (vers lesquels
-// la donnée sera envoyée).
+// Package engine is the backbone of the import. It defines the
+// interfaces for defining parsers, the filter, and sinks (to which
+// data will be sent).
 package engine
 
 import (
@@ -15,7 +15,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// Load charge les données d'un batch depuis du JSON
+// Load loads batch data from JSON
 func Load(batch *AdminBatch, reader io.Reader) error {
 	batchFileContent, err := io.ReadAll(reader)
 	if err != nil {
@@ -26,7 +26,7 @@ func Load(batch *AdminBatch, reader io.Reader) error {
 	return err
 }
 
-// ImportBatch lance tous les parsers sur le batch fourni
+// ImportBatch runs all parsers on the provided batch
 func ImportBatch(
 	batchConfig AdminBatch,
 	parserTypes []ParserType,
@@ -42,11 +42,12 @@ func ImportBatch(
 	}
 
 	logger := slog.With("batch", batchConfig.Key)
-	logger.Info("starting raw data import")
+
+	logger.Info("importing raw data...")
 
 	unsupported := checkUnsupportedFiletypes(registry, batchConfig)
 	for _, file := range unsupported {
-		logger.Warn("Type de fichier non reconnu", "file", file)
+		logger.Warn("unrecognized filetype, skipped", "file", file)
 	}
 
 	var g errgroup.Group
@@ -66,25 +67,25 @@ func ImportBatch(
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
 				func() error {
-					err := eventSink.Process(eventChannel)
-					return err
+					eventErr := eventSink.Process(eventChannel)
+					return eventErr
 				},
 			)
 
 			// Stream data to the output sink(s)
 			g.Go(
 				func() error {
-					dataSink, err := sinkFactory.CreateSink(parser.Type())
-					if err != nil {
-						return err
+					dataSink, sinkErr := sinkFactory.CreateSink(parser.Type())
+					if sinkErr != nil {
+						return sinkErr
 					}
 
-					err = dataSink.ProcessOutput(ctx, outputChannel)
-					if err != nil {
-						cancelParserProcess(err)
+					sinkErr = dataSink.ProcessOutput(ctx, outputChannel)
+					if sinkErr != nil {
+						cancelParserProcess(sinkErr)
 					}
 
-					return err
+					return sinkErr
 				},
 			)
 		}
@@ -94,8 +95,9 @@ func ImportBatch(
 	if err != nil {
 		return err
 	}
-	logger.Info("raw data parsing ended")
-	logger.Info("inspect the \"Journal\" database to consult parsing errors.")
+
+	logger.Info("raw data import ended")
+	logger.Info("inspect the import logs to consult any parsing errors")
 
 	return nil
 }
@@ -143,7 +145,7 @@ func (p JSONBatchProvider) Get() (AdminBatch, error) {
 	}
 
 	if err != nil {
-		return batch, fmt.Errorf("impossible de charger la configuration du batch : %w", err)
+		return batch, fmt.Errorf("unable to load batch configuration : %w", err)
 	}
 
 	return batch, nil
