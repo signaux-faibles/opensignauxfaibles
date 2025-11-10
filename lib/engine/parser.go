@@ -143,7 +143,7 @@ func runParserOnFile(
 		if err != nil {
 			// Do not proceed with parsing if fatal error
 			tracker.AddFatalError(err)
-			slog.Error("Fatal error while parsing line: " + err.Error())
+			slog.Error("Fatal error while parsing line", "error", err)
 			break
 		}
 

@@ -61,7 +61,7 @@ func parseLogLevel(logLevel string) (slog.Level, error) {
 func ConfigureLogLevel(logLevel string) {
 	var level, err = parseLogLevel(logLevel)
 	if err != nil {
-		slog.Warn("log level configuration error", slog.String("cause", err.Error()))
+		slog.Warn("log level configuration error", "error", err)
 		return
 	}
 	loglevel.Set(level)
