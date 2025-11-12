@@ -69,6 +69,8 @@ type Tuple interface {
 }
 
 // ParseFilesFromBatch parse les tuples des fichiers listés dans batch pour le parseur spécifié.
+// Retourne les channels des données et des rapports, qui seront populés en
+// arrière plan, puis fermés quand toute la donnée aura été traitée.
 func ParseFilesFromBatch(
 	ctx context.Context,
 	cache Cache,
@@ -83,7 +85,7 @@ func ParseFilesFromBatch(
 
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			reportChannel <- ParseFile(ctx, path, parser, batch, cache, outputChannel, filter)
+			reportChannel <- parseFileWithReport(ctx, path, parser, batch, cache, outputChannel, filter)
 		}
 		close(outputChannel)
 		close(reportChannel)
@@ -91,27 +93,39 @@ func ParseFilesFromBatch(
 	return outputChannel, reportChannel
 }
 
-// ParseFile parse les tuples du fichier spécifié puis retourne un rapport de journal.
-func ParseFile(ctx context.Context, path BatchFile, parser Parser, batch *AdminBatch,
-	cache Cache, outputChannel chan Tuple, filter SirenFilter) Report {
-	logger := slog.With("batch", batch.Key, "parser", parser.Type(), "filename", path.Path())
+// parseFileWithReport parses tuples on a single file, and returns a parsing report.
+// This function is responsible for logging and error handling, but delegates actual
+// parsing down the line.
+func parseFileWithReport(
+	ctx context.Context,
+	batchFile BatchFile,
+	parser Parser,
+	batch *AdminBatch,
+	cache Cache,
+	outputChannel chan Tuple,
+	filter SirenFilter,
+) Report {
+	logger := slog.With("batch", batch.Key, "parser", parser.Type(), "filename", batchFile.Path())
 	logger.Debug("parsing file")
 
+	// One tracker per file
 	tracker := NewParsingTracker()
-	fileType := parser.Type()
 
-	err := runParserOnFile(ctx, path, parser, batch, cache, &tracker,
+	err := runParserOnFile(ctx, batchFile, parser, batch, cache, &tracker,
 		outputChannel, filter)
+
 	if err != nil {
+		slog.Error("fatal error while parsing file", "parser", parser.Type(), "file", batchFile.Path(), "error", err)
 		tracker.AddFatalError(err)
 	}
 
 	logger.Debug("end of file parsing")
 
-	return tracker.Report(fileType, batch.Key, path.Path())
+	return tracker.Report(parser.Type(), batch.Key, batchFile.Path())
 }
 
-// runParserOnFile parse les tuples du fichier spécifié, et peut retourner une erreur fatale.
+// runParserOnFile parses tuples on a single file. An error is returned if
+// parsing cannot continue.
 func runParserOnFile(
 	ctx context.Context,
 	batchFile BatchFile,
@@ -136,15 +150,13 @@ func runParserOnFile(
 	}
 
 	parsedLineChan := make(chan ParsedLineResult)
-	go ParseLines(parserInst, parsedLineChan, batchFile.Filename())
+	go parseLines(parserInst, parsedLineChan, batchFile.Filename())
 
 	for lineResult := range parsedLineChan {
-		err := processTuplesFromLine(ctx, lineResult, filter, tracker, outputChannel)
+		err := processParsedLineResult(ctx, lineResult, filter, tracker, outputChannel)
 		if err != nil {
-			// Do not proceed with parsing if fatal error
-			tracker.AddFatalError(err)
-			slog.Error("Fatal error while parsing line", "error", err)
-			break
+			// Do not proceed if fatal error
+			return err
 		}
 
 		tracker.Next()
@@ -153,26 +165,57 @@ func runParserOnFile(
 	return nil
 }
 
-// processTuplesFromLine extraie les tuples et/ou erreurs depuis une ligne parsée.
+// parseLines appelle la fonction parseLine() sur chaque ligne du fichier CSV pour transmettre les tuples et/ou erreurs dans parsedLineChan.
+//
+// "filename" is used for logging purposes.
+func parseLines(parserInst ParserInst, parsedLineChan chan ParsedLineResult, filename string) {
+	defer close(parsedLineChan)
+
+	var lineNumber = 0 // starting with the header
+
+	stopProgressLogger := LogProgress(&lineNumber, filename)
+	defer stopProgressLogger()
+
+	for {
+		lineNumber++
+		parsedLine := ParsedLineResult{}
+		err := parserInst.ReadNext(&parsedLine)
+
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			parsedLine.AddRegularError(err)
+			parsedLineChan <- parsedLine
+			break
+		}
+
+		parsedLineChan <- parsedLine
+	}
+}
+
+// processParsedLineResult extraie les tuples et/ou erreurs depuis une ligne parsée.
 // Return an error only if parsing cannot proceed. Otherwise, track errors
 // with the ParsingTracker.
-func processTuplesFromLine(ctx context.Context, lineResult ParsedLineResult, filter SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) error {
+func processParsedLineResult(ctx context.Context, lineResult ParsedLineResult, filter SirenFilter, tracker *ParsingTracker, outputChannel chan Tuple) error {
+	// tracking lines filtered by parser even if no data is transmitted
 	filterError := lineResult.FilterError
 	if filterError != nil {
-		tracker.AddFilterError(filterError) // on rapporte le filtrage même si aucun tuple n'est transmis par le parseur
+		tracker.AddFilterError(filterError)
 		return nil
 	}
+
+	// Report parsing errors
 	for _, err := range lineResult.Errors {
 		tracker.AddParseError(err)
 	}
 
 	for _, tuple := range lineResult.Tuples {
-		if _, err := isValid(tuple); err != nil {
-			// On rapporte une erreur de siret/siren invalide seulement si aucune autre error n'a été rapportée par le parseur
+		if _, err := hasValidKey(tuple); err != nil {
+			// in addition, invalid siret/siren is reported iff no other parsing
+			// error occurred
 			if len(lineResult.Errors) == 0 {
 				tracker.AddParseError(err)
 			}
-
 		} else if filter.ShouldSkip(tuple.Key()) {
 			tracker.AddFilterError(errors.New("(filtered)"))
 
@@ -198,8 +241,8 @@ func LogProgress(lineNumber *int, filename string) (stop context.CancelFunc) {
 	})
 }
 
-// idValid vérifie que la clé (Key) d'un Tuple est valide, selon le type d'entité (Scope) qu'il représente.
-func isValid(tuple Tuple) (bool, error) {
+// hasValidKey vérifie que la clé (Key) d'un Tuple est valide, selon le type d'entité (Scope) qu'il représente.
+func hasValidKey(tuple Tuple) (bool, error) {
 	scope := tuple.Scope()
 	key := tuple.Key()
 	switch scope {
