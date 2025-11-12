@@ -29,7 +29,7 @@ func (p *SireneULParser) New(r io.Reader) engine.ParserInst {
 
 type sireneULRowParser struct{}
 
-func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 	var err error
 
 	idxRow := idx.IndexRow(row)
@@ -51,5 +51,4 @@ func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 	}
 
 	res.AddTuple(sireneul)
-	return nil
 }

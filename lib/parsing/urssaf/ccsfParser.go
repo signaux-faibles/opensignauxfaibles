@@ -32,7 +32,7 @@ type ccsfRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
 	var err error
 	ccsf := CCSF{}
@@ -44,7 +44,7 @@ func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, id
 		res.AddRegularError(err)
 
 		if err != nil {
-			return err
+			return
 		}
 
 		ccsf.key, err = rp.GetComptes().GetSiret(
@@ -55,7 +55,7 @@ func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, id
 		if err != nil {
 			// Compte filtré
 			res.SetFilterError(err)
-			return err
+			return
 		}
 		ccsf.NumeroCompte = idxRow.GetVal("Compte")
 	} else {
@@ -64,5 +64,4 @@ func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, id
 	if len(res.Errors) == 0 {
 		res.AddTuple(ccsf)
 	}
-	return nil
 }

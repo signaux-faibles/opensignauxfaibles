@@ -38,7 +38,7 @@ func (rp *effectifEntRowParser) setPeriods(periods []periodCol) {
 	rp.periods = periods
 }
 
-func (rp *effectifEntRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *effectifEntRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
 	for _, period := range rp.periods {
 		value := row[period.colIndex]
@@ -58,5 +58,4 @@ func (rp *effectifEntRowParser) ParseRow(row []string, res *engine.ParsedLineRes
 			}
 		}
 	}
-	return nil
 }

@@ -31,7 +31,7 @@ type delaiRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
 	idxRow := idx.IndexRow(row)
 
@@ -39,14 +39,13 @@ func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 
 	if err != nil {
 		res.AddRegularError(err)
-		return err
-
+		return
 	}
 
 	siret, err := rp.GetComptes().GetSiret(idxRow.GetVal("Numero_compte_externe"), &date)
 	if err != nil {
 		res.SetFilterError(err)
-		return err
+		return
 	}
 
 	delai := Delai{}
@@ -70,5 +69,4 @@ func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 	if len(res.Errors) == 0 {
 		res.AddTuple(delai)
 	}
-	return nil
 }

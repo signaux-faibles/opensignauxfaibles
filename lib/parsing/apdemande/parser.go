@@ -31,12 +31,12 @@ func (p *ApdemandeParser) New(r io.Reader) engine.ParserInst {
 
 type apdemandeRowParser struct{}
 
-func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 	idxRow := idx.IndexRow(row)
 
 	if idxRow.GetVal("ETAB_SIRET") == "" {
 		res.AddRegularError(errors.New("invalidLine: siret unspecified"))
-		return nil
+		return
 	}
 
 	var err error
@@ -83,5 +83,4 @@ func (parser *apdemandeRowParser) ParseRow(row []string, res *engine.ParsedLineR
 	if len(res.Errors) == 0 {
 		res.AddTuple(apdemande)
 	}
-	return nil
 }

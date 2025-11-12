@@ -26,8 +26,9 @@ type ParserInst interface {
 
 	Init(cache *Cache, filter SirenFilter, batch *AdminBatch) error
 
-	// ReadNext extracts tuples from next line
-	// Any error definitely interrupts the parsing
+	// ReadNext extracts tuples from next line.
+	// Returns an error only if reading further is not possible: any error
+	// definitively interrupts the parsing.
 	// Should return io.EOF when there is nothing left to parse.
 	ReadNext(*ParsedLineResult) error
 }
@@ -145,30 +146,36 @@ func runParserOnFile(
 
 	parserInst := parser.New(bufio.NewReader(file))
 
-	if err := parserInst.Init(&cache, filter, batch); err != nil {
+	if err = parserInst.Init(&cache, filter, batch); err != nil {
 		return err
 	}
 
 	parsedLineChan := make(chan ParsedLineResult)
-	go parseLines(parserInst, parsedLineChan, batchFile.Filename())
+	errChan := make(chan error)
+
+	go func() {
+		errChan <- parseLines(parserInst, parsedLineChan, batchFile.Filename())
+	}()
 
 	for lineResult := range parsedLineChan {
-		err := processParsedLineResult(ctx, lineResult, filter, tracker, outputChannel)
+		err = processParsedLineResult(ctx, lineResult, filter, tracker, outputChannel)
 		if err != nil {
-			// Do not proceed if fatal error
+			// Fatal error
 			return err
 		}
 
 		tracker.Next()
 	}
 
-	return nil
+	// Fatal error if any
+	return (<-errChan)
 }
 
 // parseLines appelle la fonction parseLine() sur chaque ligne du fichier CSV pour transmettre les tuples et/ou erreurs dans parsedLineChan.
 //
 // "filename" is used for logging purposes.
-func parseLines(parserInst ParserInst, parsedLineChan chan ParsedLineResult, filename string) {
+func parseLines(parserInst ParserInst, parsedLineChan chan ParsedLineResult,
+	filename string) error {
 	defer close(parsedLineChan)
 
 	var lineNumber = 0 // starting with the header
@@ -182,11 +189,9 @@ func parseLines(parserInst ParserInst, parsedLineChan chan ParsedLineResult, fil
 		err := parserInst.ReadNext(&parsedLine)
 
 		if err == io.EOF {
-			break
+			return nil
 		} else if err != nil {
-			parsedLine.AddRegularError(err)
-			parsedLineChan <- parsedLine
-			break
+			return err
 		}
 
 		parsedLineChan <- parsedLine
