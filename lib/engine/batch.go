@@ -77,7 +77,7 @@ func (files *BatchFiles) UnmarshalJSON(data []byte) error {
 type BatchFile interface {
 	Filename() string
 
-	// Relative path given a base path
+	// Relative path given a base path.
 	// Usually begins with the batch key
 	Path() string
 
@@ -155,4 +155,3 @@ func NewCompressedBatchFile(path string) BatchFile {
 func NewBatchFileFromBatch(basepath string, batch BatchKey, filename string) BatchFile {
 	return NewBatchFile(basepath, batch.String(), filename)
 }
-

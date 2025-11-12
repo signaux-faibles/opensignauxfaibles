@@ -31,7 +31,7 @@ type debitRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
 	idxRow := idx.IndexRow(row)
 
@@ -77,5 +77,4 @@ func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 	} else {
 		res.SetFilterError(err)
 	}
-	return nil
 }

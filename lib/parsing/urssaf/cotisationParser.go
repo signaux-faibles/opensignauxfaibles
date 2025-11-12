@@ -31,7 +31,7 @@ type cotisationRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *cotisationRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *cotisationRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
 	idxRow := idx.IndexRow(row)
 
@@ -56,5 +56,4 @@ func (rp *cotisationRowParser) ParseRow(row []string, res *engine.ParsedLineResu
 	if len(res.Errors) == 0 {
 		res.AddTuple(cotisation)
 	}
-	return nil
 }

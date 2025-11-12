@@ -7,7 +7,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"log"
+	"log/slog"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"os"
@@ -44,9 +46,15 @@ var tmpDir = filepath.Join("tests", "tmp-test-execution-files")
 var update = flag.Bool("update", false, "Update the expected test values in golden file")
 
 func TestMain(m *testing.M) {
+
 	var err error
 
 	suite, err = setupSuite()
+
+	// Do not print logs in tests. Should be called after `setupSuite()` which
+	// inits a default logger
+	slog.SetDefault(slog.New(slog.NewTextHandler(io.Discard, nil)))
+
 	if err != nil {
 		panic(err)
 	}

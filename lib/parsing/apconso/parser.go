@@ -28,7 +28,7 @@ func (p *ApconsoParser) New(r io.Reader) engine.ParserInst {
 
 type apconsoRowParser struct{}
 
-func (rp *apconsoRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *apconsoRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 	var err error
 
 	idxRow := idx.IndexRow(row)
@@ -48,5 +48,4 @@ func (rp *apconsoRowParser) ParseRow(row []string, res *engine.ParsedLineResult,
 	if len(res.Errors) == 0 {
 		res.AddTuple(apconso)
 	}
-	return nil
 }

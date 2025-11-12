@@ -54,7 +54,7 @@ func ImportBatch(
 
 	var cache = NewEmptyCache()
 	for _, parser := range parsers {
-		// We create a parser-specific context. Any error will cancelParserProcess all
+		// We create a parser-specific context. Any error will cancel all
 		// parser-related operations
 		ctx, cancelParserProcess := context.WithCancelCause(context.Background())
 		defer cancelParserProcess(nil)
@@ -62,6 +62,8 @@ func ImportBatch(
 		if len(batchConfig.Files[parser.Type()]) > 0 {
 			logger.Info("parse raw data", "parser", parser.Type())
 
+			// Parsing files for given parser type
+			// outputChannel and eventChannel are populated in background thread
 			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter)
 
 			// Insert events (parsing logs) into the "Journal" collection

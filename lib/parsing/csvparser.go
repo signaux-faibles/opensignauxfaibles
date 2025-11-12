@@ -9,7 +9,9 @@ import (
 
 // RowParser parses a single row
 type RowParser interface {
-	ParseRow(row []string, result *engine.ParsedLineResult, idx ColIndex) error
+	// ParseRow extracts information from a "row".
+	// Extracted data and parsing errors are stored in "result".
+	ParseRow(row []string, result *engine.ParsedLineResult, idx ColIndex)
 }
 
 // CsvParserInst provides a CSV Parser implementation base
@@ -63,5 +65,6 @@ func (p *CsvParserInst) ReadNext(res *engine.ParsedLineResult) error {
 		return nil
 	}
 
-	return p.ParseRow(row, res, p.idx)
+	p.ParseRow(row, res, p.idx)
+	return nil
 }
