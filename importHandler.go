@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log/slog"
 
 	"github.com/cosiner/flag"
@@ -88,6 +89,28 @@ func (params importBatchHandler) Validate() error {
 func (params importBatchHandler) Run() error {
 	slog.Info("executing import command")
 
+	// Initialize database
+	if !params.DryRun {
+		shouldMigrate := true
+		err := db.Init(shouldMigrate)
+		if err != nil {
+			return fmt.Errorf("error while connecting to db: %w", err)
+		}
+	}
+
+	if params.DryRun {
+		// With dry run, we do not want to *write* to the database.
+		// We may want to *read* the filter from the database, however, we accept
+		// if the db connection fails and do without (mock the connexion)
+		shouldMigrate := false
+		err := db.Init(shouldMigrate)
+		if err != nil {
+			db.InitMock()
+		}
+	}
+	defer db.DB.Close()
+
+	// parse batchkey
 	batchKey, err := engine.NewBatchKey(params.BatchKey)
 	if err != nil {
 		return err
@@ -142,6 +165,7 @@ func (params importBatchHandler) Run() error {
 
 		slog.Info("data will be discarded")
 		dataSinkFactory = &engine.DiscardSinkFactory{}
+
 		slog.Info("import logs will be written to stdout")
 		reportSink = &engine.StdoutReportSink{}
 	}

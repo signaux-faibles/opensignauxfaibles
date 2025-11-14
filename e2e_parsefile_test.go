@@ -3,7 +3,6 @@
 package main
 
 import (
-	"os"
 	"os/exec"
 	"testing"
 
@@ -17,7 +16,6 @@ func TestParseFileEndToEnd(t *testing.T) {
 	goldenFile := "test-parseFile.golden.txt"
 
 	cmd := exec.Command("./sfdata", "parseFile", "--parser", "apconso", "--file", "./lib/parsing/apconso/testData/apconsoTestData.csv")
-	cmd.Env = append(os.Environ(), "NO_DB=1")
 
 	output, err := cmd.CombinedOutput()
 
