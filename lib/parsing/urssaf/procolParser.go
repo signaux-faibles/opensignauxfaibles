@@ -34,7 +34,7 @@ type procolRowParser struct {
 	UrssafRowParser
 }
 
-func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
 	var err error
 	idxRow := idx.IndexRow(row)
@@ -56,5 +56,4 @@ func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	if len(res.Errors) == 0 {
 		res.AddTuple(procol)
 	}
-	return nil
 }

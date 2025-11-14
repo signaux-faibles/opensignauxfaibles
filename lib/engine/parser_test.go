@@ -42,7 +42,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.AddTuple(dummyTuple{})
 
 		tracker := NewParsingTracker()
-		processTuplesFromLine(ctx, parsedLine, NoFilter, &tracker, make(chan Tuple))
+		processParsedLineResult(ctx, parsedLine, NoFilter, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")
@@ -60,7 +60,7 @@ func TestParseTuplesFromLine(t *testing.T) {
 		parsedLine.SetFilterError(errors.New("filtered"))
 
 		tracker := NewParsingTracker()
-		processTuplesFromLine(ctx, parsedLine, NoFilter, &tracker, make(chan Tuple))
+		processParsedLineResult(ctx, parsedLine, NoFilter, &tracker, make(chan Tuple))
 		tracker.Next()
 
 		report := tracker.Report("", "", "")

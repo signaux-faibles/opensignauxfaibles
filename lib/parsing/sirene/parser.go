@@ -34,7 +34,7 @@ func (p *SireneParser) New(r io.Reader) engine.ParserInst {
 
 type sireneRowParser struct{}
 
-func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) error {
+func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 	var err error
 
 	idxRow := idx.IndexRow(row)
@@ -97,7 +97,6 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	}
 
 	res.AddTuple(sirene)
-	return nil
 }
 
 var typeVoie = map[string]string{
