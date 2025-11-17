@@ -1,1 +1,4 @@
 siret               	date_effet          	action_procol       	stade_procol        
+01234567891011      	2014-05-26 00:00:00 	redressement        	solde_procedure     
+11109876543210      	2017-10-04 00:00:00 	redressement        	solde_procedure     
+11111111111111      	2014-07-17 00:00:00 	redressement        	solde_procedure     
