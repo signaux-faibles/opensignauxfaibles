@@ -33,7 +33,8 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 		engine.Effectif,
 		engine.EffectifEnt,
 		engine.Sirene,
-		engine.SireneUl:
+		engine.SireneUl,
+		engine.Procol:
 
 		tableName := fmt.Sprintf("stg_%s", parserType)
 		materializedTableUpdate := ""
@@ -49,6 +50,8 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 
 		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil
 	}
+
+	slog.Warn("type de parser non supporté pour envoi des données à PostgreSQL", "parser", parserType)
 
 	return &engine.DiscardDataSink{}, nil
 }

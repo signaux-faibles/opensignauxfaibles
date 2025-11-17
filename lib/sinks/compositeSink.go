@@ -18,7 +18,7 @@ import (
 // buffer is full, all sinks have to go at the slowest sink's pace.
 const DefaultBufferSize = 100000
 
-// NewCompositeSinkFactory gives a SinkFactory, that creates DataSink
+// Combine gives a SinkFactory, that creates DataSink
 // instances that combine multiple sinks
 func Combine(factories ...engine.SinkFactory) engine.SinkFactory {
 	return &compositeSinkFactory{
