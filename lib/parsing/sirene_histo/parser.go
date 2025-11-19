@@ -46,16 +46,22 @@ func (rp *sireneHistoRowParser) ParseRow(row []string, res *engine.ParsedLineRes
 	if (dateDebutStr != "") && err != nil {
 		res.AddRegularError(err)
 		return
+	} else if dateDebutStr == "" {
+		sirenehisto.DateDebut = nil
+	} else {
+		sirenehisto.DateDebut = &dateDebut
 	}
-	sirenehisto.DateDebut = &dateDebut
 
 	dateFinStr := idxRow.GetVal("dateFin")
 	dateFin, err := time.Parse("2006-01-02", dateFinStr)
 	if (dateFinStr != "") && err != nil {
 		res.AddRegularError(err)
 		return
+	} else if dateFinStr == "" {
+		sirenehisto.DateFin = nil
+	} else {
+		sirenehisto.DateFin = &dateFin
 	}
-	sirenehisto.DateFin = &dateFin
 
 	if dateDebutStr == "" && dateFinStr == "" {
 		res.AddRegularError(fmt.Errorf("dates de début et de fin toutes les deux manquantes"))
