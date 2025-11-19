@@ -64,7 +64,7 @@ func (rp *sireneHistoRowParser) ParseRow(row []string, res *engine.ParsedLineRes
 	}
 
 	if dateDebutStr == "" && dateFinStr == "" {
-		res.AddRegularError(fmt.Errorf("dates de début et de fin toutes les deux manquantes"))
+		res.SetFilterError(fmt.Errorf("both dateDebut and dateFin are missing. Ignoring établissement likely closed long before the start of our training period"))
 		return
 	}
 
