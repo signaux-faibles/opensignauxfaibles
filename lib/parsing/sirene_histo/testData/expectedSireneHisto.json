@@ -3,7 +3,6 @@
     {
       "siret": "00032517500016",
       "date_debut": "2009-05-27T00:00:00Z",
-      "date_fin": "0001-01-01T00:00:00Z",
       "changement_statut_actif": true
     },
     {
@@ -23,7 +22,6 @@
     {
       "siret": "00032517500024",
       "date_debut": "2011-10-21T00:00:00Z",
-      "date_fin": "0001-01-01T00:00:00Z",
       "changement_statut_actif": true
     }
   ],
