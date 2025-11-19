@@ -75,7 +75,16 @@ func (rp *sireneHistoRowParser) ParseRow(row []string, res *engine.ParsedLineRes
 	case "F":
 		sirenehisto.EstActif = false
 	default:
-		res.AddRegularError(fmt.Errorf("état administratif malformé : \"%s\" (attendu \"A\" ou \"F\"", etatAdmin))
+		// From Sirene documentation
+		// URL at time of writing: https://www.sirene.fr/static-resources/documentation/v_sommaire_311.htm#54
+		//
+		// > Lors de son inscription au répertoire, un établissement est, sauf exception, à l'état Actif. [...]
+		// > Toutefois, l'état administratif peut être à null (première date de début de l'état postérieure à la première date de début d'une autre variable historisée).
+		//
+		// As we are only interested in events related to the activity of the établissement, we can ignore these prior events.
+		//
+		// This may be a data quality issue however, how can a company that is not even active change its APE activity code?
+		res.SetFilterError(fmt.Errorf("état administratif malformé : \"%s\" (attendu \"A\" ou \"F\"", etatAdmin))
 		return
 	}
 
