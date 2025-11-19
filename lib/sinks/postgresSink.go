@@ -34,7 +34,8 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 		engine.EffectifEnt,
 		engine.Sirene,
 		engine.SireneUl,
-		engine.Procol:
+		engine.Procol,
+		engine.SireneHisto:
 
 		tableName := fmt.Sprintf("stg_%s", parserType)
 		materializedTableUpdate := ""

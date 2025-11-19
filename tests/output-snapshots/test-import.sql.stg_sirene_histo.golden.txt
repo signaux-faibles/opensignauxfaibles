@@ -1,0 +1,1 @@
+siret               	date_debut          	date_fin            	est_actif           	changement_statut_ac
