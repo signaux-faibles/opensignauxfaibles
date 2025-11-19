@@ -1,0 +1,5 @@
+siren,nic,siret,dateFin,dateDebut,etatAdministratifEtablissement,changementEtatAdministratifEtablissement,enseigne1Etablissement,enseigne2Etablissement,enseigne3Etablissement,changementEnseigneEtablissement,denominationUsuelleEtablissement,changementDenominationUsuelleEtablissement,activitePrincipaleEtablissement,nomenclatureActivitePrincipaleEtablissement,changementActivitePrincipaleEtablissement,caractereEmployeurEtablissement,changementCaractereEmployeurEtablissement
+000325175,00016,00032517500016,,2009-05-27,F,true,,,,false,,false,32.12Z,NAFRev2,false,N,false
+000325175,00016,00032517500016,2009-05-26,2008-01-01,A,false,,,,false,,false,32.12Z,NAFRev2,true,N,false
+000325175,00016,00032517500016,2007-12-31,2000-09-26,A,false,,,,false,,false,,,false,N,false
+000325175,00024,00032517500024,,2011-10-21,F,true,TAHITI PERLES CREATIONS,,,false,,false,47.89Z,NAFRev2,false,N,false

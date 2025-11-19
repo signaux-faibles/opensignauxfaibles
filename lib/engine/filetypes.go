@@ -23,6 +23,7 @@ const (
 	Procol      ParserType = "procol"
 	Sirene      ParserType = "sirene"
 	SireneUl    ParserType = "sirene_ul"
+	SireneHisto ParserType = "sirene_histo"
 	Paydex      ParserType = "paydex"
 	Ellisphere  ParserType = "ellisphere"
 )
@@ -34,3 +35,4 @@ const (
 	ScopeEntreprise    Scope = "entreprise"
 	ScopeEtablissement Scope = "etablissement"
 )
+

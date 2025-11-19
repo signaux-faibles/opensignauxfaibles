@@ -29,6 +29,8 @@ func ExtractParserTypeFromFilename(filename string) engine.ParserType {
 		return engine.SireneUl
 	case filename == "StockEtablissement_utf8_geo.csv":
 		return engine.Sirene
+	case filename == "StockEtablissementHistorique_utf8.csv":
+		return engine.SireneHisto
 	case mentionsDebits.MatchString(filename):
 		return engine.Debit
 	case hasDianePrefix.MatchString(filename):
