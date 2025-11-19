@@ -8,6 +8,7 @@ import (
 	"opensignauxfaibles/lib/parsing/apdemande"
 	"opensignauxfaibles/lib/parsing/effectif"
 	"opensignauxfaibles/lib/parsing/sirene"
+	sirenehisto "opensignauxfaibles/lib/parsing/sirene_histo"
 	sireneul "opensignauxfaibles/lib/parsing/sirene_ul"
 	"opensignauxfaibles/lib/parsing/urssaf"
 )
@@ -53,4 +54,5 @@ var DefaultParsers = ParserRegistry{
 	engine.Apdemande:   apdemande.NewApdemandeParser(),
 	engine.Sirene:      sirene.NewSireneParser(),
 	engine.SireneUl:    sireneul.NewSireneULParser(),
+	engine.SireneHisto: sirenehisto.NewSireneHistoParser(),
 }
