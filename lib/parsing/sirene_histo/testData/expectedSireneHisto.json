@@ -1,0 +1,46 @@
+{
+  "tuples": [
+    {
+      "siret": "00032517500016",
+      "date_debut": "2009-05-27T00:00:00Z",
+      "date_fin": "0001-01-01T00:00:00Z",
+      "changement_statut_actif": true
+    },
+    {
+      "siret": "00032517500016",
+      "date_debut": "2008-01-01T00:00:00Z",
+      "date_fin": "2009-05-26T00:00:00Z",
+      "est_actif": true,
+      "changement_statut_actif": false
+    },
+    {
+      "siret": "00032517500016",
+      "date_debut": "2000-09-26T00:00:00Z",
+      "date_fin": "2007-12-31T00:00:00Z",
+      "est_actif": true,
+      "changement_statut_actif": false
+    },
+    {
+      "siret": "00032517500024",
+      "date_debut": "2011-10-21T00:00:00Z",
+      "date_fin": "0001-01-01T00:00:00Z",
+      "changement_statut_actif": true
+    }
+  ],
+  "reports": [
+    {
+      "commit": "",
+      "start_date": "0001-01-01T00:00:00Z",
+      "parser": "sirene_histo",
+      "batch_key": "1902",
+      "head_fatal": [],
+      "head_rejected": [],
+      "is_fatal": false,
+      "lines_parsed": 4,
+      "lines_rejected": 0,
+      "lines_skipped": 0,
+      "lines_valid": 4,
+      "summary": "testData/sireneHistoTestData.csv: intégration terminée, 4 lignes traitées, 0 erreurs fatales, 0 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
+    }
+  ]
+}
