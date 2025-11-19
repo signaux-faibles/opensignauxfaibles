@@ -1,4 +1,9 @@
 CREATE TABLE IF NOT EXISTS stg_sirene_histo (
+  siret                   VARCHAR(14),
+  date_debut              DATE,
+  date_fin                DATE,
+  est_actif               BOOLEAN,
+  changement_statut_actif BOOLEAN
 );
 
 CREATE INDEX IF NOT EXISTS idx_stg_sirene_histo_siret ON stg_sirene_histo(siret);
