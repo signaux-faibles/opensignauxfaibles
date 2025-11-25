@@ -12,13 +12,14 @@ import (
 var update = flag.Bool("update", false, "update the expected test values in golden file")
 
 func TestEffectifEnt(t *testing.T) {
-	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
-		var golden = filepath.Join("testData", "expectedEffectifEntShort.json")
-		var testData = engine.NewBatchFile("testData", "effectifEntTestDataShort.csv")
-		cache := engine.NewEmptyCache()
+	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude (short)",
+		func(t *testing.T) {
+			var golden = filepath.Join("testData", "expectedEffectifEntShort.json")
+			var testData = engine.NewBatchFile("testData", "effectifEntTestDataShort.csv")
+			cache := engine.NewEmptyCache()
 
-		engine.TestParserOutput(t, NewEffectifEntParser(), cache, testData, golden, *update)
-	})
+			engine.TestParserOutput(t, NewEffectifEntParser(), cache, testData, golden, *update)
+		})
 
 	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
