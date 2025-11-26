@@ -14,18 +14,64 @@ Contact: [contact@signaux-faibles.beta.gouv.fr](mailto:contact@signaux-faibles.b
 - Golang
 - PostgreSQL 17
 
-## Installation
+## build et tests
 
 ```bash
-$ git clone https://github.com/signaux-faibles/opensignauxfaibles.git
-$ cd opensignauxfaibles
-$ make build
-$ go test ./...
+# Cloner le code en local
+git clone https://github.com/signaux-faibles/opensignauxfaibles.git
+cd opensignauxfaibles
+
+# Compiler le binaire
+make build
+
+# Compiler pour la production (Linux AMD64)
+make build-prod
+
+# Exécuter tous les tests (unit + e2e)
+./test-all.sh
+
+# Exécuter tous les tests et mettre à jour les snapshots/golden files
+./test-all.sh --update
+
+# Exécuter uniquement les tests unitaires
+go test ./...
+
+# Exécuter uniquement les tests e2e
+go test -tags=e2e ./...
+
+# Exécuter un seul test
+go test ./lib/engine -run TestSpecificTest
+
+# Démarrer le conteneur PostgreSQL pour les tests manuels locaux
+make start-postgres
+
+# Arrêter le conteneur PostgreSQL
+make stop-postgres
 ```
 
-Dans l'arbre de sources de l'installation go, vous trouverez tous les répertoires nécessaires à l'exécution.
+## Usage 
 
-Avant de démarrer les test il est nécessaire de lancer le démon Docker.
+Le binaire `sfdata` fournit deux commandes :
+
+```bash
+# Importer des données depuis un répertoire de batch
+./sfdata import --batch 1802 --path /path/to/data
+
+# Importer avec une configuration de batch explicite
+./sfdata import --batch 1802 --batch-config ./batch.json
+
+# Importer sans filtrage
+./sfdata import --batch 1802 --no-filter
+
+# Importer uniquement des parsers spécifiques
+./sfdata import --batch 1802 --parsers apconso,cotisation
+
+# Dry run (parser sans écrire en DB/CSV)
+./sfdata import --batch 1802 --dry-run
+
+# Parser un seul fichier vers stdout
+./sfdata parseFile --parser cotisation --file /path/to/file.csv
+```
 
 ## Configuration
 
@@ -33,26 +79,117 @@ Voir `config-sample.toml` dans les sources.
 
 Par ordre de priorité, la configuration peut être définie:
 
-- via des variables d'environnement
-- dans /etc/opensignauxfaibles/config.toml
-- dans ~/.opensignauxfaibles/config.toml
-- dans ./config.toml
+- via des variables d'environnement (majuscules, points remplacés par des `_`, 
+  ex. `LOG_LEVEL`)
+- dans "/etc/opensignauxfaibles/config.toml"
+- dans "~/.opensignauxfaibles/config.toml"
+- dans "./config.toml"
 
 Pour les variables d'environnement, les variables sont en majuscules et les 
 points `.` des options imbriquées sont remplacées par des `_` (par exemple, 
 "log.level" est défini via "LOG_LEVEL").
 
-## Usage
+### Configuration de batch spécifique
 
-La commande `sfdata` s'inscrit dans un workflow d'intégration de données. Pour plus d'informations, consulter [signaux-faibles/documentation](https://github.com/signaux-faibles/documentation/blob/master/processus-traitement-donnees.md#workflow-classique).
+Voici un modèle de configuration de batch :
 
-## Développement et tests automatisés
+```json
+ {
+    "key": "1802",
+    "files": {
+      "apconso": [
+        "1802/apconso_20180201.csv",
+        "1802/apconso_20180215.csv.gz"
+      ],
+      "effectif": [
+        "1802/effectif_202402.csv"
+      ],
+      "effectif_ent": [
+        "1802/effectif_entreprise_202402.csv"
+      ],
+      "filter": [
+        "1802/filter_custom_siren.csv"
+      ]
+  }
+}
+```
 
-Afin de prévenir les régressions, plusieurs types de tests automatisés sont inclus dans le dépôt:
+Les types de parser disponibles peuvent être consultés dans 
+"lib/engine/parser_types.go".
 
-- tests unitaires de `sfdata`: `$ go test ./...`
-- tests de bout en bout: `$ go test -tags=e2e ./...`
+Le type "filter" permet de donner une liste de siren (csv avec une colonne 
+"siren") pour filtrer l'import.
 
-Tous ces tests sont exécutés en environnement d'Intégration Continue (CI) après chaque commit poussé sur GitHub, grâce à GitHub actions, tel que défini dans les fichiers `yaml` du répertoire `.github/workflows`.
+## Ajouter un nouveau parser
 
-Il est possible de tous les exécuter en local: `$ ./test-all.sh`.
+Lors de l'ajout d'un nouveau parser de sources de données :
+
+1. Définir la constante de type de parser dans `lib/engine/parser_types.go`
+2. Créer le répertoire du parser : `lib/parsing/[parser_name]/`
+3. Implémenter les interfaces `Parser` et `ParserInst` (peut s'appuyer sur des 
+   implémentations existantes, par ex. CsvParserInst)
+4. Définir la struct tuple implémentant l'interface `Tuple` (Key(), Scope(), 
+   Type()). Les tags `csv` et `sql` définissent le nom des colonnes dans les 
+   sorties .csv et postgreSQL respectivement. 
+5. Enregistrer le parser dans `lib/registry/main.go`
+6. Créer la table `stg_[parser_name]` via une migration 
+   (`lib/db/migrations/`), puis l'ajouter dans `lib/db/tables.go`
+7. Ajouter une vue ou une vue matérialisée `clean_[parser_name]` dans une 
+   migration puis pour les vues matérialisées, l'ajouter dans 
+   `lib/db/tables.go`.
+8. Ajouter le support du sink dans `lib/sinks/postgresSink.go`. Si la vue est 
+   matérialisée, sélectionner les conditions de mise à jour de la vue dans la 
+   fonction `CreateSink`. 
+9. Ajouter la reconnaissance du pattern de nom de fichier dans 
+   `lib/prepare-import/parsertypes.go` pour que les fichiers types pour ce 
+   parser soient reconnus automatiquement.
+
+# Notes d'architecture
+
+```
+Fichiers de données → Parser → Filtre → Sink (PostgreSQL + CSV)
+```
+
+Le pipeline d'importation se compose de :
+
+1. **Préparation du batch** (`lib/prepare-import/`) : Découvre les fichiers de données et infère leurs types de parser depuis les noms de fichiers, ou charge une configuration de batch explicite
+2. **Parsing** (`lib/parsing/`, `lib/engine/`) : Lit les fichiers de données 
+   brutes et extrait des tuples structurés (parallélisé)
+3. **Filtrage** (`lib/filter/`) : Applique un filtrage basé sur le SIREN pour limiter le volume
+4. **Sinks** (`lib/sinks/`) : Écrit les données nettoyées dans les tables PostgreSQL et les fichiers CSV
+
+## Base de données
+
+- Architecture à deux couches :
+  - tables `stg_*` : Données brutes/staging importées 
+  - tables/vues `clean_*` : Données enrichies et nettoyées. Ce sont ces tables 
+    qui doivent être utilisées par les consommateurs des données downstream.
+- Migrations définies dans `lib/db/migrations.go`
+
+## Parsers
+
+- Chaque source de données a un parser dédié (ex. `apconso`, `urssaf`, 
+  `effectif`)
+- Les types de parser sont définis dans `lib/engine/parser_types.go`
+
+## Filtrage
+
+Par sécurité, l'absence de filtre est par défaut une erreur. Pour importer 
+l'intégralité des données sans filtrer, utiliser le flag `--no-filter`.
+
+Si aucun filtre explicite n'est fourni (fichier commençant par "filter", ou 
+explicitement défini dans un batch JSON), le filtre va être lu de la base de 
+données. Si aucun filtre n'est stocké en base, il faut que le batch importé 
+possède un fichier effectif, pour générer le filtre.
+
+Le système de filtrage se fait en deux étapes :
+
+- Le filtrage à l'import des entreprises qui possèdent au moins un 
+  établissement de plus de 10 salariés (sur la base des dernières données 
+  d'effectif importées) : filtre explicite ou table `stg_filter_import`
+- Un filtrage supplémentaire pour arriver au périmètre définitif (table 
+  `clean_filter`, notamment retrait des organisations publiques sur la base 
+  des données Sirene). Ce périmètre définitif est utilisé pour la construction 
+  des vues `clean_[parser_name]`.
+
+
