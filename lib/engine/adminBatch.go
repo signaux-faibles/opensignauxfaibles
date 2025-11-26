@@ -64,7 +64,15 @@ func ImportBatch(
 
 			// Parsing files for given parser type
 			// outputChannel and eventChannel are populated in background thread
-			outputChannel, eventChannel := ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter)
+			var outputChannel chan Tuple
+			var eventChannel chan Report
+
+			if parser.Type() == Sirene || parser.Type() == SireneUl {
+				// For these parsers, all data is needed for the front-end, we do not apply the filter
+				outputChannel, eventChannel = ParseFilesFromBatch(ctx, cache, &batchConfig, parser, NoFilter)
+			} else {
+				outputChannel, eventChannel = ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter)
+			}
 
 			// Insert events (parsing logs) into the "Journal" collection
 			g.Go(
