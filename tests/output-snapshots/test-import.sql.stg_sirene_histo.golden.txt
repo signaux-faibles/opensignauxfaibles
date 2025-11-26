@@ -1,0 +1,5 @@
+siret               	date_debut          	date_fin            	est_actif           	changement_statut_ac
+00032517500016      	2009-05-27 00:00:00 	NULL                	false               	true                
+00032517500016      	2008-01-01 00:00:00 	2009-05-26 00:00:00 	true                	false               
+00032517500016      	2000-09-26 00:00:00 	2007-12-31 00:00:00 	true                	false               
+00032517500024      	2011-10-21 00:00:00 	NULL                	false               	true                
