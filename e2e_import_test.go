@@ -61,6 +61,7 @@ func createImportTestBatch(t *testing.T) {
 			engine.Apdemande:   {engine.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
 			engine.Sirene:      {engine.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
 			engine.SireneUl:    {engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
+			engine.SireneHisto: {engine.NewBatchFile("lib/parsing/sirene_histo/testData/sireneHistoTestData.csv")},
 			engine.AdminUrssaf: {engine.NewBatchFile("lib/parsing/urssaf/testData/comptesTestData.csv")},
 			engine.Debit:       {engine.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")},
 			engine.Ccsf:        {engine.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},

@@ -48,7 +48,7 @@ func (rp *effectifEntRowParser) ParseRow(row []string, res *engine.ParsedLineRes
 			s, err := strconv.ParseFloat(noThousandsSep, 64)
 			res.AddRegularError(err)
 			e := int(s)
-			if e > 0 {
+			if e >= 0 {
 				idxRow := idx.IndexRow(row)
 				res.AddTuple(EffectifEnt{
 					Siren:       idxRow.GetVal("siren"),

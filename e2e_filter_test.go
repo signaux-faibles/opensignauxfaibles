@@ -199,6 +199,8 @@ func readFilter(batch engine.AdminBatch) (engine.SirenFilter, error) {
 func TestCleanFilter(t *testing.T) {
 	cleanDB := setupDBTest(t)
 	t.Run("Après l'import d'effectif et de sirene_ul, les vues préfixées par \"clean_\" sont correctement filtrées", func(t *testing.T) {
+		// Les données d'effectif sont filtrées, mais pas les données de Sirene, nécessaires au front-end
+
 		defer cleanDB()
 
 		effectifContentTwoIns := effectifContent + "\n" +
@@ -248,7 +250,7 @@ func TestCleanFilter(t *testing.T) {
 				company222in: true,
 			},
 			{
-				name: "new company appears in effectif : it is not included right away",
+				name: "new company appears in effectif : as sirene is not filtered, company is included right away",
 				batches: []engine.AdminBatch{
 					{
 						Key: "1902",
@@ -271,7 +273,7 @@ func TestCleanFilter(t *testing.T) {
 					},
 				},
 				company111in: false,
-				company222in: false,
+				company222in: true,
 			},
 			{
 				name: "new company appears in effectif : after a full new batch import, the company is included",
@@ -318,6 +320,8 @@ func TestCleanFilter(t *testing.T) {
 			rows, err := db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '222222222'")
 			assert.NoError(t, err)
 			siretsFor222, err := pgx.CollectRows(rows, pgx.RowTo[string])
+			t.Log(tc.name)
+			t.Log(siretsFor222)
 			assert.NoError(t, err)
 			if tc.company222in {
 				assert.Greater(t, len(siretsFor222), 0, "L'entreprise 222222222 (privée) devrait être présente dans clean_effectif")
