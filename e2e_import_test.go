@@ -187,7 +187,7 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, query string) string {
 	// timestamp columns should be skipped for reproducible output
 	var includeColumn []bool
 	for _, fd := range fieldDescriptions {
-		isTimestamp := fd.Name == "start_date"
+		isTimestamp := fd.Name == "start_date" || fd.Name == "end_date"
 		includeColumn = append(includeColumn, !isTimestamp)
 		if !isTimestamp {
 			headers = append(headers, fmt.Sprintf("%-20s", fd.Name)[:20])

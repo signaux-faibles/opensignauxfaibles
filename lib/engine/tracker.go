@@ -72,6 +72,7 @@ func SetGitCommit(hash string) {
 type Report struct {
 	Commit        string     `json:"commit"`
 	StartDate     time.Time  `json:"start_date"`
+	EndDate       time.Time  `json:"end_date"`
 	Parser        ParserType `json:"parser"`
 	BatchKey      BatchKey   `json:"batch_key"`
 	HeadFatal     []string   `json:"head_fatal"`
@@ -102,6 +103,7 @@ func (tracker *ParsingTracker) Report(parser ParserType, batchKey BatchKey, file
 	return Report{
 		Commit:        gitCommit,
 		StartDate:     tracker.startDate,
+		EndDate:       time.Now(),
 		Parser:        parser,
 		BatchKey:      batchKey,
 		Summary:       summary,
