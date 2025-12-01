@@ -1,3 +1,4 @@
+-- See also: 024_add_end_date_to_import_logs.sql
 CREATE TABLE IF NOT EXISTS import_logs (
   start_date     TIMESTAMP,
   parser         TEXT,
