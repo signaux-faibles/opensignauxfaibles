@@ -138,6 +138,7 @@ func RunParser(
 		defer wg.Done()
 		for event := range events {
 			event.StartDate = time.Time{}
+			event.EndDate = time.Time{}
 			output.Reports = append(output.Reports, event)
 		}
 	}()
