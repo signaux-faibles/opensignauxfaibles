@@ -57,10 +57,10 @@ func insertReport(report Report, conn db.Pool, tableName string) error {
 
 	query := fmt.Sprintf(`
 		INSERT INTO %s (
-			start_date, parser, batch_key, head_fatal, head_rejected,
+			start_date, end_date, parser, batch_key, head_fatal, head_rejected,
 			is_fatal, lines_parsed, lines_rejected, lines_skipped,
 			lines_valid, summary
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`, tableName)
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`, tableName)
 
 	// Auxiliaire pour insérer des données au format Postgres TEXT[]
 	toPgArray := func(slice []string) pgtype.FlatArray[string] {
@@ -72,6 +72,7 @@ func insertReport(report Report, conn db.Pool, tableName string) error {
 
 	row := []any{
 		report.StartDate,
+		report.EndDate,
 		report.Parser,
 		report.BatchKey,
 		toPgArray(report.HeadFatal),
