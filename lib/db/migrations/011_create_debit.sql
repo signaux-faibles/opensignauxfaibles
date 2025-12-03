@@ -19,9 +19,10 @@ CREATE TABLE IF NOT EXISTS stg_debit (
     recours_en_cours                BOOLEAN
 );
 
-CREATE INDEX IF NOT EXISTS idx_stg_debit_ecart_negatif ON stg_debit(siret, periode_debut, periode_fin, numero_ecart_negatif, periode_prise_en_compte, numero_historique_ecart_negatif);
+CREATE INDEX IF NOT EXISTS idx_stg_debit_ecart_negatif ON stg_debit(siret, periode_debut, periode_fin, numero_ecart_negatif, periode_prise_en_compte, numero_historique_ecart_negatif DESC);
 CREATE INDEX IF NOT EXISTS idx_stg_debit_siret ON stg_debit(siret);
 CREATE INDEX IF NOT EXISTS idx_stg_debit_siren ON stg_debit(LEFT(siret, 9));
+CREATE INDEX IF NOT EXISTS idx_stg_debit_siret_periode_prise_en_compte ON stg_debit (siret, periode_prise_en_compte DESC);
 
 ---- create above / drop below ----
 
