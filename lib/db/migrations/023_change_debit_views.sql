@@ -1,4 +1,4 @@
-NULL;
+BEGIN;COMMIT;
 -- CREATE MATERIALIZED VIEW IF NOT EXISTS stg_debit_summed AS
 --
 -- -- We discard all unrelevant data already replaced by newer data by the end of the period
