@@ -2,6 +2,7 @@ package urssaf
 
 import (
 	"io"
+	"time"
 
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
@@ -50,6 +51,26 @@ func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 
 		debit.DateTraitement, err = UrssafToDate(idxRow.GetVal("Dt_trt_ecn"))
 		res.AddRegularError(err)
+
+		// Calcul de la période de prise en compte :
+		// - Si date_traitement <= 20 du mois : période en cours (1er du mois)
+		// - Si date_traitement > 20 du mois : période suivante (1er du mois suivant)
+		if debit.DateTraitement.Day() <= 20 {
+			debit.PeriodePriseEnCompte = time.Date(
+				debit.DateTraitement.Year(),
+				debit.DateTraitement.Month(),
+				1, 0, 0, 0, 0,
+				debit.DateTraitement.Location(),
+			)
+		} else {
+			debit.PeriodePriseEnCompte = time.Date(
+				debit.DateTraitement.Year(),
+				debit.DateTraitement.Month(),
+				1, 0, 0, 0, 0,
+				debit.DateTraitement.Location(),
+			).AddDate(0, 1, 0)
+		}
+
 		partOuvriere, err := idxRow.GetFloat64("Mt_PO")
 		res.AddRegularError(err)
 		debit.PartOuvriere = *partOuvriere / 100

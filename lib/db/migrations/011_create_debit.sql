@@ -10,15 +10,18 @@ CREATE TABLE IF NOT EXISTS stg_debit (
     code_procedure_collective       VARCHAR(10),
     periode_debut                   DATE,
     periode_fin                     DATE,
+    -- La période de prise en compte est la période à partir de laquelle la
+    -- donnée est prise en compte. Elle est calculée à l'import en fonction de
+    -- la date de traitement.
+    periode_prise_en_compte            DATE,
     code_operation_ecart_negatif    VARCHAR(10),
     code_motif_ecart_negatif        VARCHAR(10),
     recours_en_cours                BOOLEAN
 );
 
+CREATE INDEX IF NOT EXISTS idx_stg_debit_ecart_negatif ON stg_debit(siret, periode_debut, periode_fin, numero_ecart_negatif, periode_prise_en_compte, numero_historique_ecart_negatif);
 CREATE INDEX IF NOT EXISTS idx_stg_debit_siret ON stg_debit(siret);
 CREATE INDEX IF NOT EXISTS idx_stg_debit_siren ON stg_debit(LEFT(siret, 9));
-CREATE INDEX IF NOT EXISTS idx_stg_debit_date_traitement ON stg_debit(date_traitement);
-CREATE INDEX IF NOT EXISTS idx_stg_debit_periode_debut ON stg_debit(periode_debut);
 
 ---- create above / drop below ----
 

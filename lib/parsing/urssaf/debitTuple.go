@@ -11,6 +11,7 @@ type Debit struct {
 	NumeroCompte                 string    `input:"num_cpte"         json:"numero_compte"                sql:"numero_compte"                    csv:"numéro_compte"`
 	NumeroEcartNegatif           string    `input:"Num_Ecn"          json:"numero_ecart_negatif"         sql:"numero_ecart_negatif"             csv:"numéro_écart_négatif"`
 	DateTraitement               time.Time `input:"Dt_trt_ecn"       json:"date_traitement"              sql:"date_traitement"                  csv:"date_traitement"`
+	PeriodePriseEnCompte         time.Time `                         json:"periode_prise_en_compte"      sql:"periode_prise_en_compte"          csv:"période_prise_en_compte"`
 	PartOuvriere                 float64   `input:"Mt_PO"            json:"part_ouvriere"                sql:"part_ouvriere"                    csv:"part_ouvrière"`
 	PartPatronale                float64   `input:"Mt_PP"            json:"part_patronale"               sql:"part_patronale"                   csv:"part_patronale"`
 	NumeroHistoriqueEcartNegatif *int      `input:"Num_Hist_Ecn"     json:"numero_historique"            sql:"numero_historique_ecart_negatif"  csv:"numéro_historique_écart_négatif"`
