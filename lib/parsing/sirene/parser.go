@@ -5,6 +5,7 @@ package sirene
 import (
 	//"bufio"
 
+	"fmt"
 	"io"
 	"regexp"
 	"strconv"
@@ -69,14 +70,14 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	}
 
 	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
-		if idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement") == "NAFRev2" {
-			ape := idxRow.GetVal("activitePrincipaleEtablissement")
-			if matched, matchErr := regexp.MatchString(`^[0-9]{2}\.[0-9]{2}[A-Z]$`, ape); matchErr == nil && matched {
-				sirene.APE = ape
-			}
-		} else {
-			sirene.CodeActivite = idxRow.GetVal("activitePrincipaleEtablissement")
-			sirene.NomenActivite = idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement")
+		nomenclature := idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement")
+		if nomenclature != "NAFRev2" {
+			res.SetFilterError(fmt.Errorf("nomenclature activité non NAFRev2 : %s", nomenclature))
+			return
+		}
+		ape := idxRow.GetVal("activitePrincipaleEtablissement")
+		if matched, matchErr := regexp.MatchString(`^[0-9]{2}\.[0-9]{2}[A-Z]$`, ape); matchErr == nil && matched {
+			sirene.APE = ape
 		}
 	}
 
