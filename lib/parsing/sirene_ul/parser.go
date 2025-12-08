@@ -50,5 +50,9 @@ func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 		sireneul.Creation = &creation
 	}
 
+	// etatAdministratifUniteLegale: "A" pour actif, "F" pour fermé
+	etatAdministratif := idxRow.GetVal("etatAdministratifUniteLegale")
+	sireneul.EstActif = (etatAdministratif == "A")
+
 	res.AddTuple(sireneul)
 }

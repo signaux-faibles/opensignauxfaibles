@@ -1,4 +1,4 @@
-// Package siren fournit les parser pour extraire les données des fichiers
+// Package sirene fournit les parser pour extraire les données des fichiers
 // Sirene
 package sirene
 
@@ -95,6 +95,10 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 		sirene.Latitude, err = strconv.ParseFloat(val, 64)
 		res.AddRegularError(err)
 	}
+
+	// etatAdministratifEtablissement: "A" pour actif, "F" pour fermé
+	etatAdministratif := idxRow.GetVal("etatAdministratifEtablissement")
+	sirene.EstActif = (etatAdministratif == "A")
 
 	res.AddTuple(sirene)
 }
