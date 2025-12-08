@@ -8,7 +8,6 @@ import (
 	"io"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"opensignauxfaibles/lib/engine"
@@ -71,8 +70,8 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 
 	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
 		if idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement") == "NAFRev2" {
-			ape := strings.ReplaceAll(idxRow.GetVal("activitePrincipaleEtablissement"), ".", "")
-			if matched, matchErr := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); matchErr == nil && matched {
+			ape := idxRow.GetVal("activitePrincipaleEtablissement")
+			if matched, matchErr := regexp.MatchString(`^[0-9]{2}\.[0-9]{2}[A-Z]$`, ape); matchErr == nil && matched {
 				sirene.APE = ape
 			}
 		} else {
