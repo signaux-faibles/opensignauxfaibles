@@ -3,7 +3,9 @@
 package sireneul
 
 import (
+	"fmt"
 	"io"
+	"regexp"
 	"time"
 
 	"opensignauxfaibles/lib/engine"
@@ -43,12 +45,27 @@ func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 	sireneul.NomUniteLegale = idxRow.GetVal("nomUniteLegale")
 	sireneul.NomUsageUniteLegale = idxRow.GetVal("nomUsageUniteLegale")
 	sireneul.CodeStatutJuridique = idxRow.GetVal("categorieJuridiqueUniteLegale")
-	sireneul.ActivitePrincipale = idxRow.GetVal("activitePrincipaleUniteLegale")
+
+	if idxRow.GetVal("activitePrincipaleUniteLegale") != "" {
+		nomenclature := idxRow.GetVal("nomenclatureActivitePrincipaleUniteLegale")
+		if nomenclature != "NAFRev2" {
+			res.SetFilterError(fmt.Errorf("nomenclature activité non NAFRev2 : %s", nomenclature))
+			return
+		}
+		ape := idxRow.GetVal("activitePrincipaleUniteLegale")
+		if matched, matchErr := regexp.MatchString(`^[0-9]{2}\.[0-9]{2}[A-Z]$`, ape); matchErr == nil && matched {
+			sireneul.APE = ape
+		}
+	}
 
 	creation, err := time.Parse("2006-01-02", idxRow.GetVal("dateCreationUniteLegale")) // note: cette date n'est pas toujours présente, et on ne souhaite pas être rapporter d'erreur en cas d'absence
 	if err == nil {
 		sireneul.Creation = &creation
 	}
+
+	// etatAdministratifUniteLegale: "A" pour actif, "F" pour fermé
+	etatAdministratif := idxRow.GetVal("etatAdministratifUniteLegale")
+	sireneul.EstActif = (etatAdministratif == "A")
 
 	res.AddTuple(sireneul)
 }

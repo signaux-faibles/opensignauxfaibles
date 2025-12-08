@@ -20,8 +20,7 @@ CREATE OR REPLACE VIEW clean_sirene AS
     ) AS adresse,
     code_commune,
     departement,
-    code_activite,
-    nomenclature_activite,
+    ape,
     date_creation,
     longitude,
     latitude

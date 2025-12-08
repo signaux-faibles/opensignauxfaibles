@@ -1,14 +1,14 @@
-// Package siren fournit les parser pour extraire les données des fichiers
+// Package sirene fournit les parser pour extraire les données des fichiers
 // Sirene
 package sirene
 
 import (
 	//"bufio"
 
+	"fmt"
 	"io"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"opensignauxfaibles/lib/engine"
@@ -70,14 +70,14 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	}
 
 	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
-		if idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement") == "NAFRev2" {
-			ape := strings.ReplaceAll(idxRow.GetVal("activitePrincipaleEtablissement"), ".", "")
-			if matched, matchErr := regexp.MatchString(`^[0-9]{4}[A-Z]$`, ape); matchErr == nil && matched {
-				sirene.APE = ape
-			}
-		} else {
-			sirene.CodeActivite = idxRow.GetVal("activitePrincipaleEtablissement")
-			sirene.NomenActivite = idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement")
+		nomenclature := idxRow.GetVal("nomenclatureActivitePrincipaleEtablissement")
+		if nomenclature != "NAFRev2" {
+			res.SetFilterError(fmt.Errorf("nomenclature activité non NAFRev2 : %s", nomenclature))
+			return
+		}
+		ape := idxRow.GetVal("activitePrincipaleEtablissement")
+		if matched, matchErr := regexp.MatchString(`^[0-9]{2}\.[0-9]{2}[A-Z]$`, ape); matchErr == nil && matched {
+			sirene.APE = ape
 		}
 	}
 
@@ -95,6 +95,10 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 		sirene.Latitude, err = strconv.ParseFloat(val, 64)
 		res.AddRegularError(err)
 	}
+
+	// etatAdministratifEtablissement: "A" pour actif, "F" pour fermé
+	etatAdministratif := idxRow.GetVal("etatAdministratifEtablissement")
+	sirene.EstActif = (etatAdministratif == "A")
 
 	res.AddTuple(sirene)
 }

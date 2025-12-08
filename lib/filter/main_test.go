@@ -36,10 +36,11 @@ func TestCreateFilter(t *testing.T) {
 				cmdError = *bytes.NewBufferString(err.Error())
 			}
 		}
-		expectedOutput := DiffWithGoldenFile(outGoldenFile, *updateGoldenFile, cmdOutput)
+		sortedCmdOutput := bytes.NewBufferString(sortOutput(cmdOutput.String()))
+		expectedOutput := DiffWithGoldenFile(outGoldenFile, *updateGoldenFile, *sortedCmdOutput)
 		expectedError := DiffWithGoldenFile(errGoldenFile, *updateGoldenFile, cmdError)
 
-		assert.Equal(t, string(expectedOutput), sortOutput(cmdOutput.String()))
+		assert.Equal(t, string(expectedOutput), sortedCmdOutput.String())
 		assert.Equal(t, string(expectedError), cmdError.String())
 	})
 }

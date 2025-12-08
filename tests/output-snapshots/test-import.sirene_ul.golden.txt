@@ -1,6 +1,5 @@
 ==== sirene_ul.csv ====
-Siren,RaisonSociale,Prenom1UniteLegale,Prenom2UniteLegale,Prenom3UniteLegale,Prenom4UniteLegale,NomUniteLegale,NomUsageUniteLegale,CodeStatutJuridique,Creation,ActivitePrincipale
-138426539,,cuhgjdp,,,,jjqcmkg,,5465,,41.19A
-789211558,,ajfwprw-qmxobv,,,,fvxmjl,,5258,,71.06B
-238307776,,wwdsrst,,,,nduxdzbou,,4263,1964-01-01,97.90
-112233445,companyname,,,,,,,5422,1967-01-01,68.01Z
+Siren,RaisonSociale,Prenom1UniteLegale,Prenom2UniteLegale,Prenom3UniteLegale,Prenom4UniteLegale,NomUniteLegale,NomUsageUniteLegale,CodeStatutJuridique,Creation,APE,EstActif
+138426539,,cuhgjdp,,,,jjqcmkg,,5465,,41.19A,true
+789211558,,ajfwprw-qmxobv,,,,fvxmjl,,5258,,71.06B,false
+112233445,companyname,,,,,,,5422,1967-01-01,68.01Z,false

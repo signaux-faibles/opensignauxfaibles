@@ -29,11 +29,10 @@ type Sirene struct {
 	CodePostal           string     `input:"codePostalEtablissement"                     json:"code_postal,omitempty"           sql:"code_postal"              csv:"code_postal"`
 	Departement          string     `                                                    json:"departement,omitempty"           sql:"departement"              csv:"département"`
 	APE                  string     `                                                    json:"ape,omitempty"                   sql:"ape"                      csv:"ape"`
-	CodeActivite         string     `input:"activitePrincipaleEtablissement"             json:"code_activite,omitempty"         sql:"code_activite"            csv:"code_activité"`
-	NomenActivite        string     `input:"nomenclatureActivitePrincipaleEtablissement" json:"nomen_activite,omitempty"        sql:"nomenclature_activite"    csv:"nomenclature_activité"`
 	Creation             *time.Time `input:"dateCreationEtablissement"                   json:"date_creation,omitempty"         sql:"date_creation"            csv:"création"`
 	Longitude            float64    `input:"longitude"                                   json:"longitude,omitempty"             sql:"longitude"                csv:"longitude"`
 	Latitude             float64    `input:"latitude"                                    json:"latitude,omitempty"              sql:"latitude"                 csv:"latitude"`
+	EstActif             bool       `input:"etatAdministratifEtablissement"              json:"est_actif"                       sql:"est_actif"                csv:"est_actif"`
 }
 
 // Key id de l'objet",
