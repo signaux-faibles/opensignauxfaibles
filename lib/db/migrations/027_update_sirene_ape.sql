@@ -48,10 +48,12 @@ CREATE OR REPLACE VIEW clean_sirene_ul AS
     s.statut_juridique,
     s.ape,
     naf.niv1 AS naf_section,
+    siege.departement,
     s.creation,
     s.est_actif
   FROM stg_sirene_ul s
   LEFT JOIN naf_codes naf ON s.ape = naf.niv5
+  LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true
   WHERE s.siren IN (SELECT siren FROM clean_filter);
 
 -- Update clean_filter to use ape instead of activite_principale
