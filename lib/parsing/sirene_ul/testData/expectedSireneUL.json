@@ -6,7 +6,8 @@
       "prenom1_unite_legale": "cuhgjdp",
       "nom_unite_legale": "jjqcmkg",
       "statut_juridique": "5465",
-      "activite_principale": "41.19A"
+      "activite_principale": "41.19A",
+      "est_actif": true
     },
     {
       "siren": "789211558",
@@ -14,7 +15,8 @@
       "prenom1_unite_legale": "ajfwprw-qmxobv",
       "nom_unite_legale": "fvxmjl",
       "statut_juridique": "5258",
-      "activite_principale": "71.06B"
+      "activite_principale": "71.06B",
+      "est_actif": false
     },
     {
       "siren": "238307776",
@@ -23,14 +25,16 @@
       "nom_unite_legale": "nduxdzbou",
       "statut_juridique": "4263",
       "date_creation": "1964-01-01T00:00:00Z",
-      "activite_principale": "97.90"
+      "activite_principale": "97.90",
+      "est_actif": true
     },
     {
       "siren": "112233445",
       "raison_sociale": "companyname",
       "statut_juridique": "5422",
       "date_creation": "1967-01-01T00:00:00Z",
-      "activite_principale": "68.01Z"
+      "activite_principale": "68.01Z",
+      "est_actif": false
     }
   ],
   "reports": [

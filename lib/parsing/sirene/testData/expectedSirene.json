@@ -13,7 +13,8 @@
       "nomen_activite": "NAFRev1",
       "date_creation": "2007-04-20T00:00:00Z",
       "longitude": 6.1256,
-      "latitude": 14.106745
+      "latitude": 14.106745,
+      "est_actif": true
     },
     {
       "siren": "969792769",
@@ -29,7 +30,8 @@
       "code_activite": "00.9u",
       "nomen_activite": "NAFRev1",
       "longitude": 6.140122,
-      "latitude": 58.817057
+      "latitude": 58.817057,
+      "est_actif": true
     },
     {
       "siren": "497888333",
@@ -46,7 +48,8 @@
       "nomen_activite": "NAFRev1",
       "date_creation": "2007-04-20T00:00:00Z",
       "longitude": 5.52488,
-      "latitude": 65.448048
+      "latitude": 65.448048,
+      "est_actif": true
     },
     {
       "siren": "121212123",
@@ -61,7 +64,8 @@
       "departement": "83",
       "code_activite": "28.4x",
       "nomen_activite": "NAFRev1",
-      "date_creation": "2007-04-20T00:00:00Z"
+      "date_creation": "2007-04-20T00:00:00Z",
+      "est_actif": false
     },
     {
       "siren": "232323234",
@@ -76,7 +80,8 @@
       "departement": "83",
       "code_activite": "28.4x",
       "nomen_activite": "NAFRev1",
-      "date_creation": "2007-04-20T00:00:00Z"
+      "date_creation": "2007-04-20T00:00:00Z",
+      "est_actif": true
     }
   ],
   "reports": [

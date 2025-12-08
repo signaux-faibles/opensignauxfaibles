@@ -34,7 +34,7 @@ type Sirene struct {
 	Creation             *time.Time `input:"dateCreationEtablissement"                   json:"date_creation,omitempty"         sql:"date_creation"            csv:"création"`
 	Longitude            float64    `input:"longitude"                                   json:"longitude,omitempty"             sql:"longitude"                csv:"longitude"`
 	Latitude             float64    `input:"latitude"                                    json:"latitude,omitempty"              sql:"latitude"                 csv:"latitude"`
-	EstActif             bool       `input:"etatAdministratifEtablissement"              json:"est_actif,omitempty"             sql:"est_actif"                csv:"est_actif"`
+	EstActif             bool       `input:"etatAdministratifEtablissement"              json:"est_actif"                       sql:"est_actif"                csv:"est_actif"`
 }
 
 // Key id de l'objet",
