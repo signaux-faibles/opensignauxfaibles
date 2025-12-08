@@ -26,8 +26,7 @@
       "code_commune": "94133",
       "code_postal": "08079",
       "departement": "08",
-      "code_activite": "00.9u",
-      "nomen_activite": "NAFRev1",
+      "ape": "00.91U",
       "longitude": 6.140122,
       "latitude": 58.817057,
       "est_actif": true
@@ -43,28 +42,11 @@
       "code_commune": "63024",
       "code_postal": "83699",
       "departement": "83",
-      "code_activite": "28.4x",
-      "nomen_activite": "NAFRev1",
+      "ape": "52.21Z",
       "date_creation": "2007-04-20T00:00:00Z",
       "longitude": 5.52488,
       "latitude": 65.448048,
       "est_actif": true
-    },
-    {
-      "siren": "121212123",
-      "nic": "00001",
-      "siege": true,
-      "numero_voie": "55",
-      "type_voie": "HAMEAU",
-      "voie": "demnbujm",
-      "commune": "hzvnctxvbgkms",
-      "code_commune": "63024",
-      "code_postal": "83699",
-      "departement": "83",
-      "code_activite": "28.4x",
-      "nomen_activite": "NAFRev1",
-      "date_creation": "2007-04-20T00:00:00Z",
-      "est_actif": false
     },
     {
       "siren": "232323234",
@@ -77,8 +59,7 @@
       "code_commune": "63024",
       "code_postal": "83699",
       "departement": "83",
-      "code_activite": "28.4x",
-      "nomen_activite": "NAFRev1",
+      "ape": "28.41X",
       "date_creation": "2007-04-20T00:00:00Z",
       "est_actif": true
     }
@@ -98,9 +79,9 @@
       "is_fatal": false,
       "lines_parsed": 5,
       "lines_rejected": 1,
-      "lines_skipped": 0,
-      "lines_valid": 4,
-      "summary": "testData/sireneTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 0 lignes filtrées, 4 lignes valides"
+      "lines_skipped": 1,
+      "lines_valid": 3,
+      "summary": "testData/sireneTestData.csv: intégration terminée, 5 lignes traitées, 0 erreurs fatales, 1 lignes rejetées, 1 lignes filtrées, 3 lignes valides"
     }
   ]
 }
