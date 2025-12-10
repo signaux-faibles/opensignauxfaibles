@@ -13,6 +13,7 @@ import (
 
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 type SireneParser struct{}
@@ -62,11 +63,11 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	codePostal := idxRow.GetVal("codePostalEtablissement")
 	codeCommune := idxRow.GetVal("codeCommuneEtablissement")
 
-	if matched, _ := regexp.MatchString(`^\d{5}`, codePostal); matched {
+	if sfregexp.ValidCodePostal(codePostal) {
 		sirene.CodePostal = idxRow.GetVal("codePostalEtablissement")
 	}
 
-	if matched, _ := regexp.MatchString(`^\d{5}`, codeCommune); matched {
+	if sfregexp.ValidCodeCommune(codeCommune) {
 		sirene.CodeCommune = codeCommune
 		// on extrait le département pour codeCommune qui est mieux renseigné que
 		// codePostal
