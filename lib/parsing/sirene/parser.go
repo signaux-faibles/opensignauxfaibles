@@ -161,8 +161,8 @@ var indRep = map[string]string{
 }
 
 // extractDemartement extrait le département d'un code commune INSEE.
-// Il est attendu sans vérification que le code postal est composé de 5
-// chiffres, ou qu'il commence par 2A ou 2B (corse)
+// Il est attendu sans vérification que le code commune est valide (se référer
+// à sfregexp)
 func extractDepartement(codeCommune string) string {
 	var departement string
 	// Départements et territoires d'outre-mer (codes à 3 chiffres)

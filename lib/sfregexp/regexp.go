@@ -28,7 +28,8 @@ func ValidCodePostal(codePostal string) bool {
 	return RegexpDict["postalCode"].MatchString(codePostal)
 }
 
-// ValidCodeCommune retourne `true` si le code postal est composé de 5 chiffres.
+// ValidCodeCommune retourne `true` si le code commune INSEE est valide (5
+// chiffres ou commence par 2A / 2B)
 func ValidCodeCommune(codeCommune string) bool {
 	return RegexpDict["inseeCode"].MatchString(codeCommune)
 }
