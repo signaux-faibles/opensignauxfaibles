@@ -32,7 +32,8 @@ CREATE OR REPLACE VIEW clean_sirene AS
     s.est_actif
   FROM stg_sirene s
   LEFT JOIN naf_codes naf ON s.ape = naf.niv5
-  WHERE s.siren IN (SELECT siren FROM clean_filter);
+  WHERE s.siren IN (SELECT siren FROM clean_filter)
+    AND s.departement IS NOT NULL;
 
 -- Update clean_sirene_ul view to add ape column
 CREATE OR REPLACE VIEW clean_sirene_ul AS
