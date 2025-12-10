@@ -13,6 +13,7 @@ import (
 
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 type SireneParser struct{}
@@ -54,19 +55,23 @@ func (rp *sireneRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	sirene.Commune = idxRow.GetVal("libelleCommuneEtablissement")
 	sirene.CommuneEtranger = idxRow.GetVal("libelleCommuneEtrangerEtablissement")
 	sirene.DistributionSpeciale = idxRow.GetVal("distributionSpecialeEtablissement")
-	sirene.CodeCommune = idxRow.GetVal("codeCommuneEtablissement")
 	sirene.CodeCedex = idxRow.GetVal("codeCedexEtablissement")
 	sirene.Cedex = idxRow.GetVal("libelleCedexEtablissement")
 	sirene.CodePaysEtranger = idxRow.GetVal("codePaysEtrangerEtablissement")
 	sirene.PaysEtranger = idxRow.GetVal("libellePaysEtrangerEtablissement")
 
 	codePostal := idxRow.GetVal("codePostalEtablissement")
+	codeCommune := idxRow.GetVal("codeCommuneEtablissement")
 
-	// Si le code postal a le format attendu de code à 5 chiffres, on extrait le
-	// département.
-	if matched, _ := regexp.MatchString(`^\d{5}`, codePostal); matched {
-		sirene.CodePostal = codePostal
-		sirene.Departement = extractDepartement(codePostal)
+	if sfregexp.ValidCodePostal(codePostal) {
+		sirene.CodePostal = idxRow.GetVal("codePostalEtablissement")
+	}
+
+	if sfregexp.ValidCodeCommune(codeCommune) {
+		sirene.CodeCommune = codeCommune
+		// on extrait le département pour codeCommune qui est mieux renseigné que
+		// codePostal
+		sirene.Departement = extractDepartement(codeCommune)
 	}
 
 	if idxRow.GetVal("activitePrincipaleEtablissement") != "" {
