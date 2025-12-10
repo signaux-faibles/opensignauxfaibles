@@ -102,7 +102,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 
 		if len(currentBatch) >= BatchSize {
 
-			if err = insertTuples(currentBatch, s.conn, s.table, headers); err != nil {
+			if err = insertTuples(ctx, currentBatch, s.conn, s.table, headers); err != nil {
 				return fmt.Errorf("failed to execute batch insert: %w", err)
 			}
 
@@ -115,7 +115,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 	// Insert remaining tuples after channel closes
 	if len(currentBatch) > 0 {
 
-		if err = insertTuples(currentBatch, s.conn, s.table, headers); err != nil {
+		if err = insertTuples(ctx, currentBatch, s.conn, s.table, headers); err != nil {
 			return fmt.Errorf("failed to execute final batch: %w", err)
 		}
 
@@ -136,7 +136,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 	return nil
 }
 
-func insertTuples(tuples []engine.Tuple, conn db.Pool, tableName string, columns []string) error {
+func insertTuples(ctx context.Context, tuples []engine.Tuple, conn db.Pool, tableName string, columns []string) error {
 	if len(tuples) == 0 {
 		return nil
 	}
@@ -156,7 +156,7 @@ func insertTuples(tuples []engine.Tuple, conn db.Pool, tableName string, columns
 
 	// Batch insertion
 	_, err := conn.CopyFrom(
-		context.Background(),
+		ctx,
 		pgx.Identifier{tableName},
 		lowerColumns,
 		pgx.CopyFromRows(values),
