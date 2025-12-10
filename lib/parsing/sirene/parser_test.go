@@ -29,100 +29,100 @@ func TestSirene(t *testing.T) {
 
 func TestExtractDepartement(t *testing.T) {
 	tests := []struct {
-		name       string
-		codePostal string
-		want       string
+		name        string
+		codeCommune string
+		want        string
 	}{
 		{
-			name:       "département métropolitain classique",
-			codePostal: "75001",
-			want:       "75",
+			name:        "département métropolitain classique",
+			codeCommune: "75001",
+			want:        "75",
 		},
 		{
-			name:       "département 01 (Ain)",
-			codePostal: "01000",
-			want:       "01",
+			name:        "département 01 (Ain)",
+			codeCommune: "01000",
+			want:        "01",
 		},
 		{
-			name:       "Corse-du-Sud (200)",
-			codePostal: "20000",
-			want:       "2A",
+			name:        "Corse-du-Sud (200)",
+			codeCommune: "2A000",
+			want:        "2A",
 		},
 		{
-			name:       "Corse-du-Sud (201)",
-			codePostal: "20100",
-			want:       "2A",
+			name:        "Corse-du-Sud (201)",
+			codeCommune: "2A100",
+			want:        "2A",
 		},
 		{
-			name:       "Haute-Corse (202)",
-			codePostal: "20200",
-			want:       "2B",
+			name:        "Haute-Corse (202)",
+			codeCommune: "2B200",
+			want:        "2B",
 		},
 		{
-			name:       "Haute-Corse (206)",
-			codePostal: "20600",
-			want:       "2B",
+			name:        "Haute-Corse (206)",
+			codeCommune: "2B600",
+			want:        "2B",
 		},
 		{
-			name:       "Guadeloupe (971)",
-			codePostal: "97110",
-			want:       "971",
+			name:        "Guadeloupe (971)",
+			codeCommune: "97110",
+			want:        "971",
 		},
 		{
-			name:       "Martinique (972)",
-			codePostal: "97200",
-			want:       "972",
+			name:        "Martinique (972)",
+			codeCommune: "97200",
+			want:        "972",
 		},
 		{
-			name:       "Guyane (973)",
-			codePostal: "97300",
-			want:       "973",
+			name:        "Guyane (973)",
+			codeCommune: "97300",
+			want:        "973",
 		},
 		{
-			name:       "Réunion (974)",
-			codePostal: "97400",
-			want:       "974",
+			name:        "Réunion (974)",
+			codeCommune: "97400",
+			want:        "974",
 		},
 		{
-			name:       "Saint-Pierre-et-Miquelon (975)",
-			codePostal: "97500",
-			want:       "975",
+			name:        "Saint-Pierre-et-Miquelon (975)",
+			codeCommune: "97500",
+			want:        "975",
 		},
 		{
-			name:       "Mayotte (976)",
-			codePostal: "97600",
-			want:       "976",
+			name:        "Mayotte (976)",
+			codeCommune: "97600",
+			want:        "976",
 		},
 		{
-			name:       "Saint-Barthélemy (977)",
-			codePostal: "97700",
-			want:       "977",
+			name:        "Saint-Barthélemy (977)",
+			codeCommune: "97700",
+			want:        "977",
 		},
 		{
-			name:       "Saint-Martin (978)",
-			codePostal: "97800",
-			want:       "978",
+			name:        "Saint-Martin (978)",
+			codeCommune: "97800",
+			want:        "978",
 		},
 		{
-			name:       "Wallis-et-Futuna (986)",
-			codePostal: "98600",
-			want:       "986",
+			name:        "Wallis-et-Futuna (986)",
+			codeCommune: "98600",
+			want:        "986",
 		},
 		{
-			name:       "Polynésie française (987)",
-			codePostal: "98700",
-			want:       "987",
+			name:        "Polynésie française (987)",
+			codeCommune: "98700",
+			want:        "987",
 		},
 		{
-			name:       "Nouvelle-Calédonie (988)",
-			codePostal: "98800",
-			want:       "988",
+			name:        "Nouvelle-Calédonie (988)",
+			codeCommune: "98800",
+			want:        "988",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := extractDepartement(tt.codePostal)
+			got := extractDepartement(tt.codeCommune)
 			assert.Equal(t, tt.want, got)
 		})
 	}

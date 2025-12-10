@@ -160,24 +160,18 @@ var indRep = map[string]string{
 	"C": "QUINQUIES",
 }
 
-// extractDemartement extrait le département d'un code postal.
-// Il est attendu sans vérification que le code postal est composé de 5
-// chiffres.
-func extractDepartement(codePostal string) string {
+// extractDemartement extrait le département d'un code commune INSEE.
+// Il est attendu sans vérification que le code commune est valide (se référer
+// à sfregexp)
+func extractDepartement(codeCommune string) string {
 	var departement string
 	// Départements et territoires d'outre-mer (codes à 3 chiffres)
-	if codePostal[0:2] == "97" || codePostal[0:2] == "98" {
-		departement = codePostal[0:3]
+	if codeCommune[0:2] == "97" || codeCommune[0:2] == "98" {
+		departement = codeCommune[0:3]
 	} else {
 		// Départements de métropole (codes à 2 chiffres)
-		departement = codePostal[0:2]
-
-		// Traitement spécial pour la Corse
-		if codePostal[0:3] == "200" || codePostal[0:3] == "201" {
-			departement = "2A" // Corse-du-Sud
-		} else if codePostal[0:2] == "20" {
-			departement = "2B" // Haute-Corse
-		}
+		// Les codes INSEE pour la corse commencent bien par 2A ou 2B
+		departement = codeCommune[0:2]
 	}
 	return departement
 
