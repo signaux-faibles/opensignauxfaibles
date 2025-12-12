@@ -16,7 +16,7 @@ var golden = filepath.Join("testData", "expectedSireneUL.json")
 var testData = engine.NewBatchFile("testData", "sireneULTestData.csv")
 
 func TestSireneUl(t *testing.T) {
-	engine.TestParserOutput(t, NewSireneULParser(), engine.NewEmptyCache(), testData, golden, *update)
+	engine.TestParserOutput(t, NewSireneULParser(), testData, golden, *update)
 }
 
 func TestSireneUlHeader(t *testing.T) {

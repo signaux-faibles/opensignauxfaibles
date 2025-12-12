@@ -32,7 +32,7 @@ type CsvParserInst struct {
 	header []string
 }
 
-func (p *CsvParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, batch *engine.AdminBatch) error {
+func (p *CsvParserInst) Init(filter engine.SirenFilter, batch *engine.AdminBatch) error {
 	p.csvReader = csv.NewReader(p)
 	p.csvReader.Comma = p.Comma
 	p.csvReader.LazyQuotes = p.LazyQuotes

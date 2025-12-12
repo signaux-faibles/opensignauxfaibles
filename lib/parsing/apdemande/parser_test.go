@@ -15,7 +15,7 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestApdemande(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedApdemande.json")
 	var testData = engine.NewBatchFile("testData", "apdemandeTestData.csv")
-	engine.TestParserOutput(t, NewApdemandeParser(), engine.NewEmptyCache(), testData, golden, *update)
+	engine.TestParserOutput(t, NewApdemandeParser(), testData, golden, *update)
 
 	t.Run("should fail if one column misses", func(t *testing.T) {
 		output := engine.RunParserInline(t, NewApdemandeParser(), []string{"ID_DA,ETAB_SIRET"}) // EFF_ENT is missing (among others)
