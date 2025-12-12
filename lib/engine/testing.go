@@ -79,12 +79,6 @@ func ConsumeFatalErrors(ch chan Report) []string {
 // RunParserInline returns Tuples and Reports resulting from the execution of a
 // Parser on a given list of rows.
 func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndReports) {
-	return RunParserInlineExe(t, parser, rows)
-}
-
-// RunParserInlineExe returns Tuples and Reports resulting from the execution of a
-// Parser on a given list of rows.
-func RunParserInlineExe(t *testing.T, parser Parser, rows []string) (output tuplesAndReports) {
 	csvData := strings.Join(rows, "\n")
 	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
 	return RunParser(parser, NewBatchFile(csvFile.Name()))
