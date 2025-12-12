@@ -18,7 +18,6 @@ func TestExtractParserTypeFromFilename(t *testing.T) {
 		{"sigfaible_debits.csv", engine.Debit},
 		{"sigfaible_cotisdues.csv", engine.Cotisation},
 		{"sigfaible_pcoll.csv", engine.Procol},
-		{"sigfaible_etablissement_utf8.csv", engine.AdminUrssaf},
 		{"sigfaible_effectif_siret.csv", engine.Effectif},
 		{"sigfaible_effectif_siren.csv", engine.EffectifEnt},
 		{"sigfaible_delais.csv", engine.Delai},
@@ -26,7 +25,6 @@ func TestExtractParserTypeFromFilename(t *testing.T) {
 
 		// compressed version of urssaf files
 		{"sigfaible_ccsf.csv.gz", engine.Ccsf},
-		{"sigfaible_etablissement_utf8.csv.gz", engine.AdminUrssaf}, // sfdata parser name: "comptes"
 		{"sigfaible_cotisdues.csv.gz", engine.Cotisation},
 		{"sigfaible_debits.csv.gz", engine.Debit},
 		{"sigfaible_delais.csv.gz", engine.Delai},

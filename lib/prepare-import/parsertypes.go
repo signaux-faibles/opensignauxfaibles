@@ -13,8 +13,6 @@ func ExtractParserTypeFromFilename(filename string) engine.ParserType {
 		return engine.Apconso
 	case filename == "demande_ap.csv":
 		return engine.Apdemande
-	case possiblyGzFilename == "sigfaible_etablissement_utf8.csv":
-		return engine.AdminUrssaf
 	case possiblyGzFilename == "sigfaible_effectif_siren.csv":
 		return engine.EffectifEnt
 	case possiblyGzFilename == "sigfaible_pcoll.csv":

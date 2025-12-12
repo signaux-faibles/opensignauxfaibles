@@ -8,7 +8,6 @@ type ParserType string
 const (
 	// There is actually no parser for AdminUrssaf, but it is used for an ID to
 	// Siret Mapping
-	AdminUrssaf ParserType = "admin_urssaf"
 	Apconso     ParserType = "apconso"
 	Apdemande   ParserType = "apdemande"
 	Bdf         ParserType = "bdf"
@@ -35,4 +34,3 @@ const (
 	ScopeEntreprise    Scope = "entreprise"
 	ScopeEtablissement Scope = "etablissement"
 )
-
