@@ -13,19 +13,9 @@ import (
 	"opensignauxfaibles/lib/engine"
 )
 
-var update = flag.Bool("update", false, "update the expected test values in golden file")
+var notFoundRegexp = "column [A-Za-z]+ not found"
 
-func makeCacheWithComptesMapping() engine.Cache {
-	cache := engine.NewEmptyCache()
-	cache.Set("comptes", MockComptesMapping(
-		map[string]string{
-			"111982477292496174": "00000000000000",
-			"636043216536562844": "11111111111111",
-			"450359886246036238": "22222222222222",
-		},
-	))
-	return cache
-}
+var update = flag.Bool("update", false, "update the expected test values in golden file")
 
 func TestUrssaf(t *testing.T) {
 	t.Run("URSSAF gzipped files can be decompressed on the fly", func(t *testing.T) {
@@ -33,13 +23,12 @@ func TestUrssaf(t *testing.T) {
 			Parser     engine.Parser
 			InputFile  string
 			GoldenFile string
-			Cache      engine.Cache
 		}
 		urssafFiles := []TestCase{
-			{NewCCSFParser(), "ccsfTestData.csv", "expectedCcsf.json", makeCacheWithComptesMapping()},
-			{NewDebitParser(), "debitTestData.csv", "expectedDebit.json", makeCacheWithComptesMapping()},
-			{NewDelaiParser(), "delaiTestData.csv", "expectedDelai.json", makeCacheWithComptesMapping()},
-			{NewProcolParser(), "procolTestData.csv", "expectedProcol.json", makeCacheWithComptesMapping()},
+			{NewCCSFParser(), "ccsfTestData.csv", "expectedCcsf.json"},
+			{NewDebitParser(), "debitTestData.csv", "expectedDebit.json"},
+			{NewDelaiParser(), "delaiTestData.csv", "expectedDelai.json"},
+			{NewProcolParser(), "procolTestData.csv", "expectedProcol.json"},
 		}
 		for _, testCase := range urssafFiles {
 			t.Run(string(testCase.Parser.Type()), func(t *testing.T) {
@@ -55,7 +44,7 @@ func TestUrssaf(t *testing.T) {
 				goldenContent := bytes.ReplaceAll(initialGoldenContent, []byte(testCase.InputFile), []byte(testCase.InputFile+".gz"))
 				tmpGoldenFile := engine.CreateTempFileWithContent(t, goldenContent)
 
-				engine.TestParserOutput(t, testCase.Parser, testCase.Cache, compressedFilePath, tmpGoldenFile.Name(), false)
+				engine.TestParserOutput(t, testCase.Parser, nil, compressedFilePath, tmpGoldenFile.Name(), false)
 			})
 		}
 	})
@@ -64,14 +53,14 @@ func TestUrssaf(t *testing.T) {
 func TestDebit(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebit.json")
 	var testData = engine.NewBatchFile("testData", "debitTestData.csv")
-	var cache = makeCacheWithComptesMapping()
+	var cache engine.Cache = nil
 
 	engine.TestParserOutput(t, NewDebitParser(), cache, testData, golden, *update)
 
 	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewDebitParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "column num_cpte not found")
+		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
 	})
 
 	// t.Run("Debit n'est importé que si inclus dans le filtre", func(t *testing.T) {
@@ -98,80 +87,51 @@ func TestDebit(t *testing.T) {
 func TestDebitCorrompu(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDebitCorrompu.json")
 	var testData = engine.NewBatchFile("testData", "debitCorrompuTestData.csv")
-	var cache = makeCacheWithComptesMapping()
+	var cache engine.Cache = nil
 	engine.TestParserOutput(t, NewDebitParser(), cache, testData, golden, *update)
 }
 
 func TestDelai(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedDelai.json")
 	var testData = engine.NewBatchFile("testData", "delaiTestData.csv")
-	var cache = makeCacheWithComptesMapping()
+	var cache engine.Cache = nil
 	engine.TestParserOutput(t, NewDelaiParser(), cache, testData, golden, *update)
 
 	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewDelaiParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "column Numero_compte_externe not found")
+		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
 	})
 }
 
 func TestCcsf(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCcsf.json")
 	var testData = engine.NewBatchFile("testData", "ccsfTestData.csv")
-	var cache = makeCacheWithComptesMapping()
+	var cache engine.Cache = nil
 	engine.TestParserOutput(t, NewCCSFParser(), cache, testData, golden, *update)
 
 	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewCCSFParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "column Compte not found")
+		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
 	})
 }
 
 func TestCotisation(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedCotisation.json")
 	var testData = engine.NewBatchFile("testData", "cotisationTestData.csv")
-	var cache = makeCacheWithComptesMapping()
+	var cache engine.Cache = nil
 	engine.TestParserOutput(t, NewCotisationParser(), cache, testData, golden, *update)
 
 	t.Run("should report fatal error when column is missing", func(t *testing.T) {
 		output := engine.RunParserInlineEx(t, cache, NewCotisationParser(), []string{"dummy"})
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "column Compte not found")
-	})
-
-	// t.Run("toute ligne de cotisation d'un établissement hors périmètre doit être sautée silencieusement", func(t *testing.T) {
-	// 	allowedSiren := "111111111" // SIREN correspondant à un des 3 comptes mentionnés dans le fichier testData
-	// 	cache := makeCacheWithComptesMapping()
-	// 	cache.Set("filter", engine.SirenFilter{allowedSiren: true})
-	// 	// test
-	// 	output := engine.RunParser(NewCotisationParser(), cache, testData)
-	// 	reportData := output.Reports[0]
-	// 	assert.Equal(t, false, reportData.IsFatal, "aucune erreur fatale ne doit être rapportée")
-	// 	assert.Equal(t, []string{}, reportData.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
-	// 	assert.Equal(t, int64(1.0), reportData.LinesValid, "seule la ligne de cotisation liée à un établissement du périmètre doit être incluse")
-	// })
-
-	t.Run("toute ligne de cotisation d'un établissement non inclus dans les comptes urssaf doit être sautée silencieusement", func(t *testing.T) {
-		cache := engine.NewEmptyCache()
-		cache.Set("comptes", MockComptesMapping(
-			map[string]string{
-				"111982477292496174": "00000000000000",
-				// "636043216536562844": "11111111111111", // on retire volontairement ce mapping qui va être demandé par le parseur de cotisations
-				"450359886246036238": "22222222222222",
-			},
-		))
-		// test
-		output := engine.RunParser(NewCotisationParser(), cache, testData)
-		report := output.Reports[0]
-		assert.Equal(t, false, report.IsFatal, "aucune erreur fatale ne doit être rapportée")
-		assert.Equal(t, []string{}, report.HeadRejected, "aucune erreur de parsing ne doit être rapportée")
-		assert.Equal(t, int64(1.0), report.LinesSkipped, "seule la ligne de cotisation liée à un établissement hors mapping doit être sautée")
+		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
 	})
 }
 
 func TestProcol(t *testing.T) {
-	var cache = makeCacheWithComptesMapping()
+	var cache engine.Cache = nil
 
 	t.Run("Le fichier de test Procol est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedProcol.json")

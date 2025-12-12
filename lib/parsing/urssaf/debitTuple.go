@@ -7,7 +7,7 @@ import (
 
 // Debit Débit – fichier Urssaf
 type Debit struct {
-	Siret                        string    `                         json:"-"                            sql:"siret"                            csv:"siret"`
+	Siret                        string    `input:"Siret"            json:"-"                            sql:"siret"                            csv:"siret"`
 	NumeroCompte                 string    `input:"num_cpte"         json:"numero_compte"                sql:"numero_compte"                    csv:"numéro_compte"`
 	NumeroEcartNegatif           string    `input:"Num_Ecn"          json:"numero_ecart_negatif"         sql:"numero_ecart_negatif"             csv:"numéro_écart_négatif"`
 	DateTraitement               time.Time `input:"Dt_trt_ecn"       json:"date_traitement"              sql:"date_traitement"                  csv:"date_traitement"`

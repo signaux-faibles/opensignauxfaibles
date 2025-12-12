@@ -19,33 +19,29 @@ func NewProcolParser() engine.Parser {
 
 func (parser *ProcolParser) Type() engine.ParserType { return engine.Procol }
 func (parser *ProcolParser) New(r io.Reader) engine.ParserInst {
-	return &UrssafParserInst{
-		parsing.CsvParserInst{
-			Reader:        r,
-			RowParser:     &procolRowParser{},
-			Comma:         ';',
-			LazyQuotes:    false,
-			CaseSensitive: false,
-			DestTuple:     Procol{},
-		},
+	return &parsing.CsvParserInst{
+		Reader:        r,
+		RowParser:     &procolRowParser{},
+		Comma:         ';',
+		LazyQuotes:    false,
+		CaseSensitive: false,
+		DestTuple:     Procol{},
 	}
 }
 
-type procolRowParser struct {
-	UrssafRowParser
-}
+type procolRowParser struct{}
 
 func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
 	var err error
 	idxRow := idx.IndexRow(row)
 	procol := Procol{}
-	procol.DateEffet, err = time.Parse("02Jan2006", idxRow.GetVal("dt_effet"))
+	procol.DateEffet, err = time.Parse("02Jan2006", idxRow.GetVal("Dt_effet"))
 	res.AddRegularError(err)
 
-	procol.Siret = idxRow.GetVal("siret")
+	procol.Siret = idxRow.GetVal("Siret")
 
-	actionStade := idxRow.GetVal("lib_actx_stdx")
+	actionStade := idxRow.GetVal("Lib_actx_stdx")
 	splitted := strings.Split(strings.ToLower(actionStade), "_")
 
 	for i, v := range splitted {

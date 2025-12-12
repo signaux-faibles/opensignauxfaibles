@@ -16,21 +16,17 @@ func NewCCSFParser() engine.Parser {
 
 func (parser *CCSFParser) Type() engine.ParserType { return engine.Ccsf }
 func (parser *CCSFParser) New(r io.Reader) engine.ParserInst {
-	return &UrssafParserInst{
-		parsing.CsvParserInst{
-			Reader:        r,
-			RowParser:     &ccsfRowParser{},
-			Comma:         ';',
-			LazyQuotes:    false,
-			CaseSensitive: false,
-			DestTuple:     CCSF{},
-		},
+	return &parsing.CsvParserInst{
+		Reader:        r,
+		RowParser:     &ccsfRowParser{},
+		Comma:         ';',
+		LazyQuotes:    false,
+		CaseSensitive: false,
+		DestTuple:     CCSF{},
 	}
 }
 
-type ccsfRowParser struct {
-	UrssafRowParser
-}
+type ccsfRowParser struct{}
 
 func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
@@ -47,16 +43,7 @@ func (rp *ccsfRowParser) ParseRow(row []string, res *engine.ParsedLineResult, id
 			return
 		}
 
-		ccsf.key, err = rp.GetComptes().GetSiret(
-			idxRow.GetVal("Compte"),
-			&ccsf.DateTraitement,
-		)
-
-		if err != nil {
-			// Compte filtré
-			res.SetFilterError(err)
-			return
-		}
+		ccsf.Siret = idxRow.GetVal("Siret")
 		ccsf.NumeroCompte = idxRow.GetVal("Compte")
 	} else {
 		res.AddRegularError(errors.New("invalid line, fewer than 4 fields"))
