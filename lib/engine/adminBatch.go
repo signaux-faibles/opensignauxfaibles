@@ -52,7 +52,6 @@ func ImportBatch(
 
 	var g errgroup.Group
 
-	var cache = NewEmptyCache()
 	for _, parser := range parsers {
 		// We create a parser-specific context. Any error will cancel all
 		// parser-related operations
@@ -69,9 +68,9 @@ func ImportBatch(
 
 			if parser.Type() == Sirene || parser.Type() == SireneUl {
 				// For these parsers, all data is needed for the front-end, we do not apply the filter
-				outputChannel, eventChannel = ParseFilesFromBatch(ctx, cache, &batchConfig, parser, NoFilter)
+				outputChannel, eventChannel = ParseFilesFromBatch(ctx, &batchConfig, parser, NoFilter)
 			} else {
-				outputChannel, eventChannel = ParseFilesFromBatch(ctx, cache, &batchConfig, parser, filter)
+				outputChannel, eventChannel = ParseFilesFromBatch(ctx, &batchConfig, parser, filter)
 			}
 
 			// Insert events (parsing logs) into the "Journal" collection

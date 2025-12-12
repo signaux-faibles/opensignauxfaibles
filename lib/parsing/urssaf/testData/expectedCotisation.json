@@ -1,18 +1,18 @@
 {
   "tuples": [
     {
-      "numero_compte": "111982477292496174",
-      "periode_debut": "2010-05-01T00:00:00Z",
-      "periode_fin": "2010-06-01T00:00:00Z",
-      "encaisse": 4,
-      "du": 4
-    },
-    {
       "numero_compte": "636043216536562844",
       "periode_debut": "2010-07-01T00:00:00Z",
       "periode_fin": "2010-08-01T00:00:00Z",
       "encaisse": -68231,
       "du": -21099
+    },
+    {
+      "numero_compte": "111982477292496174",
+      "periode_debut": "2010-05-01T00:00:00Z",
+      "periode_fin": "2010-06-01T00:00:00Z",
+      "encaisse": 4,
+      "du": 4
     },
     {
       "numero_compte": "450359886246036238",

@@ -4,7 +4,7 @@ apdemande           	1910                	[]                  	[]               
 ccsf                	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t
 cotisation          	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t
 debit               	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t
-delai               	1910                	[]                  	[]                  	false               	3                   	0                   	1                   	2                   	lib/parsing/urssaf/t
+delai               	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t
 effectif            	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/effectif
 effectif_ent        	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/effectif
 procol              	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t

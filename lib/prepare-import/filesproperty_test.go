@@ -50,8 +50,6 @@ func TestPopulateFilesProperty(t *testing.T) {
 			Filename string
 		}
 		files := []File{
-			{"diane", "diane_req_2002.csv"},               // --> DIANE
-			{"diane", "diane_req_dom_2002.csv"},           // --> DIANE
 			{"effectif", "effectif_dom.csv"},              // --> EFFECTIF
 			{"filter", "filter_siren_2002.csv"},           // --> FILTER
 			{"sirene_ul", "sireneUL.csv"},                 // --> SIRENE_UL

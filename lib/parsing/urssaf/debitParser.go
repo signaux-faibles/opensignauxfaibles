@@ -16,21 +16,17 @@ func NewDebitParser() engine.Parser {
 
 func (parser *DebitParser) Type() engine.ParserType { return engine.Debit }
 func (parser *DebitParser) New(r io.Reader) engine.ParserInst {
-	return &UrssafParserInst{
-		parsing.CsvParserInst{
-			Reader:        r,
-			RowParser:     &debitRowParser{},
-			Comma:         ';',
-			CaseSensitive: false,
-			LazyQuotes:    false,
-			DestTuple:     Debit{},
-		},
+	return &parsing.CsvParserInst{
+		Reader:        r,
+		RowParser:     &debitRowParser{},
+		Comma:         ';',
+		CaseSensitive: false,
+		LazyQuotes:    false,
+		DestTuple:     Debit{},
 	}
 }
 
-type debitRowParser struct {
-	UrssafRowParser
-}
+type debitRowParser struct{}
 
 func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
 
@@ -39,63 +35,59 @@ func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 	periodeDebut, periodeFin, err := UrssafToPeriod(idxRow.GetVal("Periode"))
 	res.AddRegularError(err)
 
-	if siret, err := rp.GetComptes().GetSiret(idxRow.GetVal("num_cpte"), &periodeDebut); err == nil {
-		debit := Debit{
-			Siret:                     siret,
-			NumeroCompte:              idxRow.GetVal("num_cpte"),
-			NumeroEcartNegatif:        idxRow.GetVal("Num_Ecn"),
-			CodeProcedureCollective:   idxRow.GetVal("Cd_pro_col"),
-			CodeOperationEcartNegatif: idxRow.GetVal("Cd_op_ecn"),
-			CodeMotifEcartNegatif:     idxRow.GetVal("Motif_ecn"),
-		}
+	debit := Debit{
+		Siret:                     idxRow.GetVal("Siret"),
+		NumeroCompte:              idxRow.GetVal("num_cpte"),
+		NumeroEcartNegatif:        idxRow.GetVal("Num_Ecn"),
+		CodeProcedureCollective:   idxRow.GetVal("Cd_pro_col"),
+		CodeOperationEcartNegatif: idxRow.GetVal("Cd_op_ecn"),
+		CodeMotifEcartNegatif:     idxRow.GetVal("Motif_ecn"),
+	}
 
-		debit.DateTraitement, err = UrssafToDate(idxRow.GetVal("Dt_trt_ecn"))
-		res.AddRegularError(err)
+	debit.DateTraitement, err = UrssafToDate(idxRow.GetVal("Dt_trt_ecn"))
+	res.AddRegularError(err)
 
-		// Calcul de la période de prise en compte :
-		// - Si date_traitement <= 20 du mois : période en cours (1er du mois)
-		// - Si date_traitement > 20 du mois : période suivante (1er du mois suivant)
-		if debit.DateTraitement.Day() <= 20 {
-			debit.PeriodePriseEnCompte = time.Date(
-				debit.DateTraitement.Year(),
-				debit.DateTraitement.Month(),
-				1, 0, 0, 0, 0,
-				debit.DateTraitement.Location(),
-			)
-		} else {
-			debit.PeriodePriseEnCompte = time.Date(
-				debit.DateTraitement.Year(),
-				debit.DateTraitement.Month(),
-				1, 0, 0, 0, 0,
-				debit.DateTraitement.Location(),
-			).AddDate(0, 1, 0)
-		}
-
-		partOuvriere, err := idxRow.GetFloat64("Mt_PO")
-		res.AddRegularError(err)
-		debit.PartOuvriere = *partOuvriere / 100
-		partPatronale, err := idxRow.GetFloat64("Mt_PP")
-		res.AddRegularError(err)
-		debit.PartPatronale = *partPatronale / 100
-		debit.NumeroHistoriqueEcartNegatif, err = idxRow.GetInt("Num_Hist_Ecn")
-		res.AddRegularError(err)
-		debit.EtatCompte, err = idxRow.GetInt("Etat_cpte")
-		res.AddRegularError(err)
-
-		debit.PeriodeDebut = periodeDebut
-		debit.PeriodeFin = periodeFin
-
-		debit.Recours, err = idxRow.GetBool("Recours_en_cours")
-		res.AddRegularError(err)
-		// debit.MontantMajorations, err = strconv.ParseFloat(idxRow.GetVal("montantMajorations"), 64)
-		// tracker.Error(err)
-		// debit.MontantMajorations = debit.MontantMajorations / 100
-		res.AddTuple(debit)
-
-		if len(res.Errors) > 0 {
-			res.Tuples = []engine.Tuple{}
-		}
+	// Calcul de la période de prise en compte :
+	// - Si date_traitement <= 20 du mois : période en cours (1er du mois)
+	// - Si date_traitement > 20 du mois : période suivante (1er du mois suivant)
+	if debit.DateTraitement.Day() <= 20 {
+		debit.PeriodePriseEnCompte = time.Date(
+			debit.DateTraitement.Year(),
+			debit.DateTraitement.Month(),
+			1, 0, 0, 0, 0,
+			debit.DateTraitement.Location(),
+		)
 	} else {
-		res.SetFilterError(err)
+		debit.PeriodePriseEnCompte = time.Date(
+			debit.DateTraitement.Year(),
+			debit.DateTraitement.Month(),
+			1, 0, 0, 0, 0,
+			debit.DateTraitement.Location(),
+		).AddDate(0, 1, 0)
+	}
+
+	partOuvriere, err := idxRow.GetFloat64("Mt_PO")
+	res.AddRegularError(err)
+	debit.PartOuvriere = *partOuvriere / 100
+	partPatronale, err := idxRow.GetFloat64("Mt_PP")
+	res.AddRegularError(err)
+	debit.PartPatronale = *partPatronale / 100
+	debit.NumeroHistoriqueEcartNegatif, err = idxRow.GetInt("Num_Hist_Ecn")
+	res.AddRegularError(err)
+	debit.EtatCompte, err = idxRow.GetInt("Etat_cpte")
+	res.AddRegularError(err)
+
+	debit.PeriodeDebut = periodeDebut
+	debit.PeriodeFin = periodeFin
+
+	debit.Recours, err = idxRow.GetBool("Recours_en_cours")
+	res.AddRegularError(err)
+	// debit.MontantMajorations, err = strconv.ParseFloat(idxRow.GetVal("montantMajorations"), 64)
+	// tracker.Error(err)
+	// debit.MontantMajorations = debit.MontantMajorations / 100
+	res.AddTuple(debit)
+
+	if len(res.Errors) > 0 {
+		res.Tuples = []engine.Tuple{}
 	}
 }

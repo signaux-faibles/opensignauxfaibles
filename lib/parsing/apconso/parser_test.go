@@ -15,7 +15,7 @@ var update = flag.Bool("update", false, "Update the expected test values in gold
 func TestApconso(t *testing.T) {
 	var golden = filepath.Join("testData", "expectedApconso.json")
 	var testData = engine.NewBatchFile("testData", "apconsoTestData.csv")
-	engine.TestParserOutput(t, NewApconsoParser(), engine.NewEmptyCache(), testData, golden, *update)
+	engine.TestParserOutput(t, NewApconsoParser(), testData, golden, *update)
 
 	t.Run("doit détecter s'il manque des colonnes", func(t *testing.T) {
 		output := engine.RunParserInline(t, NewApconsoParser(), []string{"ID_DA,ETAB_SIRET,MOIS,HEURE,MONTANTS,EFFECTIFS"}) // typo: HEURE au lieu de HEURES
