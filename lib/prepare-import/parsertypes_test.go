@@ -37,20 +37,15 @@ func TestExtractParserTypeFromFilename(t *testing.T) {
 		{"demande_ap.csv", engine.Apdemande},
 
 		// others
-		{"Diane_Export_4.txt", engine.Diane},
 		{"sigfaibles_debits.csv", engine.Debit},
 		{"sigfaibles_debits2.csv", engine.Debit},
-		{"diane_req_2002.csv", engine.Diane},
-		{"diane_req_dom_2002.csv", engine.Diane},
 		{"effectif_dom.csv", engine.Effectif},
 		{"filter.csv", engine.Filter},
 		{"filter_siren_2002.csv", engine.Filter},
 		{"sireneUL.csv", engine.SireneUl},
 		{"StockEtablissement_utf8_geo.csv", engine.Sirene},
 		{"StockEtablissement_utf8_geo.csv", engine.Sirene},
-		{"E_202011095813_Retro-Paydex_20201207.csv", engine.Paydex},
 		{"E_202011095813_Identite_20201207.csv", ""}, // not paydex
-		{"Ellisphère-Tête de groupe-FinalV2-2015.xlsx", engine.Ellisphere},
 	}
 	for _, testCase := range cases {
 		t.Run("should return "+string(testCase.category)+" for file "+testCase.name, func(t *testing.T) {

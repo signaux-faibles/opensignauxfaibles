@@ -31,24 +31,15 @@ func ExtractParserTypeFromFilename(filename string) engine.ParserType {
 		return engine.SireneHisto
 	case mentionsDebits.MatchString(filename):
 		return engine.Debit
-	case hasDianePrefix.MatchString(filename):
-		return engine.Diane
 	case mentionsEffectif.MatchString(filename):
 		return engine.Effectif
 	case hasFilterPrefix.MatchString(filename):
 		return engine.Filter
-	case isRetroPaydex.MatchString(filename):
-		return engine.Paydex
-	case isEllisphere.MatchString(filename):
-		return engine.Ellisphere
 	default:
 		return ""
 	}
 }
 
-var hasDianePrefix = regexp.MustCompile(`^[Dd]iane`)
 var mentionsEffectif = regexp.MustCompile(`effectif_`)
 var mentionsDebits = regexp.MustCompile(`_debits`)
 var hasFilterPrefix = regexp.MustCompile(`^filter`)
-var isRetroPaydex = regexp.MustCompile(`^E_[0-9]{12}_Retro-Paydex_[0-9]{8}.csv$`)
-var isEllisphere = regexp.MustCompile(`^Ellisphère-Tête de groupe-[^.]*.xlsx$`)
