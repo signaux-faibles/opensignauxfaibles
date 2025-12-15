@@ -29,7 +29,7 @@ func TestUrssafToDate(t *testing.T) {
 	t.Run("(tests récupérés depuis lib/misc/main_test.go)", func(t *testing.T) {
 
 		a, e := UrssafToDate("1180101")
-		if a == time.Date(2018, time.Month(1), 1, 0, 0, 0, 0, time.UTC) && e == nil {
+		if time.Time.Equal(a, time.Date(2018, time.Month(1), 1, 0, 0, 0, 0, time.UTC)) && e == nil {
 			t.Log("UrssafToDate: 1180101 -> 1er janvier 2018: OK")
 		} else {
 			t.Error("UrssafToDate: 1180101 -> 1er janvier 2018: Fail")
@@ -37,14 +37,14 @@ func TestUrssafToDate(t *testing.T) {
 
 		a, e = UrssafToDate("11a0101")
 		z := time.Time{}
-		if a == z && e != nil {
+		if time.Time.Equal(a, z) && e != nil {
 			t.Log("UrssafToDate: 11a0101 -> erreur: OK")
 		} else {
 			t.Error("UrssafToDate: 1180101 -> erreur: Fail")
 		}
 
 		a, e = UrssafToDate("1180151")
-		if a == z && e != nil {
+		if time.Time.Equal(a, z) && e != nil {
 			t.Log("UrssafToDate: 1180151 -> erreur: OK")
 		} else {
 			t.Error("UrssafToDate: 1180151 -> erreur: Fail")

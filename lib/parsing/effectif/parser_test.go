@@ -16,17 +16,15 @@ func TestEffectifEnt(t *testing.T) {
 		func(t *testing.T) {
 			var golden = filepath.Join("testData", "expectedEffectifEntShort.json")
 			var testData = engine.NewBatchFile("testData", "effectifEntTestDataShort.csv")
-			cache := engine.NewEmptyCache()
 
-			engine.TestParserOutput(t, NewEffectifEntParser(), cache, testData, golden, *update)
+			engine.TestParserOutput(t, NewEffectifEntParser(), testData, golden, *update)
 		})
 
 	t.Run("Le fichier de test EffectifEnt est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectifEnt.json")
 		var testData = engine.NewBatchFile("testData", "effectifEntTestData.csv")
-		cache := engine.NewEmptyCache()
 
-		engine.TestParserOutput(t, NewEffectifEntParser(), cache, testData, golden, *update)
+		engine.TestParserOutput(t, NewEffectifEntParser(), testData, golden, *update)
 	})
 
 	t.Run("EffectifEnt ne peut pas être importé s'il manque une colonne", func(t *testing.T) {
@@ -46,8 +44,7 @@ func TestEffectif(t *testing.T) {
 
 	t.Run("Le fichier de test Effectif est parsé comme d'habitude", func(t *testing.T) {
 		var golden = filepath.Join("testData", "expectedEffectif.json")
-		cache := engine.NewEmptyCache()
-		engine.TestParserOutput(t, NewEffectifParser(), cache, testData, golden, *update)
+		engine.TestParserOutput(t, NewEffectifParser(), testData, golden, *update)
 	})
 
 	t.Run("Effectif ne peut pas être importé s'il manque une colonne", func(t *testing.T) {

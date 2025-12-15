@@ -17,9 +17,9 @@ type EffectifParserInst struct {
 	parsing.CsvParserInst
 }
 
-func (p *EffectifParserInst) Init(cache *engine.Cache, filter engine.SirenFilter, batch *engine.AdminBatch) error {
+func (p *EffectifParserInst) Init(filter engine.SirenFilter, batch *engine.AdminBatch) error {
 
-	err := p.CsvParserInst.Init(cache, filter, batch)
+	err := p.CsvParserInst.Init(filter, batch)
 	if err != nil {
 		return err
 	}

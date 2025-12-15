@@ -24,7 +24,7 @@ type Parser interface {
 type ParserInst interface {
 	io.Reader
 
-	Init(cache *Cache, filter SirenFilter, batch *AdminBatch) error
+	Init(filter SirenFilter, batch *AdminBatch) error
 
 	// ReadNext extracts tuples from next line.
 	// Returns an error only if reading further is not possible: any error
@@ -74,7 +74,6 @@ type Tuple interface {
 // arrière plan, puis fermés quand toute la donnée aura été traitée.
 func ParseFilesFromBatch(
 	ctx context.Context,
-	cache Cache,
 	batch *AdminBatch,
 	parser Parser,
 	filter SirenFilter,
@@ -86,7 +85,7 @@ func ParseFilesFromBatch(
 
 	go func() {
 		for _, path := range batch.Files[fileType] {
-			reportChannel <- parseFileWithReport(ctx, path, parser, batch, cache, outputChannel, filter)
+			reportChannel <- parseFileWithReport(ctx, path, parser, batch, outputChannel, filter)
 		}
 		close(outputChannel)
 		close(reportChannel)
@@ -102,7 +101,6 @@ func parseFileWithReport(
 	batchFile BatchFile,
 	parser Parser,
 	batch *AdminBatch,
-	cache Cache,
 	outputChannel chan Tuple,
 	filter SirenFilter,
 ) Report {
@@ -112,7 +110,7 @@ func parseFileWithReport(
 	// One tracker per file
 	tracker := NewParsingTracker()
 
-	err := runParserOnFile(ctx, batchFile, parser, batch, cache, &tracker,
+	err := runParserOnFile(ctx, batchFile, parser, batch, &tracker,
 		outputChannel, filter)
 
 	if err != nil {
@@ -132,7 +130,6 @@ func runParserOnFile(
 	batchFile BatchFile,
 	parser Parser,
 	batch *AdminBatch,
-	cache Cache,
 	tracker *ParsingTracker,
 	outputChannel chan Tuple,
 	filter SirenFilter,
@@ -146,7 +143,7 @@ func runParserOnFile(
 
 	parserInst := parser.New(bufio.NewReader(file))
 
-	if err = parserInst.Init(&cache, filter, batch); err != nil {
+	if err = parserInst.Init(filter, batch); err != nil {
 		return err
 	}
 

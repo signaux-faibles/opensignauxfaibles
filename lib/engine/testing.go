@@ -77,17 +77,11 @@ func ConsumeFatalErrors(ch chan Report) []string {
 }
 
 // RunParserInline returns Tuples and Reports resulting from the execution of a
-// Parser on a given list of rows, with an empty Cache.
-func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndReports) {
-	return RunParserInlineEx(t, NewEmptyCache(), parser, rows)
-}
-
-// RunParserInlineEx returns Tuples and Reports resulting from the execution of a
 // Parser on a given list of rows.
-func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) (output tuplesAndReports) {
+func RunParserInline(t *testing.T, parser Parser, rows []string) (output tuplesAndReports) {
 	csvData := strings.Join(rows, "\n")
 	csvFile := CreateTempFileWithContent(t, []byte(csvData)) // will clean up after the test
-	return RunParser(parser, cache, NewBatchFile(csvFile.Name()))
+	return RunParser(parser, NewBatchFile(csvFile.Name()))
 }
 
 // TestParserOutput compares output Tuples and output Reports with JSON stored
@@ -95,12 +89,11 @@ func RunParserInlineEx(t *testing.T, cache Cache, parser Parser, rows []string) 
 func TestParserOutput(
 	t *testing.T,
 	parser Parser,
-	cache Cache,
 	inputFile BatchFile,
 	goldenFile string,
 	update bool,
 ) {
-	var output = RunParser(parser, cache, inputFile)
+	var output = RunParser(parser, inputFile)
 
 	actual, err := json.MarshalIndent(output, "", "  ")
 	if err != nil {
@@ -124,12 +117,11 @@ func TestParserOutput(
 // TimeStamps are set to 0 for reproducibility
 func RunParser(
 	parser Parser,
-	cache Cache,
 	inputFile BatchFile,
 ) (output tuplesAndReports) {
 	ctx := context.Background()
 	batch := MockBatch(parser.Type(), []BatchFile{inputFile})
-	tuples, events := ParseFilesFromBatch(ctx, cache, &batch, parser, NoFilter)
+	tuples, events := ParseFilesFromBatch(ctx, &batch, parser, NoFilter)
 
 	// intercepter et afficher les évènements pendant l'importation
 	var wg sync.WaitGroup
@@ -225,7 +217,7 @@ type dummyParserInst struct {
 	initError error
 }
 
-func (parser *dummyParserInst) Init(cache *Cache, filter SirenFilter, batch *AdminBatch) error {
+func (parser *dummyParserInst) Init(filter SirenFilter, batch *AdminBatch) error {
 	return parser.initError
 }
 

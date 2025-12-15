@@ -8,7 +8,7 @@ import (
 // Delai tuple fichier urssaf
 // Implémente engine.Tuple
 type Delai struct {
-	Siret             string    `                                    json:"-"                  sql:"siret"                csv:"siret"`
+	Siret             string    `input:"Siret"                       json:"-"                  sql:"siret"                csv:"siret"`
 	NumeroCompte      string    `input:"Numero_compte_externe"       json:"numero_compte"                                 csv:"numéro_compte"`
 	NumeroContentieux string    `input:"Numero_structure"            json:"numero_contentieux"                            csv:"numéro_contentieux"`
 	DateCreation      time.Time `input:"Date_creation"               json:"date_creation"      sql:"date_creation"        csv:"date_création"`
