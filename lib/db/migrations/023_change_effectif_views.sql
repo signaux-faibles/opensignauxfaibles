@@ -5,7 +5,7 @@ CREATE OR REPLACE VIEW clean_effectif AS
     -- Nouvelle colonne qui taggue la dernière valeur disponible pour chaque siret
     periode = (SELECT MAX(e2.periode)
                FROM stg_effectif e2
-               WHERE e2.siret = stg_effectif.siret) AS is_latest
+               WHERE e2.siret = e.siret) AS is_latest
   FROM stg_effectif e
   WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE b.siren = LEFT(e.siret, 9));
 
@@ -15,7 +15,7 @@ CREATE OR REPLACE VIEW clean_effectif_ent AS
     -- Nouvelle colonne qui taggue la dernière valeur disponible pour chaque siren
     periode = (SELECT MAX(e2.periode)
                FROM stg_effectif_ent e2
-               WHERE e2.siren = stg_effectif_ent.siren) AS is_latest -- nouvelle colonne
+               WHERE e2.siren = e.siren) AS is_latest -- nouvelle colonne
   FROM stg_effectif_ent e
   WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE b.siren = e.siren);
 
