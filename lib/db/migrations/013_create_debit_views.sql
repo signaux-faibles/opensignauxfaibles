@@ -26,7 +26,8 @@ SELECT
     sum(part_ouvriere) AS part_ouvriere,
     sum(part_patronale) AS part_patronale
 FROM debits
-GROUP BY siret, periode;
+GROUP BY siret, periode
+WITH NO DATA;
 
 CREATE INDEX IF NOT EXISTS idx_clean_debit_siret ON clean_debit(siret);
 CREATE INDEX IF NOT EXISTS idx_clean_debit_siren ON clean_debit(LEFT(siret, 9));
@@ -34,4 +35,4 @@ CREATE INDEX IF NOT EXISTS idx_clean_debit_periode ON clean_debit(periode);
 
 ---- create above / drop below ----
 
-DROP MATERIALIZED VIEW clean_debit;
+DROP MATERIALIZED VIEW IF EXISTS clean_debit;

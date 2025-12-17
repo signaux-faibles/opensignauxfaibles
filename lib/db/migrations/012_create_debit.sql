@@ -25,4 +25,4 @@ CREATE INDEX IF NOT EXISTS idx_stg_debit_siren ON stg_debit(LEFT(siret, 9));
 
 ---- create above / drop below ----
 
-DROP TABLE stg_debit;
+DROP TABLE IF EXISTS stg_debit;

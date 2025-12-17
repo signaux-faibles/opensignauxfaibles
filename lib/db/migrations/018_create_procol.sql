@@ -10,4 +10,4 @@ CREATE INDEX IF NOT EXISTS idx_stg_procol_siren ON stg_procol(LEFT(siret, 9));
 
 ---- create above / drop below ----
 
-DROP TABLE stg_procol;
+DROP TABLE IF EXISTS stg_procol;

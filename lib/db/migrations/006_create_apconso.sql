@@ -15,4 +15,4 @@ CREATE INDEX IF NOT EXISTS idx_stg_apconso_period ON stg_apconso(periode);
 
 ---- create above / drop below ----
 
-DROP TABLE stg_apconso;
+DROP TABLE IF EXISTS stg_apconso;

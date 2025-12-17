@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS stg_delai (
 );
 
 CREATE INDEX IF NOT EXISTS idx_stg_delai_siret ON stg_delai(siret);
-CREATE INDEX IF NOT EXISTS idx_stg_delai_siret ON stg_delai(LEFT(siret, 9));
+CREATE INDEX IF NOT EXISTS idx_stg_delai_siren ON stg_delai(LEFT(siret, 9));
 
 ---- create above / drop below ----
 
-DROP TABLE stg_delai;
+DROP TABLE IF EXISTS stg_delai;

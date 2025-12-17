@@ -4,9 +4,9 @@
 -- les tables nommées 'clean_...'
 CREATE OR REPLACE VIEW clean_delai
   AS SELECT *
-  FROM stg_delai
-  WHERE LEFT(siret, 9) IN (SELECT siren FROM clean_filter);
+  FROM stg_delai d
+  WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE LEFT(d.siret, 9) = b.siren);
 
 ---- create above / drop below ----
 
-DROP VIEW clean_delai;
+DROP VIEW IF EXISTS clean_delai;

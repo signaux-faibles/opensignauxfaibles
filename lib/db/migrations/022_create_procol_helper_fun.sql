@@ -10,10 +10,11 @@ RETURNS TABLE(siren VARCHAR(9), date_effet DATE, action_procol TEXT, stade_proco
   )
   SELECT siren, date_effet, action_procol, stade_procol
   FROM last_action_procol
-  WHERE action_procol != 'fin_procedure';
+  -- On retire les procédures collectives qui se sont terminées
+  WHERE action_procol != 'fin_procedure' AND action_procol != 'inclusion_autre_procedure';
 $$ LANGUAGE SQL;
 
-COMMENT ON FUNCTION procol_at_date (date) IS 'Returns entreprises that have a procédure collective in progress on a given date. A single entreprise may have several simultaneous proceedings. Completed proceedings are not counted (action_procol = "fin_procedure") — closed entreprises are nevertheless displayed.';
+COMMENT ON FUNCTION procol_at_date (date) IS 'Returns entreprises that have a procédure collective in progress on a given date. A single entreprise may have several simultaneous proceedings. Completed proceedings are not counted (action_procol = "fin_procedure" or action_procol = "inclusion_autre_procedure") — closed entreprises are nevertheless displayed.';
 
 ---- create above / drop below ----
 
