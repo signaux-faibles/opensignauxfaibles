@@ -41,6 +41,8 @@ func (rp *effectifRowParser) setPeriods(periods []periodCol) {
 }
 
 func (rp *effectifRowParser) ParseRow(row []string, res *engine.ParsedLineResult, idx parsing.ColIndex) {
+	idxRow := idx.IndexRow(row)
+
 	for _, period := range rp.periods {
 		value := row[period.colIndex]
 
@@ -50,7 +52,6 @@ func (rp *effectifRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 			res.AddRegularError(err)
 
 			if e >= 0 {
-				idxRow := idx.IndexRow(row)
 				siret := idxRow.GetVal("siret")
 				if strings.TrimSpace(siret) == "" {
 					res.SetFilterError(fmt.Errorf("empty SIRET number"))
