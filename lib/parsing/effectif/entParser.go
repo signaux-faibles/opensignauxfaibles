@@ -1,6 +1,7 @@
 package effectif
 
 import (
+	"fmt"
 	"io"
 	"strconv"
 
@@ -50,8 +51,15 @@ func (rp *effectifEntRowParser) ParseRow(row []string, res *engine.ParsedLineRes
 			e := int(s)
 			if e >= 0 {
 				idxRow := idx.IndexRow(row)
+
+				siren := idxRow.GetVal("siren")
+
+				if siren == "" {
+					res.SetFilterError(fmt.Errorf("empty SIREN number"))
+					return
+				}
 				res.AddTuple(EffectifEnt{
-					Siren:       idxRow.GetVal("siren"),
+					Siren:       siren,
 					Periode:     period.dateStart,
 					EffectifEnt: e,
 				})

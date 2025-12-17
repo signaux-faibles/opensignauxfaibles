@@ -1,8 +1,10 @@
 package effectif
 
 import (
+	"fmt"
 	"io"
 	"strconv"
+	"strings"
 
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
@@ -46,10 +48,16 @@ func (rp *effectifRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 			noThousandsSep := sfregexp.RegexpDict["notDigit"].ReplaceAllString(value, "")
 			e, err := strconv.Atoi(noThousandsSep)
 			res.AddRegularError(err)
+
 			if e >= 0 {
 				idxRow := idx.IndexRow(row)
+				siret := idxRow.GetVal("siret")
+				if strings.TrimSpace(siret) == "" {
+					res.SetFilterError(fmt.Errorf("empty SIRET number"))
+					return
+				}
 				res.AddTuple(Effectif{
-					Siret:        idxRow.GetVal("siret"),
+					Siret:        siret,
 					NumeroCompte: idxRow.GetVal("compte"),
 					Periode:      period.dateStart,
 					Effectif:     e,
