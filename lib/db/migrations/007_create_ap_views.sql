@@ -69,6 +69,7 @@ WHERE LEFT(siret, 9) IN (SELECT siren FROM clean_filter)
 GROUP BY siret, periode;
 
 ---- create above / drop below ----
+
 DROP MATERIALIZED VIEW IF EXISTS stg_apdemande_by_period CASCADE;
 DROP VIEW IF EXISTS stg_apconso_by_period CASCADE;
 DROP VIEW IF EXISTS clean_ap CASCADE;

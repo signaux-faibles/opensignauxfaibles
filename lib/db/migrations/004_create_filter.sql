@@ -1,4 +1,4 @@
--- filter_import est le périmètre de l'import des données.
+-- stg_filter_import est le périmètre de l'import des données.
 -- Ce n'est pas le filtrage définitif, qui croise plusieurs données, mais
 -- un filtrage sur la seule donnée de l'effectif qui limite déjà
 -- considérablement le volume des données importées.
@@ -9,47 +9,30 @@ CREATE TABLE IF NOT EXISTS stg_filter_import (
     siren VARCHAR(9) PRIMARY KEY
 );
 
--- clean_filter est le périmètre définitif des données distribuées par la
--- couche de données propres "clean_xxx"
-CREATE MATERIALIZED VIEW IF NOT EXISTS clean_filter AS
-  WITH excluded_categories AS (
-    -- Excluded Catégories Juridiques:
-    SELECT ARRAY[
-      '4110', -- Établissement public national à caractère industriel ou commercial
-      '4120', -- Établissement public national à caractère administratif
-      '4140', -- Établissement public local à caractère industriel ou commercial
-      '4160', -- Établissement public local à caractère administratif
-      '7210', -- Commune et commune nouvelle
-      '7220', -- Département
-      '7346', -- Association de droit local (Bas-Rhin, Haut-Rhin et Moselle)
-      '7348', -- Association intermédiaire
-      '7366', -- Syndicat mixte fermé
-      '7373', -- Association syndicale libre
-      '7379', -- Autre groupement de droit privé non doté de la personnalité morale
-      '7383', -- Syndicat mixte ouvert
-      '7389', -- Autre groupement de collectivités territoriales
-      '7410', -- Établissement public national d'enseignement
-      '7430', -- Établissement public local d'enseignement
-      '7470', -- Groupement de coopération sanitaire à gestion publique
-      '7490'  -- Autre établissement public local d'enseignement
-    ] AS categories
-  )
-  SELECT fp.siren
-  FROM stg_filter_import fp
-  INNER JOIN stg_sirene_ul sirene_ul ON sirene_ul.siren = fp.siren
-  CROSS JOIN excluded_categories ec
-  WHERE
-    -- Exclude if statut_juridique is in the excluded categories list
-    NOT (sirene_ul.statut_juridique = ANY(ec.categories))
-    -- Exclude Activity Codes:
-    -- 84.XX: Administration publique et défense ; sécurité sociale obligatoire
-    -- 85.XX: Enseignement
-    AND NOT (sirene_ul.activite_principale LIKE '84%' OR sirene_ul.activite_principale LIKE '85%');
+-- siren_blacklist est une liste de siren à exclure du périmètre final.
+CREATE MATERIALIZED VIEW siren_blacklist
+TABLESPACE pg_default
+AS WITH excluded_categories AS (
+         SELECT ARRAY['4110'::text, '4120'::text, '4140'::text, '4160'::text, '7210'::text, '7220'::text, '7346'::text, '7348'::text, '7366'::text, '7373'::text, '7379'::text, '7383'::text, '7389'::text, '7410'::text, '7430'::text, '7470'::text, '7490'::text] AS categories
+        )
+ SELECT fp.siren
+   FROM stg_filter_import fp
+     JOIN stg_sirene_ul sirene_ul ON sirene_ul.siren::text = fp.siren::text
+     CROSS JOIN excluded_categories ec
+  WHERE (sirene_ul.statut_juridique::text = ANY (ec.categories)) OR sirene_ul.activite_principale::text ~~ '84%'::text OR sirene_ul.activite_principale::text ~~ '85%'::text;
 
-CREATE UNIQUE INDEX clean_filter_siren_index
-    ON clean_filter(siren);
+CREATE UNIQUE INDEX siren_blacklist_siren_index ON siren_blacklist(siren);
+
+-- clean_filter représente le périmètre final de Signaux Faibles
+-- (stg_filter_import - siren_blacklist)
+CREATE OR REPLACE VIEW clean_filter AS
+  SELECT f.siren
+  FROM  stg_filter_import f
+  WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE b.siren = f.siren);
+
 
 ---- create above / drop below ----
 
+DROP VIEW IF EXISTS clean_filter;
+DROP MATERIALIZED VIEW IF EXISTS siren_blacklist;
 DROP TABLE IF EXISTS stg_filter_import;
-DROP MATERIALIZED VIEW IF EXISTS clean_filter;

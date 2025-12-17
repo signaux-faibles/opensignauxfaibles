@@ -29,6 +29,7 @@ FROM debits
 GROUP BY siret, periode;
 
 CREATE INDEX IF NOT EXISTS idx_clean_debit_siret ON clean_debit(siret);
+CREATE INDEX IF NOT EXISTS idx_clean_debit_siren ON clean_debit(LEFT(siret, 9));
 CREATE INDEX IF NOT EXISTS idx_clean_debit_periode ON clean_debit(periode);
 
 ---- create above / drop below ----
