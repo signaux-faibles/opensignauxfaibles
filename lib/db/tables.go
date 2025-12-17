@@ -20,7 +20,8 @@ const (
 // Materialized views
 const (
 	ViewStgApdemandePeriod = "stg_apdemande_by_period"
-	ViewCleanFilter        = "clean_filter"
+	ViewSirenBlacklist     = "siren_blacklist"
+	ViewDebits             = "clean_debit"
 )
 
 // AllTables returns all table names that should be truncated during test cleanup
@@ -44,6 +45,6 @@ func AllTables() []string {
 func AllMaterializedViews() []string {
 	return []string{
 		ViewStgApdemandePeriod,
-		ViewCleanFilter,
+		ViewSirenBlacklist,
 	}
 }
