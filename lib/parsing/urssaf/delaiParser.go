@@ -1,9 +1,12 @@
 package urssaf
 
 import (
+	"fmt"
 	"io"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/sfregexp"
+	"strings"
 	"time"
 )
 
@@ -35,6 +38,15 @@ func (rp *delaiRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 
 	delai := Delai{}
 	delai.Siret = idxRow.GetVal("Siret")
+
+	if strings.TrimSpace(delai.Siret) == "" ||
+		delai.Siret == "@" ||
+		sfregexp.RegexpDict["acossInternal"].MatchString(delai.Siret) ||
+		sfregexp.RegexpDict["delaiInvalid"].MatchString(delai.Siret) {
+		res.SetFilterError(fmt.Errorf("acoss internal id: %s", delai.Siret))
+		return
+	}
+
 	delai.NumeroCompte = idxRow.GetVal("Numero_compte_externe")
 	delai.NumeroContentieux = idxRow.GetVal("Numero_structure")
 	delai.DateCreation, err = time.Parse("02/01/2006", idxRow.GetVal("Date_creation"))
