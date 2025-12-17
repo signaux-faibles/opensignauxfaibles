@@ -11,4 +11,4 @@ CREATE INDEX IF NOT EXISTS idx_stg_sirene_histo_siren ON stg_sirene_histo(LEFT(s
 
 ---- create above / drop below ----
 
-DROP TABLE stg_sirene_histo;
+DROP TABLE IF EXISTS stg_sirene_histo;

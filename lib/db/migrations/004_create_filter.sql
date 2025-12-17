@@ -1,4 +1,4 @@
--- filter_import est le périmètre de l'import des données.
+-- stg_filter_import est le périmètre de l'import des données.
 -- Ce n'est pas le filtrage définitif, qui croise plusieurs données, mais
 -- un filtrage sur la seule donnée de l'effectif qui limite déjà
 -- considérablement le volume des données importées.
@@ -9,11 +9,10 @@ CREATE TABLE IF NOT EXISTS stg_filter_import (
     siren VARCHAR(9) PRIMARY KEY
 );
 
--- clean_filter est le périmètre définitif des données distribuées par la
--- couche de données propres "clean_xxx"
-CREATE MATERIALIZED VIEW IF NOT EXISTS clean_filter AS
-  WITH excluded_categories AS (
-    -- Excluded Catégories Juridiques:
+-- siren_blacklist est une liste de siren à exclure du périmètre final.
+CREATE MATERIALIZED VIEW siren_blacklist
+AS WITH excluded_categories AS (
+   -- Excluded Catégories Juridiques:
     SELECT ARRAY[
       '4110', -- Établissement public national à caractère industriel ou commercial
       '4120', -- Établissement public national à caractère administratif
@@ -33,23 +32,30 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS clean_filter AS
       '7470', -- Groupement de coopération sanitaire à gestion publique
       '7490'  -- Autre établissement public local d'enseignement
     ] AS categories
-  )
-  SELECT fp.siren
-  FROM stg_filter_import fp
-  INNER JOIN stg_sirene_ul sirene_ul ON sirene_ul.siren = fp.siren
-  CROSS JOIN excluded_categories ec
-  WHERE
-    -- Exclude if statut_juridique is in the excluded categories list
-    NOT (sirene_ul.statut_juridique = ANY(ec.categories))
-    -- Exclude Activity Codes:
-    -- 84.XX: Administration publique et défense ; sécurité sociale obligatoire
-    -- 85.XX: Enseignement
-    AND NOT (sirene_ul.activite_principale LIKE '84%' OR sirene_ul.activite_principale LIKE '85%');
+        )
+ SELECT fp.siren
+   FROM stg_filter_import fp
+     JOIN stg_sirene_ul sirene_ul ON sirene_ul.siren::text = fp.siren::text
+     CROSS JOIN excluded_categories ec
+  -- Exclude Activity Codes:
+  -- 84.XX: Administration publique et défense ; sécurité sociale obligatoire
+  -- 85.XX: Enseignement
+  WHERE (sirene_ul.statut_juridique::text = ANY (ec.categories))
+    OR sirene_ul.activite_principale::text ~~ '84%'::text
+    OR sirene_ul.activite_principale::text ~~ '85%'::text;
 
-CREATE UNIQUE INDEX clean_filter_siren_index
-    ON clean_filter(siren);
+CREATE UNIQUE INDEX siren_blacklist_siren_index ON siren_blacklist(siren);
+
+-- clean_filter représente le périmètre final de Signaux Faibles
+-- (stg_filter_import - siren_blacklist)
+CREATE OR REPLACE VIEW clean_filter AS
+  SELECT f.siren
+  FROM  stg_filter_import f
+  WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE b.siren = f.siren);
+
 
 ---- create above / drop below ----
 
+DROP VIEW IF EXISTS clean_filter;
+DROP MATERIALIZED VIEW IF EXISTS siren_blacklist;
 DROP TABLE IF EXISTS stg_filter_import;
-DROP MATERIALIZED VIEW IF EXISTS clean_filter;

@@ -31,8 +31,7 @@ CREATE OR REPLACE VIEW clean_sirene AS
     s.latitude,
     s.est_actif
   FROM stg_sirene s
-  LEFT JOIN naf_codes naf ON s.ape = naf.niv5
-  WHERE s.siren IN (SELECT siren FROM clean_filter);
+  LEFT JOIN naf_codes naf ON s.ape = naf.niv5;
 
 -- Update clean_sirene_ul view to add ape column
 CREATE OR REPLACE VIEW clean_sirene_ul AS
@@ -47,8 +46,7 @@ CREATE OR REPLACE VIEW clean_sirene_ul AS
     s.est_actif
   FROM stg_sirene_ul s
   LEFT JOIN naf_codes naf ON s.activite_principale = naf.niv5
-  LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true
-  WHERE s.siren IN (SELECT siren FROM clean_filter);
+  LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true;
 
 
 

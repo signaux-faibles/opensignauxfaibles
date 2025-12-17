@@ -30,4 +30,4 @@ CREATE INDEX IF NOT EXISTS idx_stg_sirene_siret ON stg_sirene(siret);
 
 ---- create above / drop below ----
 
-DROP TABLE stg_sirene;
+DROP TABLE IF EXISTS stg_sirene;

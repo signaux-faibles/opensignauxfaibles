@@ -11,4 +11,4 @@ CREATE INDEX IF NOT EXISTS idx_stg_cotisation_periode ON stg_cotisation(periode_
 
 ---- create above / drop below ----
 
-DROP TABLE stg_cotisation;
+DROP TABLE IF EXISTS stg_cotisation;

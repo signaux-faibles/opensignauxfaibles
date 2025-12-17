@@ -29,5 +29,5 @@ CREATE INDEX IF NOT EXISTS idx_stg_apdemande_siren ON stg_apdemande(LEFT(siret, 
 
 ---- create above / drop below ----
 
-DROP TABLE labels_motif_recours;
-DROP TABLE stg_apdemande;
+DROP TABLE IF EXISTS stg_apdemande;
+DROP TABLE IF EXISTS labels_motif_recours;

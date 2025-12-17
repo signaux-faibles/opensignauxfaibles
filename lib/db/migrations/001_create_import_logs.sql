@@ -14,4 +14,4 @@ CREATE TABLE IF NOT EXISTS import_logs (
 )
 ---- create above / drop below ----
 
-DROP TABLE import_logs;
+DROP TABLE IF EXISTS import_logs;
