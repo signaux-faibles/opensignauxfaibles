@@ -1,6 +1,7 @@
 package urssaf
 
 import (
+	"fmt"
 	"io"
 	"regexp"
 	"slices"
@@ -9,6 +10,7 @@ import (
 
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 type ProcolParser struct{}
@@ -40,6 +42,11 @@ func (rp *procolRowParser) ParseRow(row []string, res *engine.ParsedLineResult, 
 	res.AddRegularError(err)
 
 	procol.Siret = idxRow.GetVal("Siret")
+
+	if sfregexp.RegexpDict["acossInternal"].MatchString(procol.Siret) {
+		res.SetFilterError(fmt.Errorf("acoss internal id: %s", procol.Siret))
+		return
+	}
 
 	actionStade := idxRow.GetVal("Lib_actx_stdx")
 	splitted := strings.Split(strings.ToLower(actionStade), "_")

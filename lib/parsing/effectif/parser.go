@@ -57,6 +57,11 @@ func (rp *effectifRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 					res.SetFilterError(fmt.Errorf("empty SIRET number"))
 					return
 				}
+				if sfregexp.RegexpDict["acossInternal"].MatchString(siret) {
+					res.SetFilterError(fmt.Errorf("acoss internal id: %s", siret))
+					return
+				}
+
 				res.AddTuple(Effectif{
 					Siret:        siret,
 					NumeroCompte: idxRow.GetVal("compte"),

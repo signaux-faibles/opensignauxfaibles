@@ -6,11 +6,13 @@ import (
 
 // RegexpDict fournit des expressions régulières communes.
 var RegexpDict = map[string]*regexp.Regexp{
-	"siret":      regexp.MustCompile("^[0-9]{14}$"),
-	"siren":      regexp.MustCompile("^[0-9]{9}$"),
-	"notDigit":   regexp.MustCompile("[^0-9]"),
-	"postalCode": regexp.MustCompile(`^[0-9]{5}$`),
-	"inseeCode":  regexp.MustCompile(`^[0-9][0-9A-B][0-9]{3}$`),
+	"siret":         regexp.MustCompile("^[0-9]{14}$"),
+	"siren":         regexp.MustCompile("^[0-9]{9}$"),
+	"notDigit":      regexp.MustCompile("[^0-9]"),
+	"postalCode":    regexp.MustCompile(`^[0-9]{5}$`),
+	"inseeCode":     regexp.MustCompile(`^[0-9][0-9A-B][0-9]{3}$`),
+	"acossInternal": regexp.MustCompile(`^[0-9]{7}[A-Z][0-9]{2}$`),
+	"delaiInvalid":  regexp.MustCompile(`^[0-9]{8}$`),
 }
 
 // ValidSiret retourne `true` si le numéro SIRET est valide.

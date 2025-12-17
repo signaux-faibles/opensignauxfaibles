@@ -1,10 +1,12 @@
 package urssaf
 
 import (
+	"fmt"
 	"io"
 
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 type CotisationParser struct{}
@@ -36,7 +38,14 @@ func (rp *cotisationRowParser) ParseRow(row []string, res *engine.ParsedLineResu
 	periodeDebut, periodeFin, err := UrssafToPeriod(idxRow.GetVal("periode"))
 	res.AddRegularError(err)
 
-	cotisation.Siret = idxRow.GetVal("Siret")
+	siret := idxRow.GetVal("Siret")
+
+	if sfregexp.RegexpDict["acossInternal"].MatchString(siret) {
+		res.SetFilterError(fmt.Errorf("acoss internal id: %s", siret))
+		return
+	}
+
+	cotisation.Siret = siret
 	cotisation.NumeroCompte = idxRow.GetVal("Compte")
 	cotisation.PeriodeDebut = periodeDebut
 	cotisation.PeriodeFin = periodeFin

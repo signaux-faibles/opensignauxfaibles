@@ -1,11 +1,13 @@
 package urssaf
 
 import (
+	"fmt"
 	"io"
 	"time"
 
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/parsing"
+	"opensignauxfaibles/lib/sfregexp"
 )
 
 type DebitParser struct{}
@@ -35,8 +37,14 @@ func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 	periodeDebut, periodeFin, err := UrssafToPeriod(idxRow.GetVal("Periode"))
 	res.AddRegularError(err)
 
+	siret := idxRow.GetVal("Siret")
+	if sfregexp.RegexpDict["acossInternal"].MatchString(siret) {
+		res.SetFilterError(fmt.Errorf("acoss internal id: %s", siret))
+		return
+	}
+
 	debit := Debit{
-		Siret:                     idxRow.GetVal("Siret"),
+		Siret:                     siret,
 		NumeroCompte:              idxRow.GetVal("num_cpte"),
 		NumeroEcartNegatif:        idxRow.GetVal("Num_Ecn"),
 		CodeProcedureCollective:   idxRow.GetVal("Cd_pro_col"),
