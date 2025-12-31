@@ -22,6 +22,7 @@ type Debit struct {
 	CodeOperationEcartNegatif    string    `input:"Cd_op_ecn"        json:"code_operation_ecart_negatif" sql:"code_operation_ecart_negatif"     csv:"code_opération_écart_négatif"`
 	CodeMotifEcartNegatif        string    `input:"Motif_ecn"        json:"code_motif_ecart_negatif"     sql:"code_motif_ecart_negatif"         csv:"code_motif_écart_négatif"`
 	Recours                      bool      `input:"Recours_en_cours" json:"recours_en_cours"             sql:"recours_en_cours"                 csv:"recours"`
+	DebitID                      string    `sql:"debit_id" csv:"debit_id"`
 }
 
 // Key _id de l'objet
