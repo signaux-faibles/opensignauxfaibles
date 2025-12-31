@@ -10,27 +10,34 @@ SELECT DISTINCT ON (siret, periode_prise_en_compte, debit_id)
 WITH NO DATA;
 
 CREATE INDEX IF NOT EXISTS idx_debits_simplified_siret_debit_periode
-  ON sfdata.stg_tmp_debits_simplified(siret, debit_id, periode_prise_en_compte DESC)
+  ON stg_tmp_debits_simplified(siret, debit_id, periode_prise_en_compte DESC)
   INCLUDE (part_ouvriere, part_patronale);
 
 DROP MATERIALIZED VIEW clean_debit;
 
 CREATE MATERIALIZED VIEW clean_debit AS
+  WITH periodes_uniques AS (
+      SELECT DISTINCT
+        siret,
+        periode_prise_en_compte as periode
+      FROM stg_tmp_debits_simplified
+  )
   SELECT
-    d1.siret,
-    d1.periode_prise_en_compte as periode,
+    p.siret,
+    p.periode as periode,
     SUM(sub.part_ouvriere) as part_ouvriere,
     SUM(sub.part_patronale) as part_patronale
-  FROM stg_tmp_debits_simplified d1
+  FROM periodes_uniques p
     CROSS JOIN LATERAL (
      SELECT DISTINCT ON (siret, debit_id)
        d.part_patronale,
-       d.part_ouvriere,
+       d.part_ouvriere
        FROM stg_tmp_debits_simplified d
-       WHERE d.siret= d1.siret
-         AND d.periode_prise_en_compte <= d1.periode_prise_en_compte
+       WHERE d.siret= p.siret
+         AND d.periode_prise_en_compte <= p.periode
        ORDER BY siret, debit_id, periode_prise_en_compte DESC
   ) sub
+  GROUP BY p.siret, p.periode
 WITH NO DATA;
 
 
