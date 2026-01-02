@@ -21,7 +21,7 @@ CREATE MATERIALIZED VIEW clean_debit AS
         siret,
         periode_prise_en_compte as periode
       FROM stg_tmp_debits_simplified
-      WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE LEFT(p.siret, 9) = b.siren)
+      WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE LEFT(siret, 9) = b.siren)
   )
   SELECT
     p.siret,
@@ -41,9 +41,9 @@ CREATE MATERIALIZED VIEW clean_debit AS
   GROUP BY p.siret, p.periode
 WITH NO DATA;
 
-CREATE INDEX IF NOT EXISTS idx_clean_debit_siren ON sfdata.clean_debit USING btree ("left"((siret)::text, 9));
-CREATE INDEX IF NOT EXISTS idx_clean_debit_period ON sfdata.clean_debit USING btree (periode);
-CREATE INDEX IF NOT EXISTS idx_clean_debit_siret ON sfdata.clean_debit USING btree (siret);
+CREATE INDEX IF NOT EXISTS idx_clean_debit_siren ON clean_debit USING btree ("left"((siret)::text, 9));
+CREATE INDEX IF NOT EXISTS idx_clean_debit_period ON clean_debit USING btree (periode);
+CREATE INDEX IF NOT EXISTS idx_clean_debit_siret ON clean_debit USING btree (siret);
 
 
 ---- create above / drop below ----
