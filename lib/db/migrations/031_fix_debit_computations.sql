@@ -6,7 +6,7 @@ SELECT DISTINCT ON (siret, periode_prise_en_compte, debit_id)
     part_ouvriere,
     part_patronale
     FROM stg_debit
-  ORDER BY siret, periode_prise_en_compte, debit_id, numero_historique_ecart_negatif DESC
+  ORDER BY siret, debit_id, periode_prise_en_compte, numero_historique_ecart_negatif DESC
 WITH NO DATA;
 
 CREATE INDEX IF NOT EXISTS idx_debits_simplified_siret_debit_periode
@@ -21,6 +21,7 @@ CREATE MATERIALIZED VIEW clean_debit AS
         siret,
         periode_prise_en_compte as periode
       FROM stg_tmp_debits_simplified
+      WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE LEFT(p.siret, 9) = b.siren)
   )
   SELECT
     p.siret,
@@ -39,6 +40,10 @@ CREATE MATERIALIZED VIEW clean_debit AS
   ) sub
   GROUP BY p.siret, p.periode
 WITH NO DATA;
+
+CREATE INDEX IF NOT EXISTS idx_clean_debit_siren ON sfdata.clean_debit USING btree ("left"((siret)::text, 9));
+CREATE INDEX IF NOT EXISTS idx_clean_debit_period ON sfdata.clean_debit USING btree (periode);
+CREATE INDEX IF NOT EXISTS idx_clean_debit_siret ON sfdata.clean_debit USING btree (siret);
 
 
 ---- create above / drop below ----
