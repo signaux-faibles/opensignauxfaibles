@@ -57,8 +57,8 @@ func createImportTestBatch(t *testing.T) {
 		Files: map[engine.ParserType][]engine.BatchFile{
 			Dummy:              {},
 			engine.Filter:      {},
-			engine.Apconso:     {engine.NewBatchFile("lib/parsing/apconso/testData/apconsoTestData.csv")},
-			engine.Apdemande:   {engine.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
+			engine.Apconso:     {engine.NewBatchFile("tests/testData/apconsoTestData.csv")},
+			engine.Apdemande:   {engine.NewBatchFile("tests/testData/apdemandeTestData.csv")},
 			engine.Sirene:      {engine.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
 			engine.SireneUl:    {engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
 			engine.SireneHisto: {engine.NewBatchFile("lib/parsing/sirene_histo/testData/sireneHistoTestData.csv")},

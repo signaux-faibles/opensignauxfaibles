@@ -15,7 +15,11 @@ func TestParseFileEndToEnd(t *testing.T) {
 	outputFile := "test-parseFile.output.txt"
 	goldenFile := "test-parseFile.golden.txt"
 
-	cmd := exec.Command("./sfdata", "parseFile", "--parser", "apconso", "--file", "./lib/parsing/apconso/testData/apconsoTestData.csv")
+	cmd := exec.Command(
+		"./sfdata", "parseFile",
+		"--parser", "apconso",
+		"--file", "./tests/testData/apconsoTestData.csv",
+	)
 
 	output, err := cmd.CombinedOutput()
 

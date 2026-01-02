@@ -1,6 +1,6 @@
 parser              	batch_key           	head_fatal          	head_rejected       	is_fatal            	lines_parsed        	lines_rejected      	lines_skipped       	lines_valid         	summary             
-apconso             	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/apconso/
-apdemande           	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/apdemand
+apconso             	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	tests/testData/apcon
+apdemande           	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	tests/testData/apdem
 ccsf                	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t
 cotisation          	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t
 debit               	1910                	[]                  	[]                  	false               	3                   	0                   	0                   	3                   	lib/parsing/urssaf/t
