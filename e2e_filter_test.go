@@ -28,7 +28,7 @@ const (
 var (
 	SireneUl = engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")
 	Debit    = engine.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")
-	Effectif = engine.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")
+	Effectif = engine.NewBatchFile("tests/testData/effectifTestData.csv")
 )
 
 // importWithDiscardData is a test helper that executes an import with default

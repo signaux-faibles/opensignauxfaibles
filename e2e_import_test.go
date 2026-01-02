@@ -66,8 +66,8 @@ func createImportTestBatch(t *testing.T) {
 			engine.Ccsf:        {engine.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},
 			engine.Cotisation:  {engine.NewBatchFile("lib/parsing/urssaf/testData/cotisationTestData.csv")},
 			engine.Delai:       {engine.NewBatchFile("lib/parsing/urssaf/testData/delaiTestData.csv")},
-			engine.Effectif:    {engine.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")},
-			engine.EffectifEnt: {engine.NewBatchFile("lib/parsing/effectif/testData/effectifEntTestData.csv")},
+			engine.Effectif:    {engine.NewBatchFile("tests/testData/effectifTestData.csv")},
+			engine.EffectifEnt: {engine.NewBatchFile("tests/testData/effectifEntTestData.csv")},
 			engine.Procol:      {engine.NewBatchFile("lib/parsing/urssaf/testData/procolTestData.csv")},
 		},
 		Params: engine.AdminBatchParams{
