@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 
 	"github.com/cosiner/flag"
 
@@ -19,7 +20,7 @@ type importBatchHandler struct {
 	Enable          bool     // set to true by cosiner/flag if the user is running this command
 	Path            string   `names:"--path" env:"APP_DATA" desc:"Directory where raw data can be found. If the batch is not explicitly defined via \"--batch-config\", then it is expected to be in a subfolder named after the batchkey provided with \"--batch\""`
 	BatchKey        string   `names:"--batch" arglist:"batch_key" desc:"Batch identifier to import (e.g., 1802 for February 2018)"`
-	Parsers         []string `names:"--parsers" desc:"Parsers to use (e.g., apconso, cotisation). Consult documentation with --help for full list of available parsers."` // TODO: tester la population de ce paramètre
+	Parsers         []string `names:"--parsers" desc:"Parsers to use (e.g., apconso, cotisation). Consult documentation with --help for full list of available parsers."`
 	NoFilter        bool     `names:"--no-filter" desc:"Proceed with import without filtering input data, and without updating the filter stored in DB."`
 	BatchConfigFile string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Path to batch definition file. If not provided, files are inferred from their naming in the data directory (defined by \"APP_DATA\" environment variable or --path option."`
 	DryRun          bool     `names:"--dry-run" desc:"Parse files without creating CSV files / database imports. Import report is printed to stdout."`
@@ -138,6 +139,13 @@ func (params importBatchHandler) Run() error {
 	// On définit les parsers à faire tourner
 	if len(params.Parsers) >= 1 {
 		slog.Info("import restricted to provided parsers", "parsers", params.Parsers)
+
+		// We ignore the files associated to parsers we don't want to run
+		for k := range batch.Files {
+			if !slices.Contains(params.Parsers, string(k)) {
+				delete(batch.Files, k)
+			}
+		}
 	}
 
 	var parserTypes = make([]engine.ParserType, 0, len(params.Parsers))
