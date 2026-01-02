@@ -81,6 +81,9 @@ func (rp *debitRowParser) ParseRow(row []string, res *engine.ParsedLineResult, i
 	debit.PeriodeFin = periodeFin
 
 	debit.Recours, err = idxRow.GetBool("Recours_en_cours")
+
+	debit.DebitID = debit.Siret + debit.PeriodeDebut.Format("20060102") + debit.PeriodeFin.Format("20060102") + debit.NumeroEcartNegatif
+
 	res.AddRegularError(err)
 	// debit.MontantMajorations, err = strconv.ParseFloat(idxRow.GetVal("montantMajorations"), 64)
 	// tracker.Error(err)

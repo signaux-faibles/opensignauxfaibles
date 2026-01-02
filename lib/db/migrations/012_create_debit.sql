@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS stg_debit (
     -- La période de prise en compte est la période à partir de laquelle la
     -- donnée est prise en compte. Elle est calculée à l'import en fonction de
     -- la date de traitement.
-    periode_prise_en_compte            DATE,
+    periode_prise_en_compte         DATE,
     code_operation_ecart_negatif    VARCHAR(10),
     code_motif_ecart_negatif        VARCHAR(10),
     recours_en_cours                BOOLEAN
