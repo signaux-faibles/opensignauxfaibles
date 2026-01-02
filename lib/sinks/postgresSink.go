@@ -38,20 +38,20 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 		engine.SireneHisto:
 
 		tableName := fmt.Sprintf("stg_%s", parserType)
-		materializedTableUpdate := ""
+		var viewsToRefresh []string
 
 		switch parserType {
 		case engine.Apdemande:
-			materializedTableUpdate = db.ViewStgApdemandePeriod
+			viewsToRefresh = []string{db.ViewStgApdemandePeriod}
 		case engine.SireneUl:
-			materializedTableUpdate = db.ViewSirenBlacklist
+			viewsToRefresh = []string{db.ViewSirenBlacklist}
 		case engine.Effectif:
-			materializedTableUpdate = db.ViewSirenBlacklist
+			viewsToRefresh = []string{db.ViewSirenBlacklist}
 		case engine.Debit:
-			materializedTableUpdate = db.ViewDebits
+			viewsToRefresh = []string{db.IntermediateViewDebits, db.ViewDebits}
 		}
 
-		return &PostgresSink{f.conn, tableName, materializedTableUpdate}, nil
+		return &PostgresSink{f.conn, tableName, viewsToRefresh}, nil
 	}
 
 	slog.Warn("type de parser non supporté pour envoi des données à PostgreSQL", "parser", parserType)
@@ -72,8 +72,8 @@ type PostgresSink struct {
 	// Name of the table to which to write
 	table string
 
-	// Name of a materialized view to refresh after write
-	viewToRefresh string
+	// Names of materialized views to refresh after write, in order
+	viewsToRefresh []string
 }
 
 func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) error {
@@ -126,13 +126,13 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 
 	logger.Info("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 
-	if s.viewToRefresh != "" {
-		_, err = s.conn.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", s.viewToRefresh))
+	for _, view := range s.viewsToRefresh {
+		_, err = s.conn.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", view))
 		if err != nil {
-			return fmt.Errorf("failed to refresh materialized view %s: %w", s.viewToRefresh, err)
+			return fmt.Errorf("failed to refresh materialized view %s: %w", view, err)
 		}
 
-		logger.Debug("materialized view updated", "view", s.viewToRefresh)
+		logger.Debug("materialized view updated", "view", view)
 	}
 
 	return nil

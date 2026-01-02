@@ -21,6 +21,7 @@ const (
 const (
 	ViewStgApdemandePeriod = "stg_apdemande_by_period"
 	ViewSirenBlacklist     = "siren_blacklist"
+	IntermediateViewDebits = "stg_tmp_debits_simplified"
 	ViewDebits             = "clean_debit"
 )
 
