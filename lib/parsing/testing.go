@@ -14,6 +14,10 @@ func Float64Ptr(v float64) *float64 {
 	return &v
 }
 
+func TimePtr(v time.Time) *time.Time {
+	return &v
+}
+
 func MustParseTime(layout string, value string) time.Time {
 	parsedTime, err := time.Parse(layout, value)
 	if err != nil {
