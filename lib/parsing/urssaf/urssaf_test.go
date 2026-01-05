@@ -142,16 +142,21 @@ func TestDebitParser(t *testing.T) {
 
 func TestDebitMissingColumns(t *testing.T) {
 	t.Run("should fail if one column misses", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewDebitParser(), []string{"Siret;num_cpte"})
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
+		parser := NewDebitParser()
+		instance := parser.New(parsing.CreateReader("Siret;num_cpte", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Regexp(t, notFoundRegexp, err.Error())
 	})
 
 	t.Run("should fail if Periode column is missing", func(t *testing.T) {
-		headerRow := []string{"Siret;num_cpte;Num_Ecn;Dt_trt_ecn;Mt_PO;Mt_PP;Num_Hist_Ecn;Etat_cpte;Cd_pro_col;Cd_op_ecn;Motif_ecn;Recours_en_cours"}
-		output := engine.RunParserInline(t, NewDebitParser(), headerRow)
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Periode not found")
+		parser := NewDebitParser()
+		instance := parser.New(parsing.CreateReader("Siret;num_cpte;Num_Ecn;Dt_trt_ecn;Mt_PO;Mt_PP;Num_Hist_Ecn;Etat_cpte;Cd_pro_col;Cd_op_ecn;Motif_ecn;Recours_en_cours", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "Periode not found")
 	})
 }
 
@@ -242,16 +247,21 @@ func TestDelaiParser(t *testing.T) {
 
 func TestDelaiMissingColumns(t *testing.T) {
 	t.Run("should fail if one column misses", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewDelaiParser(), []string{"Siret;Numero_compte_externe"})
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
+		parser := NewDelaiParser()
+		instance := parser.New(parsing.CreateReader("Siret;Numero_compte_externe", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Regexp(t, notFoundRegexp, err.Error())
 	})
 
 	t.Run("should fail if Date_creation column is missing", func(t *testing.T) {
-		headerRow := []string{"Siret;Numero_compte_externe;Numero_structure;Date_echeance"}
-		output := engine.RunParserInline(t, NewDelaiParser(), headerRow)
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Date_creation not found")
+		parser := NewDelaiParser()
+		instance := parser.New(parsing.CreateReader("Siret;Numero_compte_externe;Numero_structure;Date_echeance", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "Date_creation not found")
 	})
 }
 
@@ -326,16 +336,21 @@ func TestCcsfParser(t *testing.T) {
 
 func TestCcsfMissingColumns(t *testing.T) {
 	t.Run("should fail if one column misses", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewCCSFParser(), []string{"Siret;Compte"})
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
+		parser := NewCCSFParser()
+		instance := parser.New(parsing.CreateReader("Siret;Compte", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Regexp(t, notFoundRegexp, err.Error())
 	})
 
 	t.Run("should fail if Date_de_traitement column is missing", func(t *testing.T) {
-		headerRow := []string{"Siret;Compte;Code_externe_stade;Code_externe_action"}
-		output := engine.RunParserInline(t, NewCCSFParser(), headerRow)
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Date_de_traitement not found")
+		parser := NewCCSFParser()
+		instance := parser.New(parsing.CreateReader("Siret;Compte;Code_externe_stade;Code_externe_action", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "Date_de_traitement not found")
 	})
 }
 
@@ -413,16 +428,21 @@ func TestCotisationParser(t *testing.T) {
 
 func TestCotisationMissingColumns(t *testing.T) {
 	t.Run("should fail if one column misses", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewCotisationParser(), []string{"Siret;Compte"})
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Regexp(t, notFoundRegexp, engine.GetFatalError(output))
+		parser := NewCotisationParser()
+		instance := parser.New(parsing.CreateReader("Siret;Compte", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Regexp(t, notFoundRegexp, err.Error())
 	})
 
 	t.Run("should fail if periode column is missing", func(t *testing.T) {
-		headerRow := []string{"Siret;Compte;enc_direct;cotis_due"}
-		output := engine.RunParserInline(t, NewCotisationParser(), headerRow)
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "periode not found")
+		parser := NewCotisationParser()
+		instance := parser.New(parsing.CreateReader("Siret;Compte;enc_direct;cotis_due", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "periode not found")
 	})
 }
 
@@ -501,15 +521,20 @@ func TestProcolParser(t *testing.T) {
 
 func TestProcolMissingColumns(t *testing.T) {
 	t.Run("should fail if one column misses", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewProcolParser(), []string{"Siret"})
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "not found")
+		parser := NewProcolParser()
+		instance := parser.New(parsing.CreateReader("Siret", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "not found")
 	})
 
 	t.Run("should fail if Dt_effet column is missing", func(t *testing.T) {
-		headerRow := []string{"Siret;Lib_actx_stdx"}
-		output := engine.RunParserInline(t, NewProcolParser(), headerRow)
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "Dt_effet not found")
+		parser := NewProcolParser()
+		instance := parser.New(parsing.CreateReader("Siret;Lib_actx_stdx", ";", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "Dt_effet not found")
 	})
 }

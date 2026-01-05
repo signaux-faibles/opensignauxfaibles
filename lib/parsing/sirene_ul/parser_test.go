@@ -117,16 +117,21 @@ func TestSireneULParser(t *testing.T) {
 
 func TestSireneULMissingColumns(t *testing.T) {
 	t.Run("should fail if one column misses", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewSireneULParser(), []string{"siren"}) // many columns are missing
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Regexp(t, regexp.MustCompile("column [^ ]+ not found"), engine.GetFatalError(output))
+		parser := NewSireneULParser()
+		instance := parser.New(parsing.CreateReader("siren", ",", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Regexp(t, regexp.MustCompile("column [^ ]+ not found"), err.Error())
 	})
 
 	t.Run("should fail if denominationUniteLegale column is missing", func(t *testing.T) {
-		headerRow := []string{"siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale"} // denominationUniteLegale is missing
-		output := engine.RunParserInline(t, NewSireneULParser(), headerRow)
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "column denominationUniteLegale not found")
+		parser := NewSireneULParser()
+		instance := parser.New(parsing.CreateReader("siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale", ",", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "column denominationUniteLegale not found")
 	})
 }
 

@@ -261,16 +261,21 @@ func TestSireneParser(t *testing.T) {
 
 func TestSireneMissingColumns(t *testing.T) {
 	t.Run("should fail if one column misses", func(t *testing.T) {
-		output := engine.RunParserInline(t, NewSireneParser(), []string{"siren,nic"}) // many columns are missing
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Regexp(t, regexp.MustCompile("column [^ ]+ not found"), engine.GetFatalError(output))
+		parser := NewSireneParser()
+		instance := parser.New(parsing.CreateReader("siren,nic", ",", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Regexp(t, regexp.MustCompile("column [^ ]+ not found"), err.Error())
 	})
 
 	t.Run("should fail if etablissementSiege column is missing", func(t *testing.T) {
-		headerRow := []string{"siren,nic,siret,statutDiffusionEtablissement,dateCreationEtablissement,trancheEffectifsEtablissement"} // etablissementSiege is missing
-		output := engine.RunParserInline(t, NewSireneParser(), headerRow)
-		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
-		assert.Contains(t, engine.GetFatalError(output), "column etablissementSiege not found")
+		parser := NewSireneParser()
+		instance := parser.New(parsing.CreateReader("siren,nic,siret,statutDiffusionEtablissement,dateCreationEtablissement,trancheEffectifsEtablissement", ",", []string{}))
+		err := instance.Init(engine.NoFilter, nil)
+
+		assert.Error(t, err, "should report a fatal error")
+		assert.Contains(t, err.Error(), "column etablissementSiege not found")
 	})
 }
 
