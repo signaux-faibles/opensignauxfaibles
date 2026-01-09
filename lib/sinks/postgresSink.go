@@ -15,6 +15,9 @@ import (
 // BatchSize controls the max number of rows inserted at a time
 const BatchSize = 1000
 
+// MaterializedViewsWorkMem is the value of Postgresql's WORK_MEM option to set locally for materialized views updates.
+const MaterializedViewsWorkMem = "1GB"
+
 type PostgresSinkFactory struct {
 	conn db.Pool
 }
@@ -127,7 +130,12 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 	logger.Info("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 
 	for _, view := range s.viewsToRefresh {
-		_, err = s.conn.Exec(ctx, fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", view))
+		_, err = s.conn.Exec(ctx, fmt.Sprintf(`
+    BEGIN;
+    SET LOCAL work_mem = '%s';
+    REFRESH MATERIALIZED VIEW %s;
+    COMMIT;
+    `, MaterializedViewsWorkMem, view))
 		if err != nil {
 			return fmt.Errorf("failed to refresh materialized view %s: %w", view, err)
 		}
