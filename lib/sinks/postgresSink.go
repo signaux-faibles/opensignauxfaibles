@@ -221,22 +221,24 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 	}
 
 	logger.Info("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
-	logger.Info("update computed data (materialized views)", "views", s.viewsToRefresh)
+	if len(s.viewsToRefresh) > 0 {
+		logger.Info("update materialized views", "views", s.viewsToRefresh)
 
-	for _, view := range s.viewsToRefresh {
-		_, err = s.conn.Exec(ctx, fmt.Sprintf(`
-    BEGIN;
-    SET LOCAL work_mem = '%s';
-    REFRESH MATERIALIZED VIEW %s;
-    COMMIT;
-    `, MaterializedViewsWorkMem, view))
-		if err != nil {
-			return fmt.Errorf("failed to refresh materialized view %s: %w", view, err)
+		for _, view := range s.viewsToRefresh {
+			_, err = s.conn.Exec(ctx, fmt.Sprintf(`
+      BEGIN;
+      SET LOCAL work_mem = '%s';
+      REFRESH MATERIALIZED VIEW %s;
+      COMMIT;
+      `, MaterializedViewsWorkMem, view))
+			if err != nil {
+				return fmt.Errorf("failed to refresh materialized view %s: %w", view, err)
+			}
+
+			logger.Debug("materialized view updated", "view", view)
 		}
-
-		logger.Debug("materialized view updated", "view", view)
+		logger.Info("materialized view update ended successfully")
 	}
-	logger.Info("materialized view update ended successfully")
 
 	return nil
 }
