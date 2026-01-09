@@ -15,6 +15,8 @@ const (
 	TableStgSirene       = "stg_sirene"
 	TableStgSireneUl     = "stg_sirene_ul"
 	TableStgFilterImport = "stg_filter_import"
+	TableStgProcol       = "stg_procol"
+	TableStgSireneHisto  = "stg_sirene_histo"
 )
 
 // Materialized views
@@ -39,6 +41,8 @@ func AllTables() []string {
 		TableStgSirene,
 		TableStgSireneUl,
 		TableStgFilterImport,
+		TableStgProcol,
+		TableStgSireneHisto,
 	}
 }
 
