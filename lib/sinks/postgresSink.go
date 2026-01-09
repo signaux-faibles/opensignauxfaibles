@@ -94,6 +94,14 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 		return fmt.Errorf("failed to truncate table: %w", err)
 	}
 
+	logger.Debug("configure table")
+
+	// For performance reasons, we do not want to write to the WAL.
+	_, err = s.conn.Exec(ctx, fmt.Sprintf("ALTER TABLE %s SET UNLOGGED", s.table))
+	if err != nil {
+		return fmt.Errorf("failed to set UNLOGGED setting on table: %w", err)
+	}
+
 	logger.Debug("data insertion")
 
 	nInserted := 0
