@@ -160,19 +160,20 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 					return
 				}
 				logger.Debug("index recreated", "index", idx.IndexName)
+
+				if err = tx.Commit(ctx); err != nil {
+					logger.Error("failed to commit index recreation transaction", "error", err)
+				} else {
+					logger.Debug("all indexes recreated successfully")
+				}
 			}
 
-			_, err = tx.Exec(ctx, fmt.Sprintf("ANALYZE %s", s.table))
+			_, err = s.conn.Exec(ctx, fmt.Sprintf("ANALYZE %s", s.table))
 			if err != nil {
 				logger.Error("failed to ANALYZE table", "error", err)
 			}
 			logger.Debug("Table ANALYZEd")
 
-			if err = tx.Commit(ctx); err != nil {
-				logger.Error("failed to commit index recreation transaction", "error", err)
-			} else {
-				logger.Debug("all indexes recreated successfully")
-			}
 		}
 	}()
 
