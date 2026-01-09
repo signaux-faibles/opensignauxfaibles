@@ -18,9 +18,6 @@ const BatchSize = 1000
 // MaterializedViewsWorkMem is the value of Postgresql's WORK_MEM option to set locally for materialized views updates.
 const MaterializedViewsWorkMem = "1GB"
 
-// MaintenanceWorkMem is the value of Postgresql's MAINTENANCE_WORK_MEM option to set locally for index recreation.
-const MaintenanceWorkMem = "500MB"
-
 type PostgresSinkFactory struct {
 	conn db.Pool
 }
@@ -97,94 +94,12 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 		return fmt.Errorf("failed to truncate table: %w", err)
 	}
 
-	logger.Debug("setup table, drop indexes")
+	logger.Debug("setup table")
 
 	// For performance reasons, we do not want to write to the WAL.
 	_, err = s.conn.Exec(ctx, fmt.Sprintf("ALTER TABLE %s SET UNLOGGED", s.table))
 	if err != nil {
 		return fmt.Errorf("failed to set UNLOGGED setting on table: %w", err)
-	}
-
-	// For performance reasons, we drop the indexes and recreate them after bulk
-	// import
-
-	type indexInfo struct {
-		IndexName string `db:"indexname"`
-		IndexDef  string `db:"indexdef"`
-	}
-
-	// We want indexes but NOT primary keys
-	rows, err := s.conn.Query(ctx, `
-		SELECT i.indexname, i.indexdef
-		FROM pg_indexes i
-		JOIN pg_class c ON c.relname = i.indexname
-		JOIN pg_index idx ON idx.indexrelid = c.oid
-		WHERE i.tablename = $1
-		AND i.schemaname = current_schema()
-		AND NOT idx.indisprimary
-	`, s.table)
-	if err != nil {
-		return fmt.Errorf("failed to retrieve indexes: %w", err)
-	}
-
-	indexes, err := pgx.CollectRows(rows, pgx.RowToStructByName[indexInfo])
-	if err != nil {
-		return fmt.Errorf("failed to collect indexes: %w", err)
-	}
-
-	// Recreate indexes even if an error occurred
-	defer func() {
-
-		if len(indexes) != 0 {
-			logger.Debug("recreating indexes", "count", len(indexes))
-
-			// We initiate a transaction to SET LOCAL options for all index
-			// recreations
-			tx, err := s.conn.Begin(ctx)
-			if err != nil {
-				logger.Error("failed to begin transaction for index recreation", "error", err)
-				return
-			}
-			defer tx.Rollback(ctx)
-
-			// Set maintenance_work_mem
-			_, err = tx.Exec(ctx, fmt.Sprintf("SET LOCAL maintenance_work_mem = '%s'", MaintenanceWorkMem))
-			if err != nil {
-				logger.Error("failed to set maintenance_work_mem", "error", err)
-				return
-			}
-
-			// Recréer chaque index
-			for _, idx := range indexes {
-				_, err = tx.Exec(ctx, idx.IndexDef)
-				if err != nil {
-					logger.Error("failed to recreate index", "index", idx.IndexName, "error", err)
-					return
-				}
-				logger.Debug("index recreated", "index", idx.IndexName)
-			}
-
-			_, err = tx.Exec(ctx, fmt.Sprintf("ANALYZE %s", s.table))
-			if err != nil {
-				logger.Error("failed to ANALYZE table", "error", err)
-			}
-			logger.Debug("Table ANALYZEd")
-
-			if err = tx.Commit(ctx); err != nil {
-				logger.Error("failed to commit index recreation transaction", "error", err)
-			} else {
-				logger.Debug("all indexes recreated successfully")
-			}
-		}
-	}()
-
-	// Dropper les indexes avant l'import en masse
-	for _, idx := range indexes {
-		logger.Debug("dropping index", "index", idx.IndexName)
-		_, err = s.conn.Exec(ctx, fmt.Sprintf("DROP INDEX IF EXISTS %s", idx.IndexName))
-		if err != nil {
-			return fmt.Errorf("failed to drop index %s: %w", idx.IndexName, err)
-		}
 	}
 
 	logger.Debug("data insertion")

@@ -29,7 +29,6 @@ var DB Pool
 
 // Pool is the subset of the pgxpool.Pool interface we actually use
 type Pool interface {
-	Begin(ctx context.Context) (pgx.Tx, error)
 	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
 	Acquire(ctx context.Context) (*pgxpool.Conn, error)
 	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
