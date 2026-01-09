@@ -13,7 +13,7 @@ import (
 )
 
 // BatchSize controls the max number of rows inserted at a time
-const BatchSize = 500000
+const BatchSize = 100000
 
 // MaterializedViewsWorkMem is the value of Postgresql's WORK_MEM option to set locally for materialized views updates.
 const MaterializedViewsWorkMem = "512MB"
