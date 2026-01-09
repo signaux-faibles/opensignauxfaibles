@@ -16,7 +16,7 @@ import (
 const BatchSize = 100000
 
 // MaterializedViewsWorkMem is the value of Postgresql's WORK_MEM option to set locally for materialized views updates.
-const MaterializedViewsWorkMem = "512MB"
+const MaterializedViewsWorkMem = "256MB"
 
 // MaintenanceWorkMem is the value of Postgresql's MAINTENANCE_WORK_MEM option to set locally for index recreation.
 const MaintenanceWorkMem = "256MB"
@@ -98,12 +98,6 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 	}
 
 	logger.Debug("setup table, drop indexes")
-
-	// For performance reasons, we do not want to write to the WAL.
-	_, err = s.conn.Exec(ctx, fmt.Sprintf("ALTER TABLE %s SET UNLOGGED", s.table))
-	if err != nil {
-		return fmt.Errorf("failed to set UNLOGGED setting on table: %w", err)
-	}
 
 	// For performance reasons, we drop the indexes and recreate them after bulk
 	// import
