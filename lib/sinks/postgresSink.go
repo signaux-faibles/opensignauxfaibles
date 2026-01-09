@@ -13,13 +13,13 @@ import (
 )
 
 // BatchSize controls the max number of rows inserted at a time
-const BatchSize = 1000
+const BatchSize = 500000
 
 // MaterializedViewsWorkMem is the value of Postgresql's WORK_MEM option to set locally for materialized views updates.
-const MaterializedViewsWorkMem = "1GB"
+const MaterializedViewsWorkMem = "512MB"
 
 // MaintenanceWorkMem is the value of Postgresql's MAINTENANCE_WORK_MEM option to set locally for index recreation.
-const MaintenanceWorkMem = "500MB"
+const MaintenanceWorkMem = "256MB"
 
 type PostgresSinkFactory struct {
 	conn db.Pool
@@ -138,24 +138,22 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 		if len(indexes) != 0 {
 			logger.Debug("recreating indexes", "count", len(indexes))
 
-			// We initiate a transaction to SET LOCAL options for all index
-			// recreations
-			tx, err := s.conn.Begin(ctx)
-			if err != nil {
-				logger.Error("failed to begin transaction for index recreation", "error", err)
-				return
-			}
-			defer tx.Rollback(ctx)
-
-			// Set maintenance_work_mem
-			_, err = tx.Exec(ctx, fmt.Sprintf("SET LOCAL maintenance_work_mem = '%s'", MaintenanceWorkMem))
-			if err != nil {
-				logger.Error("failed to set maintenance_work_mem", "error", err)
-				return
-			}
-
 			// Recréer chaque index
 			for _, idx := range indexes {
+				tx, err := s.conn.Begin(ctx)
+				if err != nil {
+					logger.Error("failed to begin transaction for index recreation", "error", err)
+					return
+				}
+				defer tx.Rollback(ctx)
+
+				// Set maintenance_work_mem
+				_, err = tx.Exec(ctx, fmt.Sprintf("SET LOCAL maintenance_work_mem = '%s'", MaintenanceWorkMem))
+				if err != nil {
+					logger.Error("failed to set maintenance_work_mem", "error", err)
+					return
+				}
+
 				_, err = tx.Exec(ctx, idx.IndexDef)
 				if err != nil {
 					logger.Error("failed to recreate index", "index", idx.IndexName, "error", err)
