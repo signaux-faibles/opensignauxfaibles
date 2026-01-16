@@ -57,8 +57,8 @@ func createImportTestBatch(t *testing.T) {
 		Files: map[engine.ParserType][]engine.BatchFile{
 			Dummy:              {},
 			engine.Filter:      {},
-			engine.Apconso:     {engine.NewBatchFile("lib/parsing/apconso/testData/apconsoTestData.csv")},
-			engine.Apdemande:   {engine.NewBatchFile("lib/parsing/apdemande/testData/apdemandeTestData.csv")},
+			engine.Apconso:     {engine.NewBatchFile("tests/testData/apconsoTestData.csv")},
+			engine.Apdemande:   {engine.NewBatchFile("tests/testData/apdemandeTestData.csv")},
 			engine.Sirene:      {engine.NewBatchFile("lib/parsing/sirene/testData/sireneTestData.csv")},
 			engine.SireneUl:    {engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")},
 			engine.SireneHisto: {engine.NewBatchFile("lib/parsing/sirene_histo/testData/sireneHistoTestData.csv")},
@@ -66,8 +66,8 @@ func createImportTestBatch(t *testing.T) {
 			engine.Ccsf:        {engine.NewBatchFile("lib/parsing/urssaf/testData/ccsfTestData.csv")},
 			engine.Cotisation:  {engine.NewBatchFile("lib/parsing/urssaf/testData/cotisationTestData.csv")},
 			engine.Delai:       {engine.NewBatchFile("lib/parsing/urssaf/testData/delaiTestData.csv")},
-			engine.Effectif:    {engine.NewBatchFile("lib/parsing/effectif/testData/effectifTestData.csv")},
-			engine.EffectifEnt: {engine.NewBatchFile("lib/parsing/effectif/testData/effectifEntTestData.csv")},
+			engine.Effectif:    {engine.NewBatchFile("tests/testData/effectifTestData.csv")},
+			engine.EffectifEnt: {engine.NewBatchFile("tests/testData/effectifEntTestData.csv")},
 			engine.Procol:      {engine.NewBatchFile("lib/parsing/urssaf/testData/procolTestData.csv")},
 		},
 		Params: engine.AdminBatchParams{
