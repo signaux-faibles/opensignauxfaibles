@@ -2,7 +2,7 @@
 CREATE OR REPLACE VIEW clean_sirene_ul AS
   SELECT
     s.siren,
-    CASE WHEN s.raison_sociale IS NOT NULL
+    CASE WHEN s.raison_sociale IS NOT NULL AND s.raison_sociale != ''
       THEN s.raison_sociale
       ELSE
         TRIM(
