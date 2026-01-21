@@ -5,7 +5,7 @@
       "raison_sociale": "",
       "prenom1_unite_legale": "cuhgjdp",
       "nom_unite_legale": "jjqcmkg",
-      "statut_juridique": "5465",
+      "categorie_juridique": "5465",
       "ape": "41.19A",
       "est_actif": true
     },
@@ -14,14 +14,14 @@
       "raison_sociale": "",
       "prenom1_unite_legale": "ajfwprw-qmxobv",
       "nom_unite_legale": "fvxmjl",
-      "statut_juridique": "5258",
+      "categorie_juridique": "5258",
       "ape": "71.06B",
       "est_actif": false
     },
     {
       "siren": "112233445",
       "raison_sociale": "companyname",
-      "statut_juridique": "5422",
+      "categorie_juridique": "5422",
       "date_creation": "1967-01-01T00:00:00Z",
       "ape": "68.01Z",
       "est_actif": false

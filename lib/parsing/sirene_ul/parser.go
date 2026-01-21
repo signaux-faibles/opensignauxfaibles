@@ -44,7 +44,7 @@ func (rp *sireneULRowParser) ParseRow(row []string, res *engine.ParsedLineResult
 	sireneul.Prenom4UniteLegale = idxRow.GetVal("prenom4UniteLegale")
 	sireneul.NomUniteLegale = idxRow.GetVal("nomUniteLegale")
 	sireneul.NomUsageUniteLegale = idxRow.GetVal("nomUsageUniteLegale")
-	sireneul.CodeStatutJuridique = idxRow.GetVal("categorieJuridiqueUniteLegale")
+	sireneul.CategorieJuridique = idxRow.GetVal("categorieJuridiqueUniteLegale")
 
 	if idxRow.GetVal("activitePrincipaleUniteLegale") != "" {
 		nomenclature := idxRow.GetVal("nomenclatureActivitePrincipaleUniteLegale")
