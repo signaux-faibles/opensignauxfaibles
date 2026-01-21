@@ -15,7 +15,7 @@ type SireneUL struct {
 	Prenom4UniteLegale  string     ` input:"prenom4UniteLegale"            json:"prenom4_unite_legale,omitempty"   sql:"prenom4_unite_legale"     csv:"Prenom4UniteLegale"`
 	NomUniteLegale      string     ` input:"nomUniteLegale"                json:"nom_unite_legale,omitempty"       sql:"nom_unite_legale"         csv:"NomUniteLegale"`
 	NomUsageUniteLegale string     ` input:"nomUsageUniteLegale"           json:"nom_usage_unite_legale,omitempty" sql:"nom_usage_unite_legale"   csv:"NomUsageUniteLegale"`
-	CodeStatutJuridique string     ` input:"categorieJuridiqueUniteLegale" json:"statut_juridique"                 sql:"statut_juridique"         csv:"CodeStatutJuridique"`
+	CategorieJuridique  string     ` input:"categorieJuridiqueUniteLegale" json:"categorie_juridique"              sql:"categorie_juridique"         csv:"CodeStatutJuridique"`
 	Creation            *time.Time ` input:"dateCreationUniteLegale"       json:"date_creation,omitempty"          sql:"creation"                 csv:"Creation"`
 	APE                 string     `                                       json:"ape,omitempty"                    sql:"activite_principale"      csv:"APE"`
 	EstActif            bool       ` input:"etatAdministratifUniteLegale"  json:"est_actif"                        sql:"est_actif"                csv:"EstActif"`

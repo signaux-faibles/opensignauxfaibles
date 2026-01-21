@@ -1,4 +1,3 @@
--- Back to previous version of the view
 CREATE OR REPLACE VIEW clean_sirene_ul AS
   SELECT
     s.siren,
