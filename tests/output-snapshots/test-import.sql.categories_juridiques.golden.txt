@@ -1,0 +1,261 @@
+code                	libelle             
+0000                	Organisme de placeme
+1000                	Entrepreneur individ
+2110                	Indivision entre per
+2120                	Indivision avec pers
+2210                	Société créée de
+2220                	Société créée de
+2310                	Société en partici
+2320                	Société en partici
+2385                	Société en partici
+2400                	Fiducie             
+2700                	Paroisse hors zone c
+2800                	Assujetti unique à 
+2900                	Autre groupement de 
+3110                	Représentation ou a
+3120                	Société commercial
+3205                	Organisation interna
+3210                	État, collectivité
+3220                	Société étrangèr
+3290                	Autre personne moral
+4110                	Établissement publi
+4120                	Établissement publi
+4130                	Exploitant public   
+4140                	Établissement publi
+4150                	Régie d'une collect
+4160                	Institution Banque d
+5191                	Société de caution
+5192                	Société coopérati
+5193                	Caisse de crédit ma
+5194                	Caisse (fédérale) 
+5195                	Association coopéra
+5196                	Caisse d'épargne et
+5202                	Société en nom col
+5203                	Société en nom col
+5306                	Société en command
+5307                	Société en command
+5308                	Société en command
+5309                	Société en command
+5310                	Société en libre p
+5370                	Société de Partici
+5385                	Société d'exercice
+5410                	SARL nationale      
+5415                	SARL d'économie mix
+5422                	SARL immobilière po
+5426                	SARL immobilière de
+5430                	SARL d'aménagement 
+5431                	SARL mixte d'intér�
+5432                	SARL d'intérêt col
+5442                	SARL d'attribution  
+5443                	SARL coopérative de
+5451                	SARL coopérative de
+5453                	SARL coopérative ar
+5454                	SARL coopérative d'
+5455                	SARL coopérative de
+5458                	SARL coopérative de
+5459                	SARL union de socié
+5460                	Autre SARL coopérat
+5470                	Société de Partici
+5485                	Société d'exercice
+5499                	Société à respons
+5505                	SA à participation 
+5510                	SA nationale à cons
+5515                	SA d'économie mixte
+5520                	Fonds à forme soci�
+5522                	SA immobilière pour
+5525                	SA immobilière d'in
+5530                	SA d'aménagement fo
+5531                	Société anonyme mi
+5532                	SA d'intérêt colle
+5542                	SA d'attribution à 
+5543                	SA coopérative de c
+5546                	SA de HLM à conseil
+5547                	SA coopérative de p
+5548                	SA de crédit immobi
+5551                	SA coopérative de c
+5552                	SA coopérative de c
+5553                	SA coopérative arti
+5554                	SA coopérative (d'i
+5555                	SA coopérative de t
+5558                	SA coopérative de p
+5559                	SA union de sociét�
+5560                	Autre SA coopérativ
+5570                	Société de Partici
+5585                	Société d'exercice
+5599                	SA à conseil d'admi
+5605                	SA à participation 
+5610                	SA nationale à dire
+5615                	SA d'économie mixte
+5620                	Fonds à forme soci�
+5622                	SA immobilière pour
+5625                	SA immobilière d'in
+5630                	Safer anonyme à dir
+5631                	SA mixte d'intérêt
+5632                	SA d'intérêt colle
+5642                	SA d'attribution à 
+5643                	SA coopérative de c
+5646                	SA de HLM à directo
+5647                	Société coopérati
+5648                	SA de crédit immobi
+5651                	SA coopérative de c
+5652                	SA coopérative de c
+5653                	SA coopérative arti
+5654                	SA coopérative d'in
+5655                	SA coopérative de t
+5658                	SA coopérative de p
+5659                	SA union de sociét�
+5660                	Autre SA coopérativ
+5670                	Société de Partici
+5685                	Société d'exercice
+5699                	SA à directoire (s.
+5710                	SAS, société par a
+5770                	Société de Partici
+5785                	Société d'exercice
+5800                	Société européenn
+6100                	Caisse d'Épargne et
+6210                	Groupement européen
+6220                	Groupement d'intér�
+6316                	Coopérative d'utili
+6317                	Société coopérati
+6318                	Union de sociétés 
+6411                	Société d'assuranc
+6511                	Sociétés Interprof
+6521                	Société civile de 
+6532                	Société civile d'i
+6533                	Groupement agricole 
+6534                	Groupement foncier a
+6535                	Groupement agricole 
+6536                	Groupement forestier
+6537                	Groupement pastoral 
+6538                	Groupement foncier e
+6539                	Société civile fon
+6540                	Société civile imm
+6541                	Société civile imm
+6542                	Société civile d'a
+6543                	Société civile coo
+6544                	Société civile imm
+6551                	Société civile coo
+6554                	Société civile coo
+6558                	Société civile coo
+6560                	Autre société civi
+6561                	SCP d'avocats       
+6562                	SCP d'avocats aux co
+6563                	SCP d'avoués d'appe
+6564                	SCP d'huissiers     
+6565                	SCP de notaires     
+6566                	SCP de commissaires-
+6567                	SCP de greffiers de 
+6568                	SCP de conseils juri
+6569                	SCP de commissaires 
+6571                	SCP de médecins    
+6572                	SCP de dentistes    
+6573                	SCP d'infirmiers    
+6574                	SCP de masseurs-kin�
+6575                	SCP de directeurs de
+6576                	SCP de vétérinaire
+6577                	SCP de géomètres e
+6578                	SCP d'architectes   
+6585                	Autre société civi
+6589                	Société civile de 
+6595                	Caisse locale de cr�
+6596                	Caisse de crédit ag
+6597                	Société civile d'e
+6598                	Exploitation agricol
+6599                	Autre société civi
+6901                	Autre personne de dr
+7111                	Autorité constituti
+7112                	Autorité administra
+7113                	Ministère          
+7120                	Service central d'un
+7150                	Service du ministèr
+7160                	Service déconcentr�
+7171                	Service déconcentr�
+7172                	Service déconcentr�
+7179                	(Autre) Service déc
+7190                	Ecole nationale non 
+7210                	Commune et commune n
+7220                	Département        
+7225                	Collectivité et ter
+7229                	(Autre) Collectivit�
+7230                	Région             
+7312                	Commune associée et
+7313                	Section de commune  
+7314                	Ensemble urbain     
+7321                	Association syndical
+7322                	Association foncièr
+7323                	Association foncièr
+7331                	Établissement publi
+7340                	Pôle métropolitain
+7341                	Secteur de commune  
+7342                	District urbain     
+7343                	Communauté urbaine 
+7344                	Métropole          
+7345                	Syndicat intercommun
+7346                	Communauté de commu
+7347                	Communauté de ville
+7348                	Communauté d'agglom
+7349                	Autre établissement
+7351                	Institution interdé
+7352                	Institution interré
+7353                	Syndicat intercommun
+7354                	Syndicat mixte ferm�
+7355                	Syndicat mixte ouver
+7356                	Commission syndicale
+7357                	Pôle d'équilibre t
+7361                	Centre communal d'ac
+7362                	Caisse des écoles  
+7363                	Caisse de crédit mu
+7364                	Établissement d'hos
+7365                	Syndicat inter hospi
+7366                	Établissement publi
+7367                	Centre Intercommunal
+7371                	Office public d'habi
+7372                	Service département
+7373                	Établissement publi
+7378                	Régie d'une collect
+7379                	(Autre) Établisseme
+7381                	Organisme consulaire
+7382                	Établissement publi
+7383                	Établissement publi
+7384                	Autre établissement
+7385                	Autre établissement
+7389                	Établissement publi
+7410                	Groupement d'intér�
+7430                	Établissement publi
+7450                	Etablissement public
+7470                	Groupement de coopé
+7490                	Autre personne moral
+8110                	Régime général de
+8120                	Régime spécial de 
+8130                	Institution de retra
+8140                	Mutualité sociale a
+8150                	Régime maladie des 
+8160                	Régime vieillesse n
+8170                	Régime d'assurance 
+8190                	Autre régime de pr�
+8210                	Mutuelle            
+8250                	Assurance mutuelle a
+8290                	Autre organisme mutu
+8310                	Comité social écon
+8311                	Comité social écon
+8410                	Syndicat de salarié
+8420                	Syndicat patronal   
+8450                	Ordre professionnel 
+8470                	Centre technique ind
+8490                	Autre organisme prof
+8510                	Institution de prév
+8520                	Institution de retra
+9110                	Syndicat de copropri
+9150                	Association syndical
+9210                	Association non déc
+9220                	Association déclar�
+9221                	Association déclar�
+9222                	Association intermé
+9223                	Groupement d'employe
+9224                	Association d'avocat
+9230                	Association déclar�
+9240                	Congrégation       
+9260                	Association de droit
+9300                	Fondation           
+9900                	Autre personne moral
+9970                	Groupement de coopé
