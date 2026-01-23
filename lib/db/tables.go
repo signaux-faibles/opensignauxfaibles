@@ -22,6 +22,7 @@ const (
 // Materialized views
 const (
 	ViewStgApdemandePeriod = "stg_apdemande_by_period"
+	ViewCleanAp            = "clean_ap"
 	ViewSirenBlacklist     = "siren_blacklist"
 	IntermediateViewDebits = "stg_tmp_debits_simplified"
 	ViewDebits             = "clean_debit"

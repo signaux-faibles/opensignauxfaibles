@@ -48,7 +48,9 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 
 		switch parserType {
 		case engine.Apdemande:
-			viewsToRefresh = []string{db.ViewStgApdemandePeriod}
+			viewsToRefresh = []string{db.ViewStgApdemandePeriod, db.ViewCleanAp}
+		case engine.Apconso:
+			viewsToRefresh = []string{db.ViewCleanAp}
 		case engine.SireneUl:
 			viewsToRefresh = []string{db.ViewSirenBlacklist}
 		case engine.Effectif:
