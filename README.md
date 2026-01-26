@@ -166,6 +166,42 @@ Le pipeline d'importation se compose de :
     qui doivent être utilisées par les consommateurs des données downstream.
 - Migrations définies dans `lib/db/migrations.go`
 
+|           name            |       type        |                                             description                                              |
+|---------------------------|-------------------|------------------------------------------------------------------------------------------------------|
+| stg_filter_import         | table             | Périmètre d'import des données brutes,filtré sur l'effectif uniquement                               |
+| siren_blacklist           | materialized view | Siren à exclure du périmètre d'import (à privilégier sur clean_filter lorsque la performance compte) |
+| clean_filter              | view              | Périmètre des données enrichies = stg_filter_import - siren_blacklist                                |
+| stg_apdemande             | table             | Données brutes d'autorisation d'activité partielle                                                   |
+| stg_apconso               | table             | Données brutes de consommation d'activité partielle                                                  |
+| stg_apconso_by_period     | view              | Données intermédiaires                                                                               |
+| stg_apdemande_by_period   | materialized view | Données intermédiaires                                                                               |
+| clean_ap                  | materialized view | Données enrichie et agrégée d'activité partielle                                                     |
+| stg_sirene                | table             | Données brutes sur les établissements (non filtrées sur le périmètre SF)                             |
+| clean_sirene              | view              | Données enrichies sur les établissements (non filtrées sur le périmètre SF)                          |
+| stg_sirene_ul             | table             | Données brutes sur les entreprises (non filtrées sur le périmètre SF)                                |
+| clean_sirene_ul           | view              | Données enrichies sur les entreprises (non filtrées sur le périmètre SF)                             |
+| stg_sirene_histo          | table             | Données historiques brutes sur les établissements                                                    |
+| clean_sirene_histo        | view              | Données historiques enrichies sur les établissements                                                 |
+| stg_cotisation            | table             | Données brutes sur les cotisation                                                                    |
+| clean_cotisation          | view              | Données enrichies sur les cotisations                                                                |
+| stg_debit                 | table             | Données brutes sur les débits                                                                        |
+| stg_tmp_debits_simplified | materialized view | Données intermédiaires                                                                               |
+| clean_debit               | materialized view | Données enrichies sur les débits                                                                     |
+| stg_procol                | table             | Données brutes de procédures collectives                                                             |
+| clean_procol              | view              | Données enrichies de procédures collectives                                                          |
+| stg_delai                 | table             | Données brutes de délais de paiement des cotisations sociales                                        |
+| clean_delai               | view              | Données enrichies de délais de paiement des cotisations sociales                                     |
+| stg_effectif              | table             | Données brutes des effectifs d'établissements                                                        |
+| clean_effectif            | view              | Données enrichies des effectifs d'établissements                                                     |
+| stg_effectif_ent          | table             | Données brutes des effectifs d'entreprises                                                           |
+| clean_effectif_ent        | view              | Données enrichies des effectifs d'entreprises                                                        |
+| labels_motif_recours      | table             | Libellés pour les recours à l'activité partielle                                                     |
+| categories_juridiques     | table             | Libellés pour les catégories juridiques                                                              |
+| naf_codes                 | table             | Libellés pour la nomenclature d'activité                                                             |
+| import_logs               | table             | Logs des données importées via OpenSignauxFaibles                                                    |
+| migrations                | table             | Dernière migration appliquée                                                                         |
+
+
 ## Parsers
 
 - Chaque source de données a un parser dédié (ex. `apconso`, `urssaf`, 
