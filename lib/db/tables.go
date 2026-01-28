@@ -19,6 +19,12 @@ const (
 	TableStgSireneHisto  = "stg_sirene_histo"
 )
 
+// Views
+const (
+	ViewCleanSirene   = "clean_sirene"
+	ViewCleanSireneUL = "clean_sirene_ul"
+)
+
 // Materialized views
 const (
 	ViewStgApdemandePeriod = "stg_apdemande_by_period"

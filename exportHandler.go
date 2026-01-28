@@ -38,7 +38,7 @@ func (params exportHandler) Run() error {
 		return fmt.Errorf("error while connecting to db: %w", err)
 	}
 
-	return export.CleanViews(params.Path)
+	return export.NewExporter(params.Path, db.DB).CleanViews()
 }
 
 func (params exportHandler) Validate() error {
