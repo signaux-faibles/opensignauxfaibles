@@ -104,6 +104,7 @@ type commandHandler interface {
 type cliCommands struct {
 	ParseFile parseFileHandler
 	Import    importBatchHandler
+	Export    exportHandler
 }
 
 func (cmds *cliCommands) populateFromArgs(args []string) {
