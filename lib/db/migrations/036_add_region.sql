@@ -1,5 +1,5 @@
 CREATE TABLE labels_departement_region (
-  departement VARCHAR(10),
+  departement VARCHAR(10) PRIMARY KEY,
   libelle_departement TEXT,
   region VARCHAR(10),
   libelle_region TEXT
