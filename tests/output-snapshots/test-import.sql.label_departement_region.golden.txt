@@ -1,13 +1,13 @@
 departement         	libelle_departement 	region              	libelle_region      
-1                   	Ain                 	84                  	Auvergne-Rhône-Alpe
-2                   	Aisne               	32                  	Hauts-de-France     
-3                   	Allier              	84                  	Auvergne-Rhône-Alpe
-4                   	Alpes-de-Haute-Prove	93                  	Provence-Alpes-Côte
-5                   	Hautes-Alpes        	93                  	Provence-Alpes-Côte
-6                   	Alpes-Maritimes     	93                  	Provence-Alpes-Côte
-7                   	Ardèche            	84                  	Auvergne-Rhône-Alpe
-8                   	Ardennes            	44                  	Grand Est           
-9                   	Ariège             	76                  	Occitanie           
+01                  	Ain                 	84                  	Auvergne-Rhône-Alpe
+02                  	Aisne               	32                  	Hauts-de-France     
+03                  	Allier              	84                  	Auvergne-Rhône-Alpe
+04                  	Alpes-de-Haute-Prove	93                  	Provence-Alpes-Côte
+05                  	Hautes-Alpes        	93                  	Provence-Alpes-Côte
+06                  	Alpes-Maritimes     	93                  	Provence-Alpes-Côte
+07                  	Ardèche            	84                  	Auvergne-Rhône-Alpe
+08                  	Ardennes            	44                  	Grand Est           
+09                  	Ariège             	76                  	Occitanie           
 10                  	Aube                	44                  	Grand Est           
 11                  	Aude                	76                  	Occitanie           
 12                  	Aveyron             	76                  	Occitanie           
@@ -95,17 +95,17 @@ departement         	libelle_departement 	region              	libelle_region
 93                  	Seine-Saint-Denis   	11                  	Île-de-France      
 94                  	Val-de-Marne        	11                  	Île-de-France      
 95                  	Val-d'Oise          	11                  	Île-de-France      
-971                 	Guadeloupe          	1                   	Guadeloupe          
-972                 	Martinique          	2                   	Martinique          
-973                 	Guyane              	3                   	Guyane              
-974                 	La Réunion         	4                   	La Réunion         
-976                 	Mayotte             	6                   	Mayotte             
-975                 	Saint-Pierre-et-Miqu	0                   	Collectivité d'outr
-977                 	Saint-Barthélemy   	0                   	Collectivité d'outr
-978                 	Saint-Martin        	0                   	Collectivité d'outr
-981                 	Île des Faisans    	0                   	Collectivité d'outr
-984                 	Terres australes et 	0                   	Collectivité d'outr
-986                 	Wallis-et-Futuna    	0                   	Collectivité d'outr
-987                 	Polynésie français	0                   	Collectivité d'outr
-988                 	Nouvelle-Calédonie 	0                   	Collectivité d'outr
-989                 	La Passion-Clipperto	0                   	Collectivité d'outr
+971                 	Guadeloupe          	01                  	Guadeloupe          
+972                 	Martinique          	02                  	Martinique          
+973                 	Guyane              	03                  	Guyane              
+974                 	La Réunion         	04                  	La Réunion         
+976                 	Mayotte             	06                  	Mayotte             
+975                 	Saint-Pierre-et-Miqu	00                  	Collectivité d'outr
+977                 	Saint-Barthélemy   	00                  	Collectivité d'outr
+978                 	Saint-Martin        	00                  	Collectivité d'outr
+981                 	Île des Faisans    	00                  	Collectivité d'outr
+984                 	Terres australes et 	00                  	Collectivité d'outr
+986                 	Wallis-et-Futuna    	00                  	Collectivité d'outr
+987                 	Polynésie français	00                  	Collectivité d'outr
+988                 	Nouvelle-Calédonie 	00                  	Collectivité d'outr
+989                 	La Passion-Clipperto	00                  	Collectivité d'outr
