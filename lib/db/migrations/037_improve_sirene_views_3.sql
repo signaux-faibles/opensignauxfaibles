@@ -1,3 +1,4 @@
+-- add region, libelle_region and libelle_departement to sirene_ul and sirene
 
 DROP VIEW IF EXISTS clean_sirene_ul;
 
