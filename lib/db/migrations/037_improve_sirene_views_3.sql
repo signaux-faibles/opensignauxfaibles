@@ -38,7 +38,7 @@ CREATE VIEW clean_sirene_ul AS
   LEFT JOIN naf_codes naf ON s.activite_principale = naf.niv5
   LEFT JOIN categories_juridiques sj ON s.categorie_juridique = sj.code
   LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true
-  LEFT JOIN label_departement_region ldr ON siege.departement = ldr.departement;
+  LEFT JOIN labels_departement_region ldr ON siege.departement = ldr.departement;
 
 DROP VIEW IF EXISTS clean_sirene;
 
@@ -75,7 +75,7 @@ CREATE OR REPLACE VIEW clean_sirene AS
     s.est_actif
   FROM stg_sirene s
   LEFT JOIN naf_codes naf ON s.ape = naf.niv5
-  LEFT JOIN label_departement_region ldr
+  LEFT JOIN labels_departement_region ldr
     ON s.departement = ldr.departement;
 
 
