@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"log/slog"
 	"os"
 	"reflect"
@@ -105,6 +104,7 @@ type commandHandler interface {
 type cliCommands struct {
 	ParseFile parseFileHandler
 	Import    importBatchHandler
+	Export    exportHandler
 }
 
 func (cmds *cliCommands) populateFromArgs(args []string) {
@@ -132,7 +132,7 @@ func (cmds *cliCommands) index() map[string]commandHandler {
 		cmdName := strings.ToLower(fieldName[0:1]) + fieldName[1:]             // e.g. "pruneEntities"
 		cmdArgs, ok := supportedCommands.Field(i).Interface().(commandHandler) // e.g. pruneEntitiesHandler instance
 		if !ok {
-			log.Fatalf("Property %v of type cliCommands is not an instance of commandHandler", fieldName)
+			panic(fmt.Sprintf("Property %v of type cliCommands is not an instance of commandHandler", fieldName))
 		}
 		commandByName[cmdName] = cmdArgs
 	}
