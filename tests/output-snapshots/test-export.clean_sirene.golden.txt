@@ -1,0 +1,13 @@
+siren,siret,siege,adresse,code_commune,departement,libelle_departement,region,libelle_region,ape,naf_section,date_creation,longitude,latitude,est_actif
+232323234,23232323400001,t,"55  HAMEAU demnbujm ()
+83699 hzvnctxvbgkms 
+",63024,63,Puy-de-Dôme,84,Auvergne-Rhône-Alpes,28.41X,,2007-04-20,0,0,t
+497888333,49788833327462,t,"55  HAMEAU demnbujm ()
+83699 hzvnctxvbgkms 
+",63024,63,Puy-de-Dôme,84,Auvergne-Rhône-Alpes,52.21Z,H,2007-04-20,5.52488,65.448048,t
+956520573,95652057344947,f,"CHEMIN dguylittc ()
+64276 rjkxla 
+",73187,73,Savoie,84,Auvergne-Rhône-Alpes,52.21Z,H,2007-04-20,6.1256,14.106745,t
+969792769,96979276956291,t,"192  RUE oyrdvmle ()
+08079 qxszfpieiukzzxr 
+",94133,94,Val-de-Marne,11,Île-de-France,00.91U,,,6.140122,58.817057,t
