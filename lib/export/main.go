@@ -43,7 +43,12 @@ func (exp *Exporter) CleanViews() error {
 
 	for _, view := range viewsToExport {
 		fileAbsPath := filepath.Join(dirAbsPath, view+".csv")
-		// Truncates if already exists
+		// Fail if file already exist
+		_, err := os.Stat(fileAbsPath)
+		if err == nil {
+			return fmt.Errorf("file %s already exist", fileAbsPath)
+		}
+
 		f, err := os.Create(fileAbsPath)
 		if err != nil {
 			return err
