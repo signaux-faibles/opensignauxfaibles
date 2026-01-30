@@ -3,6 +3,10 @@ package export
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+
 	"opensignauxfaibles/lib/db"
 )
 
@@ -16,6 +20,10 @@ type Exporter struct {
 	conn db.Pool
 }
 
+// NewExporter initialise la fonctionnalité d'export de la base de donnée
+// dont on fournit une connexion `conn` vers un répertoire *sur le serveur ou
+// conteneur de base de données* `path`.
+// Il est supposé que le répertoire existe, sans vérification.
 func NewExporter(path string, conn db.Pool) *Exporter {
 	return &Exporter{path, conn}
 }
@@ -24,20 +32,42 @@ func NewExporter(path string, conn db.Pool) *Exporter {
 func (exp *Exporter) CleanViews() error {
 	ctx := context.TODO()
 
+	err := os.MkdirAll(exp.path, 0644)
+	if err != nil {
+		return err
+	}
+	dirAbsPath, err := filepath.Abs(exp.path)
+	if err != nil {
+		return err
+	}
+
 	for _, view := range viewsToExport {
-		ToCsv(ctx, exp.path, view, view+".csv", exp.conn)
+		fileAbsPath := filepath.Join(dirAbsPath, view+".csv")
+		// Truncates if already exists
+		f, err := os.Create(fileAbsPath)
+		if err != nil {
+			return err
+		}
+
+		if err = toWriter(ctx, f, view, exp.conn); err != nil {
+			return fmt.Errorf("export of %s failed: %w", view, err)
+		}
 	}
 
 	return nil
 }
 
-func ToCsv(ctx context.Context, path string, view string, tableName string, conn db.Pool) error {
-	_, err := conn.Exec(ctx, fmt.Sprintf(`
-    COPY (
-      SELECT *
-      FROM %s
-    ) TO %s
-    WITH (FORMAT CSV, HEADER, DELIMITER ',');`, view, tableName),
+// toWriter copies the whole content of the `view` (on database with
+// connection `conn`) to `w`
+func toWriter(ctx context.Context, w io.Writer, view string, conn db.Pool) error {
+	poolConn, err := conn.Acquire(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = poolConn.Conn().PgConn().CopyTo(
+		ctx,
+		w,
+		fmt.Sprintf(`COPY (SELECT * FROM %s) TO STDOUT WITH (FORMAT CSV, HEADER, DELIMITER ',');`, view),
 	)
 	return err
 }
