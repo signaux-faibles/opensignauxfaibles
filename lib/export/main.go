@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -46,7 +47,8 @@ func (exp *Exporter) CleanViews() error {
 		// Fail if file already exist
 		_, err := os.Stat(fileAbsPath)
 		if err == nil {
-			return fmt.Errorf("file %s already exist", fileAbsPath)
+			slog.Warn(fmt.Sprintf("Le fichier %s existe déjà et n'est pas réexporté", fileAbsPath))
+			continue
 		}
 
 		f, err := os.Create(fileAbsPath)
