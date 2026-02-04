@@ -175,7 +175,8 @@ Le pipeline d'importation se compose de :
   - tables `stg_*` : Données brutes/staging importées 
   - tables/vues `clean_*` : Données enrichies et nettoyées. Ce sont ces tables qui doivent être utilisées par les consommateurs des données downstream.
 
-Voir [la documentation des tables](./docs/documentation_donnees.md) pour plus d'informations.
+Voir [la documentation des tables](./docs/documentation_tables.md) pour plus 
+d'informations.
 
 ## Migrations de base de données
 
