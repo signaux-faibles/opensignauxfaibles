@@ -16,8 +16,8 @@ Ces vues (parfois matéralisées, parfois non selon leur complexité) sont les d
 | clean_sirene_ul           | view              | Données enrichies sur les entreprises (non filtrées sur le périmètre SF)                             |
 | clean_sirene_histo        | view              | Données historiques enrichies sur les établissements (on ne conserve que les évènements qui impliquent un changement d'état administratif) |
 | clean_cotisation          | view              | Données enrichies sur les cotisations                                                                |
-| clean_debit               | materialized view | Données enrichies sur les débits                                                                     |
-| clean_procol              | view              | Données enrichies de procédures collectives                                                          |
+| [clean_debit](./documentation_clean_debit.md)               | materialized view | Données enrichies sur les débits                                                                     |
+| [clean_procol](./documentation_clean_procol.md)              | view              | Données enrichies de procédures collectives                                                          |
 | clean_delai               | view              | Données enrichies de délais de paiement des cotisations sociales                                     |
 | clean_effectif            | view              | Données enrichies des effectifs d'établissements                                                     |
 | clean_effectif_ent        | view              | Données enrichies des effectifs d'entreprises                                                        |
