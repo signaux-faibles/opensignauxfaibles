@@ -1,20 +1,24 @@
-![CI](https://github.com/signaux-faibles/opensignauxfaibles/workflows/CI/badge.svg) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/47a9094cf7bd4f7387a10151b90ed609)](https://www.codacy.com/gh/signaux-faibles/opensignauxfaibles/dashboard?utm_source=github.com&utm_medium=referral&utm_content=signaux-faibles/opensignauxfaibles&utm_campaign=Badge_Grade)
+![CI](https://github.com/signaux-faibles/opensignauxfaibles/workflows/CI/badge.svg)
 
 # Open Signaux Faibles
 
 Le projet [Signaux Faibles](https://beta.gouv.fr/startups/signaux-faibles.html) fournit une plateforme technique de détection anticipée d'entreprises en difficulté, en s'appuyant sur l'exploitation des signaux faibles.
 
-La commande `sfdata` fournie dans ce dépôt centralise toutes les 
-fonctionnalités d'import des données.
+La commande `sfdata` fournie dans ce dépôt centralise toutes les fonctionnalités d'import et de préparation des données.
+
+Les données préparées s'adressent à deux consommateurs aval :
+
+- La data science (qui a besoin d'une grande profondeur historique)
+- Le front-end de l'application Signaux Faibles
 
 Contact: [contact@signaux-faibles.beta.gouv.fr](mailto:contact@signaux-faibles.beta.gouv.fr)
 
 ## Architecture
 
-- Golang
-- PostgreSQL 17
+- Golang pour l'import des données
+- PostgreSQL 17 pour le stockage et la préparation des données
 
-## build et tests
+## Build et tests
 
 ```bash
 # Cloner le code en local
@@ -63,8 +67,8 @@ Le binaire `sfdata` fournit deux commandes :
 # Importer sans filtrage
 ./sfdata import --batch 1802 --no-filter
 
-# Importer uniquement des parsers spécifiques
-./sfdata import --batch 1802 --parsers apconso,cotisation
+# Importer uniquement des parsers spécifiques (plusieurs possibles)
+./sfdata import --batch 1802 --parsers apconso --parsers cotisation
 
 # Dry run (parser sans écrire en DB/CSV)
 ./sfdata import --batch 1802 --dry-run
@@ -152,55 +156,37 @@ Fichiers de données → Parser → Filtre → Sink (PostgreSQL + CSV)
 
 Le pipeline d'importation se compose de :
 
-1. **Préparation du batch** (`lib/prepare-import/`) : Découvre les fichiers de données et infère leurs types de parser depuis les noms de fichiers, ou charge une configuration de batch explicite
-2. **Parsing** (`lib/parsing/`, `lib/engine/`) : Lit les fichiers de données 
+1. **Préparation du batch** (`lib/prepare-import/`) : Découvre les fichiers de 
+   données et infère leurs types de parser depuis les noms de fichiers, ou 
+   charge une configuration de batch explicite. Les heuristiques peuvent être 
+   consultées dans `lib/prepare-import/parsertypes.go`
+2. **Parsing** (`lib/parsing/` pour l'implémentation de chaque parser, 
+   `lib/engine/` pour la mécanique générale) : Lit les fichiers de données 
    brutes et extrait des tuples structurés (parallélisé)
 3. **Filtrage** (`lib/filter/`) : Applique un filtrage basé sur le SIREN pour limiter le volume
-4. **Sinks** (`lib/sinks/`) : Écrit les données nettoyées dans les tables PostgreSQL et les fichiers CSV
+4. **Sinks** (`lib/sinks/`) : destination des données. Écrit les données 
+   nettoyées dans les tables PostgreSQL et les fichiers CSV (les données des  
+   fichiers CSV sont avant préparation, car la préparation des données se fait 
+   via des vues Postgres)
 
 ## Base de données
 
 - Architecture à deux couches :
   - tables `stg_*` : Données brutes/staging importées 
-  - tables/vues `clean_*` : Données enrichies et nettoyées. Ce sont ces tables 
-    qui doivent être utilisées par les consommateurs des données downstream.
-- Migrations définies dans `lib/db/migrations.go`
+  - tables/vues `clean_*` : Données enrichies et nettoyées. Ce sont ces tables qui doivent être utilisées par les consommateurs des données downstream.
 
-|           name            |       type        |                                             description                                              |
-|---------------------------|-------------------|------------------------------------------------------------------------------------------------------|
-| stg_filter_import         | table             | Périmètre d'import des données brutes,filtré sur l'effectif uniquement                               |
-| siren_blacklist           | materialized view | Siren à exclure du périmètre d'import (à privilégier sur clean_filter lorsque la performance compte) |
-| clean_filter              | view              | Périmètre des données enrichies = stg_filter_import - siren_blacklist                                |
-| stg_apdemande             | table             | Données brutes d'autorisation d'activité partielle                                                   |
-| stg_apconso               | table             | Données brutes de consommation d'activité partielle                                                  |
-| stg_apconso_by_period     | view              | Données intermédiaires                                                                               |
-| stg_apdemande_by_period   | materialized view | Données intermédiaires                                                                               |
-| clean_ap                  | materialized view | Données enrichie et agrégée d'activité partielle                                                     |
-| stg_sirene                | table             | Données brutes sur les établissements (non filtrées sur le périmètre SF)                             |
-| clean_sirene              | view              | Données enrichies sur les établissements (non filtrées sur le périmètre SF)                          |
-| stg_sirene_ul             | table             | Données brutes sur les entreprises (non filtrées sur le périmètre SF)                                |
-| clean_sirene_ul           | view              | Données enrichies sur les entreprises (non filtrées sur le périmètre SF)                             |
-| stg_sirene_histo          | table             | Données historiques brutes sur les établissements                                                    |
-| clean_sirene_histo        | view              | Données historiques enrichies sur les établissements                                                 |
-| stg_cotisation            | table             | Données brutes sur les cotisation                                                                    |
-| clean_cotisation          | view              | Données enrichies sur les cotisations                                                                |
-| stg_debit                 | table             | Données brutes sur les débits                                                                        |
-| stg_tmp_debits_simplified | materialized view | Données intermédiaires                                                                               |
-| clean_debit               | materialized view | Données enrichies sur les débits                                                                     |
-| stg_procol                | table             | Données brutes de procédures collectives                                                             |
-| clean_procol              | view              | Données enrichies de procédures collectives                                                          |
-| stg_delai                 | table             | Données brutes de délais de paiement des cotisations sociales                                        |
-| clean_delai               | view              | Données enrichies de délais de paiement des cotisations sociales                                     |
-| stg_effectif              | table             | Données brutes des effectifs d'établissements                                                        |
-| clean_effectif            | view              | Données enrichies des effectifs d'établissements                                                     |
-| stg_effectif_ent          | table             | Données brutes des effectifs d'entreprises                                                           |
-| clean_effectif_ent        | view              | Données enrichies des effectifs d'entreprises                                                        |
-| labels_motif_recours      | table             | Libellés pour les recours à l'activité partielle                                                     |
-| categories_juridiques     | table             | Libellés pour les catégories juridiques                                                              |
-| naf_codes                 | table             | Libellés pour la nomenclature d'activité                                                             |
-| import_logs               | table             | Logs des données importées via OpenSignauxFaibles                                                    |
-| migrations                | table             | Dernière migration appliquée                                                                         |
+Voir [la documentation des tables](./docs/documentation_tables.md) pour plus 
+d'informations.
 
+## Migrations de base de données
+
+Les migrations sont définies dans `lib/db/migrations.go`.
+Elles sont automatiquement effectuées au début de l'import. 
+
+Le fonctionnement est simple : les migrations sont numérotées dans l'ordre, la 
+table `migrations` stocke la dernière migration appliquée, et golang applique 
+les migrations suivantes au besoin (via l'utilitaire 
+[`tern`](https://github.com/JackC/tern))
 
 ## Parsers
 
@@ -210,13 +196,20 @@ Le pipeline d'importation se compose de :
 
 ## Filtrage
 
+Les données sont filtrées à l'import via leur SIREN, afin de n'importer que 
+des données d'intérêt et restreindre le volume de données stockées. Le 
+filtrage s'applique sur tous les fichiers sauf les fichiers `sirene` et 
+`sirene_ul`, car le front-end a besoin de l'intégralité des données sur ces 
+bases.
+
 Par sécurité, l'absence de filtre est par défaut une erreur. Pour importer 
-l'intégralité des données sans filtrer, utiliser le flag `--no-filter`.
+l'intégralité des données sans filtrage, il est nécessaire d'utiliser le flag 
+`--no-filter`.
 
 Si aucun filtre explicite n'est fourni (fichier commençant par "filter", ou 
 explicitement défini dans un batch JSON), le filtre va être lu de la base de 
 données. Si aucun filtre n'est stocké en base, il faut que le batch importé 
-possède un fichier effectif, pour générer le filtre.
+possède un fichier effectif, afin de générer le filtre.
 
 Le système de filtrage se fait en deux étapes :
 
@@ -228,4 +221,6 @@ Le système de filtrage se fait en deux étapes :
   des données Sirene). Ce périmètre définitif est utilisé pour la construction 
   des vues `clean_[parser_name]`.
 
-
+Les deux étapes permettent d'écarter le plus gros volume de données qui ne 
+nous intéressent pas à l'import (via le fichier effectif), en laissant la 
+possibilité d'affiner le filtrage dans un second temps.
