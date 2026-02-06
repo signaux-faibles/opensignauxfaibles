@@ -67,8 +67,8 @@ Le binaire `sfdata` fournit deux commandes :
 # Importer sans filtrage
 ./sfdata import --batch 1802 --no-filter
 
-# Importer uniquement des parsers spécifiques
-./sfdata import --batch 1802 --parsers apconso,cotisation
+# Importer uniquement des parsers spécifiques (plusieurs possibles)
+./sfdata import --batch 1802 --parsers apconso --parsers cotisation
 
 # Dry run (parser sans écrire en DB/CSV)
 ./sfdata import --batch 1802 --dry-run
