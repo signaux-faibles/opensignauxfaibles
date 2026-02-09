@@ -217,9 +217,9 @@ Le système de filtrage se fait en deux étapes :
   établissement de plus de 10 salariés (sur la base des dernières données 
   d'effectif importées) : filtre explicite ou table `stg_filter_import`
 - Un filtrage supplémentaire pour arriver au périmètre définitif (table 
-  `clean_filter`, notamment retrait des organisations publiques sur la base 
-  des données Sirene). Ce périmètre définitif est utilisé pour la construction 
-  des vues `clean_[parser_name]`.
+  `clean_filter`, cf. [documentation spécifique](./docs/documentation_clean_filter.md) notamment retrait des 
+  organisations publiques sur la base des données Sirene). Ce périmètre 
+  définitif est utilisé pour la construction des vues `clean_[parser_name]`.
 
 Les deux étapes permettent d'écarter le plus gros volume de données qui ne 
 nous intéressent pas à l'import (via le fichier effectif), en laissant la 
