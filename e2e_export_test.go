@@ -35,6 +35,8 @@ func TestExportEndToEnd(t *testing.T) {
 	t.Run("Verify exported CSV files", func(t *testing.T) {
 		verifyExportedFiles(t)
 	})
+
+	os.RemoveAll(exportDir)
 }
 
 func verifyExportedFiles(t *testing.T) {

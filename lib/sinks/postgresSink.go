@@ -56,7 +56,7 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 		case engine.Effectif:
 			viewsToRefresh = []string{db.ViewSirenBlacklist}
 		case engine.Debit:
-			viewsToRefresh = []string{db.IntermediateViewDebits, db.ViewDebits}
+			viewsToRefresh = []string{db.IntermediateViewDebits, db.ViewDebit}
 		}
 
 		return &PostgresSink{f.conn, tableName, viewsToRefresh}, nil

@@ -1,3 +1,6 @@
+// Package export defines the export of the postgres views.
+// It differs from the sinks in that it exports refined data (clean views)
+// instead of staging data (`stg_*` tables).
 package export
 
 import (
@@ -12,8 +15,13 @@ import (
 )
 
 var viewsToExport = []string{
-	db.ViewCleanSirene,
-	db.ViewCleanSireneUL,
+	db.ViewSireneHisto,
+	db.ViewEffectifEnt,
+	db.ViewCotisation,
+	db.ViewDebit,
+	db.ViewDelai,
+	db.ViewProcol,
+	db.ViewAp,
 }
 
 type Exporter struct {
