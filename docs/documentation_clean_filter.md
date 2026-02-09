@@ -15,12 +15,12 @@ agrégés dans `siren_blacklist`.
 
 Les filtrages effectués portent :
 
-- sur l'effectif, ne sont conservées que les entreprises qui ont dépassé le 
-  nombre de 10 salariés dans les 100 derniers mois.
+- sur l'effectif, ne sont conservées que les entreprises dont un établissement 
+  a atteint au moins 10 salariés dans les 100 derniers mois.
 - sur la nature juridique : sont filtrées les catégories juridiques et 
   certaines activités principales.
 
   Voir la définition de la vue `siren_blacklist` pour consulter le détail des 
   catégories juridiques et activités filtrées (actuellement consultable dans 
-  la [migration 004](lib/db/migrations/004_create_filter.sql), mais qui peut 
-  évoluer par la suite)
+  la [migration 004](../lib/db/migrations/004_create_filter.sql), mais qui 
+  peut évoluer par la suite)

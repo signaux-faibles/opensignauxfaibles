@@ -10,8 +10,8 @@ Ces vues (parfois matéralisées, parfois non selon leur complexité) sont les d
 
 |           name            |       type        |                                             description                                              |
 |---------------------------|-------------------|------------------------------------------------------------------------------------------------------|
-| clean_filter              | view              | Périmètre des données enrichies = stg_filter_import - siren_blacklist                                |
-| clean_ap                  | materialized view | Données enrichie et agrégée d'activité partielle                                                     |
+| [clean_filter](./documentation_clean_filter.md)              | view              | Périmètre des données enrichies = stg_filter_import - siren_blacklist                                |
+| [clean_ap](./documentation_clean_ap.md)                  | materialized view | Données enrichie et agrégée d'activité partielle                                                     |
 | clean_sirene              | view              | Données enrichies sur les établissements (non filtrées sur le périmètre SF)                          |
 | clean_sirene_ul           | view              | Données enrichies sur les entreprises (non filtrées sur le périmètre SF)                             |
 | clean_sirene_histo        | view              | Données historiques enrichies sur les établissements (on ne conserve que les évènements qui impliquent un changement d'état administratif) |
