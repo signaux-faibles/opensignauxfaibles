@@ -89,6 +89,7 @@ func toWriter(ctx context.Context, w io.Writer, view string, conn db.Pool) error
 	if err != nil {
 		return err
 	}
+	defer poolConn.Release()
 	_, err = poolConn.Conn().PgConn().CopyTo(
 		ctx,
 		w,
