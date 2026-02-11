@@ -60,14 +60,14 @@ func TestOutputPerimeter(t *testing.T) {
 	t.Run("le département de l'entreprise n'est pas considéré comme une valeur d'effectif", func(t *testing.T) {
 		// setup conditions and expectations
 		minEffectif := 10
-		nbIgnoredCols := 2 // "base" and "UR_EMET"
+		nbIgnoredCols := 1 // "rais_soc"
 		expectedSirens := []string{"222222222", "333333333"}
 		csvLines := []string{
-			"compte;siret;rais_soc;ape_ins;dep;eff201011;eff201012;base;UR_EMET",
-			"000000000000000000;00000000000000;ENTREPRISE;1234Z;75;4;4;116;075077",   // ❌ 75 ≥ 10, mais ce n'est pas un effectif
-			"111111111111111111;11111111111111;ENTREPRISE;1234Z;53;4;4;116;075077",   // ❌ 53 ≥ 10, mais ce n'est pas un effectif
-			"222222222222222222;22222222222222;ENTREPRISE;1234Z;92;14;14;116;075077", // ✅ siren retenu car 14 est bien un effectif ≥ 10
-			"333333333333333333;33333333333333;ENTREPRISE;1234Z;92;14;14;116;075077", // ✅ siren retenu car 14 est bien un effectif ≥ 10
+			"siren;eff201011;eff201012;rais_soc",
+			"000000000;4;4;ENTREPRISE",   // ❌ 75 ≥ 10, mais ce n'est pas un effectif
+			"111111111;4;4;ENTREPRISE",   // ❌ 53 ≥ 10, mais ce n'est pas un effectif
+			"222222222;14;14;ENTREPRISE", // ✅ siren retenu car 14 est bien un effectif ≥ 10
+			"333333333;14;14;ENTREPRISE", // ✅ siren retenu car 14 est bien un effectif ≥ 10
 		}
 		// test: run outputPerimeter() on csv lines
 		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif, nbIgnoredCols)
@@ -80,13 +80,13 @@ func TestOutputPerimeter(t *testing.T) {
 	t.Run("outputPerimeter ne doit pas contenir deux fois le même siren", func(t *testing.T) {
 		// setup conditions and expectations
 		minEffectif := 1
-		nbIgnoredCols := 0
+		nbIgnoredCols := 1
 		expectedSirens := []string{"111111111", "333333333"}
 		csvLines := []string{
-			"compte;siret;rais_soc;ape_ins;dep;eff201011",
-			"111111111111111111;11111111111112;ENTREPRISE;1234Z;53;1", // premier établissement ayant 111111111 comme siren
-			"111111111111111111;11111111111113;ENTREPRISE;1234Z;92;1", // deuxième établissement ayant 111111111 comme siren
-			"333333333333333333;33333333333333;ENTREPRISE;1234Z;92;1",
+			"siren;eff201011;rais_soc",
+			"111111111;1;ENTREPRISE", // première entreprise ayant 111111111 comme siren
+			"111111111;1;ENTREPRISE", // deuxième entreprise ayant 111111111 comme siren
+			"333333333;1;ENTREPRISE",
 		}
 		// test: run outputPerimeter() on csv lines
 		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif, nbIgnoredCols)
@@ -210,7 +210,7 @@ func TestCheck(t *testing.T) {
 		{
 			"Fichier effectif valide -> OK",
 			engine.BatchFiles{
-				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+				"effectif_ent": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
 			},
 			invalidFilterReader,
 			false,
@@ -276,7 +276,7 @@ func TestUpdateState(t *testing.T) {
 		{
 			"Effectif file present -> filter should be written",
 			engine.BatchFiles{
-				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+				"effectif_ent": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
 			},
 			true,
 		},
@@ -297,8 +297,8 @@ func TestUpdateState(t *testing.T) {
 		{
 			"Both effectif and filter files present -> filter should NOT be written",
 			engine.BatchFiles{
-				"effectif": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
-				"filter":   []engine.BatchFile{engine.NewMockBatchFile("siren\n012345678")},
+				"effectif_ent": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
+				"filter":       []engine.BatchFile{engine.NewMockBatchFile("siren\n012345678")},
 			},
 			false,
 		},

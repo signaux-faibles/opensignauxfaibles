@@ -55,10 +55,11 @@ const DefaultNbMois = 100
 const DefaultMinEffectif = 10
 
 // DefaultNbIgnoredCols is the default number of rightmost columns that don't contain effectif data.
-const DefaultNbIgnoredCols = 2
+const DefaultNbIgnoredCols = 1 // column name: "rais_soc"
 
 // NbLeadingColsToSkip is the number of leftmost columns that don't contain effectif data.
-const NbLeadingColsToSkip = 5 // column names: "compte", "siret", "rais_soc", "ape_ins" and "dep"
+const NbLeadingColsToSkip = 1 // column name: "siren"
+
 // Create generates a "filter" from an "effectif" file.
 func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
 	last, err := guessLastNMissing(effectifFile, nIgnoredCols)
@@ -92,7 +93,7 @@ func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols
 func Check(r Reader, batchFiles engine.BatchFiles) error {
 	var err error
 
-	effectifFile := batchFiles.GetEffectifFile()
+	effectifFile := batchFiles.GetEffectifEntFile()
 
 	if r == nil {
 		return errors.New("please provided a supported filter : nil interface is not supported")
@@ -125,7 +126,7 @@ func Check(r Reader, batchFiles engine.BatchFiles) error {
 func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 	// Guard clause 1: the import filter is based uniquely on the effectif file.
 	// If no effectif file is provided, there is nothing to update.
-	effectifFile := batchFiles.GetEffectifFile()
+	effectifFile := batchFiles.GetEffectifEntFile()
 
 	if effectifFile == nil {
 		slog.Info("no effectif file provided, filter is not updated")
@@ -138,7 +139,7 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 	filterIsExplicit := (filterFile != nil)
 
 	if filterIsExplicit {
-		slog.Info("explicit effectif file provided, filter is not update")
+		slog.Info("explicit filter file provided, filter is not updated")
 		return nil
 	}
 
@@ -152,7 +153,7 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 
 	// Create the filter
 	sirenFilter, err := Create(
-		effectifFile, // input: the effectif file
+		effectifFile,
 		DefaultNbMois,
 		DefaultMinEffectif,
 		DefaultNbIgnoredCols,
@@ -208,13 +209,11 @@ func getImportPerimeter(effectifFile engine.BatchFile, nbMois, minEffectif, nIgn
 		} else if err != nil {
 			return nil, err
 		}
-		siret := record[1]
-		shouldKeep := len(siret) == 14 &&
+		siren := record[0]
+		shouldKeep := len(siren) == 9 &&
 			isInsidePerimeter(record[NbLeadingColsToSkip:len(record)-nIgnoredCols], nbMois, minEffectif)
 
-		var siren string
-		if len(siret) >= 9 {
-			siren = siret[0:9] // trim siret into a siren
+		if len(siren) == 9 {
 			_, alreadyDetected := detectedSirens[siren]
 			if shouldKeep && !alreadyDetected {
 				detectedSirens[siren] = struct{}{}
@@ -234,10 +233,9 @@ func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
 		if record[i] == "" {
 			continue
 		}
-		reg, err := regexp.Compile("[^0-9]")
-		if err != nil {
-			log.Fatal(err)
-		}
+		reg := regexp.MustCompile("[^0-9]")
+
+		fmt.Println("record i", record[i])
 		effectif, err := strconv.Atoi(reg.ReplaceAllString(record[i], ""))
 		if err != nil {
 			slog.Error(fmt.Sprintf("%v", record))

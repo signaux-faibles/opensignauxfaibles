@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	effectifContent = `compte;siret;rais_soc;ape_ins;dep;eff202501;base;UR_EMET
+	effectifContent = `compte;siret;rais_soc;ape_ins;dep;eff202501;rais_soc
 000000000000000000;00000000000000;ENTREPRISE_A;1234Z;75;5;116;075077
 111111111111111111;11111111111111;ENTREPRISE_B;5678Z;92;20;116;075077`
 	filterContent = `siren
@@ -28,7 +28,7 @@ const (
 var (
 	SireneUl = engine.NewBatchFile("lib/parsing/sirene_ul/testData/sireneULTestData.csv")
 	Debit    = engine.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")
-	Effectif = engine.NewBatchFile("tests/testData/effectifTestData.csv")
+	Effectif = engine.NewBatchFile("tests/testData/effectifEntTestData.csv")
 )
 
 // importWithDiscardData is a test helper that executes an import with default
@@ -92,20 +92,20 @@ func TestImportFilter(t *testing.T) {
 		assert.NoError(t, err, "should succeed to import when an explicit filter file is provided")
 	})
 
-	t.Run("Import with effectif file should succeed", func(t *testing.T) {
+	t.Run("Import with \"effectif_ent\" file should succeed", func(t *testing.T) {
 		defer cleanDB()
 
 		// Create a batch with Debit file and an explicit filter file
 		batch := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
-				engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+				engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 			},
 		}
 
 		err := importWithDiscardData(t, batch)
 
-		assert.NoError(t, err, "should succeed to import when an effectif file is provided")
+		assert.NoError(t, err, "should succeed to import when an \"effectif_ent\" file is provided")
 
 		// Check that the filter has been properly updated
 		filter, err := readFilter(batch)
@@ -121,7 +121,7 @@ func TestImportFilter(t *testing.T) {
 		batch1 := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
-				engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+				engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 			},
 		}
 		newEffectifContent := `compte;siret;rais_soc;ape_ins;dep;eff202501;eff202502;base;UR_EMET
@@ -131,7 +131,7 @@ func TestImportFilter(t *testing.T) {
 		batch2 := engine.AdminBatch{
 			Key: "1903",
 			Files: map[engine.ParserType][]engine.BatchFile{
-				engine.Effectif: {engine.NewMockBatchFile(newEffectifContent)},
+				engine.EffectifEnt: {engine.NewMockBatchFile(newEffectifContent)},
 			},
 		}
 
@@ -156,7 +156,7 @@ func TestImportFilter(t *testing.T) {
 		batch1 := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
-				engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+				engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 			},
 		}
 
@@ -190,7 +190,7 @@ func defaultFilterResolver(batch engine.AdminBatch) engine.FilterResolver {
 	}
 }
 
-// readFilter reproduces the default filter reading strategyg strategy
+// readFilter reproduces the default filter reading strategy
 func readFilter(batch engine.AdminBatch) (engine.SirenFilter, error) {
 	reader := &filter.StandardReader{Batch: &batch, DB: db.DB}
 	return reader.Read()
@@ -204,7 +204,7 @@ func TestCleanFilter(t *testing.T) {
 		defer cleanDB()
 
 		effectifContentTwoIns := effectifContent + "\n" +
-			"222222222222222222;22222222222222;ENTREPRISE_C;5678Z;95;20;116;075077`"
+			"222222222222222222;22222222222222;ENTREPRISE_C;5678Z;95;20;MON ENTREPRISE`"
 
 		sireneUlContent := `siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale
 111111111,O,,2000-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2000-01-01,A,,,ENTREPRISE PUBLIQUE,,,,4110,62.01Z,NAFRev2,00001,,O
@@ -222,8 +222,8 @@ func TestCleanFilter(t *testing.T) {
 					{
 						Key: "1902",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
-							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
+							engine.SireneUl:    {engine.NewMockBatchFile(sireneUlContent)},
 						},
 					},
 				},
@@ -236,7 +236,7 @@ func TestCleanFilter(t *testing.T) {
 					{
 						Key: "1902",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
 						},
 					},
 					{
@@ -256,7 +256,7 @@ func TestCleanFilter(t *testing.T) {
 						Key: "1902",
 						Files: map[engine.ParserType][]engine.BatchFile{
 							// Another effectif file to initialize the filter
-							engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 						},
 					},
 					{
@@ -268,7 +268,7 @@ func TestCleanFilter(t *testing.T) {
 					{
 						Key: "1904",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
 						},
 					},
 				},
@@ -282,7 +282,7 @@ func TestCleanFilter(t *testing.T) {
 						Key: "1902",
 						Files: map[engine.ParserType][]engine.BatchFile{
 							// Another effectif file to initialize the filter
-							engine.Effectif: {engine.NewMockBatchFile(effectifContent)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 						},
 					},
 					{
@@ -294,7 +294,7 @@ func TestCleanFilter(t *testing.T) {
 					{
 						Key: "1904",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.Effectif: {engine.NewMockBatchFile(effectifContentTwoIns)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
 						},
 					},
 					{
