@@ -1,0 +1,11 @@
+$ ./sfdata --help
+Usage: sfdata [FLAG|COMMAND]...
+
+Flags:
+    -h, --help    show help    (type: bool)
+
+Commands:
+    parseFile    Parses a file to stdout
+    import       Import data files
+    export       Export DB data for data science
+---

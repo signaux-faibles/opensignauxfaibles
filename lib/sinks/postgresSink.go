@@ -21,6 +21,9 @@ const MaterializedViewsWorkMem = "512MB"
 // MaintenanceWorkMem is the value of Postgresql's MAINTENANCE_WORK_MEM option to set locally for index recreation.
 const MaintenanceWorkMem = "512MB"
 
+// tmpTableSavedIndexes is the name of the temporary table to store indexes
+const tmpTableSavedIndexes = "tmp_saved_indexes"
+
 type PostgresSinkFactory struct {
 	conn db.Pool
 }
@@ -84,6 +87,89 @@ type PostgresSink struct {
 	viewsToRefresh []string
 }
 
+type indexInfo struct {
+	IndexName string `db:"indexname"`
+	IndexDef  string `db:"indexdef"`
+}
+
+// recreateSavedIndexes reads index definitions from the saved_indexes table
+// and recreates them. If all indexes are recreated successfully, their entries
+// are removed from the table. Otherwise, entries are kept for the next run.
+func (s *PostgresSink) recreateSavedIndexes(ctx context.Context, logger *slog.Logger) {
+	savedRows, err := s.conn.Query(ctx, fmt.Sprintf(
+		"SELECT index_name AS indexname, index_def AS indexdef FROM %s WHERE table_name = $1",
+		tmpTableSavedIndexes,
+	), s.table)
+	if err != nil {
+		logger.Error("failed to read saved indexes", "error", err)
+		return
+	}
+	savedIndexes, err := pgx.CollectRows(savedRows, pgx.RowToStructByName[indexInfo])
+	if err != nil {
+		logger.Error("failed to collect saved indexes", "error", err)
+		return
+	}
+
+	if len(savedIndexes) == 0 {
+		return
+	}
+
+	logger.Debug("recreating indexes", "count", len(savedIndexes))
+
+	allRecreated := true
+	for _, idx := range savedIndexes {
+		tx, err := s.conn.Begin(ctx)
+		if err != nil {
+			logger.Error("failed to begin transaction for index recreation", "error", err)
+			allRecreated = false
+			continue
+		}
+
+		_, err = tx.Exec(ctx, fmt.Sprintf("SET LOCAL maintenance_work_mem = '%s'", MaintenanceWorkMem))
+		if err != nil {
+			logger.Error("failed to set maintenance_work_mem", "error", err)
+			tx.Rollback(ctx) //nolint:errcheck
+			allRecreated = false
+			continue
+		}
+
+		idempotentDef := strings.Replace(idx.IndexDef, "CREATE INDEX ", "CREATE INDEX IF NOT EXISTS ", 1)
+		_, err = tx.Exec(ctx, idempotentDef)
+		if err != nil {
+			logger.Error("failed to recreate index", "index", idx.IndexName, "error", err)
+			tx.Rollback(ctx) //nolint:errcheck
+			allRecreated = false
+			continue
+		}
+
+		if err = tx.Commit(ctx); err != nil {
+			logger.Error("failed to commit index recreation transaction", "error", err)
+			allRecreated = false
+			continue
+		}
+		logger.Debug("index recreated", "index", idx.IndexName)
+	}
+
+	if allRecreated {
+		logger.Debug("all indexes recreated successfully")
+		_, err = s.conn.Exec(ctx, fmt.Sprintf(
+			"DELETE FROM %s WHERE table_name = $1",
+			tmpTableSavedIndexes,
+		), s.table)
+		if err != nil {
+			logger.Error("failed to clean up saved indexes", "error", err)
+		}
+	} else {
+		logger.Warn("some indexes could not be recreated, keeping saved_indexes entries for next run")
+	}
+
+	_, err = s.conn.Exec(ctx, fmt.Sprintf("ANALYZE %s", s.table))
+	if err != nil {
+		logger.Error("failed to ANALYZE table", "error", err)
+	}
+	logger.Debug("Table ANALYZEd")
+}
+
 func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) error {
 	logger := slog.With("sink", "postgresql", "table", s.table)
 
@@ -104,11 +190,6 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 	// For performance reasons, we drop the indexes and recreate them after bulk
 	// import
 
-	type indexInfo struct {
-		IndexName string `db:"indexname"`
-		IndexDef  string `db:"indexdef"`
-	}
-
 	// We want indexes but NOT primary keys
 	rows, err := s.conn.Query(ctx, `
 		SELECT i.indexname, i.indexdef
@@ -128,50 +209,19 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 		return fmt.Errorf("failed to collect indexes: %w", err)
 	}
 
-	// Recreate indexes even if an error occurred
-	defer func() {
-
-		if len(indexes) != 0 {
-			logger.Debug("recreating indexes", "count", len(indexes))
-
-			// Recréer chaque index
-			for _, idx := range indexes {
-				tx, err := s.conn.Begin(ctx)
-				if err != nil {
-					logger.Error("failed to begin transaction for index recreation", "error", err)
-					return
-				}
-				defer tx.Rollback(ctx)
-
-				// Set maintenance_work_mem
-				_, err = tx.Exec(ctx, fmt.Sprintf("SET LOCAL maintenance_work_mem = '%s'", MaintenanceWorkMem))
-				if err != nil {
-					logger.Error("failed to set maintenance_work_mem", "error", err)
-					return
-				}
-
-				_, err = tx.Exec(ctx, idx.IndexDef)
-				if err != nil {
-					logger.Error("failed to recreate index", "index", idx.IndexName, "error", err)
-					return
-				}
-				logger.Debug("index recreated", "index", idx.IndexName)
-
-				if err = tx.Commit(ctx); err != nil {
-					logger.Error("failed to commit index recreation transaction", "error", err)
-				} else {
-					logger.Debug("all indexes recreated successfully")
-				}
-			}
-
-			_, err = s.conn.Exec(ctx, fmt.Sprintf("ANALYZE %s", s.table))
-			if err != nil {
-				logger.Error("failed to ANALYZE table", "error", err)
-			}
-			logger.Debug("Table ANALYZEd")
-
+	// Save indexes to database so they survive a process crash
+	for _, idx := range indexes {
+		_, err = s.conn.Exec(ctx, fmt.Sprintf(
+			"INSERT INTO %s (table_name, index_name, index_def) VALUES ($1, $2, $3) ON CONFLICT (table_name, index_name) DO UPDATE SET index_def = EXCLUDED.index_def",
+			tmpTableSavedIndexes,
+		), s.table, idx.IndexName, idx.IndexDef)
+		if err != nil {
+			return fmt.Errorf("failed to save index %s to %s: %w", idx.IndexName, tmpTableSavedIndexes, err)
 		}
-	}()
+	}
+
+	// Recreate indexes even if an error occurred
+	defer s.recreateSavedIndexes(ctx, logger)
 
 	// Dropper les indexes avant l'import en masse
 	for _, idx := range indexes {
