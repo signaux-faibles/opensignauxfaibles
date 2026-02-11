@@ -26,7 +26,7 @@ func TestCreateFilter(t *testing.T) {
 		var cmdOutput bytes.Buffer
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
-		filter, err := Create(engine.NewBatchFile("testData/test_data.csv"), DefaultNbMois, DefaultMinEffectif, DefaultNbIgnoredCols)
+		filter, err := Create(engine.NewBatchFile("testData/test_data.csv"), DefaultNbMois, DefaultMinEffectif)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
 		} else {
@@ -60,7 +60,6 @@ func TestOutputPerimeter(t *testing.T) {
 	t.Run("le département de l'entreprise n'est pas considéré comme une valeur d'effectif", func(t *testing.T) {
 		// setup conditions and expectations
 		minEffectif := 10
-		nbIgnoredCols := 1 // "rais_soc"
 		expectedSirens := []string{"222222222", "333333333"}
 		csvLines := []string{
 			"siren;eff201011;eff201012;rais_soc",
@@ -70,7 +69,7 @@ func TestOutputPerimeter(t *testing.T) {
 			"333333333;14;14;ENTREPRISE", // ✅ siren retenu car 14 est bien un effectif ≥ 10
 		}
 		// test: run outputPerimeter() on csv lines
-		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif, nbIgnoredCols)
+		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif)
 		sort.Strings(actualSirens)
 
 		// assert
@@ -80,7 +79,6 @@ func TestOutputPerimeter(t *testing.T) {
 	t.Run("outputPerimeter ne doit pas contenir deux fois le même siren", func(t *testing.T) {
 		// setup conditions and expectations
 		minEffectif := 1
-		nbIgnoredCols := 1
 		expectedSirens := []string{"111111111", "333333333"}
 		csvLines := []string{
 			"siren;eff201011;rais_soc",
@@ -89,7 +87,7 @@ func TestOutputPerimeter(t *testing.T) {
 			"333333333;1;ENTREPRISE",
 		}
 		// test: run outputPerimeter() on csv lines
-		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif, nbIgnoredCols)
+		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif)
 		sort.Strings(actualSirens)
 		// assert
 		assert.Equal(t, expectedSirens, actualSirens)
@@ -97,12 +95,16 @@ func TestOutputPerimeter(t *testing.T) {
 }
 
 // wrapper to run outputPerimeter() on a slice of csv lines
-func getOutputPerimeter(csvLines []string, nbMois, minEffectif, nbIgnoredCols int) (actualSirens []string) {
+func getOutputPerimeter(csvLines []string, nbMois, minEffectif int) (actualSirens []string) {
 	effectifData := strings.Join(csvLines, "\n")
 	mockFile := engine.NewMockBatchFile(effectifData)
+	extractor, err := newEffectifDataExtractor(mockFile)
+	if err != nil {
+		panic(err)
+	}
 	var output bytes.Buffer
 	writer := bufio.NewWriter(&output)
-	perimeter, err := getImportPerimeter(mockFile, nbMois, minEffectif, nbIgnoredCols)
+	perimeter, err := getImportPerimeter(mockFile, nbMois, minEffectif, extractor)
 	if err != nil {
 		panic(err)
 	}

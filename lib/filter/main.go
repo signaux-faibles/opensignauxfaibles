@@ -52,20 +52,21 @@ const DefaultNbMois = 120
 // DefaultMinEffectif is the default effectif threshold, expressed in number of employees.
 const DefaultMinEffectif = 10
 
-// DefaultNbIgnoredCols is the default number of rightmost columns that don't contain effectif data.
-const DefaultNbIgnoredCols = 1 // column name: "rais_soc"
+// effColRegex is a regular expression used to extract data related to
+// headcounts
+var effColRegex = regexp.MustCompile(`^eff[0-9]+$`)
 
-// NbLeadingColsToSkip is the number of leftmost columns that don't contain effectif data.
-const NbLeadingColsToSkip = 1 // column name: "siren"
+// sirenColumn is the name of the column that holds the SIREN number
+const sirenColumn = "siren"
 
 // Create generates a "filter" from an "effectif_ent" file.
-func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
-	last, err := guessLastNMissing(effectifEntFile, nIgnoredCols)
+func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
+	extractor, err := newEffectifDataExtractor(effectifEntFile)
 	if err != nil {
 		return nil, err
 	}
 
-	perimeter, err := getImportPerimeter(effectifEntFile, nbMois, minEffectif, nIgnoredCols+last)
+	perimeter, err := getImportPerimeter(effectifEntFile, nbMois, minEffectif, extractor)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +155,6 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 		effectifEntFile,
 		DefaultNbMois,
 		DefaultMinEffectif,
-		DefaultNbIgnoredCols,
 	)
 
 	if err != nil {
@@ -179,8 +179,75 @@ func newCsvReader(reader io.Reader) *csv.Reader {
 	return r
 }
 
+// newEffectifDataExtractor builds an effectifDataExtractor by reading the
+// header of "file". It identifies the "siren" column and the effectif
+// columns (matching "^eff[0-9]+$") from the header, then uses
+// guessLastNMissing to detect and exclude trailing entirely-empty columns
+func newEffectifDataExtractor(file engine.BatchFile) (*effectifDataExtractor, error) {
+	header, err := readHeader(file)
+	if err != nil {
+		return nil, err
+	}
+
+	e := effectifDataExtractor{sirenColIndex: -1}
+
+	for i, colName := range header {
+		if colName == sirenColumn {
+			e.sirenColIndex = i
+		} else if effColRegex.MatchString(colName) {
+			e.effectifColIndexes = append(e.effectifColIndexes, i)
+		}
+	}
+
+	if e.sirenColIndex == -1 {
+		return nil, fmt.Errorf("no \"%s\" column found in header: %v", sirenColumn, header)
+	}
+	if len(e.effectifColIndexes) == 0 {
+		return nil, fmt.Errorf("no effectif column (matching ^eff[0-9]+$) found in header: %v", header)
+	}
+
+	// compute how many columns to ignore for guessLastNMissing
+	lastEffIdx := e.effectifColIndexes[len(e.effectifColIndexes)-1]
+	nIgnoredCols := len(header) - 1 - lastEffIdx
+
+	nTrailingEmpty, err := guessLastNMissing(file, nIgnoredCols)
+	if err != nil {
+		return nil, err
+	}
+	e.effectifColIndexes = e.effectifColIndexes[:len(e.effectifColIndexes)-nTrailingEmpty]
+
+	return &e, nil
+}
+
+func readHeader(file engine.BatchFile) ([]string, error) {
+	f, err := file.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+	r := newCsvReader(f)
+	return r.Read()
+}
+
+type effectifDataExtractor struct {
+	sirenColIndex      int
+	effectifColIndexes []int
+}
+
+func (e *effectifDataExtractor) GetSiren(record []string) string {
+	return record[e.sirenColIndex]
+}
+
+func (e *effectifDataExtractor) GetEffectif(record []string) []string {
+	effectifData := make([]string, len(e.effectifColIndexes))
+	for j, i := range e.effectifColIndexes {
+		effectifData[j] = record[i]
+	}
+	return effectifData
+}
+
 // getImportPerimeter makes a perimeter on effectif criterias alone
-func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif, nIgnoredCols int) (map[string]struct{}, error) {
+func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif int, extractor *effectifDataExtractor) (map[string]struct{}, error) {
 	f, err := effectifEntFile.Open()
 	if err != nil {
 		return nil, err
@@ -190,13 +257,12 @@ func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif, n
 	r := newCsvReader(f)
 
 	detectedSirens := map[string]struct{}{} // smaller memory footprint than map[string]bool
-	if _, err = r.Read(); err != nil {      // header
+	if _, err := r.Read(); err != nil {     // skip header
 		return nil, err
 	}
 
-	lineNumber, skippedLines := 0, 0
+	skippedLines := 0
 	for {
-		lineNumber++
 		record, err := r.Read()
 
 		// Stop at EOF.
@@ -205,21 +271,20 @@ func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif, n
 		} else if err != nil {
 			return nil, err
 		}
-		siren := record[0]
-		shouldKeep := len(siren) == 9 &&
-			isInsidePerimeter(record[NbLeadingColsToSkip:len(record)-nIgnoredCols], nbMois, minEffectif)
 
-		if len(siren) == 9 {
-			_, alreadyDetected := detectedSirens[siren]
-			if shouldKeep && !alreadyDetected {
-				detectedSirens[siren] = struct{}{}
-			}
-		} else {
+		siren := extractor.GetSiren(record)
+		if len(siren) != 9 {
 			skippedLines++
+			continue
+		}
+
+		effData := extractor.GetEffectif(record)
+		if isInsidePerimeter(effData, nbMois, minEffectif) {
+			detectedSirens[siren] = struct{}{}
 		}
 	}
 	if skippedLines > 0 {
-		slog.Info(fmt.Sprintf("%d lines with bad siret/siren skipped in the effectif_ent file at filter creation", skippedLines))
+		slog.Info(fmt.Sprintf("%d lines with bad siren skipped in the effectif_ent file at filter creation", skippedLines))
 	}
 	return detectedSirens, nil
 }
