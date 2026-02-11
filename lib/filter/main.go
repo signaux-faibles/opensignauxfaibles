@@ -49,7 +49,7 @@ type Reader interface {
 // Usage: $ ./create_filter --path testData/test_data.csv
 
 // DefaultNbMois is the default number of the most recent months during which the effectif of the company must reach the threshold.
-const DefaultNbMois = 100
+const DefaultNbMois = 120
 
 // DefaultMinEffectif is the default effectif threshold, expressed in number of employees.
 const DefaultMinEffectif = 10
