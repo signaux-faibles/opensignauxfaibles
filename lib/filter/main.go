@@ -235,7 +235,6 @@ func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
 		}
 		reg := regexp.MustCompile("[^0-9]")
 
-		fmt.Println("record i", record[i])
 		effectif, err := strconv.Atoi(reg.ReplaceAllString(record[i], ""))
 		if err != nil {
 			slog.Error(fmt.Sprintf("%v", record))

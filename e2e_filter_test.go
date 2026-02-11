@@ -16,9 +16,9 @@ import (
 )
 
 const (
-	effectifContent = `compte;siret;rais_soc;ape_ins;dep;eff202501;rais_soc
-000000000000000000;00000000000000;ENTREPRISE_A;1234Z;75;5;116;075077
-111111111111111111;11111111111111;ENTREPRISE_B;5678Z;92;20;116;075077`
+	effectifContent = `siren;eff202501;rais_soc
+000000000;5;ENTREPRISE_A
+111111111;20;ENTREPRISE_B`
 	filterContent = `siren
 111111111`
 	sirenOut = "000000000"
@@ -124,9 +124,9 @@ func TestImportFilter(t *testing.T) {
 				engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 			},
 		}
-		newEffectifContent := `compte;siret;rais_soc;ape_ins;dep;eff202501;eff202502;base;UR_EMET
-000000000000000000;00000000000000;ENTREPRISE_A;1234Z;75;5;20;116;075077
-111111111111111111;11111111111111;ENTREPRISE_B;5678Z;92;20;20;116;075077`
+		newEffectifContent := `siren;eff202501;eff202502;rais_soc
+000000000;5;20;ENTREPRISE_A
+111111111;20;20;ENTREPRISE_B`
 
 		batch2 := engine.AdminBatch{
 			Key: "1903",
@@ -204,7 +204,7 @@ func TestCleanFilter(t *testing.T) {
 		defer cleanDB()
 
 		effectifContentTwoIns := effectifContent + "\n" +
-			"222222222222222222;22222222222222;ENTREPRISE_C;5678Z;95;20;MON ENTREPRISE`"
+			"222222222;20;MON ENTREPRISE`"
 
 		sireneUlContent := `siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale
 111111111,O,,2000-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2000-01-01,A,,,ENTREPRISE PUBLIQUE,,,,4110,62.01Z,NAFRev2,00001,,O
@@ -317,27 +317,27 @@ func TestCleanFilter(t *testing.T) {
 			}
 
 			// Vérifier que 222222222 (entreprise privée) est présent dans clean_effectif
-			rows, err := db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '222222222'")
+			rows, err := db.DB.Query(context.Background(), "SELECT siren FROM clean_effectif_ent WHERE siren = '222222222'")
 			assert.NoError(t, err)
 			siretsFor222, err := pgx.CollectRows(rows, pgx.RowTo[string])
 			t.Log(tc.name)
 			t.Log(siretsFor222)
 			assert.NoError(t, err)
 			if tc.company222in {
-				assert.Greater(t, len(siretsFor222), 0, "L'entreprise 222222222 (privée) devrait être présente dans clean_effectif")
+				assert.Greater(t, len(siretsFor222), 0, "L'entreprise 222222222 (privée) devrait être présente dans clean_effectif_ent")
 			} else {
 				assert.Equal(t, len(siretsFor222), 0)
 			}
 
 			// Vérifier que 111111111 (organisation publique) n'est PAS présent dans clean_effectif
-			rows, err = db.DB.Query(context.Background(), "SELECT siret FROM clean_effectif WHERE LEFT(siret, 9) = '111111111'")
+			rows, err = db.DB.Query(context.Background(), "SELECT siren FROM clean_effectif_ent WHERE siren = '111111111'")
 			assert.NoError(t, err)
 			siretsFor111, err := pgx.CollectRows(rows, pgx.RowTo[string])
 			assert.NoError(t, err)
 			if tc.company111in {
 				assert.Greater(t, len(siretsFor111), 0)
 			} else {
-				assert.Equal(t, len(siretsFor111), 0, "L'entreprise 111111111 (publique) ne devrait PAS être présente dans clean_effectif")
+				assert.Equal(t, len(siretsFor111), 0, "L'entreprise 111111111 (publique) ne devrait PAS être présente dans clean_effectif_ent")
 			}
 		}
 	})
