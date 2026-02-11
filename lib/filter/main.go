@@ -5,7 +5,7 @@
 //
 // This package provides utilities to create and maintain SIREN filters that
 // determine which companies should be included in the data import. Filters
-// are typically derived from effectif (employee count) data, selecting
+// are typically derived from effectif_ent (employee count) data, selecting
 // companies that meet minimum employee thresholds over a specified time
 // period.
 //
@@ -14,11 +14,11 @@
 // the "clean_..." layers.
 //
 // The package provides functions to:
-// - Create filters from effectif files based on configurable criteria
+// - Create filters from effectif_ent files based on configurable criteria
 // - Check if valid filtering conditions are met before import
 // - Read filters from multiple sources (files, database). Filters provided as
-// an explicit file has precedence over the database stored filter.
-// - Update filter state in the database when appropriate (effectif file
+// an explicit file have precedence over the database stored filter.
+// - Update filter state in the database when appropriate (effectif_ent file
 // is present, and no explicit filter has been provided in the batch).
 package filter
 
@@ -46,8 +46,6 @@ type Reader interface {
 	Read() (engine.SirenFilter, error)
 }
 
-// Usage: $ ./create_filter --path testData/test_data.csv
-
 // DefaultNbMois is the default number of the most recent months during which the effectif of the company must reach the threshold.
 const DefaultNbMois = 120
 
@@ -60,14 +58,14 @@ const DefaultNbIgnoredCols = 1 // column name: "rais_soc"
 // NbLeadingColsToSkip is the number of leftmost columns that don't contain effectif data.
 const NbLeadingColsToSkip = 1 // column name: "siren"
 
-// Create generates a "filter" from an "effectif" file.
-func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
-	last, err := guessLastNMissing(effectifFile, nIgnoredCols)
+// Create generates a "filter" from an "effectif_ent" file.
+func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols int) (engine.SirenFilter, error) {
+	last, err := guessLastNMissing(effectifEntFile, nIgnoredCols)
 	if err != nil {
 		return nil, err
 	}
 
-	perimeter, err := getImportPerimeter(effectifFile, nbMois, minEffectif, nIgnoredCols+last)
+	perimeter, err := getImportPerimeter(effectifEntFile, nbMois, minEffectif, nIgnoredCols+last)
 	if err != nil {
 		return nil, err
 	}
@@ -86,28 +84,28 @@ func Create(effectifFile engine.BatchFile, nbMois, minEffectif int, nIgnoredCols
 //
 // It checks whether :
 // - a  non-empty filter can be read from the provided reader
-// - OR an "effectif" file is provided.
+// - OR an "effectif_ent" file is provided.
 //
 // If a nil interface is provided fails.
 // Note however that a nil *Reader pointer is properly handled and accepted.
 func Check(r Reader, batchFiles engine.BatchFiles) error {
 	var err error
 
-	effectifFile := batchFiles.GetEffectifEntFile()
+	effectifEntFile := batchFiles.GetEffectifEntFile()
 
 	if r == nil {
-		return errors.New("please provided a supported filter : nil interface is not supported")
+		return errors.New("please provide a supported filter : nil interface is not supported")
 	}
 
 	// check if a filter can be read
 	_, err = r.Read()
 
-	validFiltering := (err == nil || effectifFile != nil)
+	validFiltering := (err == nil || effectifEntFile != nil)
 
 	if !validFiltering {
-		return errors.New("filter is missing: a filter or one effectif file should be provided")
+		return errors.New("filter is missing: a filter or one effectif_ent file should be provided")
 	} else {
-		slog.Debug("filter can be retrieved or created from effectif file")
+		slog.Debug("filter can be retrieved or created from effectif_ent file")
 	}
 
 	return nil
@@ -124,12 +122,12 @@ func Check(r Reader, batchFiles engine.BatchFiles) error {
 // usually used solely for tests and should not affect the saved perimeter in
 // the database.
 func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
-	// Guard clause 1: the import filter is based uniquely on the effectif file.
-	// If no effectif file is provided, there is nothing to update.
-	effectifFile := batchFiles.GetEffectifEntFile()
+	// Guard clause 1: the import filter is based uniquely on the effectif_ent file.
+	// If no effectif_ent file is provided, there is nothing to update.
+	effectifEntFile := batchFiles.GetEffectifEntFile()
 
-	if effectifFile == nil {
-		slog.Info("no effectif file provided, filter is not updated")
+	if effectifEntFile == nil {
+		slog.Info("no effectif_ent file provided, filter is not updated")
 		return nil
 	}
 
@@ -153,7 +151,7 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 
 	// Create the filter
 	sirenFilter, err := Create(
-		effectifFile,
+		effectifEntFile,
 		DefaultNbMois,
 		DefaultMinEffectif,
 		DefaultNbIgnoredCols,
@@ -182,10 +180,8 @@ func newCsvReader(reader io.Reader) *csv.Reader {
 }
 
 // getImportPerimeter makes a perimeter on effectif criterias alone
-// This perimeter is used for efficient imports, and is further refined with
-// SQL for the "clean_data" layer (see the "clean_filter" materialized view)
-func getImportPerimeter(effectifFile engine.BatchFile, nbMois, minEffectif, nIgnoredCols int) (map[string]struct{}, error) {
-	f, err := effectifFile.Open()
+func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif, nIgnoredCols int) (map[string]struct{}, error) {
+	f, err := effectifEntFile.Open()
 	if err != nil {
 		return nil, err
 	}
@@ -194,7 +190,7 @@ func getImportPerimeter(effectifFile engine.BatchFile, nbMois, minEffectif, nIgn
 	r := newCsvReader(f)
 
 	detectedSirens := map[string]struct{}{} // smaller memory footprint than map[string]bool
-	if _, err = r.Read(); err != nil {      // en tête
+	if _, err = r.Read(); err != nil {      // header
 		return nil, err
 	}
 
@@ -223,7 +219,7 @@ func getImportPerimeter(effectifFile engine.BatchFile, nbMois, minEffectif, nIgn
 		}
 	}
 	if skippedLines > 0 {
-		slog.Info(fmt.Sprintf("%d lines with bad siret/siren skipped in the effectif file at filter creation", skippedLines))
+		slog.Info(fmt.Sprintf("%d lines with bad siret/siren skipped in the effectif_ent file at filter creation", skippedLines))
 	}
 	return detectedSirens, nil
 }

@@ -15,8 +15,8 @@ agrégés dans `siren_blacklist`.
 
 Les filtrages effectués portent :
 
-- sur l'effectif, ne sont conservées que les entreprises dont un établissement 
-  a atteint au moins 10 salariés dans les 100 derniers mois.
+- sur l'effectif, ne sont conservées que les entreprises ayant atteint ou 
+  dépassé 10 salariés dans les 120 derniers mois.
 - sur la nature juridique : sont filtrées les catégories juridiques et 
   certaines activités principales.
 
