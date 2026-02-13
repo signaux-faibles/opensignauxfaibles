@@ -23,12 +23,17 @@ set -o pipefail # ... even for tests which pipe their output to indent
 heading "make build"
 (killall sfdata 2>/dev/null || true; make build && echo "📦 sfdata") 2>&1 | indent
 
-heading "go test"
 if [[ "$*" == *--update* ]]
 then
+    heading "Update tests"
     (go test ./... -test.count=1 -update) 2>&1 | indent
+
+    heading "Update e2e tests"
     (go test ./... -tags=e2e -test.count=1 -update) 2>&1 | indent
 else
+    heading "go test"
     (go test ./... -test.count=1) 2>&1 | indent
+
+    heading "go test e2e"
     (go test ./... -tags=e2e -test.count=1) 2>&1 | indent
 fi
