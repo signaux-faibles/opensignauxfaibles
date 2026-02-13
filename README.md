@@ -213,18 +213,23 @@ l'intégralité des données sans filtrage, il est nécessaire d'utiliser le fla
 Si aucun filtre explicite n'est fourni (fichier commençant par "filter", ou 
 explicitement défini dans un batch JSON), le filtre va être lu de la base de 
 données. Si aucun filtre n'est stocké en base, il faut que le batch importé 
-possède un fichier effectif, afin de générer le filtre.
+possède un fichier de type "effectif_ent" (effectif de l'entreprise), afin de 
+générer le filtre.
 
-Le système de filtrage se fait en deux étapes :
+Le système de filtrage se fait en trois étapes :
 
-- Le filtrage à l'import des entreprises qui possèdent au moins un 
-  établissement de plus de 10 salariés (sur la base des dernières données 
-  d'effectif importées) : filtre explicite ou table `stg_filter_import`
+- Si pas de filtre explicite fourni, et en présence d'un fichier 
+  "effectif_ent", on met à jour le filtre (entreprises qui ont atteint ou 
+  dépassé 10 salariés dans les 120 derniers mois)
+- Le filtre explicite ou la table `stg_filter_import` est utilisé pour le 
+  filtrage à l'import (à l'exception des données "sirene" et "sirene_ul" qui 
+  sont importées intégralement)
 - Un filtrage supplémentaire pour arriver au périmètre définitif (table 
-  `clean_filter`, cf. [documentation spécifique](./docs/documentation_clean_filter.md) notamment retrait des 
+  `clean_filter`, cf. [documentation 
+  spécifique](./docs/documentation_clean_filter.md) notamment retrait des 
   organisations publiques sur la base des données Sirene). Ce périmètre 
   définitif est utilisé pour la construction des vues `clean_[parser_name]`.
 
-Les deux étapes permettent d'écarter le plus gros volume de données qui ne 
-nous intéressent pas à l'import (via le fichier effectif), en laissant la 
-possibilité d'affiner le filtrage dans un second temps.
+Ces trois étapes permettent d'écarter le plus gros volume de données qui ne 
+nous intéressent pas à l'import, en laissant la possibilité d'affiner le 
+filtrage dans un second temps.

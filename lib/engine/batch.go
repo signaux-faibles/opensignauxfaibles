@@ -45,13 +45,13 @@ func (files BatchFiles) GetSireneULFile() (BatchFile, error) {
 	return files[SireneUl][0], nil
 }
 
-// GetEffectifFile returns the effectif file if there is only one.
+// GetEffectifEntFile returns the effectif file if there is only one.
 // Returns nil if there is none or several ones.
-func (files BatchFiles) GetEffectifFile() BatchFile {
-	if files["effectif"] == nil || len(files["effectif"]) != 1 {
+func (files BatchFiles) GetEffectifEntFile() BatchFile {
+	if files[EffectifEnt] == nil || len(files[EffectifEnt]) != 1 {
 		return nil
 	}
-	return files["effectif"][0]
+	return files[EffectifEnt][0]
 }
 
 func (files *BatchFiles) UnmarshalJSON(data []byte) error {
