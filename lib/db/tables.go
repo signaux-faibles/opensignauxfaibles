@@ -19,13 +19,27 @@ const (
 	TableStgSireneHisto  = "stg_sirene_histo"
 )
 
+// Views
+const (
+	ViewSirene      = "clean_sirene"
+	ViewSireneUL    = "clean_sirene_ul"
+	ViewSireneHisto = "clean_sirene_histo"
+	ViewEffectif    = "clean_effectif"
+	ViewEffectifEnt = "clean_effectif_ent"
+	ViewCotisation  = "clean_cotisation"
+	ViewDelai       = "clean_delai"
+	ViewProcol      = "clean_procol"
+	ViewAp          = "clean_ap"
+	ViewFilter      = "clean_filter"
+)
+
 // Materialized views
 const (
 	ViewStgApdemandePeriod = "stg_apdemande_by_period"
 	ViewCleanAp            = "clean_ap"
 	ViewSirenBlacklist     = "siren_blacklist"
 	IntermediateViewDebits = "stg_tmp_debits_simplified"
-	ViewDebits             = "clean_debit"
+	ViewDebit              = "clean_debit"
 )
 
 // AllTables returns all table names that should be truncated during test cleanup

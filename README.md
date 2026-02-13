@@ -55,9 +55,10 @@ make stop-postgres
 
 ## Usage 
 
-Le binaire `sfdata` fournit deux commandes :
-
 ```bash
+# Afficher l'aide
+./sfdata --help
+
 # Importer des données depuis un répertoire de batch
 ./sfdata import --batch 1802 --path /path/to/data
 
@@ -75,6 +76,9 @@ Le binaire `sfdata` fournit deux commandes :
 
 # Parser un seul fichier vers stdout
 ./sfdata parseFile --parser cotisation --file /path/to/file.csv
+
+# Exporter les données des vues postgres pour la data science
+./sfdata export --path /path/to/dir/
 ```
 
 ## Configuration

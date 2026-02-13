@@ -1,0 +1,4 @@
+siret,date_creation,date_echeance,duree_delai,montant_echeancier,stade,action
+00000000000000,2000-01-01,2001-01-04,456,5065.79,nbz sk,cya ng
+11111111111111,2000-03-03,2001-05-05,758,74825.41,qh,bad mu
+22222222222222,2019-01-23,2019-01-31,127,29140.29,djq ya,pyo as
