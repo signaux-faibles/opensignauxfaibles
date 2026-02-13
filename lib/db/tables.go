@@ -31,6 +31,7 @@ const (
 	ViewProcol      = "clean_procol"
 	ViewAp          = "clean_ap"
 	ViewFilter      = "clean_filter"
+	ViewSireneUl    = "clean_sirene_ul"
 )
 
 // Materialized views

@@ -17,6 +17,11 @@ import (
 )
 
 var viewsToExport = []string{
+	db.ViewFilter,
+	db.TableStgFilterImport,
+	db.ViewSirenBlacklist,
+	db.ViewSirene,
+	db.ViewSireneUL,
 	db.ViewSireneHisto,
 	db.ViewEffectifEnt,
 	db.ViewCotisation,
@@ -24,7 +29,6 @@ var viewsToExport = []string{
 	db.ViewDelai,
 	db.ViewProcol,
 	db.ViewAp,
-	db.ViewFilter,
 }
 
 type Exporter struct {
