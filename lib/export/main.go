@@ -24,6 +24,7 @@ var viewsToExport = []string{
 	db.ViewDelai,
 	db.ViewProcol,
 	db.ViewAp,
+	db.ViewFilter,
 }
 
 type Exporter struct {
