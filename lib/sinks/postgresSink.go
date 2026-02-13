@@ -16,10 +16,10 @@ import (
 const BatchSize = 100000
 
 // MaterializedViewsWorkMem is the value of Postgresql's WORK_MEM option to set locally for materialized views updates.
-const MaterializedViewsWorkMem = "256MB"
+const MaterializedViewsWorkMem = "512MB"
 
 // MaintenanceWorkMem is the value of Postgresql's MAINTENANCE_WORK_MEM option to set locally for index recreation.
-const MaintenanceWorkMem = "256MB"
+const MaintenanceWorkMem = "512MB"
 
 type PostgresSinkFactory struct {
 	conn db.Pool
