@@ -7,7 +7,7 @@ toolchain go1.24.3
 require (
 	github.com/cosiner/flag v0.5.2
 	github.com/jackc/pgx/v5 v5.8.0
-	github.com/jackc/tern/v2 v2.3.4
+	github.com/jackc/tern/v2 v2.3.5
 	github.com/jaswdr/faker v1.19.1
 	github.com/pashagolub/pgxmock/v4 v4.9.0
 	github.com/pkg/errors v0.9.1
