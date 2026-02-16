@@ -114,7 +114,7 @@ func (s *PostgresSink) recreateSavedIndexes(ctx context.Context, logger *slog.Lo
 		return
 	}
 
-	logger.Debug("recreating indexes", "count", len(savedIndexes))
+	logger.Info("recreating indexes", "count", len(savedIndexes))
 
 	allRecreated := true
 	for _, idx := range savedIndexes {
@@ -151,7 +151,7 @@ func (s *PostgresSink) recreateSavedIndexes(ctx context.Context, logger *slog.Lo
 	}
 
 	if allRecreated {
-		logger.Debug("all indexes recreated successfully")
+		logger.Info("all indexes recreated successfully")
 		_, err = s.conn.Exec(ctx, fmt.Sprintf(
 			"DELETE FROM %s WHERE table_name = $1",
 			tmpTableSavedIndexes,
@@ -225,7 +225,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 
 	// Dropper les indexes avant l'import en masse
 	for _, idx := range indexes {
-		logger.Debug("dropping index", "index", idx.IndexName)
+		logger.Info("dropping index", "index", idx.IndexName)
 		_, err = s.conn.Exec(ctx, fmt.Sprintf("DROP INDEX IF EXISTS %s", idx.IndexName))
 		if err != nil {
 			return fmt.Errorf("failed to drop index %s: %w", idx.IndexName, err)
