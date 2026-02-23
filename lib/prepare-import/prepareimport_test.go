@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	debitsFilename = "sigfaibles_debits.csv"
+	debitsFilename = "sigfaible_debits.csv"
 )
 
 func TestReadFilenames(t *testing.T) {

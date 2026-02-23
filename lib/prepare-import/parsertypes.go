@@ -29,7 +29,7 @@ func ExtractParserTypeFromFilename(filename string) engine.ParserType {
 		return engine.Sirene
 	case filename == "StockEtablissementHistorique_utf8.csv":
 		return engine.SireneHisto
-	case mentionsDebits.MatchString(filename):
+	case possiblyGzFilename == "sigfaible_debits.csv":
 		return engine.Debit
 	case mentionsEffectif.MatchString(filename):
 		return engine.Effectif
@@ -41,5 +41,4 @@ func ExtractParserTypeFromFilename(filename string) engine.ParserType {
 }
 
 var mentionsEffectif = regexp.MustCompile(`effectif_`)
-var mentionsDebits = regexp.MustCompile(`_debits`)
 var hasFilterPrefix = regexp.MustCompile(`^filter`)

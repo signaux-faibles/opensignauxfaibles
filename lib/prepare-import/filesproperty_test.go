@@ -26,22 +26,10 @@ func TestPopulateFilesProperty(t *testing.T) {
 	})
 
 	t.Run("PopulateFilesProperty should contain one debit file in \"debit\" property", func(t *testing.T) {
-		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]engine.BatchFile{engine.NewBatchFile("sigfaibles_debits.csv")})
-		expected := engine.BatchFiles{engine.Debit: {engine.NewBatchFile("sigfaibles_debits.csv")}}
+		batchFiles, unsupportedFiles := PopulateFilesPropertyFromDataFiles([]engine.BatchFile{engine.NewBatchFile("sigfaible_debits.csv")})
+		expected := engine.BatchFiles{engine.Debit: {engine.NewBatchFile("sigfaible_debits.csv")}}
 		assert.Len(t, unsupportedFiles, 0)
 		assert.Equal(t, expected, batchFiles)
-	})
-
-	t.Run("PopulateFilesProperty should contain both debits files in \"debit\" property", func(t *testing.T) {
-		batchFiles, unsupportedFiles :=
-			PopulateFilesPropertyFromDataFiles([]engine.BatchFile{
-				engine.NewBatchFile("sigfaibles_debits.csv"),
-				engine.NewBatchFile("sigfaibles_debits2.csv"),
-			})
-		if assert.Len(t, unsupportedFiles, 0) {
-			assert.Equal(t, []engine.BatchFile{engine.NewBatchFile("sigfaibles_debits.csv"),
-				engine.NewBatchFile("sigfaibles_debits2.csv")}, batchFiles[engine.Debit])
-		}
 	})
 
 	t.Run("Should support multiple types of csv files", func(t *testing.T) {
