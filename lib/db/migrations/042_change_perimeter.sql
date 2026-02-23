@@ -9,6 +9,7 @@
 -- pattern with an intermediate (normal) view (named
 -- `siren_blacklist_logic`), that can be changed with a simple `CREATE OR REPLACE VIEW`,
 -- on which depends the materialized (cached) view `siren_blacklist`.
+SET LOCAL work_mem TO '512MB';
 
 DROP MATERIALIZED VIEW siren_blacklist CASCADE;
 
