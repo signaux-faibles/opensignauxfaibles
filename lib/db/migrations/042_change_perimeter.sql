@@ -12,14 +12,14 @@
 SET LOCAL work_mem TO '512MB';
 SET LOCAL maintenance_work_mem TO '512MB';
 
-CREATE INDEX idx_sirene_siren_siege
+CREATE INDEX IF NOT EXISTS idx_sirene_siren_siege
   ON stg_sirene (siren)
   WHERE siege AND departement <> '';
 
 DROP MATERIALIZED VIEW siren_blacklist CASCADE;
 
 -- this view definition can be replaced with `CREATE OR REPLACE VIEW`
-CREATE VIEW siren_blacklist_logic AS
+CREATE OR REPLACE VIEW siren_blacklist_logic AS
   WITH excluded_categories AS (
  -- Excluded Catégories Juridiques:
     SELECT ARRAY[
@@ -116,11 +116,11 @@ CREATE VIEW siren_blacklist_logic AS
     OR sirene.siren IS NULL;
 
 -- This materialized view serves as a cache for siren_blacklist_logic
-CREATE MATERIALIZED VIEW siren_blacklist AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS siren_blacklist AS
 SELECT * FROM siren_blacklist_logic
 WITH DATA;
 
-CREATE UNIQUE INDEX siren_blacklist_siren_index
+CREATE UNIQUE INDEX IF NOT EXISTS siren_blacklist_siren_index
   ON siren_blacklist (siren);
 
 -- recreate dependent views...
