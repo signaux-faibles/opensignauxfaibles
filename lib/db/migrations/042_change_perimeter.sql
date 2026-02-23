@@ -10,6 +10,11 @@
 -- `siren_blacklist_logic`), that can be changed with a simple `CREATE OR REPLACE VIEW`,
 -- on which depends the materialized (cached) view `siren_blacklist`.
 SET LOCAL work_mem TO '512MB';
+SET LOCAL maintenance_work_mem TO '512MB';
+
+CREATE INDEX idx_sirene_siren_siege
+  ON stg_sirene (siren)
+  WHERE siege AND departement <> '';
 
 DROP MATERIALIZED VIEW siren_blacklist CASCADE;
 
@@ -97,19 +102,18 @@ CREATE VIEW siren_blacklist_logic AS
   )
  SELECT fp.siren
    FROM stg_filter_import fp
-     JOIN stg_sirene_ul sirene_ul ON sirene_ul.siren::text = fp.siren::text
+     LEFT JOIN stg_sirene_ul sirene_ul
+       ON sirene_ul.siren::text = fp.siren::text
+     LEFT JOIN stg_sirene sirene
+      ON sirene.siren = fp.siren
+        AND sirene.siege = true
+        -- exclure les sièges à l'étranger (département vide)
+        AND sirene.departement <> ''
      CROSS JOIN excluded_categories ec
      CROSS JOIN excluded_activities ea
   WHERE (sirene_ul.categorie_juridique::text = ANY (ec.categories))
     OR sirene_ul.activite_principale::text = ANY (ea.activities)
-    -- Exclure les entreprises dont le siège est à l'étranger
-    -- Cela se manifeste par un departement vide ('')
-    OR NOT EXISTS (
-      SELECT 1 FROM stg_sirene s
-      WHERE s.siren = fp.siren
-        AND s.siege = true
-        AND s.departement <> ''
-    );
+    OR sirene.siren IS NULL;
 
 -- This materialized view serves as a cache for siren_blacklist_logic
 CREATE MATERIALIZED VIEW siren_blacklist AS
