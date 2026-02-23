@@ -8,11 +8,15 @@ import (
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
 	"opensignauxfaibles/lib/parsing/effectif"
+	"opensignauxfaibles/lib/parsing/sirene"
 	sireneul "opensignauxfaibles/lib/parsing/sirene_ul"
 	"opensignauxfaibles/lib/registry"
 	"opensignauxfaibles/lib/sinks"
+	"sort"
 	"testing"
 	"time"
+
+	"slices"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
@@ -38,7 +42,8 @@ var (
 )
 
 // importWithDiscardData is a test helper that executes an import with default
-// behaviors for a given batch
+// test behaviors for a given batch
+// All data is discarded.
 func importWithDiscardData(t *testing.T, batch engine.AdminBatch) error {
 	t.Helper()
 	return executeBatchImport(
@@ -66,7 +71,11 @@ func importWithDB(t *testing.T, batch engine.AdminBatch) error {
 func TestImportFilter(t *testing.T) {
 	cleanDB := setupDBTest(t)
 
-	t.Run("Import without filter should fail when filter tables are empty, and no explicit filter is provided", func(t *testing.T) {
+	t.Run(`Import without filter should fail when
+     1. filter tables are empty,
+     2. no explicit filter is provided and
+     3. no "effectif_ent" file is provided`, func(t *testing.T) {
+
 		// Create a batch with only Debit file, no explicitely filter provided
 		defer cleanDB()
 		batch := engine.AdminBatch{
@@ -78,7 +87,7 @@ func TestImportFilter(t *testing.T) {
 
 		err := importWithDiscardData(t, batch)
 
-		assert.Error(t, err, "should fail to import when filter tables are empty and no explicit filter is provided")
+		assert.Error(t, err)
 	})
 
 	t.Run("Import with explicit filter file should succeed", func(t *testing.T) {
@@ -95,7 +104,7 @@ func TestImportFilter(t *testing.T) {
 		// Run import with the filter
 		err := importWithDiscardData(t, batch)
 
-		assert.NoError(t, err, "should succeed to import when an explicit filter file is provided")
+		assert.NoError(t, err)
 	})
 
 	t.Run("Import with \"effectif_ent\" file should succeed", func(t *testing.T) {
@@ -207,61 +216,97 @@ func readFilter(batch engine.AdminBatch) (engine.SirenFilter, error) {
 
 func TestCleanFilter(t *testing.T) {
 	cleanDB := setupDBTest(t)
-	t.Run("Après l'import d'effectif et de sirene_ul, les vues préfixées par \"clean_\" sont correctement filtrées", func(t *testing.T) {
-		// Les données d'effectif sont filtrées, mais pas les données de Sirene, nécessaires au front-end
+	t.Run("Test du périmètre selon les imports effectif_ent, sirene et sireneul", func(t *testing.T) {
+		// Les données d'effectif sont filtrées, mais pas les données de Sirene
+		// (clean_sirene et clean_sirene_ul), selon les besoins du front-end
 
-		defer cleanDB()
-
-		effectifContentTwoIns := effectif.MakeEffectifEntCSV(
+		const (
+			siren0 = "000000000"
+			siren1 = "111111111"
+			siren2 = "222222222"
+			siren3 = "333333333"
+			siren4 = "444444444"
+		)
+		effectifContent := effectif.MakeEffectifEntCSV(
 			[]time.Time{period},
-			map[string][]int{"000000000": {5}, "111111111": {20}, "222222222": {20}},
+			map[string][]int{siren0: {5}, siren1: {20}, siren2: {20}, siren3: {20}},
+		)
+
+		effectifContentNewCompany := effectif.MakeEffectifEntCSV(
+			[]time.Time{period},
+			map[string][]int{siren0: {5}, siren1: {20}, siren2: {20}, siren3: {20}, siren4: {20}},
 		)
 
 		sireneUlContent := sireneul.MakeSireneULCSV(
 			[]sireneul.SireneULEntry{
-				{Siren: "111111111", APE: "62.01Z", CategorieJuridique: "4110"}, // public entity
-				{Siren: "222222222", APE: "62.02A", CategorieJuridique: "5499"}, // private entity
+				{Siren: siren0, APE: "62.02A", CategorieJuridique: "5499"}, // private
+				{Siren: siren1, APE: "62.01Z", CategorieJuridique: "4110"}, // public entity
+				{Siren: siren2, APE: "62.02A", CategorieJuridique: "5499"}, // private
+				{Siren: siren3, APE: "62.02A", CategorieJuridique: "5499"}, // private
+				{Siren: siren4, APE: "62.02A", CategorieJuridique: "5499"}, // private
+			},
+		)
+
+		sireneContent := sirene.MakeSireneCSV(
+			[]sirene.SireneEntry{
+				{Siret: siren0 + "00001", Siege: true, Etranger: false},
+				{Siret: siren1 + "00001", Siege: true, Etranger: false},
+				{Siret: siren2 + "00001", Siege: false, Etranger: false}, // not headquarters
+				{Siret: siren2 + "00002", Siege: true, Etranger: true},   // headquarters abroad
+				{Siret: siren3 + "00001", Siege: true, Etranger: false},
+				{Siret: siren4 + "00001", Siege: true, Etranger: false},
 			},
 		)
 
 		testCases := []struct {
-			name         string
-			batches      []engine.AdminBatch
-			company111in bool
-			company222in bool
+			name              string
+			batches           []engine.AdminBatch
+			expectedPerimeter []string
 		}{
 			{
-				name: "effectif and sireneul simultanous import",
+				name: "only effectif import, data can be imported but no clean_* layer yet (sirene and sirene_ul are missing)",
 				batches: []engine.AdminBatch{
 					{
 						Key: "1902",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
-							engine.SireneUl:    {engine.NewMockBatchFile(sireneUlContent)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 						},
 					},
 				},
-				company111in: false,
-				company222in: true,
+				expectedPerimeter: []string{},
 			},
 			{
-				name: "effectif import, then sireneul import",
+				name: "effectif, sirene and sireneul simultanous import",
 				batches: []engine.AdminBatch{
 					{
 						Key: "1902",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
+							engine.SireneUl:    {engine.NewMockBatchFile(sireneUlContent)},
+							engine.Sirene:      {engine.NewMockBatchFile(sireneContent)},
+						},
+					},
+				},
+				expectedPerimeter: []string{siren3},
+			},
+			{
+				name: "effectif import, then sireneul and sirene import",
+				batches: []engine.AdminBatch{
+					{
+						Key: "1902",
+						Files: map[engine.ParserType][]engine.BatchFile{
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 						},
 					},
 					{
 						Key: "1903",
 						Files: map[engine.ParserType][]engine.BatchFile{
 							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+							engine.Sirene:   {engine.NewMockBatchFile(sireneContent)},
 						},
 					},
 				},
-				company111in: false,
-				company222in: true,
+				expectedPerimeter: []string{siren3},
 			},
 			{
 				name: "new company appears in effectif : as sirene is not filtered, company is included right away",
@@ -269,7 +314,6 @@ func TestCleanFilter(t *testing.T) {
 					{
 						Key: "1902",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							// Another effectif file to initialize the filter
 							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 						},
 					},
@@ -277,82 +321,40 @@ func TestCleanFilter(t *testing.T) {
 						Key: "1903",
 						Files: map[engine.ParserType][]engine.BatchFile{
 							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
+							engine.Sirene:   {engine.NewMockBatchFile(sireneContent)},
 						},
 					},
 					{
 						Key: "1904",
 						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
+							// siren4 appears for the first time in the effectif file
+							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentNewCompany)},
 						},
 					},
 				},
-				company111in: false,
-				company222in: true,
-			},
-			{
-				name: "new company appears in effectif : after a full new batch import, the company is included",
-				batches: []engine.AdminBatch{
-					{
-						Key: "1902",
-						Files: map[engine.ParserType][]engine.BatchFile{
-							// Another effectif file to initialize the filter
-							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
-						},
-					},
-					{
-						Key: "1903",
-						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
-						},
-					},
-					{
-						Key: "1904",
-						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.EffectifEnt: {engine.NewMockBatchFile(effectifContentTwoIns)},
-						},
-					},
-					{
-						Key: "1905",
-						Files: map[engine.ParserType][]engine.BatchFile{
-							engine.SireneUl: {engine.NewMockBatchFile(sireneUlContent)},
-						},
-					},
-				},
-				company111in: false,
-				company222in: true,
+				expectedPerimeter: []string{siren3, siren4},
 			},
 		}
 
 		for _, tc := range testCases {
+			t.Run(tc.name, func(t *testing.T) {
+				defer cleanDB()
 
-			for _, batch := range tc.batches {
-				err := importWithDB(t, batch)
+				for _, batch := range tc.batches {
+					err := importWithDB(t, batch)
+					assert.NoError(t, err)
+				}
+
+				rows, err := db.DB.Query(context.Background(), "SELECT siren FROM clean_filter")
 				assert.NoError(t, err)
-			}
+				actualPerimeter, err := pgx.CollectRows(rows, pgx.RowTo[string])
+				assert.NoError(t, err)
 
-			// Vérifier que 222222222 (entreprise privée) est présent dans clean_effectif
-			rows, err := db.DB.Query(context.Background(), "SELECT siren FROM clean_effectif_ent WHERE siren = '222222222'")
-			assert.NoError(t, err)
-			siretsFor222, err := pgx.CollectRows(rows, pgx.RowTo[string])
-			t.Log(tc.name)
-			t.Log(siretsFor222)
-			assert.NoError(t, err)
-			if tc.company222in {
-				assert.Greater(t, len(siretsFor222), 0, "L'entreprise 222222222 (privée) devrait être présente dans clean_effectif_ent")
-			} else {
-				assert.Equal(t, len(siretsFor222), 0)
-			}
-
-			// Vérifier que 111111111 (organisation publique) n'est PAS présent dans clean_effectif
-			rows, err = db.DB.Query(context.Background(), "SELECT siren FROM clean_effectif_ent WHERE siren = '111111111'")
-			assert.NoError(t, err)
-			siretsFor111, err := pgx.CollectRows(rows, pgx.RowTo[string])
-			assert.NoError(t, err)
-			if tc.company111in {
-				assert.Greater(t, len(siretsFor111), 0)
-			} else {
-				assert.Equal(t, len(siretsFor111), 0, "L'entreprise 111111111 (publique) ne devrait PAS être présente dans clean_effectif_ent")
-			}
+				sort.Strings(actualPerimeter)
+				expected := slices.Clone(tc.expectedPerimeter)
+				sort.Strings(expected)
+				assert.Equal(t, expected, actualPerimeter)
+			})
 		}
 	})
 }
