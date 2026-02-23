@@ -8,10 +8,28 @@ import (
 )
 
 // MakeEffectifEntCSV generates a CSV string simulating the raw content of an effectif_ent file.
-// periods defines the list of monthly periods to include as columns.
-// effectifs maps each SIREN to a slice of nullable effectif values, one per period.
+// `periods` defines the list of monthly periods to include as columns.
+// `effectifs` maps each SIREN to a slice of effectif values, one per period.
+//
+// Use MakeEffectifEntCSVWithMissing if missing data needs to be included.
+func MakeEffectifEntCSV(periods []time.Time, effectifs map[string][]int) string {
+	withMissing := make(map[string][]*int, len(effectifs))
+	for siren, values := range effectifs {
+		ptrs := make([]*int, len(values))
+		for i := range values {
+			v := values[i]
+			ptrs[i] = &v
+		}
+		withMissing[siren] = ptrs
+	}
+	return MakeEffectifEntCSVWithMissing(periods, withMissing)
+}
+
+// MakeEffectifEntCSVWithMissing generates a CSV string simulating the raw content of an effectif_ent file.
+// `periods` defines the list of monthly periods to include as columns.
+// `effectifs` maps each SIREN to a slice of nullable effectif values, one per period.
 // A nil pointer in the slice represents an empty (absent) value in the CSV.
-func MakeEffectifEntCSV(periods []time.Time, effectifs map[string][]*int) string {
+func MakeEffectifEntCSVWithMissing(periods []time.Time, effectifs map[string][]*int) string {
 	var sb strings.Builder
 
 	// Header

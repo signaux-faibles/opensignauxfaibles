@@ -7,18 +7,24 @@ import (
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
+	"opensignauxfaibles/lib/parsing/effectif"
+	sireneul "opensignauxfaibles/lib/parsing/sirene_ul"
 	"opensignauxfaibles/lib/registry"
 	"opensignauxfaibles/lib/sinks"
 	"testing"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 )
 
+var period, _ = time.Parse("2006-01-02", "2025-01-01")
+var effectifContent = effectif.MakeEffectifEntCSV(
+	[]time.Time{period},
+	map[string][]int{"000000000": {5}, "111111111": {20}},
+)
+
 const (
-	effectifContent = `siren;eff202501;rais_soc
-000000000;5;ENTREPRISE_A
-111111111;20;ENTREPRISE_B`
 	filterContent = `siren
 111111111`
 	sirenOut = "000000000"
@@ -124,9 +130,12 @@ func TestImportFilter(t *testing.T) {
 				engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 			},
 		}
-		newEffectifContent := `siren;eff202501;eff202502;rais_soc
-000000000;5;20;ENTREPRISE_A
-111111111;20;20;ENTREPRISE_B`
+
+		period2 := period.AddDate(0, 1, 0)
+		newEffectifContent := effectif.MakeEffectifEntCSV(
+			[]time.Time{period, period2},
+			map[string][]int{"000000000": {5, 20}, "111111111": {20, 20}},
+		)
 
 		batch2 := engine.AdminBatch{
 			Key: "1903",
@@ -203,12 +212,17 @@ func TestCleanFilter(t *testing.T) {
 
 		defer cleanDB()
 
-		effectifContentTwoIns := effectifContent + "\n" +
-			"222222222;20;MON ENTREPRISE`"
+		effectifContentTwoIns := effectif.MakeEffectifEntCSV(
+			[]time.Time{period},
+			map[string][]int{"000000000": {5}, "111111111": {20}, "222222222": {20}},
+		)
 
-		sireneUlContent := `siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale
-111111111,O,,2000-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2000-01-01,A,,,ENTREPRISE PUBLIQUE,,,,4110,62.01Z,NAFRev2,00001,,O
-222222222,O,,2010-01-01,,,,,,,,,,,,2020-01-01T00:00:00,1,PME,2020,2010-01-01,A,,,ENTREPRISE PRIVEE,,,,5499,62.02A,NAFRev2,00001,,O`
+		sireneUlContent := sireneul.MakeSireneULCSV(
+			[]sireneul.SireneULEntry{
+				{Siren: "111111111", APE: "62.01Z", CategorieJuridique: "4110"}, // public entity
+				{Siren: "222222222", APE: "62.02A", CategorieJuridique: "5499"}, // private entity
+			},
+		)
 
 		testCases := []struct {
 			name         string
