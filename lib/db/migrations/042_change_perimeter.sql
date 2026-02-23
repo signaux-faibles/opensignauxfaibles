@@ -9,8 +9,8 @@
 -- pattern with an intermediate (normal) view (named
 -- `siren_blacklist_logic`), that can be changed with a simple `CREATE OR REPLACE VIEW`,
 -- on which depends the materialized (cached) view `siren_blacklist`.
-SET LOCAL work_mem TO '512MB';
-SET LOCAL maintenance_work_mem TO '512MB';
+SET LOCAL work_mem TO '256MB';
+SET LOCAL maintenance_work_mem TO '256MB';
 
 CREATE INDEX IF NOT EXISTS idx_sirene_siren_siege
   ON stg_sirene (siren)
