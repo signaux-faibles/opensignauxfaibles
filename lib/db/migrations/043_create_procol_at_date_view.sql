@@ -5,6 +5,7 @@
 -- an active procédure collective exists, restricted to the clean_filter perimeter.
 -- Covers monthly periods from 2016-01-01 to today.
 -- Absence from the view means "In bonis" by definition.
+DROP FUNCTION procol_at_date;
 
 CREATE OR REPLACE FUNCTION procol_at_date(date_param date)
 RETURNS TABLE(siren VARCHAR(9), date_effet DATE, action_procol TEXT, stade_procol TEXT, libelle_procol TEXT) AS $$
