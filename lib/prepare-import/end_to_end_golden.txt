@@ -2,7 +2,7 @@
   "key": "1802",
   "files": {
     "debit": [
-      "1802/sigfaibles_debits.csv"
+      "1802/sigfaible_debits.csv"
     ],
     "effectif": [
       "1802/sigfaibles_effectif_siret.csv"
