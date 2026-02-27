@@ -1,6 +1,6 @@
 DROP VIEW IF EXISTS clean_sirene_histo;
 
-CREATE VIEW clean_sirene_histo AS
+CREATE OR REPLACE VIEW clean_sirene_histo AS
 WITH ranked_changes AS (
   SELECT *,
          rank() OVER (PARTITION BY siret ORDER BY date_debut ASC) as rank
@@ -21,7 +21,7 @@ WHERE rank = 1 OR changement_statut_actif;
 DROP VIEW IF EXISTS clean_sirene_histo;
 
 
-CREATE VIEW clean_sirene_histo AS
+CREATE OR REPLACE VIEW clean_sirene_histo AS
 SELECT *
 FROM stg_sirene_histo sh
 WHERE NOT EXISTS (SELECT siren FROM siren_blacklist b WHERE LEFT(sh.siret, 9) = b.siren);

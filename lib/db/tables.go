@@ -41,6 +41,7 @@ const (
 	ViewSirenBlacklist     = "siren_blacklist"
 	IntermediateViewDebits = "stg_tmp_debits_simplified"
 	ViewDebit              = "clean_debit"
+	ViewProcolAtDate       = "clean_procol_at_date"
 )
 
 // AllTables returns all table names that should be truncated during test cleanup
