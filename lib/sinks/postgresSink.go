@@ -62,6 +62,8 @@ func (f *PostgresSinkFactory) CreateSink(parserType engine.ParserType) (engine.D
 			viewsToRefresh = []string{db.ViewSirenBlacklist}
 		case engine.Debit:
 			viewsToRefresh = []string{db.IntermediateViewDebits, db.ViewDebit}
+		case engine.Procol:
+			viewsToRefresh = []string{db.ViewProcolAtDate}
 		}
 
 		return &PostgresSink{f.conn, tableName, viewsToRefresh}, nil

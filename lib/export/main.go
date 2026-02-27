@@ -23,6 +23,7 @@ var viewsToExport = []string{
 	db.ViewDebit,
 	db.ViewDelai,
 	db.ViewProcol,
+	db.ViewProcolAtDate,
 	db.ViewAp,
 	db.ViewFilter,
 	db.ViewSireneUl,
