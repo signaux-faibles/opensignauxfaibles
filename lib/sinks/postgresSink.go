@@ -271,7 +271,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 
 	logger.Info("output streaming to PostgreSQL ended successfully", "n_inserted", nInserted)
 	if len(s.viewsToRefresh) > 0 {
-		logger.Info("update materialized views", "views", s.viewsToRefresh)
+		logger.Info("update materialized views, some views may take some time... (up to an hour or more)", "views", s.viewsToRefresh)
 
 		for _, view := range s.viewsToRefresh {
 			_, err = s.conn.Exec(ctx, fmt.Sprintf(`
