@@ -35,6 +35,7 @@ Le périmètre (liste de SIREN) de l'import pour les consommateurs aval est déf
 |           name            |       type        |                                             description                                              |
 |---------------------------|-------------------|------------------------------------------------------------------------------------------------------|
 | stg_filter_import         | table             | Périmètre d'import des données brutes, filtré sur l'effectif uniquement                               |
+| siren_blacklist_logic     | view              | Vue technique, strictement identique à siren_blacklist, mais qui permet un "CREATE OR REPLACE" (contrairement à la vue matérialisée) en cas d'évolution de la logique de filtrage |
 | siren_blacklist           | materialized view | Siren à exclure du périmètre d'import (à privilégier sur clean_filter lorsque la performance compte) |
 | clean_filter              | view              | Périmètre des données préparées = stg_filter_import - siren_blacklist                                |
 

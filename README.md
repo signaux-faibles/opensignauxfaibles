@@ -226,10 +226,18 @@ Le système de filtrage se fait en trois étapes :
   sont importées intégralement)
 - Un filtrage supplémentaire pour arriver au périmètre définitif (table 
   `clean_filter`, cf. [documentation 
-  spécifique](./docs/documentation_clean_filter.md) notamment retrait des 
-  organisations publiques sur la base des données Sirene). Ce périmètre 
-  définitif est utilisé pour la construction des vues `clean_[parser_name]`.
+  spécifique](./docs/documentation_clean_filter.md)). Ce périmètre définitif 
+  est utilisé pour la construction des vues `clean_[parser_name]`.
 
 Ces trois étapes permettent d'écarter le plus gros volume de données qui ne 
 nous intéressent pas à l'import, en laissant la possibilité d'affiner le 
 filtrage dans un second temps.
+
+### Faire évoluer la logique de filtrage
+
+Pour faire évoluer la logique de filtrage, utiliser `CREATE OR REPLACE VIEW` 
+sur la vue `siren_blacklist_logic`, puis `REFRESH MATERIALIZED VIEW 
+siren_blacklist;` qui stocke une copie matérialisée pour des raisons de 
+performance (cette construction en deux étape vient du fait que les vues 
+matérialisées ne permettent pas de mise-à-jour sur place et nécessitent un 
+`DROP ... CASCADE` qu'on souhaite éviter).

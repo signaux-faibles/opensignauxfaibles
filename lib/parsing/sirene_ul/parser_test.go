@@ -4,6 +4,7 @@ import (
 	"flag"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,15 +25,21 @@ func TestSireneUl(t *testing.T) {
 
 func TestSireneULParser(t *testing.T) {
 	testCases := []struct {
-		csvRow   []string
+		fields   map[string]string
 		expected SireneUL
 	}{
 		{
-			csvRow: []string{
-				"123456789", "O", "false", "2010-05-15", "ABC", "M", "Jean", "Pierre", "", "",
-				"Jean", "", "W123456789", "12", "2023", "2024-01-15T10:30:00", "3",
-				"PME", "2023", "2010-05-15", "A", "Dupont", "", "SARL Dupont Services", "",
-				"", "", "5710", "47.11A", "NAFRev2", "00012", "O", "O",
+			fields: map[string]string{
+				"siren":                                     "123456789",
+				"prenom1UniteLegale":                       "Jean",
+				"prenom2UniteLegale":                       "Pierre",
+				"nomUniteLegale":                           "Dupont",
+				"denominationUniteLegale":                  "SARL Dupont Services",
+				"categorieJuridiqueUniteLegale":            "5710",
+				"activitePrincipaleUniteLegale":            "47.11A",
+				"nomenclatureActivitePrincipaleUniteLegale": "NAFRev2",
+				"dateCreationUniteLegale":                  "2010-05-15",
+				"etatAdministratifUniteLegale":             "A",
 			},
 			expected: SireneUL{
 				Siren:               "123456789",
@@ -50,11 +57,19 @@ func TestSireneULParser(t *testing.T) {
 			},
 		},
 		{
-			csvRow: []string{
-				"987654321", "O", "false", "2015-03-20", "XYZ", "F", "Marie", "Louise", "Anne", "",
-				"Marie", "", "", "22", "2023", "2024-01-15T10:30:00", "2",
-				"ETI", "2023", "2015-03-20", "F", "Martin", "Durand", "SAS Martin Tech", "",
-				"", "", "5499", "62.01Z", "NAFRev2", "00025", "N", "O",
+			fields: map[string]string{
+				"siren":                                     "987654321",
+				"prenom1UniteLegale":                       "Marie",
+				"prenom2UniteLegale":                       "Louise",
+				"prenom3UniteLegale":                       "Anne",
+				"nomUniteLegale":                           "Martin",
+				"nomUsageUniteLegale":                      "Durand",
+				"denominationUniteLegale":                  "SAS Martin Tech",
+				"categorieJuridiqueUniteLegale":            "5499",
+				"activitePrincipaleUniteLegale":            "62.01Z",
+				"nomenclatureActivitePrincipaleUniteLegale": "NAFRev2",
+				"dateCreationUniteLegale":                  "2015-03-20",
+				"etatAdministratifUniteLegale":             "F",
 			},
 			expected: SireneUL{
 				Siren:               "987654321",
@@ -72,11 +87,14 @@ func TestSireneULParser(t *testing.T) {
 			},
 		},
 		{
-			csvRow: []string{
-				"111222333", "O", "false", "2018-11-10", "", "", "", "", "", "",
-				"", "", "", "03", "2023", "2024-01-15T10:30:00", "1",
-				"GE", "2023", "2018-11-10", "A", "", "", "Entreprise Collective", "",
-				"", "", "9220", "85.59A", "NAFRev2", "00030", "O", "N",
+			fields: map[string]string{
+				"siren":                                     "111222333",
+				"denominationUniteLegale":                  "Entreprise Collective",
+				"categorieJuridiqueUniteLegale":            "9220",
+				"activitePrincipaleUniteLegale":            "85.59A",
+				"nomenclatureActivitePrincipaleUniteLegale": "NAFRev2",
+				"dateCreationUniteLegale":                  "2018-11-10",
+				"etatAdministratifUniteLegale":             "A",
 			},
 			expected: SireneUL{
 				Siren:               "111222333",
@@ -96,9 +114,11 @@ func TestSireneULParser(t *testing.T) {
 	}
 
 	parser := NewSireneULParser()
-	header := "siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale"
+	header := strings.Join(sireneULColumns, ",")
 	for _, tc := range testCases {
-		instance := parser.New(parsing.CreateReader(header, ",", tc.csvRow))
+		row, err := makeRow(tc.fields)
+		require.NoError(t, err)
+		instance := parser.New(strings.NewReader(header + "\n" + row))
 		instance.Init(engine.NoFilter, nil)
 		res := &engine.ParsedLineResult{}
 		instance.ReadNext(res)
@@ -168,19 +188,21 @@ func TestSireneULNAFFiltering(t *testing.T) {
 		},
 	}
 
-	header := "siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale"
+	header := strings.Join(sireneULColumns, ",")
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			csvRow := []string{
-				"123456789", "O", "false", "2010-05-15", "ABC", "M", "Jean", "Pierre", "", "",
-				"Jean", "", "W123456789", "12", "2023", "2024-01-15T10:30:00", "3",
-				"PME", "2023", "2010-05-15", "A", "Dupont", "", "SARL Dupont Services", "",
-				"", "", "5710", "47.11A", tc.nomenclatureActivite, "00012", "O", "O",
-			}
-
+			row, err := makeRow(map[string]string{
+				"siren":                                     "123456789",
+				"etatAdministratifUniteLegale":              "A",
+				"denominationUniteLegale":                   "SARL Dupont Services",
+				"categorieJuridiqueUniteLegale":             "5710",
+				"activitePrincipaleUniteLegale":             "47.11A",
+				"nomenclatureActivitePrincipaleUniteLegale": tc.nomenclatureActivite,
+			})
+			require.NoError(t, err)
 			parser := NewSireneULParser()
-			instance := parser.New(parsing.CreateReader(header, ",", csvRow))
+			instance := parser.New(strings.NewReader(header + "\n" + row))
 			instance.Init(engine.NoFilter, nil)
 			res := &engine.ParsedLineResult{}
 			instance.ReadNext(res)
@@ -196,7 +218,7 @@ func TestSireneULNAFFiltering(t *testing.T) {
 
 func TestSireneUlHeader(t *testing.T) {
 	t.Run("can parse file that just contains a header", func(t *testing.T) {
-		csvRows := []string{"siren,statutDiffusionUniteLegale,unitePurgeeUniteLegale,dateCreationUniteLegale,sigleUniteLegale,sexeUniteLegale,prenom1UniteLegale,prenom2UniteLegale,prenom3UniteLegale,prenom4UniteLegale,prenomUsuelUniteLegale,pseudonymeUniteLegale,identifiantAssociationUniteLegale,trancheEffectifsUniteLegale,anneeEffectifsUniteLegale,dateDernierTraitementUniteLegale,nombrePeriodesUniteLegale,categorieEntreprise,anneeCategorieEntreprise,dateDebut,etatAdministratifUniteLegale,nomUniteLegale,nomUsageUniteLegale,denominationUniteLegale,denominationUsuelle1UniteLegale,denominationUsuelle2UniteLegale,denominationUsuelle3UniteLegale,categorieJuridiqueUniteLegale,activitePrincipaleUniteLegale,nomenclatureActivitePrincipaleUniteLegale,nicSiegeUniteLegale,economieSocialeSolidaireUniteLegale,caractereEmployeurUniteLegale"}
+		csvRows := []string{strings.Join(sireneULColumns, ",")}
 		output := engine.RunParserInline(t, NewSireneULParser(), csvRows)
 		assert.Equal(t, []engine.Tuple(nil), output.Tuples, "should return no tuples")
 		assert.Equal(t, "", engine.GetFatalError(output), "should not report a fatal error")

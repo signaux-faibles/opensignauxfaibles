@@ -4,6 +4,7 @@ import (
 	"flag"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -129,34 +130,30 @@ func TestExtractDepartement(t *testing.T) {
 	}
 }
 
-var sampleRow = []string{
-	"956520573", "44947", "67323298386574", "t", "2007-04-20", "", "", "", "",
-	"false", "2", "", "", "", "CHE", "dguylittc", "64276", "rjkxla", "", "",
-	"73187", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-	"", "2007-11-19", "A", "", "", "", "", "52.21Z", "NAFRev2", "w", "6.125600",
-	"14.106745", "4.74", "rmyvud", "pycqborak26441jvefqp", "52756_a195_mpo13m",
-	"p", "hkcilbeed", "",
-}
-
-var headers = []string{
-	"siren", "nic", "siret", "statutDiffusionEtablissement", "dateCreationEtablissement", "trancheEffectifsEtablissement", "anneeEffectifsEtablissement", "activitePrincipaleRegistreMetiersEtablissement", "dateDernierTraitementEtablissement", "etablissementSiege", "nombrePeriodesEtablissement", "complementAdresseEtablissement", "numeroVoieEtablissement", "indiceRepetitionEtablissement", "typeVoieEtablissement", "libelleVoieEtablissement", "codePostalEtablissement", "libelleCommuneEtablissement", "libelleCommuneEtrangerEtablissement", "distributionSpecialeEtablissement", "codeCommuneEtablissement", "codeCedexEtablissement", "libelleCedexEtablissement", "codePaysEtrangerEtablissement", "libellePaysEtrangerEtablissement", "complementAdresse2Etablissement", "numeroVoie2Etablissement", "indiceRepetition2Etablissement", "typeVoie2Etablissement", "libelleVoie2Etablissement", "codePostal2Etablissement", "libelleCommune2Etablissement", "libelleCommuneEtranger2Etablissement", "distributionSpeciale2Etablissement", "codeCommune2Etablissement", "codeCedex2Etablissement", "libelleCedex2Etablissement", "codePaysEtranger2Etablissement", "libellePaysEtranger2Etablissement", "dateDebut", "etatAdministratifEtablissement", "enseigne1Etablissement", "enseigne2Etablissement", "enseigne3Etablissement", "denominationUsuelleEtablissement", "activitePrincipaleEtablissement", "nomenclatureActivitePrincipaleEtablissement", "caractereEmployeurEtablissement", "longitude", "latitude", "geo_score", "geo_type", "geo_adresse", "geo_id", "geo_ligne", "geo_l4", "geo_l5",
-}
-
-var colIndex, _ = parsing.HeaderIndexer{Dest: Sirene{}}.Index(headers, true)
-
 func TestSireneParser(t *testing.T) {
 	testCases := []struct {
-		csvRow   []string
+		fields   map[string]string
 		expected Sirene
 	}{
 		{
-			csvRow: []string{
-				"123456789", "00012", "12345678900012", "O", "2010-05-15", "", "", "", "",
-				"true", "1", "Bat A", "10", "B", "RUE", "de la Paix", "75001", "Paris", "",
-				"", "75101", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-				"", "2010-05-15", "A", "", "", "", "", "47.11A", "NAFRev2", "O", "2.352341",
-				"48.864716", "0.9", "housenumber", "10 BIS RUE de la Paix 75001 Paris", "75101_1234_00001",
-				"w", "10 BIS RUE de la Paix 75001 Paris", "",
+			fields: map[string]string{
+				"siren":                                    "123456789",
+				"nic":                                      "00012",
+				"etablissementSiege":                      "true",
+				"complementAdresseEtablissement":          "Bat A",
+				"numeroVoieEtablissement":                 "10",
+				"indiceRepetitionEtablissement":           "B",
+				"typeVoieEtablissement":                   "RUE",
+				"libelleVoieEtablissement":                "de la Paix",
+				"codePostalEtablissement":                 "75001",
+				"libelleCommuneEtablissement":             "Paris",
+				"codeCommuneEtablissement":                "75101",
+				"activitePrincipaleEtablissement":         "47.11A",
+				"nomenclatureActivitePrincipaleEtablissement": "NAFRev2",
+				"dateCreationEtablissement":               "2010-05-15",
+				"etatAdministratifEtablissement":          "A",
+				"longitude":                               "2.352341",
+				"latitude":                                "48.864716",
 			},
 			expected: Sirene{
 				Siren:             "123456789",
@@ -180,69 +177,85 @@ func TestSireneParser(t *testing.T) {
 			},
 		},
 		{
-			csvRow: []string{
-				"987654321", "00025", "98765432100025", "O", "2015-03-20", "", "", "", "",
-				"false", "1", "", "25", "", "AV", "des Champs-Elysées", "13001", "Marseille", "",
-				"", "13201", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-				"", "2015-03-20", "F", "", "", "", "", "56.10A", "NAFRev2", "O", "5.369780",
-				"43.296482", "0.85", "street", "25 AVENUE des Champs-Elysées 13001 Marseille", "13201_5678_00001",
-				"w", "25 AVENUE des Champs-Elysées", "",
+			fields: map[string]string{
+				"siren":                                    "987654321",
+				"nic":                                      "00025",
+				"etablissementSiege":                      "false",
+				"numeroVoieEtablissement":                 "25",
+				"typeVoieEtablissement":                   "AV",
+				"libelleVoieEtablissement":                "des Champs-Elysées",
+				"codePostalEtablissement":                 "13001",
+				"libelleCommuneEtablissement":             "Marseille",
+				"codeCommuneEtablissement":                "13201",
+				"activitePrincipaleEtablissement":         "56.10A",
+				"nomenclatureActivitePrincipaleEtablissement": "NAFRev2",
+				"dateCreationEtablissement":               "2015-03-20",
+				"etatAdministratifEtablissement":          "F",
+				"longitude":                               "5.369780",
+				"latitude":                                "43.296482",
 			},
 			expected: Sirene{
-				Siren:        "987654321",
-				Nic:          "00025",
-				Siret:        "98765432100025",
-				Siege:        false,
-				NumVoie:      "25",
-				IndRep:       "",
-				TypeVoie:     "AVENUE",
-				Voie:         "des Champs-Elysées",
-				CodePostal:   "13001",
-				Commune:      "Marseille",
-				CodeCommune:  "13201",
-				Departement:  "13",
-				APE:          "56.10A",
-				Creation:     parsing.TimePtr(parsing.MustParseTime("2006-01-02", "2015-03-20")),
-				Longitude:    5.369780,
-				Latitude:     43.296482,
-				EstActif:     false,
+				Siren:       "987654321",
+				Nic:         "00025",
+				Siret:       "98765432100025",
+				Siege:       false,
+				NumVoie:     "25",
+				TypeVoie:    "AVENUE",
+				Voie:        "des Champs-Elysées",
+				CodePostal:  "13001",
+				Commune:     "Marseille",
+				CodeCommune: "13201",
+				Departement: "13",
+				APE:         "56.10A",
+				Creation:    parsing.TimePtr(parsing.MustParseTime("2006-01-02", "2015-03-20")),
+				Longitude:   5.369780,
+				Latitude:    43.296482,
+				EstActif:    false,
 			},
 		},
 		{
-			csvRow: []string{
-				"111222333", "00030", "11122233300030", "O", "2018-11-10", "", "", "", "",
-				"true", "1", "", "3", "T", "CHE", "du Moulin", "97110", "Pointe-à-Pitre", "",
-				"", "97120", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-				"", "2018-11-10", "A", "", "", "", "", "62.01Z", "NAFRev2", "N", "",
-				"", "", "", "", "",
-				"", "", "",
+			fields: map[string]string{
+				"siren":                                    "111222333",
+				"nic":                                      "00030",
+				"etablissementSiege":                      "true",
+				"numeroVoieEtablissement":                 "3",
+				"indiceRepetitionEtablissement":           "T",
+				"typeVoieEtablissement":                   "CHE",
+				"libelleVoieEtablissement":                "du Moulin",
+				"codePostalEtablissement":                 "97110",
+				"libelleCommuneEtablissement":             "Pointe-à-Pitre",
+				"codeCommuneEtablissement":                "97120",
+				"activitePrincipaleEtablissement":         "62.01Z",
+				"nomenclatureActivitePrincipaleEtablissement": "NAFRev2",
+				"dateCreationEtablissement":               "2018-11-10",
+				"etatAdministratifEtablissement":          "A",
 			},
 			expected: Sirene{
-				Siren:        "111222333",
-				Nic:          "00030",
-				Siret:        "11122233300030",
-				Siege:        true,
-				NumVoie:      "3",
-				IndRep:       "TER",
-				TypeVoie:     "CHEMIN",
-				Voie:         "du Moulin",
-				CodePostal:   "97110",
-				Commune:      "Pointe-à-Pitre",
-				CodeCommune:  "97120",
-				Departement:  "971",
-				APE:          "62.01Z",
-				Creation:     parsing.TimePtr(parsing.MustParseTime("2006-01-02", "2018-11-10")),
-				Longitude:    0,
-				Latitude:     0,
-				EstActif:     true,
+				Siren:       "111222333",
+				Nic:         "00030",
+				Siret:       "11122233300030",
+				Siege:       true,
+				NumVoie:     "3",
+				IndRep:      "TER",
+				TypeVoie:    "CHEMIN",
+				Voie:        "du Moulin",
+				CodePostal:  "97110",
+				Commune:     "Pointe-à-Pitre",
+				CodeCommune: "97120",
+				Departement: "971",
+				APE:         "62.01Z",
+				Creation:    parsing.TimePtr(parsing.MustParseTime("2006-01-02", "2018-11-10")),
+				EstActif:    true,
 			},
 		},
 	}
 
 	parser := NewSireneParser()
-	header := "siren,nic,siret,statutDiffusionEtablissement,dateCreationEtablissement,trancheEffectifsEtablissement,anneeEffectifsEtablissement,activitePrincipaleRegistreMetiersEtablissement,dateDernierTraitementEtablissement,etablissementSiege,nombrePeriodesEtablissement,complementAdresseEtablissement,numeroVoieEtablissement,indiceRepetitionEtablissement,typeVoieEtablissement,libelleVoieEtablissement,codePostalEtablissement,libelleCommuneEtablissement,libelleCommuneEtrangerEtablissement,distributionSpecialeEtablissement,codeCommuneEtablissement,codeCedexEtablissement,libelleCedexEtablissement,codePaysEtrangerEtablissement,libellePaysEtrangerEtablissement,complementAdresse2Etablissement,numeroVoie2Etablissement,indiceRepetition2Etablissement,typeVoie2Etablissement,libelleVoie2Etablissement,codePostal2Etablissement,libelleCommune2Etablissement,libelleCommuneEtranger2Etablissement,distributionSpeciale2Etablissement,codeCommune2Etablissement,codeCedex2Etablissement,libelleCedex2Etablissement,codePaysEtranger2Etablissement,libellePaysEtranger2Etablissement,dateDebut,etatAdministratifEtablissement,enseigne1Etablissement,enseigne2Etablissement,enseigne3Etablissement,denominationUsuelleEtablissement,activitePrincipaleEtablissement,nomenclatureActivitePrincipaleEtablissement,caractereEmployeurEtablissement,longitude,latitude,geo_score,geo_type,geo_adresse,geo_id,geo_ligne,geo_l4,geo_l5"
+	header := strings.Join(sireneColumns, ",")
 	for _, tc := range testCases {
-		instance := parser.New(parsing.CreateReader(header, ",", tc.csvRow))
+		row, err := makeRow(tc.fields)
+		require.NoError(t, err)
+		instance := parser.New(strings.NewReader(header + "\n" + row))
 		instance.Init(engine.NoFilter, nil)
 		res := &engine.ParsedLineResult{}
 		instance.ReadNext(res)
@@ -312,26 +325,29 @@ func TestNAFFiltering(t *testing.T) {
 		},
 	}
 
+	header := strings.Join(sireneColumns, ",")
 	for _, tc := range testcases {
 		t.Run(tc.name, func(t *testing.T) {
-			row := make([]string, len(sampleRow))
-			copy(row, sampleRow)
-
-			index, _ := colIndex.Get("nomenclatureActivitePrincipaleEtablissement")
-			row[index] = tc.nomenclatureActivite
-
-			parser := &sireneRowParser{}
+			row, err := makeRow(map[string]string{
+				"siren":                                    "123456789",
+				"nic":                                      "00012",
+				"etablissementSiege":                       "true",
+				"etatAdministratifEtablissement":           "A",
+				"activitePrincipaleEtablissement":          "47.11A",
+				"nomenclatureActivitePrincipaleEtablissement": tc.nomenclatureActivite,
+			})
+			require.NoError(t, err)
+			parser := NewSireneParser()
+			instance := parser.New(strings.NewReader(header + "\n" + row))
+			instance.Init(engine.NoFilter, nil)
 			res := &engine.ParsedLineResult{}
-
-			parser.ParseRow(row, res, colIndex)
+			instance.ReadNext(res)
 
 			if tc.shouldFilter {
 				assert.NotNil(t, res.FilterError)
 			} else {
 				assert.Nil(t, res.FilterError)
 			}
-
 		})
 	}
-
 }

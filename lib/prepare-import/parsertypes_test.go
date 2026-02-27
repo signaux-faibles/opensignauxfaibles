@@ -37,8 +37,6 @@ func TestExtractParserTypeFromFilename(t *testing.T) {
 		{"demande_ap.csv", engine.Apdemande},
 
 		// others
-		{"sigfaibles_debits.csv", engine.Debit},
-		{"sigfaibles_debits2.csv", engine.Debit},
 		{"effectif_dom.csv", engine.Effectif},
 		{"filter.csv", engine.Filter},
 		{"filter_siren_2002.csv", engine.Filter},

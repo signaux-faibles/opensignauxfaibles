@@ -6,11 +6,13 @@ import (
 	"flag"
 	"fmt"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/parsing/effectif"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -61,13 +63,17 @@ func TestOutputPerimeter(t *testing.T) {
 		// setup conditions and expectations
 		minEffectif := 10
 		expectedSirens := []string{"222222222", "333333333"}
-		csvLines := []string{
-			"siren;eff201011;eff201012;rais_soc",
-			"000000000;4;4;ENTREPRISE",   // ❌ 75 ≥ 10, mais ce n'est pas un effectif
-			"111111111;4;4;ENTREPRISE",   // ❌ 53 ≥ 10, mais ce n'est pas un effectif
-			"222222222;14;14;ENTREPRISE", // ✅ siren retenu car 14 est bien un effectif ≥ 10
-			"333333333;14;14;ENTREPRISE", // ✅ siren retenu car 14 est bien un effectif ≥ 10
-		}
+
+		period1, _ := time.Parse("2006-01-02", "2010-01-01")
+		period2, _ := time.Parse("2006-01-02", "2010-01-02")
+
+		csvLines := effectif.MakeEffectifEntCSV(
+			[]time.Time{period1, period2},
+			map[string][]int{
+				"000000000": {4, 4}, "111111111": {4, 4},
+				"222222222": {14, 14}, // ✅ siren retenu car 14 est bien un effectif ≥ 10
+				"333333333": {14, 14}, // ✅ siren retenu car 14 est bien un effectif ≥ 10
+			})
 		// test: run outputPerimeter() on csv lines
 		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif)
 		sort.Strings(actualSirens)
@@ -80,24 +86,23 @@ func TestOutputPerimeter(t *testing.T) {
 		// setup conditions and expectations
 		minEffectif := 1
 		expectedSirens := []string{"111111111", "333333333"}
-		csvLines := []string{
+		csvContent := strings.Join([]string{
 			"siren;eff201011;rais_soc",
 			"111111111;1;ENTREPRISE", // première entreprise ayant 111111111 comme siren
 			"111111111;1;ENTREPRISE", // deuxième entreprise ayant 111111111 comme siren
 			"333333333;1;ENTREPRISE",
-		}
+		}, "\n")
 		// test: run outputPerimeter() on csv lines
-		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif)
+		actualSirens := getOutputPerimeter(csvContent, DefaultNbMois, minEffectif)
 		sort.Strings(actualSirens)
 		// assert
 		assert.Equal(t, expectedSirens, actualSirens)
 	})
 }
 
-// wrapper to run outputPerimeter() on a slice of csv lines
-func getOutputPerimeter(csvLines []string, nbMois, minEffectif int) (actualSirens []string) {
-	effectifData := strings.Join(csvLines, "\n")
-	mockFile := engine.NewMockBatchFile(effectifData)
+// wrapper to run outputPerimeter() on a csv string
+func getOutputPerimeter(csvContent string, nbMois, minEffectif int) (actualSirens []string) {
+	mockFile := engine.NewMockBatchFile(csvContent)
 	extractor, err := newEffectifDataExtractor(mockFile)
 	if err != nil {
 		panic(err)

@@ -3,7 +3,6 @@
 --
 -- some refactorings along the way of intermediate views (mock columns are only setup at the
 -- UNION ALL stage, otherwise it is quite confusing)
-BEGIN;
 DROP materialized VIEW clean_ap;
 DROP VIEW stg_apconso_by_period;
 
@@ -80,4 +79,3 @@ AS WITH aggregated AS (
     aggregated.is_last
    FROM aggregated
 WITH DATA;
-COMMIT;
