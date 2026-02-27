@@ -75,7 +75,7 @@ make stop-postgres
 ./sfdata import --batch 1802 --dry-run
 
 # Parser un seul fichier vers stdout
-./sfdata parseFile --parser cotisation --file /path/to/file.csv
+./sfdata parseFile --parsers cotisation --file /path/to/file.csv
 
 # Exporter les données des vues postgres pour la data science
 ./sfdata export --path /path/to/dir/
@@ -182,6 +182,11 @@ Le pipeline d'importation se compose de :
 Voir [la documentation des tables](./docs/documentation_tables.md) pour plus 
 d'informations.
 
+Les vues matérialisées des données enrichies sont mis à jour automatiquement 
+lorsque les données dont elles dépendent sont importées, via une dépendance 
+exlpicite dans le code (cf `viewsToRefresh` dans 
+[./lib/sinks/postgresSink.go](./lib/sinks/postgresSink.go))
+
 ## Migrations de base de données
 
 Les migrations sont définies dans `lib/db/migrations.go`.
@@ -191,6 +196,13 @@ Le fonctionnement est simple : les migrations sont numérotées dans l'ordre, l
 table `migrations` stocke la dernière migration appliquée, et golang applique 
 les migrations suivantes au besoin (via l'utilitaire 
 [`tern`](https://github.com/JackC/tern))
+
+Il n'y a pour l'instant pas de commande pour n'effectuer que les migrations, 
+cependant, l'import d'un petit fichier (e.g. `--parsers delai`) est un 
+contournement pour migrer la base de données sans import complet.
+
+Le test de bout en bout exécute toutes les migrations et vérifie donc qu'elles 
+sont valides.
 
 ## Parsers
 
@@ -241,3 +253,29 @@ siren_blacklist;` qui stocke une copie matérialisée pour des raisons de
 performance (cette construction en deux étape vient du fait que les vues 
 matérialisées ne permettent pas de mise-à-jour sur place et nécessitent un 
 `DROP ... CASCADE` qu'on souhaite éviter).
+
+# Performance 
+
+Pour des questions de performances, les indexes sont supprimés au début de 
+l'import des données, et reconstruits a posteriori. 
+
+Pour éviter qu'ils ne soient définitivement perdus si une anomalie survient 
+pendant l'import (perte de connexion à la base de données par exemple), ils 
+sont stockés dans une table `tmp_saved_indexes`. Ainsi, si la reconstruction 
+échoue, il suffit de relancer la pipeline pour que les indexes stockés en base 
+soient reconstruits. 
+
+Par ailleurs opensignauxfaibles augmente, le temps de l'import, les paramètres 
+`work_mem` (pour le rafraîchissement des vues matérialisées) et 
+`maintenance_work_mem` (pour la reconstruction des indexes), pour une 
+meilleure utilisation de la mémoire vive.
+
+# Consommation des données 
+
+Les consommateur de données doivent exclusivement consommer les données 
+préparées des vues préfixées par `clean_xxx`. 
+
+**Note concernant l'utilisation des indexes** : pour rechercher par SIREN dans 
+une table indexée par SIRET, utiliser une requête du type `siret LIKE 
+'123456789%'` pour profiter de l'index. Le fait de ne pas cumuler les indexes 
+réduit sensiblement le temps de reconstruction des indexes à chaque import. 

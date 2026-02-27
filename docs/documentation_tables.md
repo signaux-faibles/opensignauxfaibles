@@ -18,6 +18,7 @@ Ces vues (parfois matéralisées, parfois non selon leur complexité) sont les d
 | clean_cotisation          | view              | Données enrichies sur les cotisations                                                                |
 | [clean_debit](./documentation_clean_debit.md)               | materialized view | Données enrichies sur les débits                                                                     |
 | [clean_procol](./documentation_clean_procol.md)              | view              | Données enrichies de procédures collectives                                                          |
+| [clean_procol_at_date](./documentation_clean_procol.md)              | materialized view              | Données de procédures collectives décomposées par siren x periode. La plus simple à utiliser.     |
 | clean_delai               | view              | Données enrichies de délais de paiement des cotisations sociales                                     |
 | clean_effectif            | view              | Données enrichies des effectifs d'établissements                                                     |
 | clean_effectif_ent        | view              | Données enrichies des effectifs d'entreprises                                                        |
@@ -41,9 +42,10 @@ Le périmètre (liste de SIREN) de l'import pour les consommateurs aval est déf
 
 ### Migrations 
 
-|           name            |       type        |                                             description                                              |
-|---------------------------|-------------------|------------------------------------------------------------------------------------------------------|
-| migrations                | table             | Dernière migration de base de donnée appliquée                                                       |
+| name                        | type                | description                                                                                            |
+| --------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------ |
+| migrations                  | table               | Dernière migration de base de donnée appliquée                                                         |
+| tmp_saved_indexes           | table               | Sauvegarde des indexes droppés pendant l'import et de leur définition                                  |
 
 ### Labels
 
