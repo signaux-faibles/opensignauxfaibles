@@ -57,4 +57,6 @@ Flags:
                          Path to batch definition file. If not provided, files are inferred from their naming in the data directory (defined by "APP_DATA" environment variable or --path option.
     --dry-run                (type: bool)
                          Parse files without creating CSV files / database imports. Import report is printed to stdout.
+    --csv-only               (type: bool)
+                         Write data to CSV files only, skip database import. No database connection required when combined with --no-filter.
 ---
