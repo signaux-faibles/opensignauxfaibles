@@ -8,6 +8,7 @@ import (
 	"opensignauxfaibles/lib/engine"
 	"opensignauxfaibles/lib/filter"
 	"opensignauxfaibles/lib/parsing"
+	"path/filepath"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
@@ -300,11 +301,12 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 		if sirenBlacklistRefreshed {
 			batchKey := viper.GetString("batch")
 			if batchKey != "" {
+				exportPath := filepath.Join(DefaultExportPath, batchKey)
 				connGetter := func() (interface{}, error) {
 					return s.conn, nil
 				}
 				
-				err := filter.UpdateFilterReportWithSQLStats(connGetter, batchKey)
+				err := filter.UpdateFilterReportWithSQLStats(connGetter, exportPath)
 				if err != nil {
 					logger.Warn("failed to update filter report with SQL statistics", "error", err)
 					// Non-fatal error - continue execution

@@ -83,7 +83,8 @@ func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.S
 	// Generate detailed filter report
 	batchKey := viper.GetString("batch")
 	if batchKey != "" {
-		if err := generateFilterReport(stats, batchKey); err != nil {
+		exportPath := filepath.Join(sinks.DefaultExportPath, batchKey)
+		if err := generateFilterReport(stats, exportPath); err != nil {
 			slog.Warn("failed to generate filter report", "error", err)
 		}
 	}

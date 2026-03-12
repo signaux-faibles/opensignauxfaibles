@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"opensignauxfaibles/lib/sinks"
 	"os"
 	"path/filepath"
 	"time"
@@ -30,8 +29,7 @@ type SQLFilterStats struct {
 }
 
 // generateFilterReport creates a detail-filtres.md file with detailed filter statistics
-func generateFilterReport(stats FilterStats, batchKey string) error {
-	exportPath := filepath.Join(sinks.DefaultExportPath, batchKey)
+func generateFilterReport(stats FilterStats, exportPath string) error {
 	filename := filepath.Join(exportPath, "detail-filtres.md")
 	f, err := os.Create(filename)
 	if err != nil {
@@ -96,7 +94,7 @@ func generateFilterReport(stats FilterStats, batchKey string) error {
 }
 
 // UpdateFilterReportWithSQLStats appends SQL filter statistics to the existing report
-func UpdateFilterReportWithSQLStats(connGetter func() (interface{}, error), batchKey string) error {
+func UpdateFilterReportWithSQLStats(connGetter func() (interface{}, error), exportPath string) error {
 	conn, err := connGetter()
 	if err != nil {
 		return fmt.Errorf("failed to get database connection: %w", err)
@@ -172,7 +170,6 @@ func UpdateFilterReportWithSQLStats(connGetter func() (interface{}, error), batc
 	}
 
 	// Open report file in append mode
-	exportPath := filepath.Join(sinks.DefaultExportPath, batchKey)
 	filename := filepath.Join(exportPath, "detail-filtres.md")
 
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, 0644)
