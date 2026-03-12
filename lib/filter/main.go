@@ -30,11 +30,9 @@ import (
 	"log"
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
-	"time"
 
 	"github.com/spf13/viper"
 )
