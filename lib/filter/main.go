@@ -47,7 +47,7 @@ type Reader interface {
 }
 
 // DefaultNbMois is the default number of the most recent months during which the effectif of the company must reach the threshold.
-const DefaultNbMois = 120
+const DefaultNbMois = 36
 
 // DefaultMinEffectif is the default effectif threshold, expressed in number of employees.
 const DefaultMinEffectif = 10
