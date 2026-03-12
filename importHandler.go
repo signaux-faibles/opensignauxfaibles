@@ -24,6 +24,7 @@ type importBatchHandler struct {
 	NoFilter        bool     `names:"--no-filter" desc:"Proceed with import without filtering input data, and without updating the filter stored in DB."`
 	BatchConfigFile string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Path to batch definition file. If not provided, files are inferred from their naming in the data directory (defined by \"APP_DATA\" environment variable or --path option."`
 	DryRun          bool     `names:"--dry-run" desc:"Parse files without creating CSV files / database imports. Import report is printed to stdout."`
+	CsvOnly         bool     `names:"--csv-only" desc:"Write data to CSV files only, skip database import. No database connection required when combined with --no-filter."`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
@@ -91,7 +92,7 @@ func (params importBatchHandler) Run() error {
 	slog.Info("executing import command")
 
 	// Initialize database
-	if !params.DryRun {
+	if !params.DryRun && !params.CsvOnly {
 		shouldMigrate := true
 		err := db.Init(shouldMigrate)
 		if err != nil {
@@ -99,8 +100,8 @@ func (params importBatchHandler) Run() error {
 		}
 	}
 
-	if params.DryRun {
-		// With dry run, we do not want to *write* to the database.
+	if params.DryRun || (params.CsvOnly && !params.NoFilter) {
+		// With dry run or csv-only, we do not want to *write* to the database.
 		// We may want to *read* the filter from the database, however, we accept
 		// if the db connection fails and do without (mock the connexion)
 		shouldMigrate := false
@@ -108,6 +109,11 @@ func (params importBatchHandler) Run() error {
 		if err != nil {
 			db.InitMock()
 		}
+	}
+
+	if params.CsvOnly && params.NoFilter {
+		// CSV-only without filter: no database connection needed at all
+		db.InitMock()
 	}
 	defer db.DB.Close()
 
@@ -159,7 +165,13 @@ func (params importBatchHandler) Run() error {
 	var dataSinkFactory engine.SinkFactory
 	var reportSink engine.ReportSink
 
-	if !params.DryRun {
+	if params.CsvOnly {
+		slog.Info("csv-only mode: data will be written to CSV files only")
+		dataSinkFactory = sinks.NewCSVSinkFactory(batchKey.String())
+
+		slog.Info("import logs will be written to stdout")
+		reportSink = &engine.StdoutReportSink{}
+	} else if !params.DryRun {
 		slog.Info("data will be written as CSV and to Postgresql tables")
 		dataSinkFactory = sinks.Combine(
 			sinks.NewCSVSinkFactory(batchKey.String()),
@@ -186,7 +198,7 @@ func (params importBatchHandler) Run() error {
 	} else {
 		reader := &filter.StandardReader{Batch: &batch, DB: db.DB}
 		var writer filter.Writer
-		if !params.DryRun {
+		if !params.DryRun && !params.CsvOnly {
 			writer = &filter.DBWriter{DB: db.DB}
 		}
 		filterResolver = &filter.StandardFilterResolver{
