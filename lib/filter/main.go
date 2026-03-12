@@ -30,8 +30,10 @@ import (
 	"log"
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
+	"os"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 // Writer writes a filter
@@ -52,12 +54,24 @@ const DefaultNbMois = 36
 // DefaultMinEffectif is the default effectif threshold, expressed in number of employees.
 const DefaultMinEffectif = 10
 
+// DefaultNbMoisRecentData is the number of most recent months that must have at least one effectif data point.
+const DefaultNbMoisRecentData = 3
+
 // effColRegex is a regular expression used to extract data related to
 // headcounts
 var effColRegex = regexp.MustCompile(`^eff[0-9]+$`)
 
 // sirenColumn is the name of the column that holds the SIREN number
 const sirenColumn = "siren"
+
+// FilterStats tracks the number of companies at each stage of the filtering process
+type FilterStats struct {
+	TotalCompanies              int
+	AfterEffectifFilter         int
+	AfterRecentDataFilter       int
+	ExcludedByEffectifFilter    int
+	ExcludedByRecentDataFilter  int
+}
 
 // Create generates a "filter" from an "effectif_ent" file.
 func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
@@ -66,9 +80,14 @@ func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.S
 		return nil, err
 	}
 
-	perimeter, err := getImportPerimeter(effectifEntFile, nbMois, minEffectif, extractor)
+	perimeter, stats, err := getImportPerimeter(effectifEntFile, nbMois, minEffectif, extractor)
 	if err != nil {
 		return nil, err
+	}
+
+	// Generate detailed filter report
+	if err := generateFilterReport(stats); err != nil {
+		slog.Warn("failed to generate filter report", "error", err)
 	}
 
 	// Convert to MapFilter
@@ -247,18 +266,19 @@ func (e *effectifDataExtractor) GetEffectif(record []string) []string {
 }
 
 // getImportPerimeter makes a perimeter on effectif criterias alone
-func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif int, extractor *effectifDataExtractor) (map[string]struct{}, error) {
+func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif int, extractor *effectifDataExtractor) (map[string]struct{}, FilterStats, error) {
 	f, err := effectifEntFile.Open()
 	if err != nil {
-		return nil, err
+		return nil, FilterStats{}, err
 	}
 	defer f.Close()
 
 	r := newCsvReader(f)
 
+	stats := FilterStats{}
 	detectedSirens := map[string]struct{}{} // smaller memory footprint than map[string]bool
 	if _, err := r.Read(); err != nil {     // skip header
-		return nil, err
+		return nil, FilterStats{}, err
 	}
 
 	skippedLines := 0
@@ -269,7 +289,7 @@ func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif in
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return nil, err
+			return nil, FilterStats{}, err
 		}
 
 		siren := extractor.GetSiren(record)
@@ -278,15 +298,29 @@ func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif in
 			continue
 		}
 
+		stats.TotalCompanies++
 		effData := extractor.GetEffectif(record)
-		if isInsidePerimeter(effData, nbMois, minEffectif) {
-			detectedSirens[siren] = struct{}{}
+
+		// Filter 1: Effectif threshold over nbMois
+		if !isInsidePerimeter(effData, nbMois, minEffectif) {
+			stats.ExcludedByEffectifFilter++
+			continue
 		}
+		stats.AfterEffectifFilter++
+
+		// Filter 2: Recent data availability
+		if !hasRecentEffectifData(effData, DefaultNbMoisRecentData) {
+			stats.ExcludedByRecentDataFilter++
+			continue
+		}
+		stats.AfterRecentDataFilter++
+
+		detectedSirens[siren] = struct{}{}
 	}
 	if skippedLines > 0 {
 		slog.Info(fmt.Sprintf("%d lines with bad siren skipped in the effectif_ent file at filter creation", skippedLines))
 	}
-	return detectedSirens, nil
+	return detectedSirens, stats, nil
 }
 
 func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
@@ -306,6 +340,84 @@ func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
 		}
 	}
 	return false
+}
+
+// hasRecentEffectifData checks if the company has at least one non-empty effectif value
+// in the last nbMoisRecent months
+func hasRecentEffectifData(record []string, nbMoisRecent int) bool {
+	for i := len(record) - 1; i >= len(record)-nbMoisRecent && i >= 0; i-- {
+		if record[i] != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// generateFilterReport creates a detail-filtres.md file with detailed filter statistics
+func generateFilterReport(stats FilterStats) error {
+	filename := "detail-filtres.md"
+	f, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("failed to create filter report file: %w", err)
+	}
+	defer f.Close()
+
+	// Write header
+	fmt.Fprintf(f, "# Détail des filtres appliqués\n\n")
+	fmt.Fprintf(f, "Généré le : %s\n\n", time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Fprintf(f, "## Paramètres\n\n")
+	fmt.Fprintf(f, "- **Fenêtre d'observation effectifs** : %d mois\n", DefaultNbMois)
+	fmt.Fprintf(f, "- **Seuil minimum d'effectif** : %d employés\n", DefaultMinEffectif)
+	fmt.Fprintf(f, "- **Nombre de mois avec données récentes requis** : %d mois\n\n", DefaultNbMoisRecentData)
+
+	// Write filter statistics
+	fmt.Fprintf(f, "## Résultats du filtrage\n\n")
+	fmt.Fprintf(f, "| Étape | Entreprises | Exclues | Taux d'exclusion |\n")
+	fmt.Fprintf(f, "|-------|-------------|---------|------------------|\n")
+
+	// Initial count
+	fmt.Fprintf(f, "| **Entreprises initiales** | %d | - | - |\n", stats.TotalCompanies)
+
+	// Filter 1: Effectif threshold
+	effectifExclusionRate := 0.0
+	if stats.TotalCompanies > 0 {
+		effectifExclusionRate = float64(stats.ExcludedByEffectifFilter) / float64(stats.TotalCompanies) * 100
+	}
+	fmt.Fprintf(f, "| Suppression des entreprises ne dépassant pas %d employés sur les %d derniers mois | %d | %d | %.2f%% |\n",
+		DefaultMinEffectif, DefaultNbMois, stats.AfterEffectifFilter, stats.ExcludedByEffectifFilter, effectifExclusionRate)
+
+	// Filter 2: Recent data
+	recentDataExclusionRate := 0.0
+	if stats.AfterEffectifFilter > 0 {
+		recentDataExclusionRate = float64(stats.ExcludedByRecentDataFilter) / float64(stats.AfterEffectifFilter) * 100
+	}
+	fmt.Fprintf(f, "| Suppression des entreprises n'ayant pas de données d'effectif sur les %d derniers mois | %d | %d | %.2f%% |\n",
+		DefaultNbMoisRecentData, stats.AfterRecentDataFilter, stats.ExcludedByRecentDataFilter, recentDataExclusionRate)
+
+	// Note about subsequent filters
+	fmt.Fprintf(f, "\n## Filtres appliqués ultérieurement (en SQL)\n\n")
+	fmt.Fprintf(f, "Les filtres suivants sont appliqués au niveau de la base de données (entre les couches `stg_*` et `clean_*`) :\n\n")
+	fmt.Fprintf(f, "1. **Suppression de certaines formes juridiques**\n")
+	fmt.Fprintf(f, "   - Établissements publics nationaux et locaux\n")
+	fmt.Fprintf(f, "   - Communes, départements, associations\n")
+	fmt.Fprintf(f, "   - Syndicats et groupements de collectivités territoriales\n\n")
+	fmt.Fprintf(f, "2. **Suppression de certaines activités principales** (codes NAF)\n")
+	fmt.Fprintf(f, "   - Administration publique (84.XX)\n")
+	fmt.Fprintf(f, "   - Enseignement (85.XX)\n")
+	fmt.Fprintf(f, "   - Organisations associatives (94.XX)\n")
+	fmt.Fprintf(f, "   - Services financiers et assurance (64.XX, 65.XX, 66.XX)\n")
+	fmt.Fprintf(f, "   - Organisations extraterritoriales (99.XX)\n\n")
+	fmt.Fprintf(f, "3. **Suppression des entreprises domiciliées hors de France**\n")
+	fmt.Fprintf(f, "   - Exclusion des sièges avec département vide\n\n")
+
+	// Final note
+	fmt.Fprintf(f, "## Périmètre final\n\n")
+	fmt.Fprintf(f, "Le périmètre final est disponible dans :\n")
+	fmt.Fprintf(f, "- **Base de données** : table `sfdata.clean_filter`\n")
+	fmt.Fprintf(f, "- **Export CSV** : fichier `clean_filter.csv`\n")
+
+	slog.Info("filter report generated", "filename", filename)
+	return nil
 }
 
 // guessLastNMissingFromReader returns the number of rightmost columns
