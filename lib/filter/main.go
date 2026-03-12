@@ -30,7 +30,6 @@ import (
 	"log"
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
-	"opensignauxfaibles/lib/sinks"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -83,7 +82,12 @@ func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.S
 	// Generate detailed filter report
 	batchKey := viper.GetString("batch")
 	if batchKey != "" {
-		exportPath := filepath.Join(sinks.DefaultExportPath, batchKey)
+		// Use export.path from config, or default to /export/csv
+		rootDir := "/export/csv"
+		if viper.IsSet("export.path") {
+			rootDir = viper.GetString("export.path")
+		}
+		exportPath := filepath.Join(rootDir, batchKey)
 		if err := generateFilterReport(stats, exportPath); err != nil {
 			slog.Warn("failed to generate filter report", "error", err)
 		}
