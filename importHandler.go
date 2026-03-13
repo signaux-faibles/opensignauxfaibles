@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"github.com/cosiner/flag"
+	"github.com/spf13/viper"
 
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
@@ -122,6 +123,9 @@ func (params importBatchHandler) Run() error {
 	if err != nil {
 		return err
 	}
+	
+	// Set batch key in viper for use by other components (e.g., filter report generation)
+	viper.Set("batch", params.BatchKey)
 
 	// Étape 1
 	// On définit d'abord un ensemble de fichiers à importer (batch)
