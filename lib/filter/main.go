@@ -30,8 +30,11 @@ import (
 	"log"
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
+	"path/filepath"
 	"regexp"
 	"strconv"
+
+	"github.com/spf13/viper"
 )
 
 // Writer writes a filter
@@ -47,10 +50,13 @@ type Reader interface {
 }
 
 // DefaultNbMois is the default number of the most recent months during which the effectif of the company must reach the threshold.
-const DefaultNbMois = 120
+const DefaultNbMois = 36
 
 // DefaultMinEffectif is the default effectif threshold, expressed in number of employees.
 const DefaultMinEffectif = 10
+
+// DefaultNbMoisRecentData is the number of most recent months that must have at least one effectif data point.
+const DefaultNbMoisRecentData = 3
 
 // effColRegex is a regular expression used to extract data related to
 // headcounts
@@ -59,16 +65,30 @@ var effColRegex = regexp.MustCompile(`^eff[0-9]+$`)
 // sirenColumn is the name of the column that holds the SIREN number
 const sirenColumn = "siren"
 
-// Create generates a "filter" from an "effectif_ent" file.
+// Create writes a SirenFilter from the provided effectif_ent file.
 func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
 	extractor, err := newEffectifDataExtractor(effectifEntFile)
 	if err != nil {
 		return nil, err
 	}
 
-	perimeter, err := getImportPerimeter(effectifEntFile, nbMois, minEffectif, extractor)
+	perimeter, stats, err := getImportPerimeter(effectifEntFile, nbMois, minEffectif, extractor)
 	if err != nil {
 		return nil, err
+	}
+
+	// Generate detailed filter report
+	batchKey := viper.GetString("batch")
+	if batchKey != "" {
+		// Use export.path from config, or default to /export/csv
+		rootDir := "/export/csv"
+		if viper.IsSet("export.path") {
+			rootDir = viper.GetString("export.path")
+		}
+		exportPath := filepath.Join(rootDir, batchKey)
+		if err := generateFilterReport(stats, exportPath); err != nil {
+			slog.Warn("failed to generate filter report", "error", err)
+		}
 	}
 
 	// Convert to MapFilter
@@ -247,18 +267,19 @@ func (e *effectifDataExtractor) GetEffectif(record []string) []string {
 }
 
 // getImportPerimeter makes a perimeter on effectif criterias alone
-func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif int, extractor *effectifDataExtractor) (map[string]struct{}, error) {
+func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif int, extractor *effectifDataExtractor) (map[string]struct{}, FilterStats, error) {
 	f, err := effectifEntFile.Open()
 	if err != nil {
-		return nil, err
+		return nil, FilterStats{}, err
 	}
 	defer f.Close()
 
 	r := newCsvReader(f)
 
+	stats := FilterStats{}
 	detectedSirens := map[string]struct{}{} // smaller memory footprint than map[string]bool
 	if _, err := r.Read(); err != nil {     // skip header
-		return nil, err
+		return nil, FilterStats{}, err
 	}
 
 	skippedLines := 0
@@ -269,7 +290,7 @@ func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif in
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return nil, err
+			return nil, FilterStats{}, err
 		}
 
 		siren := extractor.GetSiren(record)
@@ -278,15 +299,29 @@ func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif in
 			continue
 		}
 
+		stats.TotalCompanies++
 		effData := extractor.GetEffectif(record)
-		if isInsidePerimeter(effData, nbMois, minEffectif) {
-			detectedSirens[siren] = struct{}{}
+
+		// Filter 1: Effectif threshold over nbMois
+		if !isInsidePerimeter(effData, nbMois, minEffectif) {
+			stats.ExcludedByEffectifFilter++
+			continue
 		}
+		stats.AfterEffectifFilter++
+
+		// Filter 2: Recent data availability
+		if !hasRecentEffectifData(effData, DefaultNbMoisRecentData) {
+			stats.ExcludedByRecentDataFilter++
+			continue
+		}
+		stats.AfterRecentDataFilter++
+
+		detectedSirens[siren] = struct{}{}
 	}
 	if skippedLines > 0 {
 		slog.Info(fmt.Sprintf("%d lines with bad siren skipped in the effectif_ent file at filter creation", skippedLines))
 	}
-	return detectedSirens, nil
+	return detectedSirens, stats, nil
 }
 
 func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
@@ -302,6 +337,17 @@ func isInsidePerimeter(record []string, nbMois, minEffectif int) bool {
 			log.Panic(err)
 		}
 		if effectif >= minEffectif {
+			return true
+		}
+	}
+	return false
+}
+
+// hasRecentEffectifData checks if the company has at least one non-empty effectif value
+// in the last nbMoisRecent months
+func hasRecentEffectifData(record []string, nbMoisRecent int) bool {
+	for i := len(record) - 1; i >= len(record)-nbMoisRecent && i >= 0; i-- {
+		if record[i] != "" {
 			return true
 		}
 	}

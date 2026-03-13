@@ -6,10 +6,13 @@ import (
 	"log/slog"
 	"opensignauxfaibles/lib/db"
 	"opensignauxfaibles/lib/engine"
+	"opensignauxfaibles/lib/filter"
 	"opensignauxfaibles/lib/parsing"
+	"path/filepath"
 	"strings"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/spf13/viper"
 )
 
 // BatchSize controls the max number of rows inserted at a time
@@ -273,6 +276,7 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 	if len(s.viewsToRefresh) > 0 {
 		logger.Info("update materialized views, some views may take some time... (up to an hour or more)", "views", s.viewsToRefresh)
 
+		sirenBlacklistRefreshed := false
 		for _, view := range s.viewsToRefresh {
 			_, err = s.conn.Exec(ctx, fmt.Sprintf(`
       BEGIN;
@@ -285,8 +289,30 @@ func (s *PostgresSink) ProcessOutput(ctx context.Context, ch chan engine.Tuple) 
 			}
 
 			logger.Debug("materialized view updated", "view", view)
+			
+			// Track if siren_blacklist was refreshed
+			if view == db.ViewSirenBlacklist {
+				sirenBlacklistRefreshed = true
+			}
 		}
 		logger.Info("materialized view update ended successfully")
+		
+		// Update filter report with SQL statistics after siren_blacklist refresh
+		if sirenBlacklistRefreshed {
+			batchKey := viper.GetString("batch")
+			if batchKey != "" {
+				exportPath := filepath.Join(DefaultExportPath, batchKey)
+				connGetter := func() (interface{}, error) {
+					return s.conn, nil
+				}
+				
+				err := filter.UpdateFilterReportWithSQLStats(connGetter, exportPath)
+				if err != nil {
+					logger.Warn("failed to update filter report with SQL statistics", "error", err)
+					// Non-fatal error - continue execution
+				}
+			}
+		}
 	}
 
 	return nil

@@ -109,7 +109,7 @@ func getOutputPerimeter(csvContent string, nbMois, minEffectif int) (actualSiren
 	}
 	var output bytes.Buffer
 	writer := bufio.NewWriter(&output)
-	perimeter, err := getImportPerimeter(mockFile, nbMois, minEffectif, extractor)
+	perimeter, _, err := getImportPerimeter(mockFile, nbMois, minEffectif, extractor)
 	if err != nil {
 		panic(err)
 	}
@@ -139,6 +139,30 @@ func TestIsInsidePerimeter(t *testing.T) {
 		t.Run("Test case "+strconv.Itoa(i), func(t *testing.T) {
 			shouldKeep := isInsidePerimeter(tc.input, nbMois, minEffectif)
 			assert.Equal(t, tc.expected, shouldKeep)
+		})
+	}
+}
+
+func TestHasRecentEffectifData(t *testing.T) {
+	nbMoisRecent := 3 // Check last 3 months for data
+	testCases := []struct {
+		name     string
+		input    []string
+		expected bool
+	}{
+		{"has data in last month", []string{"10", "9", "12", "7", "5"}, true},
+		{"has data in 2nd to last month", []string{"10", "9", "12", "7", ""}, true},
+		{"has data in 3rd to last month", []string{"10", "9", "12", "", ""}, true},
+		{"no data in last 3 months", []string{"10", "9", "", "", ""}, false},
+		{"all empty", []string{"", "", "", "", ""}, false},
+		{"data only older than 3 months", []string{"10", "20", "", "", ""}, false},
+		{"has 0 as data (valid)", []string{"10", "9", "12", "7", "0"}, true},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result := hasRecentEffectifData(tc.input, nbMoisRecent)
+			assert.Equal(t, tc.expected, result)
 		})
 	}
 }
