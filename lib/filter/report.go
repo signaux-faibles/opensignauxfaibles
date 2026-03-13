@@ -30,6 +30,11 @@ type SQLFilterStats struct {
 
 // generateFilterReport creates a detail-filtres.md file with detailed filter statistics
 func generateFilterReport(stats FilterStats, exportPath string) error {
+	// Ensure export directory exists
+	if err := os.MkdirAll(exportPath, 0755); err != nil {
+		return fmt.Errorf("failed to create export directory: %w", err)
+	}
+	
 	filename := filepath.Join(exportPath, "detail-filtres.md")
 	f, err := os.Create(filename)
 	if err != nil {
