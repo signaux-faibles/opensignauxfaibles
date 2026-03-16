@@ -19,8 +19,9 @@ func (err UnsupportedFilesError) Error() string {
 func populateParamProperty(batchKey engine.BatchKey) engine.AdminBatchParams {
 	year, _ := strconv.Atoi("20" + batchKey.String()[0:2])
 	month, _ := strconv.Atoi(batchKey.String()[2:4])
+	dateFin := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 	return engine.AdminBatchParams{
-		DateDebut: time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC),
-		DateFin:   time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC),
+		DateDebut: dateFin.AddDate(-5, 0, 0), // 5 ans avant DateFin
+		DateFin:   dateFin,
 	}
 }
