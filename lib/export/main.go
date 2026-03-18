@@ -58,7 +58,7 @@ func (exp *Exporter) CleanViews() error {
 	for _, view := range viewsToExport {
 		// run export in parallel
 		g.Go(func() error {
-			fileAbsPath := filepath.Join(dirAbsPath, view+".csv")
+			fileAbsPath := filepath.Join(dirAbsPath, view+".parquet")
 			// Fail if file already exist
 			_, err := os.Stat(fileAbsPath)
 			if err == nil {

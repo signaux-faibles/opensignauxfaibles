@@ -92,7 +92,7 @@ func generateFilterReport(stats FilterStats, exportPath string) error {
 	fmt.Fprintf(f, "## Périmètre final\n\n")
 	fmt.Fprintf(f, "Le périmètre final est disponible dans :\n")
 	fmt.Fprintf(f, "- **Base de données** : table `sfdata.clean_filter`\n")
-	fmt.Fprintf(f, "- **Export CSV** : fichier `clean_filter.csv`\n")
+	fmt.Fprintf(f, "- **Export CSV** : fichier `clean_filter.parquet`\n")
 
 	slog.Info("filter report generated", "filename", filename)
 	return nil
