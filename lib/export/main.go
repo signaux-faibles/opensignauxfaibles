@@ -96,7 +96,7 @@ func toWriter(ctx context.Context, w io.Writer, view string, conn db.Pool) error
 	_, err = poolConn.Conn().PgConn().CopyTo(
 		ctx,
 		w,
-		fmt.Sprintf(`COPY (SELECT * FROM %s) TO STDOUT WITH (FORMAT CSV, HEADER, DELIMITER ',');`, view),
+		fmt.Sprintf(`COPY (SELECT * FROM %s) TO STDOUT WITH (FORMAT parquet);`, view),
 	)
 	return err
 }
