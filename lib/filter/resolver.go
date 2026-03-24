@@ -7,7 +7,7 @@ import (
 	"opensignauxfaibles/lib/engine"
 )
 
-// StandardFilterResolver performs full filter resolution with Check, Update, and Read.
+// StandardFilterResolver performs full filter resolution with CheckIFilterRequirementsAreMet, Update, and Read.
 // It orchestrates the complete filter lifecycle: checking requirements, updating state
 // based on effectif files, and loading the final filter.
 type StandardFilterResolver struct {
@@ -17,20 +17,19 @@ type StandardFilterResolver struct {
 
 // Resolve implements engine.FilterResolver.
 // It performs the complete filter resolution workflow:
-// 1. Check if filtering requirements are met (filter exists or effectif file present)
+// 1. CheckIFilterRequirementsAreMet (filter exists or effectif file present)
 // 2. Update filter state in database if appropriate (effectif file provided, no explicit filter)
 // 3. Read and return the final SirenFilter
 func (r *StandardFilterResolver) Resolve(files engine.BatchFiles) (engine.SirenFilter, error) {
 	slog.Info("resolving filter...")
 
-	// Check filter requirements
-	if err := Check(r.Reader, files); err != nil {
+	if err := CheckIFilterRequirementsAreMet(r.Reader, files); err != nil {
 		return nil, fmt.Errorf("filter check failed: %w", err)
 	}
 	slog.Debug("filter check passed: conditions are met for filtering input data")
 
 	// Update filter state if needed
-	if err := UpdateState(r.Writer, files); err != nil {
+	if err := UpdateFilter(r.Writer, files); err != nil {
 		return nil, fmt.Errorf("filter update failed: %w", err)
 	}
 

@@ -76,7 +76,7 @@ func TestImportFilter(t *testing.T) {
      2. no explicit filter is provided and
      3. no "effectif_ent" file is provided`, func(t *testing.T) {
 
-		// Create a batch with only Debit file, no explicitely filter provided
+		// CreateFilter a batch with only Debit file, no explicitely filter provided
 		defer cleanDB()
 		batch := engine.AdminBatch{
 			Key: "1902",
@@ -91,7 +91,7 @@ func TestImportFilter(t *testing.T) {
 	})
 
 	t.Run("Import with explicit filter file should succeed", func(t *testing.T) {
-		// Create a batch with Debit file and an explicit filter file
+		// CreateFilter a batch with Debit file and an explicit filter file
 		defer cleanDB()
 		batch := engine.AdminBatch{
 			Key: "1902",
@@ -110,7 +110,7 @@ func TestImportFilter(t *testing.T) {
 	t.Run("Import with \"effectif_ent\" file should succeed", func(t *testing.T) {
 		defer cleanDB()
 
-		// Create a batch with Debit file and an explicit filter file
+		// CreateFilter a batch with Debit file and an explicit filter file
 		batch := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
@@ -122,7 +122,7 @@ func TestImportFilter(t *testing.T) {
 
 		assert.NoError(t, err, "should succeed to import when an \"effectif_ent\" file is provided")
 
-		// Check that the filter has been properly updated
+		// CheckIFilterRequirementsAreMet that the filter has been properly updated
 		filter, err := readFilter(batch)
 		assert.NoError(t, err)
 		assert.True(t, filter.ShouldSkip(sirenOut))
@@ -132,7 +132,7 @@ func TestImportFilter(t *testing.T) {
 	t.Run("When filter exists, new import with effectif updates the filter", func(t *testing.T) {
 		defer cleanDB()
 
-		// Create a batch with Debit file and an explicit filter file
+		// CreateFilter a batch with Debit file and an explicit filter file
 		batch1 := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
@@ -159,7 +159,7 @@ func TestImportFilter(t *testing.T) {
 		err = importWithDiscardData(t, batch2)
 		assert.NoError(t, err, "should succeed to import again when filter exists")
 
-		// Check that the filter has been properly updated
+		// CheckIFilterRequirementsAreMet that the filter has been properly updated
 		filter, err := readFilter(batch2)
 		assert.NoError(t, err)
 		// The new effectif should include former "sirenOut" inside the perimeter.
@@ -192,7 +192,7 @@ func TestImportFilter(t *testing.T) {
 		}
 		assert.NoError(t, err, "should succeed to import when a filter has been created in DB")
 
-		// Check that the filter has been left unchanged
+		// CheckIFilterRequirementsAreMet that the filter has been left unchanged
 		filter, err := readFilter(batch2)
 		assert.NoError(t, err)
 		assert.True(t, filter.ShouldSkip("000000000"))

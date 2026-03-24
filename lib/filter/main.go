@@ -14,8 +14,8 @@
 // the "clean_..." layers.
 //
 // The package provides functions to:
-// - Create filters from effectif_ent files based on configurable criteria
-// - Check if valid filtering conditions are met before import
+// - CreateFilter filters from effectif_ent files based on configurable criteria
+// - CheckIFilterRequirementsAreMet if valid filtering conditions are met before import
 // - Read filters from multiple sources (files, database). Filters provided as
 // an explicit file have precedence over the database stored filter.
 // - Update filter state in the database when appropriate (effectif_ent file
@@ -65,8 +65,8 @@ var effColRegex = regexp.MustCompile(`^eff[0-9]+$`)
 // sirenColumn is the name of the column that holds the SIREN number
 const sirenColumn = "siren"
 
-// Create writes a SirenFilter from the provided effectif_ent file.
-func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
+// CreateFilter writes a SirenFilter from the provided effectif_ent file.
+func CreateFilter(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
 	extractor, err := newEffectifDataExtractor(effectifEntFile)
 	if err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.S
 	return mapFilter, nil
 }
 
-// Check checks whether the conditions for filtering are met, as we
+// CheckIFilterRequirementsAreMet checks whether the conditions for filtering are met, as we
 // do not want to import all data by accident.
 //
 // It checks whether :
@@ -109,7 +109,7 @@ func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.S
 //
 // If a nil interface is provided fails.
 // Note however that a nil *Reader pointer is properly handled and accepted.
-func Check(r Reader, batchFiles engine.BatchFiles) error {
+func CheckIFilterRequirementsAreMet(r Reader, batchFiles engine.BatchFiles) error {
 	var err error
 
 	effectifEntFile := batchFiles.GetEffectifEntFile()
@@ -132,17 +132,17 @@ func Check(r Reader, batchFiles engine.BatchFiles) error {
 	return nil
 }
 
-// UpdateState udpates (or creates) the filter if appropriate.
+// UpdateFilter udpates (or creates) the filter if appropriate.
 // Providing a `nil` writer will result in no update.
 //
-// It updates (or creates if none exists) the filter if the following conditions are met :
+// It updates (or creates if none exists) the filter if the following conditions are met :
 // - An "effectif" file is provided
-// - AND the filter is not explicitely provided in the batchfile
+// - AND the filter is not explicitly provided in the batchfile
 //
 // The rationale behind this last point is that a user-provided filter is
 // usually used solely for tests and should not affect the saved perimeter in
 // the database.
-func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
+func UpdateFilter(w Writer, batchFiles engine.BatchFiles) error {
 	// Guard clause 1: the import filter is based uniquely on the effectif_ent file.
 	// If no effectif_ent file is provided, there is nothing to update.
 	effectifEntFile := batchFiles.GetEffectifEntFile()
@@ -152,7 +152,7 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 		return nil
 	}
 
-	// Guard clause 2: Check if filter has been explicitely provided in the batch
+	// Guard clause 2: CheckIFilterRequirementsAreMet if filter has been explicitly provided in the batch
 	// In this case, we do not update the filter state.
 	filterFile := batchFiles.GetFilterFile()
 	filterIsExplicit := (filterFile != nil)
@@ -170,8 +170,8 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 
 	slog.Info("update filter...")
 
-	// Create the filter
-	sirenFilter, err := Create(
+	// CreateFilter the filter
+	sirenFilter, err := CreateFilter(
 		effectifEntFile,
 		DefaultNbMois,
 		DefaultMinEffectif,

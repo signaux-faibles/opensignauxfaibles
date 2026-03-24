@@ -28,7 +28,7 @@ func TestCreateFilter(t *testing.T) {
 		var cmdOutput bytes.Buffer
 		var cmdError = *bytes.NewBufferString("") // default: no error
 
-		filter, err := Create(engine.NewBatchFile("testData/test_data.csv"), DefaultNbMois, DefaultMinEffectif)
+		filter, err := CreateFilter(engine.NewBatchFile("testData/test_data.csv"), DefaultNbMois, DefaultMinEffectif)
 		if err != nil {
 			cmdError = *bytes.NewBufferString(err.Error())
 		} else {
@@ -284,7 +284,7 @@ func TestCheck(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := Check(tc.filterReader, tc.batchFiles)
+			err := CheckIFilterRequirementsAreMet(tc.filterReader, tc.batchFiles)
 
 			if tc.expectError {
 				assert.Error(t, err)
@@ -338,7 +338,7 @@ func TestUpdateState(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			mockFilterWriter := &MemoryFilterWriter{}
-			err := UpdateState(mockFilterWriter, tc.batchFiles)
+			err := UpdateFilter(mockFilterWriter, tc.batchFiles)
 			assert.NoError(t, err)
 
 			if tc.expectWrite {
