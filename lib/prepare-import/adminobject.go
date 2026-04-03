@@ -21,7 +21,7 @@ func populateParamProperty(batchKey engine.BatchKey) engine.AdminBatchParams {
 	month, _ := strconv.Atoi(batchKey.String()[2:4])
 	dateFin := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 	return engine.AdminBatchParams{
-		DateDebut: dateFin.AddDate(-5, 0, 0), // 5 ans avant DateFin
+		DateDebut: dateFin.AddDate(-10, 0, 0), // 10 ans avant DateFin
 		DateFin:   dateFin,
 	}
 }
