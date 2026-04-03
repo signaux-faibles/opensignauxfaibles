@@ -14,23 +14,23 @@ func TestPopulateParamProperty(t *testing.T) {
 		assert.Equal(t, expected, res.DateFin)
 	})
 
-	t.Run("Should return a date_debut 5 years before date_fin", func(t *testing.T) {
+	t.Run("Should return a date_debut 10 years before date_fin", func(t *testing.T) {
 		res := populateParamProperty(engine.NewSafeBatchKey("2603"))
 		expectedDateFin := makeDayDate(2026, 3, 1)
-		expectedDateDebut := makeDayDate(2021, 3, 1)
+		expectedDateDebut := makeDayDate(2016, 3, 1)
 		assert.Equal(t, expectedDateFin, res.DateFin, "DateFin should match batch key")
-		assert.Equal(t, expectedDateDebut, res.DateDebut, "DateDebut should be 5 years before DateFin")
+		assert.Equal(t, expectedDateDebut, res.DateDebut, "DateDebut should be 10 years before DateFin")
 	})
 
-	t.Run("Should maintain 5 year window for different batch keys", func(t *testing.T) {
+	t.Run("Should maintain 10 year window for different batch keys", func(t *testing.T) {
 		testCases := []struct {
 			batchKey         string
 			expectedDateFin  string
 			expectedDateDebut string
 		}{
-			{"2601", "2026-01-01", "2021-01-01"},
-			{"2512", "2025-12-01", "2020-12-01"},
-			{"2406", "2024-06-01", "2019-06-01"},
+			{"2601", "2026-01-01", "2016-01-01"},
+			{"2512", "2025-12-01", "2015-12-01"},
+			{"2406", "2024-06-01", "2014-06-01"},
 		}
 
 		for _, tc := range testCases {
