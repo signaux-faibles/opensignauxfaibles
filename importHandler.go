@@ -176,11 +176,8 @@ func (params importBatchHandler) Run() error {
 		slog.Info("import logs will be written to stdout")
 		reportSink = &engine.StdoutReportSink{}
 	} else if !params.DryRun {
-		slog.Info("data will be written as CSV and to Postgresql tables")
-		dataSinkFactory = sinks.Combine(
-			sinks.NewCSVSinkFactory(batchKey.String()),
-			sinks.NewPostgresSinkFactory(db.DB),
-		)
+		slog.Info("data will be written to Postgresql tables")
+		dataSinkFactory = sinks.NewPostgresSinkFactory(db.DB)
 
 		slog.Info("import logs will be written to Postgresql")
 		reportSink = engine.NewPostgresReportSink(db.DB)
