@@ -32,7 +32,7 @@ func TestExportEndToEnd(t *testing.T) {
 		assert.Equal(t, 0, exitCode, "sfdata export should succeed")
 	})
 
-	t.Run("Verify exported CSV files", func(t *testing.T) {
+	t.Run("Verify exported parquet files", func(t *testing.T) {
 		verifyExportedFiles(t)
 	})
 
@@ -40,11 +40,11 @@ func TestExportEndToEnd(t *testing.T) {
 }
 
 func verifyExportedFiles(t *testing.T) {
-	t.Log("Verifying exported CSV files from PostgreSQL...")
+	t.Log("Verifying exported parquet files from PostgreSQL...")
 
-	files, err := filepath.Glob(filepath.Join(exportDir, "*.csv"))
+	files, err := filepath.Glob(filepath.Join(exportDir, "*.parquet"))
 	assert.NoError(t, err)
-	assert.NotEmpty(t, files, "Expected at least one exported CSV file")
+	assert.NotEmpty(t, files, "Expected at least one exported parquet file")
 
 	sort.Strings(files)
 
@@ -53,7 +53,7 @@ func verifyExportedFiles(t *testing.T) {
 		assert.NoError(t, err)
 
 		baseName := filepath.Base(file)
-		viewName := strings.TrimSuffix(baseName, ".csv")
+		viewName := strings.TrimSuffix(baseName, ".parquet")
 
 		goldenFile := "test-export." + viewName + ".golden.txt"
 		tmpOutputFile := "test-export." + viewName + ".output.txt"

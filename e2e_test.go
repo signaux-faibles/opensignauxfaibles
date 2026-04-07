@@ -34,7 +34,7 @@ type TestSuite struct {
 var suite *TestSuite
 
 const (
-	pgImage     = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
+	pgImage     = "ghcr.io/signaux-faibles/conteneurs/postgresql-pgparquet:v"
 	pgContainer = "test-postgres"
 	pgPort      = 5432
 	pgDatabase  = "testdb"
