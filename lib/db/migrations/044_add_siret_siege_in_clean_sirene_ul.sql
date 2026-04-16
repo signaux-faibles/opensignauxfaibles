@@ -27,13 +27,17 @@ SELECT
     naf.niv1 AS naf_section,
     naf.niv1_libelle AS libelle_naf_section,
     siege.departement,
-    siege.siret AS siret_siege,
+    siege.siret as siret_siege,
+    ldr.libelle_departement,
+    ldr.region,
+    ldr.libelle_region,
     s.creation,
     s.est_actif
 FROM stg_sirene_ul s
          LEFT JOIN naf_codes naf ON s.activite_principale = naf.niv5
          LEFT JOIN categories_juridiques sj ON s.categorie_juridique = sj.code
-         LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true;
+         LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true
+         LEFT JOIN labels_departement_region ldr ON siege.departement = ldr.departement;
 
 ---- create above / drop below ----
 
@@ -66,9 +70,13 @@ SELECT
     naf.niv1 AS naf_section,
     naf.niv1_libelle AS libelle_naf_section,
     siege.departement,
+    ldr.libelle_departement,
+    ldr.region,
+    ldr.libelle_region,
     s.creation,
     s.est_actif
 FROM stg_sirene_ul s
          LEFT JOIN naf_codes naf ON s.activite_principale = naf.niv5
          LEFT JOIN categories_juridiques sj ON s.categorie_juridique = sj.code
-         LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true;
+         LEFT JOIN stg_sirene siege ON s.siren = siege.siren AND siege.siege = true
+         LEFT JOIN labels_departement_region ldr ON siege.departement = ldr.departement;
