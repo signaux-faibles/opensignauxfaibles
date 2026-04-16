@@ -12,7 +12,7 @@ RETURNS TABLE(siren VARCHAR(9), date_effet DATE, action_procol TEXT, stade_proco
   WITH last_action_procol AS (
     SELECT DISTINCT ON (siren, action_procol)
       siren, date_effet, action_procol, stade_procol, libelle_procol
-    FROM clean_procol
+    FROM sfdata.clean_procol
     WHERE date_effet <= date_param
     ORDER BY siren, action_procol, date_effet DESC
   )
@@ -44,7 +44,7 @@ WITH periodes AS (
   )::date AS periode
 ),
 sirens_procol AS (
-  SELECT DISTINCT siren FROM clean_procol
+  SELECT DISTINCT siren FROM sfdata.clean_procol
 ),
 -- Call procol_at_date once per period (not once per siren×period)
 active_procol_by_periode AS (
