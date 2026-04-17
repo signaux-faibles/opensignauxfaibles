@@ -14,12 +14,10 @@
 // the "clean_..." layers.
 //
 // The package provides functions to:
-// - CreateFilter filters from effectif_ent files based on configurable criteria
-// - CheckIFilterRequirementsAreMet if valid filtering conditions are met before import
+// - CreateFilter: generate filters from effectif_ent files based on configurable criteria
+// - CheckFilterExists: verify that a filter is available before import
 // - Read filters from multiple sources (files, database). Filters provided as
 // an explicit file have precedence over the database stored filter.
-// - Update filter state in the database when appropriate (effectif_ent file
-// is present, and no explicit filter has been provided in the batch).
 package filter
 
 import (
@@ -65,7 +63,7 @@ var effColRegex = regexp.MustCompile(`^eff[0-9]+$`)
 // sirenColumn is the name of the column that holds the SIREN number
 const sirenColumn = "siren"
 
-// CreateFilter writes a SirenFilter from the provided effectif_ent file.
+// CreateFilter generates a "filter" from an "effectif_ent" file.
 func CreateFilter(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
 	extractor, err := newEffectifDataExtractor(effectifEntFile)
 	if err != nil {
@@ -100,35 +98,24 @@ func CreateFilter(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (en
 	return mapFilter, nil
 }
 
-// CheckIFilterRequirementsAreMet checks whether the conditions for filtering are met, as we
-// do not want to import all data by accident.
+// CheckFilterExists checks whether a filter can be read from the provided reader.
+// This is used to ensure that data is not imported without filtering by accident.
 //
-// It checks whether :
-// - a  non-empty filter can be read from the provided reader
-// - OR an "effectif_ent" file is provided.
-//
-// If a nil interface is provided fails.
+// If a nil interface is provided, it fails.
 // Note however that a nil *Reader pointer is properly handled and accepted.
-func CheckIFilterRequirementsAreMet(r Reader, batchFiles engine.BatchFiles) error {
-	var err error
-
-	effectifEntFile := batchFiles.GetEffectifEntFile()
-
+func CheckFilterExists(r Reader) error {
 	if r == nil {
-		return errors.New("please provide a supported filter : nil interface is not supported")
+		return errors.New("please provide a supported filter : nil interface is not supported")
 	}
 
 	// check if a filter can be read
-	_, err = r.Read()
+	_, err := r.Read()
 
-	validFiltering := (err == nil || effectifEntFile != nil)
-
-	if !validFiltering {
-		return errors.New("filter is missing: a filter or one effectif_ent file should be provided")
-	} else {
-		slog.Debug("filter can be retrieved or created from effectif_ent file")
+	if err != nil {
+		return errors.New("filter is missing: run \"computePerimeter\" first, or provide an explicit filter file")
 	}
 
+	slog.Debug("filter can be retrieved")
 	return nil
 }
 

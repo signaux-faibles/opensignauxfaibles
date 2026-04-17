@@ -4,34 +4,25 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+
 	"opensignauxfaibles/lib/engine"
 )
 
-// StandardFilterResolver performs full filter resolution with CheckIFilterRequirementsAreMet, Update, and Read.
-// It orchestrates the complete filter lifecycle: checking requirements, updating state
-// based on effectif files, and loading the final filter.
+// StandardFilterResolver reads an existing filter from the database or batch files.
+// It does NOT compute or update the perimeter — use the "computePerimeter" command for that.
 type StandardFilterResolver struct {
 	Reader Reader
-	Writer Writer
 }
 
 // Resolve implements engine.FilterResolver.
-// It performs the complete filter resolution workflow:
-// 1. CheckIFilterRequirementsAreMet (filter exists or effectif file present)
-// 2. Update filter state in database if appropriate (effectif file provided, no explicit filter)
-// 3. Read and return the final SirenFilter
+// It checks that a filter exists, then reads and returns it.
 func (r *StandardFilterResolver) Resolve(files engine.BatchFiles) (engine.SirenFilter, error) {
 	slog.Info("resolving filter...")
 
-	if err := CheckIFilterRequirementsAreMet(r.Reader, files); err != nil {
+	if err := CheckFilterExists(r.Reader); err != nil {
 		return nil, fmt.Errorf("filter check failed: %w", err)
 	}
-	slog.Debug("filter check passed: conditions are met for filtering input data")
-
-	// Update filter state if needed
-	if err := UpdateFilter(r.Writer, files); err != nil {
-		return nil, fmt.Errorf("filter update failed: %w", err)
-	}
+	slog.Debug("filter check passed: a filter is available")
 
 	// Read the filter
 	sirenFilter, err := r.Reader.Read()
@@ -40,8 +31,8 @@ func (r *StandardFilterResolver) Resolve(files engine.BatchFiles) (engine.SirenF
 	}
 	if sirenFilter == nil {
 		return nil, errors.New(`filter is required but missing.
-When the filter is missing, it must be initialized by importing an 'effectif' file,
-or by placing a filter file (prefixed with 'filter_') in the data import directory.
+Run "computePerimeter" to compute the perimeter from an effectif_ent file,
+or place a filter file (prefixed with 'filter_') in the data import directory.
 If you wish to import without a filter, use the "--no-filter" option`)
 	}
 

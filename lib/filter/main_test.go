@@ -213,10 +213,7 @@ func TestGuessLastNonMissing(t *testing.T) {
 	}
 }
 
-func TestCheck(t *testing.T) {
-	// Helper to read test effectif data
-	effectifData := readTestData(t, "testData/test_data.csv")
-
+func TestCheckFilterExists(t *testing.T) {
 	// Mock readers
 	validFilterReader := &MemoryFilterReader{Filter: engine.NoFilter}
 	invalidFilterReader := &MemoryFilterReader{Filter: nil}
@@ -226,57 +223,28 @@ func TestCheck(t *testing.T) {
 
 	testCases := []struct {
 		name         string
-		batchFiles   engine.BatchFiles
 		filterReader Reader
 		expectError  bool
 	}{
 		{
-			"Filtre valide explicitement fourni par l'utilisateur -> OK",
-			engine.BatchFiles{
-				"filter": []engine.BatchFile{engine.NewMockBatchFile("")},
-			},
+			"Filtre valide en base -> OK",
 			validFilterReader,
 			false,
 		},
 		{
-			"Fichier effectif valide -> OK",
-			engine.BatchFiles{
-				"effectif_ent": []engine.BatchFile{engine.NewMockBatchFile(effectifData)},
-			},
-			invalidFilterReader,
-			false,
-		},
-		{
-			"Pas de fichier filtre ou effectif ou filtre en base -> NOK",
-			engine.BatchFiles{
-				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
-			},
+			"Pas de filtre disponible -> NOK",
 			invalidFilterReader,
 			true,
 		},
 		{
-			"Pas de fichier filtre ou effectif mais filtre en base -> OK",
-			engine.BatchFiles{
-				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
-			},
-			validFilterReader,
-			false,
-		},
-		{
 			// Si r = nil.(*Reader), r.Read() retourne NoFilter
 			"Pointeur de Reader nil -> OK",
-			engine.BatchFiles{
-				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
-			},
 			nilPointerReader,
 			false,
 		},
 		{
 			// Si r = nil.(engine.FilterReader), r.Read() est illicite
 			"Pointeur d'interface nil -> NOK",
-			engine.BatchFiles{
-				"debits": []engine.BatchFile{engine.NewMockBatchFile("")},
-			},
 			nilInterfaceReader,
 			true,
 		},
@@ -284,7 +252,7 @@ func TestCheck(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := CheckIFilterRequirementsAreMet(tc.filterReader, tc.batchFiles)
+			err := CheckFilterExists(tc.filterReader)
 
 			if tc.expectError {
 				assert.Error(t, err)
