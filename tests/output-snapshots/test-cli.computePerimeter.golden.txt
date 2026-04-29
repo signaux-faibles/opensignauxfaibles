@@ -1,0 +1,24 @@
+$ ./sfdata computePerimeter --help
+Compute import perimeter from effectif_ent file
+
+Usage: computePerimeter [FLAG]...
+
+Description:
+    Computes the SIREN import perimeter from an effectif_ent file and stores it
+    in the database (table "stg_filter_import").
+    
+    This command should be run before importing data, so that the import can
+    filter input data based on the computed perimeter.
+    
+    The effectif_ent file is resolved from the batch configuration (explicit or
+    inferred from filenames in the data directory).
+
+Flags:
+    --path                   (type: string; env: APP_DATA)
+                         Directory where raw data can be found. If the batch is not explicitly defined via "--batch-config", then it is expected to be in a subfolder named after the batchkey provided with "--batch"
+    --batch batch_key        (type: string)
+                         Batch identifier (e.g., 1802 for February 2018)
+    --batch-config           (type: string; env: BATCH_CONFIG_FILE)
+                         Path to batch definition file. If not provided, files are inferred from their naming in the data directory.
+
+---

@@ -48,6 +48,18 @@ func TestCLI(t *testing.T) {
 			"test-cli.parseFile.golden.txt",
 			"test-cli.parseFile.output.txt",
 		},
+		{
+			"sfdata computePerimeter --help",
+			[]string{"computePerimeter", "--help"},
+			"test-cli.computePerimeter.golden.txt",
+			"test-cli.computePerimeter.output.txt",
+		},
+		{
+			"sfdata export --help",
+			[]string{"export", "--help"},
+			"test-cli.export.golden.txt",
+			"test-cli.export.output.txt",
+		},
 	}
 
 	for _, tc := range testCases {
