@@ -69,8 +69,11 @@ func TestCLI(t *testing.T) {
 			var output bytes.Buffer
 			output.WriteString(fmt.Sprintf("$ %s\n", cmdStr))
 
-			if stdout.Len() > 0 {
-				output.WriteString(stdout.String())
+			// Filter out log lines (containing timestamps) for reproducible output
+			for _, line := range strings.Split(stdout.String(), "\n") {
+				if !strings.HasPrefix(line, "time=") {
+					output.WriteString(line + "\n")
+				}
 			}
 
 			output.WriteString("---\n")

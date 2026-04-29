@@ -1,4 +1,4 @@
 $ ./sfdata 
-time=2026-04-29T17:34:31.138+02:00 level=ERROR msg="unrecognized command" app.sha1=9f08343e2721ce77d09ac678b59f3b3410cb6acf args=[./sfdata]
 Unrecognized command. Use ./sfdata --help to list available commands.
+
 ---
