@@ -23,9 +23,9 @@ Description:
       1. Explicitly provided filter (in batch configuration or "filter_..." file)
       2. Filter stored in database (table "stg_filter_import")
     
-    If an "effectif" file is provided, the filter will be updated (or created if none
-    exists). If no filter is available and no effectif file is provided, the import
-    will fail, unless the "--no-filter" flag is provided.
+    The perimeter must be computed beforehand using the "computePerimeter" command.
+    If no filter is available, the import will fail, unless the "--no-filter" flag
+    is provided.
     
     OUTPUT:
     The cleaned data is sent to two sinks:

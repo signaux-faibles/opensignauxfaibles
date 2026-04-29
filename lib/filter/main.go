@@ -28,7 +28,6 @@ import (
 	"log"
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
-	"path/filepath"
 	"regexp"
 	"strconv"
 
