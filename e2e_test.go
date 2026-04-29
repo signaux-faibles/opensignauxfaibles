@@ -72,7 +72,7 @@ func setupSuite() (*TestSuite, error) {
 	startPostgresContainer()
 
 	postgresURI := fmt.Sprintf(
-		"postgres://%s:%s@localhost:%v/%s?sslmode=disable",
+		"postgres://%s:%s@localhost:%v/%s?sslmode=disable&search_path=sfdata",
 		pgUser,
 		pgPassword,
 		pgPort,
@@ -111,6 +111,17 @@ func setupSuite() (*TestSuite, error) {
 	}
 
 	time.Sleep(3 * time.Second)
+
+	// Create the sfdata schema (matching production setup)
+	createSchemaCmd := exec.Command(
+		"docker", "exec", pgContainer,
+		"psql", "-U", pgUser, "-d", pgDatabase,
+		"-c", "CREATE SCHEMA IF NOT EXISTS sfdata; GRANT ALL ON SCHEMA sfdata TO "+pgUser+";",
+	)
+	if out, err := createSchemaCmd.CombinedOutput(); err != nil {
+		log.Fatalf("Failed to create sfdata schema: %v\nOutput: %s", err, string(out))
+	}
+
 	return &TestSuite{
 		TmpDir:         tmpDir,
 		PostgresURI:    postgresURI,

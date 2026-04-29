@@ -227,7 +227,7 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, query string) string {
 func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 	query := `SELECT tablename
   FROM pg_catalog.pg_tables
-  WHERE schemaname = 'public'
+  WHERE schemaname = 'sfdata'
   `
 
 	rows, err := conn.Query(context.Background(), query)

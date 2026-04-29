@@ -11,7 +11,7 @@ BEGIN
   WITH last_action_procol AS (
     SELECT DISTINCT ON (cp.siren, cp.action_procol)
       cp.siren::VARCHAR(9), cp.date_effet, cp.action_procol, cp.stade_procol, cp.libelle_procol
-    FROM public.clean_procol cp
+    FROM sfdata.clean_procol cp
     WHERE cp.date_effet <= date_param
     ORDER BY cp.siren, cp.action_procol, cp.date_effet DESC
   )
@@ -45,7 +45,7 @@ BEGIN
   WITH last_action_procol AS (
     SELECT DISTINCT ON (cp.siren, cp.action_procol)
       cp.siren, cp.date_effet, cp.action_procol, cp.stade_procol
-    FROM public.clean_procol cp
+    FROM sfdata.clean_procol cp
     WHERE cp.date_effet <= date_param
     ORDER BY cp.siren, cp.action_procol, cp.date_effet DESC
   )

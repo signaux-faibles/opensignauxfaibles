@@ -13,7 +13,7 @@ WITH periodes AS (
   )::date AS periode
 ),
 sirens_procol AS (
-  SELECT DISTINCT siren FROM public.clean_procol
+  SELECT DISTINCT siren FROM sfdata.clean_procol
 ),
 active_procol_by_periode AS (
   SELECT p.periode, pad.siren, pad.date_effet, pad.action_procol, pad.stade_procol, pad.libelle_procol
