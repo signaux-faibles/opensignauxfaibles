@@ -14,12 +14,10 @@
 // the "clean_..." layers.
 //
 // The package provides functions to:
-// - Create filters from effectif_ent files based on configurable criteria
-// - Check if valid filtering conditions are met before import
+// - CreateFilter: generate filters from effectif_ent files based on configurable criteria
+// - CheckFilterExists: verify that a filter is available before import
 // - Read filters from multiple sources (files, database). Filters provided as
 // an explicit file have precedence over the database stored filter.
-// - Update filter state in the database when appropriate (effectif_ent file
-// is present, and no explicit filter has been provided in the batch).
 package filter
 
 import (
@@ -30,7 +28,6 @@ import (
 	"log"
 	"log/slog"
 	"opensignauxfaibles/lib/engine"
-	"path/filepath"
 	"regexp"
 	"strconv"
 
@@ -65,8 +62,8 @@ var effColRegex = regexp.MustCompile(`^eff[0-9]+$`)
 // sirenColumn is the name of the column that holds the SIREN number
 const sirenColumn = "siren"
 
-// Create writes a SirenFilter from the provided effectif_ent file.
-func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
+// CreateFilter generates a "filter" from an "effectif_ent" file.
+func CreateFilter(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.SirenFilter, error) {
 	extractor, err := newEffectifDataExtractor(effectifEntFile)
 	if err != nil {
 		return nil, err
@@ -80,12 +77,12 @@ func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.S
 	// Generate detailed filter report
 	batchKey := viper.GetString("batch")
 	if batchKey != "" {
-		// Use export.path from config, or default to /export/csv
-		rootDir := "/export/csv"
+		// Use export.path from config, or default to /export
+		rootDir := "/export"
 		if viper.IsSet("export.path") {
 			rootDir = viper.GetString("export.path")
 		}
-		exportPath := filepath.Join(rootDir, batchKey)
+		exportPath := rootDir + "_" + batchKey
 		if err := generateFilterReport(stats, exportPath); err != nil {
 			slog.Warn("failed to generate filter report", "error", err)
 		}
@@ -100,49 +97,38 @@ func Create(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (engine.S
 	return mapFilter, nil
 }
 
-// Check checks whether the conditions for filtering are met, as we
-// do not want to import all data by accident.
+// CheckFilterExists checks whether a filter can be read from the provided reader.
+// This is used to ensure that data is not imported without filtering by accident.
 //
-// It checks whether :
-// - a  non-empty filter can be read from the provided reader
-// - OR an "effectif_ent" file is provided.
-//
-// If a nil interface is provided fails.
+// If a nil interface is provided, it fails.
 // Note however that a nil *Reader pointer is properly handled and accepted.
-func Check(r Reader, batchFiles engine.BatchFiles) error {
-	var err error
-
-	effectifEntFile := batchFiles.GetEffectifEntFile()
-
+func CheckFilterExists(r Reader) error {
 	if r == nil {
-		return errors.New("please provide a supported filter : nil interface is not supported")
+		return errors.New("please provide a supported filter : nil interface is not supported")
 	}
 
 	// check if a filter can be read
-	_, err = r.Read()
+	_, err := r.Read()
 
-	validFiltering := (err == nil || effectifEntFile != nil)
-
-	if !validFiltering {
-		return errors.New("filter is missing: a filter or one effectif_ent file should be provided")
-	} else {
-		slog.Debug("filter can be retrieved or created from effectif_ent file")
+	if err != nil {
+		return errors.New("filter is missing: run \"computePerimeter\" first, or provide an explicit filter file")
 	}
 
+	slog.Debug("filter can be retrieved")
 	return nil
 }
 
-// UpdateState udpates (or creates) the filter if appropriate.
+// UpdateFilter udpates (or creates) the filter if appropriate.
 // Providing a `nil` writer will result in no update.
 //
-// It updates (or creates if none exists) the filter if the following conditions are met :
+// It updates (or creates if none exists) the filter if the following conditions are met :
 // - An "effectif" file is provided
-// - AND the filter is not explicitely provided in the batchfile
+// - AND the filter is not explicitly provided in the batchfile
 //
 // The rationale behind this last point is that a user-provided filter is
 // usually used solely for tests and should not affect the saved perimeter in
 // the database.
-func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
+func UpdateFilter(w Writer, batchFiles engine.BatchFiles) error {
 	// Guard clause 1: the import filter is based uniquely on the effectif_ent file.
 	// If no effectif_ent file is provided, there is nothing to update.
 	effectifEntFile := batchFiles.GetEffectifEntFile()
@@ -152,7 +138,7 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 		return nil
 	}
 
-	// Guard clause 2: Check if filter has been explicitely provided in the batch
+	// Guard clause 2: CheckIFilterRequirementsAreMet if filter has been explicitly provided in the batch
 	// In this case, we do not update the filter state.
 	filterFile := batchFiles.GetFilterFile()
 	filterIsExplicit := (filterFile != nil)
@@ -170,8 +156,8 @@ func UpdateState(w Writer, batchFiles engine.BatchFiles) error {
 
 	slog.Info("update filter...")
 
-	// Create the filter
-	sirenFilter, err := Create(
+	// CreateFilter the filter
+	sirenFilter, err := CreateFilter(
 		effectifEntFile,
 		DefaultNbMois,
 		DefaultMinEffectif,

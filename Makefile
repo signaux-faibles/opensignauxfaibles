@@ -22,7 +22,9 @@ start-postgres: ## Run a postgres container for tests
     -e POSTGRES_USER=testuser \
     -e POSTGRES_PASSWORD=testpass \
     -p 5432:5432 \
-    -d postgres:17
+    -d ghcr.io/signaux-faibles/conteneurs/postgresql-pgparquet:v17
+	@sleep 2
+	@docker exec test-postgres psql -U testuser -d testdb -c "CREATE SCHEMA IF NOT EXISTS sfdata; GRANT ALL ON SCHEMA sfdata TO testuser;"
 
 stop-postgres: ## Stop the postgrescontainer. All data will be lost
 	@docker stop test-postgres

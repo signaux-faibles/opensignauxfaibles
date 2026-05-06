@@ -16,6 +16,13 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+// ViewsToExport returns the list of views that are exported
+func ViewsToExport() []string {
+	result := make([]string, len(viewsToExport))
+	copy(result, viewsToExport)
+	return result
+}
+
 var viewsToExport = []string{
 	db.ViewSireneHisto,
 	db.ViewEffectifEnt,

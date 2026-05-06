@@ -51,9 +51,9 @@ func (params importBatchHandler) Documentation() flag.Flag {
       1. Explicitly provided filter (in batch configuration or "filter_..." file)
       2. Filter stored in database (table "stg_filter_import")
 
-    If an "effectif" file is provided, the filter will be updated (or created if none
-    exists). If no filter is available and no effectif file is provided, the import
-    will fail, unless the "--no-filter" flag is provided.
+    The perimeter must be computed beforehand using the "computePerimeter" command.
+    If no filter is available, the import will fail, unless the "--no-filter" flag
+    is provided.
 
     OUTPUT:
     The cleaned data is sent to two sinks:
@@ -198,13 +198,8 @@ func (params importBatchHandler) Run() error {
 		filterResolver = &filter.NoFilterResolver{}
 	} else {
 		reader := &filter.StandardReader{Batch: &batch, DB: db.DB}
-		var writer filter.Writer
-		if !params.DryRun && !params.CsvOnly {
-			writer = &filter.DBWriter{DB: db.DB}
-		}
 		filterResolver = &filter.StandardFilterResolver{
 			Reader: reader,
-			Writer: writer,
 		}
 	}
 

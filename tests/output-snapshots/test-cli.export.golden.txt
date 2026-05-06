@@ -1,0 +1,13 @@
+$ ./sfdata export --help
+Export DB data for data science
+
+Usage: export [FLAG]...
+
+Description:
+    Exports all cleaned views to files.
+
+Flags:
+    --path        (type: string; env: EXPORT_DIR)
+              Directory to export to
+
+---

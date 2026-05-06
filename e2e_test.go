@@ -34,7 +34,7 @@ type TestSuite struct {
 var suite *TestSuite
 
 const (
-	pgImage     = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
+	pgImage     = "ghcr.io/signaux-faibles/conteneurs/postgresql-pgparquet:v17"
 	pgContainer = "test-postgres"
 	pgPort      = 5432
 	pgDatabase  = "testdb"
@@ -72,7 +72,7 @@ func setupSuite() (*TestSuite, error) {
 	startPostgresContainer()
 
 	postgresURI := fmt.Sprintf(
-		"postgres://%s:%s@localhost:%v/%s?sslmode=disable",
+		"postgres://%s:%s@localhost:%v/%s?sslmode=disable&search_path=sfdata",
 		pgUser,
 		pgPassword,
 		pgPort,
@@ -111,6 +111,17 @@ func setupSuite() (*TestSuite, error) {
 	}
 
 	time.Sleep(3 * time.Second)
+
+	// Create the sfdata schema (matching production setup)
+	createSchemaCmd := exec.Command(
+		"docker", "exec", pgContainer,
+		"psql", "-U", pgUser, "-d", pgDatabase,
+		"-c", "CREATE SCHEMA IF NOT EXISTS sfdata; GRANT ALL ON SCHEMA sfdata TO "+pgUser+";",
+	)
+	if out, err := createSchemaCmd.CombinedOutput(); err != nil {
+		log.Fatalf("Failed to create sfdata schema: %v\nOutput: %s", err, string(out))
+	}
+
 	return &TestSuite{
 		TmpDir:         tmpDir,
 		PostgresURI:    postgresURI,

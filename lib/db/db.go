@@ -4,7 +4,7 @@
 // It also defines all tables and views in the form of
 // migrations.
 //
-// The database has a two-layer architecture :
+// The database has a two-layer architecture :
 // - Tables prefixed with `stg_` represent imported data, relatively raw
 // (although a number of quality operations are already
 // performed at import time).
@@ -85,7 +85,7 @@ func Init(shouldMigrate bool) error {
 
 func InitMock() {
 
-	slog.Info("NO DB mode : no reading from and writing to the database")
+	slog.Info("NO DB mode : no reading from and writing to the database")
 	mockPool, _ := pgxmock.NewPool()
 
 	DB = mockPool
