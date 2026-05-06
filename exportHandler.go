@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"opensignauxfaibles/lib/db"
@@ -14,6 +15,7 @@ var _ commandHandler = exportHandler{}
 type exportHandler struct {
 	Enable bool   // set to true by cosiner/flag if the user is running this command
 	Path   string `names:"--path" env:"EXPORT_DIR" desc:"Directory to export to"`
+	Schema string `names:"--schema" desc:"PostgreSQL schema to use (allows running multiple pipelines in parallel on different schemas)"`
 }
 
 func (params exportHandler) Documentation() flag.Flag {
@@ -33,7 +35,7 @@ func (params exportHandler) Run() error {
 	slog.Info("executing export command")
 
 	shouldMigrate := false
-	err := db.Init(shouldMigrate)
+	err := db.Init(params.Schema, shouldMigrate)
 	if err != nil {
 		return fmt.Errorf("error while connecting to db: %w", err)
 	}
@@ -42,5 +44,8 @@ func (params exportHandler) Run() error {
 }
 
 func (params exportHandler) Validate() error {
+	if params.Schema == "" {
+		return errors.New("`schema` parameter is required (use --schema flag)")
+	}
 	return nil
 }

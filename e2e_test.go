@@ -71,13 +71,18 @@ func setupSuite() (*TestSuite, error) {
 	log.Println("  Setting up Postgresql")
 	startPostgresContainer()
 
-	postgresURI := fmt.Sprintf(
-		"postgres://%s:%s@localhost:%v/%s?sslmode=disable&search_path=sfdata",
+	const schema = "sfdata"
+
+	postgresBaseURI := fmt.Sprintf(
+		"postgres://%s:%s@localhost:%v/%s?sslmode=disable",
 		pgUser,
 		pgPassword,
 		pgPort,
 		pgDatabase,
 	)
+
+	// URI with search_path for direct test connections (assertions, cleanup)
+	postgresURI := postgresBaseURI + "&search_path=" + schema
 
 	log.Println("  Setting up configuration")
 
@@ -86,7 +91,7 @@ func setupSuite() (*TestSuite, error) {
 	os.Setenv("APP_DATA", ".")
 	os.Setenv("BATCH_CONFIG_FILE", path.Join(tmpDir, "batch.json"))
 	os.Setenv("EXPORT_PATH", tmpDir)
-	os.Setenv("POSTGRES_DB_URL", postgresURI)
+	os.Setenv("POSTGRES_DB_URL", postgresBaseURI)
 
 	// Allow to set a different log level with LOG_LEVEL environment variable
 	// This may break the tests, which expect an "error" log level,
@@ -112,16 +117,6 @@ func setupSuite() (*TestSuite, error) {
 
 	time.Sleep(3 * time.Second)
 
-	// Create the sfdata schema (matching production setup)
-	createSchemaCmd := exec.Command(
-		"docker", "exec", pgContainer,
-		"psql", "-U", pgUser, "-d", pgDatabase,
-		"-c", "CREATE SCHEMA IF NOT EXISTS sfdata; GRANT ALL ON SCHEMA sfdata TO "+pgUser+";",
-	)
-	if out, err := createSchemaCmd.CombinedOutput(); err != nil {
-		log.Fatalf("Failed to create sfdata schema: %v\nOutput: %s", err, string(out))
-	}
-
 	return &TestSuite{
 		TmpDir:         tmpDir,
 		PostgresURI:    postgresURI,
@@ -134,11 +129,10 @@ func setupSuite() (*TestSuite, error) {
 func setupDBTest(t *testing.T) func() {
 	t.Helper()
 
-	// Initialize db.DB if not already done, with migrations
-	if db.DB == nil {
-		err := db.Init(true)
-		assert.NoError(t, err)
-	}
+	// Initialize db.DB with migrations.
+	// Always reinitialize because a previous runCLI call may have closed the pool.
+	err := db.Init("sfdata", true)
+	assert.NoError(t, err)
 
 	postgresURI := suite.PostgresURI
 

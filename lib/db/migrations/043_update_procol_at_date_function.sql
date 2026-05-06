@@ -5,13 +5,16 @@
 DROP FUNCTION IF EXISTS procol_at_date;
 
 CREATE OR REPLACE FUNCTION procol_at_date(date_param date)
-RETURNS TABLE(siren VARCHAR(9), date_effet DATE, action_procol TEXT, stade_procol TEXT, libelle_procol TEXT) AS $$
+RETURNS TABLE(siren VARCHAR(9), date_effet DATE, action_procol TEXT, stade_procol TEXT, libelle_procol TEXT)
+LANGUAGE plpgsql
+SET search_path FROM CURRENT
+AS $$
 BEGIN
   RETURN QUERY
   WITH last_action_procol AS (
     SELECT DISTINCT ON (cp.siren, cp.action_procol)
       cp.siren::VARCHAR(9), cp.date_effet, cp.action_procol, cp.stade_procol, cp.libelle_procol
-    FROM sfdata.clean_procol cp
+    FROM clean_procol cp
     WHERE cp.date_effet <= date_param
     ORDER BY cp.siren, cp.action_procol, cp.date_effet DESC
   )
@@ -29,7 +32,7 @@ BEGIN
       ELSE 4
     END;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 COMMENT ON FUNCTION procol_at_date (date) IS 'Returns one row per entreprise with an active procédure collective on a given date, choosing the most severe proceeding in case of conflict (liquidation > redressement > sauvegarde). Completed proceedings are excluded (action_procol = "fin_procedure" or "inclusion_autre_procedure").';
 
@@ -39,13 +42,16 @@ DROP FUNCTION IF EXISTS procol_at_date;
 
 -- Restore previous procol_at_date (migration 022 / 029: multiple rows per siren, no libelle_procol)
 CREATE OR REPLACE FUNCTION procol_at_date(date_param date)
-RETURNS TABLE(siren VARCHAR(9), date_effet DATE, action_procol TEXT, stade_procol TEXT) AS $$
+RETURNS TABLE(siren VARCHAR(9), date_effet DATE, action_procol TEXT, stade_procol TEXT)
+LANGUAGE plpgsql
+SET search_path FROM CURRENT
+AS $$
 BEGIN
   RETURN QUERY
   WITH last_action_procol AS (
     SELECT DISTINCT ON (cp.siren, cp.action_procol)
       cp.siren, cp.date_effet, cp.action_procol, cp.stade_procol
-    FROM sfdata.clean_procol cp
+    FROM clean_procol cp
     WHERE cp.date_effet <= date_param
     ORDER BY cp.siren, cp.action_procol, cp.date_effet DESC
   )
@@ -53,6 +59,6 @@ BEGIN
   FROM last_action_procol lap
   WHERE lap.action_procol != 'fin_procedure' AND lap.action_procol != 'inclusion_autre_procedure';
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 COMMENT ON FUNCTION procol_at_date (date) IS 'Returns entreprises that have a procédure collective in progress on a given date. A single entreprise may have several simultaneous proceedings. Completed proceedings are not counted (action_procol = "fin_procedure" or action_procol = "inclusion_autre_procedure") — closed entreprises are nevertheless displayed.';

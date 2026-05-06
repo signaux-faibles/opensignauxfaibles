@@ -24,7 +24,7 @@ func TestExportEndToEnd(t *testing.T) {
 
 	// First, import test data so clean views have content
 	createImportTestBatch(t)
-	exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter")
+	exitCode := runCLI("sfdata", "import", "--schema", "sfdata", "--batch", "1910", "--no-filter")
 	assert.Equal(t, 0, exitCode, "sfdata import should succeed")
 
 	// Clear any previous export files
@@ -32,7 +32,7 @@ func TestExportEndToEnd(t *testing.T) {
 	os.MkdirAll(exportDir, 0755)
 
 	t.Run("Run export command", func(t *testing.T) {
-		exitCode := runCLI("sfdata", "export", "--path", exportDir)
+		exitCode := runCLI("sfdata", "export", "--schema", "sfdata", "--path", exportDir)
 		assert.Equal(t, 0, exitCode, "sfdata export should succeed")
 	})
 

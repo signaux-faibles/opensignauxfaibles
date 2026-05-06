@@ -7,7 +7,9 @@ Description:
     Exports all cleaned views to files.
 
 Flags:
-    --path        (type: string; env: EXPORT_DIR)
-              Directory to export to
+    --path          (type: string; env: EXPORT_DIR)
+                Directory to export to
+    --schema        (type: string)
+                PostgreSQL schema to use (allows running multiple pipelines in parallel on different schemas)
 
 ---

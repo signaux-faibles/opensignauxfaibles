@@ -16,6 +16,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -38,7 +39,7 @@ type Pool interface {
 }
 
 // Init set Db global variable to a connection pool
-func Init(shouldMigrate bool) error {
+func Init(schema string, shouldMigrate bool) error {
 
 	connStr := viper.GetString("POSTGRES_DB_URL")
 
@@ -50,12 +51,24 @@ func Init(shouldMigrate bool) error {
 		return err
 	}
 
-	logger := slog.With("host", conf.Host, "port", conf.Port, "database", conf.Database)
+	logger := slog.With("host", conf.Host, "port", conf.Port, "database", conf.Database, "schema", schema)
 	logger.Info("connecting to database...")
 
 	ctx := context.Background()
-	conn, err := pgxpool.New(ctx, viper.GetString("POSTGRES_DB_URL"))
 
+	// Step 1: Create schema using a temporary connection (without search_path)
+	tmpConn, err := pgx.Connect(ctx, connStr)
+	if err != nil {
+		return fmt.Errorf("failed to connect to PostgreSQL: %w", err)
+	}
+	_, err = tmpConn.Exec(ctx, fmt.Sprintf("CREATE SCHEMA IF NOT EXISTS %s", pgx.Identifier{schema}.Sanitize()))
+	tmpConn.Close(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to create schema %q: %w", schema, err)
+	}
+
+	// Step 2: Create the pool with search_path set as a connection parameter.
+	conn, err := pgxpool.New(ctx, appendSearchPath(connStr, schema))
 	if err != nil {
 		return fmt.Errorf("failed to connect to PostgreSQL: %w", err)
 	}
@@ -81,6 +94,14 @@ func Init(shouldMigrate bool) error {
 
 	DB = conn
 	return nil
+}
+
+// appendSearchPath adds search_path to a PostgreSQL connection string.
+func appendSearchPath(connStr string, schema string) string {
+	if strings.Contains(connStr, "?") {
+		return connStr + "&search_path=" + schema
+	}
+	return connStr + "?search_path=" + schema
 }
 
 func InitMock() {

@@ -26,6 +26,7 @@ type importBatchHandler struct {
 	BatchConfigFile string   `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Path to batch definition file. If not provided, files are inferred from their naming in the data directory (defined by \"APP_DATA\" environment variable or --path option."`
 	DryRun          bool     `names:"--dry-run" desc:"Parse files without creating CSV files / database imports. Import report is printed to stdout."`
 	CsvOnly         bool     `names:"--csv-only" desc:"Write data to CSV files only, skip database import. No database connection required when combined with --no-filter."`
+	Schema          string   `names:"--schema" desc:"PostgreSQL schema to use (allows running multiple pipelines in parallel on different schemas)"`
 }
 
 func (params importBatchHandler) Documentation() flag.Flag {
@@ -83,6 +84,9 @@ func (params importBatchHandler) Validate() error {
 	if params.BatchKey == "" {
 		return errors.New("`batch` parameter is required")
 	}
+	if params.Schema == "" {
+		return errors.New("`schema` parameter is required (use --schema flag)")
+	}
 	return nil
 }
 
@@ -95,7 +99,7 @@ func (params importBatchHandler) Run() error {
 	// Initialize database
 	if !params.DryRun && !params.CsvOnly {
 		shouldMigrate := true
-		err := db.Init(shouldMigrate)
+		err := db.Init(params.Schema, shouldMigrate)
 		if err != nil {
 			return fmt.Errorf("error while connecting to db: %w", err)
 		}
@@ -106,7 +110,7 @@ func (params importBatchHandler) Run() error {
 		// We may want to *read* the filter from the database, however, we accept
 		// if the db connection fails and do without (mock the connexion)
 		shouldMigrate := false
-		err := db.Init(shouldMigrate)
+		err := db.Init(params.Schema, shouldMigrate)
 		if err != nil {
 			db.InitMock()
 		}

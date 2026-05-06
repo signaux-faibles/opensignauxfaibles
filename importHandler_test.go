@@ -56,6 +56,7 @@ func TestDryRunWithoutDatabase(t *testing.T) {
 			"import",
 			"--dry-run",
 			"--no-filter",
+			"--schema", "sfdata",
 			"--batch", "1910",
 			"--batch-config", batchConfigPath,
 		)
@@ -69,6 +70,7 @@ func TestDryRunWithoutDatabase(t *testing.T) {
 			"sfdata",
 			"import",
 			"--dry-run",
+			"--schema", "sfdata",
 			"--batch", "1910",
 			"--batch-config", batchConfigPath,
 		)

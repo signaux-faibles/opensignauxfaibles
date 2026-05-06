@@ -20,5 +20,7 @@ Flags:
                          Batch identifier (e.g., 1802 for February 2018)
     --batch-config           (type: string; env: BATCH_CONFIG_FILE)
                          Path to batch definition file. If not provided, files are inferred from their naming in the data directory.
+    --schema                 (type: string)
+                         PostgreSQL schema to use (allows running multiple pipelines in parallel on different schemas)
 
 ---

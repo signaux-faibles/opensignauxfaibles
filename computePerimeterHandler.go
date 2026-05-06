@@ -19,6 +19,7 @@ type computePerimeterHandler struct {
 	Path            string `names:"--path" env:"APP_DATA" desc:"Directory where raw data can be found. If the batch is not explicitly defined via \"--batch-config\", then it is expected to be in a subfolder named after the batchkey provided with \"--batch\""`
 	BatchKey        string `names:"--batch" arglist:"batch_key" desc:"Batch identifier (e.g., 1802 for February 2018)"`
 	BatchConfigFile string `names:"--batch-config" env:"BATCH_CONFIG_FILE" desc:"Path to batch definition file. If not provided, files are inferred from their naming in the data directory."`
+	Schema          string `names:"--schema" desc:"PostgreSQL schema to use (allows running multiple pipelines in parallel on different schemas)"`
 }
 
 func (params computePerimeterHandler) Documentation() flag.Flag {
@@ -45,6 +46,9 @@ func (params computePerimeterHandler) Validate() error {
 	if params.BatchKey == "" {
 		return errors.New("`batch` parameter is required")
 	}
+	if params.Schema == "" {
+		return errors.New("`schema` parameter is required (use --schema flag)")
+	}
 	return nil
 }
 
@@ -52,7 +56,7 @@ func (params computePerimeterHandler) Run() error {
 	slog.Info("executing computePerimeter command")
 
 	shouldMigrate := true
-	err := db.Init(shouldMigrate)
+	err := db.Init(params.Schema, shouldMigrate)
 	if err != nil {
 		return fmt.Errorf("error while connecting to db: %w", err)
 	}

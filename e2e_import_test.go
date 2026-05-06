@@ -26,7 +26,7 @@ func TestImportEndToEnd(t *testing.T) {
 	createImportTestBatch(t)
 	t.Run("Create batch and run import", func(t *testing.T) {
 
-		exitCode := runCLI("sfdata", "import", "--batch", "1910", "--no-filter", "--batch-config", path.Join(tmpDir, "batch.json"))
+		exitCode := runCLI("sfdata", "import", "--schema", "sfdata", "--batch", "1910", "--no-filter", "--batch-config", path.Join(tmpDir, "batch.json"))
 		assert.Equal(t, 0, exitCode, "sfdata import should succeed")
 	})
 
@@ -43,7 +43,7 @@ func TestImportEndToEnd(t *testing.T) {
 	})
 
 	t.Run("Run with --dry-run", func(t *testing.T) {
-		exitCode := runCLI("sfdata", "import", "--dry-run", "--batch", "1910", "--no-filter", "--batch-config", path.Join(tmpDir, "batch.json"))
+		exitCode := runCLI("sfdata", "import", "--schema", "sfdata", "--dry-run", "--batch", "1910", "--no-filter", "--batch-config", path.Join(tmpDir, "batch.json"))
 		assert.Equal(t, 0, exitCode, "sfdata import should succeed with --dry-run")
 	})
 }
@@ -227,7 +227,7 @@ func getTableContents(t *testing.T, conn *pgxpool.Pool, query string) string {
 func getAllTables(t *testing.T, conn *pgxpool.Pool) []string {
 	query := `SELECT tablename
   FROM pg_catalog.pg_tables
-  WHERE schemaname = 'sfdata'
+  WHERE schemaname = current_schema()
   `
 
 	rows, err := conn.Query(context.Background(), query)
