@@ -34,7 +34,7 @@ func (params exportHandler) IsEnabled() bool {
 func (params exportHandler) Run() error {
 	slog.Info("executing export command")
 
-	shouldMigrate := false
+	shouldMigrate := true
 	err := db.Init(params.Schema, shouldMigrate)
 	if err != nil {
 		return fmt.Errorf("error while connecting to db: %w", err)
