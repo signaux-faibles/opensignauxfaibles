@@ -77,14 +77,11 @@ func CreateFilter(effectifEntFile engine.BatchFile, nbMois, minEffectif int) (en
 	// Generate detailed filter report
 	batchKey := viper.GetString("batch")
 	if batchKey != "" {
-		// Use export.path from config, or default to /export
-		rootDir := "/export"
-		if viper.IsSet("export.path") {
-			rootDir = viper.GetString("export.path")
-		}
-		exportPath := rootDir + "_" + batchKey
+		exportPath := "/export/export_" + batchKey
 		if err := generateFilterReport(stats, exportPath); err != nil {
 			slog.Warn("failed to generate filter report", "error", err)
+		} else {
+			slog.Info("detailed filter report written", "path", exportPath)
 		}
 	}
 
