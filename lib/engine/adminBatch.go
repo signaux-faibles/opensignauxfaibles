@@ -66,7 +66,7 @@ func ImportBatch(
 			var outputChannel chan Tuple
 			var eventChannel chan Report
 
-			if parser.Type() == Sirene || parser.Type() == SireneUl {
+			if BypassesFilter(parser.Type()) {
 				// For these parsers, all data is needed for the front-end, we do not apply the filter
 				outputChannel, eventChannel = ParseFilesFromBatch(ctx, &batchConfig, parser, NoFilter)
 			} else {

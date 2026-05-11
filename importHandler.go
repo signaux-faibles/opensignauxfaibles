@@ -200,6 +200,14 @@ func (params importBatchHandler) Run() error {
 
 	if params.NoFilter {
 		filterResolver = &filter.NoFilterResolver{}
+	} else if onlyFilterBypassingParsers(parserTypes) {
+		// Quand l'utilisateur restreint l'import aux seuls parsers qui
+		// contournent le filtre (sirene, sirene_ul), exiger un filtre
+		// n'a pas de sens : aucune donnée ne sera filtrée. Cela permet
+		// notamment d'amorcer un schéma vierge avant computePerimeter,
+		// qui dépend de stg_sirene et stg_sirene_ul.
+		slog.Info("requested parsers all bypass the filter, skipping filter resolution", "parsers", params.Parsers)
+		filterResolver = &filter.NoFilterResolver{}
 	} else {
 		reader := &filter.StandardReader{Batch: &batch, DB: db.DB}
 		filterResolver = &filter.StandardFilterResolver{
@@ -216,6 +224,22 @@ func (params importBatchHandler) Run() error {
 		dataSinkFactory,
 		reportSink,
 	)
+}
+
+// onlyFilterBypassingParsers retourne true si une restriction non vide
+// de parsers est fournie et que tous contournent le filtre SIREN.
+// Un appel sans restriction (slice vide) retourne false : l'import
+// complet doit toujours exiger un filtre.
+func onlyFilterBypassingParsers(parserTypes []engine.ParserType) bool {
+	if len(parserTypes) == 0 {
+		return false
+	}
+	for _, p := range parserTypes {
+		if !engine.BypassesFilter(p) {
+			return false
+		}
+	}
+	return true
 }
 
 // executeBatchImport resolves the filter and imports data
