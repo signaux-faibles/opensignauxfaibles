@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -27,13 +28,23 @@ func (params computePerimeterHandler) Documentation() flag.Flag {
 		Usage: "Compute import perimeter from effectif_ent file",
 		Desc: `
     Computes the SIREN import perimeter from an effectif_ent file and stores it
-    in the database (table "stg_filter_import").
-
-    This command should be run before importing data, so that the import can
-    filter input data based on the computed perimeter.
+    in the database (table "stg_filter_import"), then refreshes the
+    "siren_blacklist" materialized view so that "clean_filter" reflects the
+    new perimeter.
 
     The effectif_ent file is resolved from the batch configuration (explicit or
     inferred from filenames in the data directory).
+
+    PREREQUISITES:
+    "siren_blacklist" filters the perimeter on juridic category, NAF activity,
+    and domiciliation — attributes that come from SIRENE data. This command
+    therefore requires "stg_sirene" and "stg_sirene_ul" to be populated, and
+    will fail otherwise. Run "sfdata import --parsers sirene,sirene_ul" first.
+
+    TYPICAL EXECUTION ORDER (from scratch):
+      1. sfdata import --parsers sirene,sirene_ul ...
+      2. sfdata computePerimeter ...
+      3. sfdata import ...
 		`,
 	}
 }
@@ -61,6 +72,10 @@ func (params computePerimeterHandler) Run() error {
 		return fmt.Errorf("error while connecting to db: %w", err)
 	}
 	defer db.DB.Close()
+
+	if err := assertSireneDataPresent(context.Background(), db.DB); err != nil {
+		return err
+	}
 
 	batchKey, err := engine.NewBatchKey(params.BatchKey)
 	if err != nil {
@@ -97,6 +112,30 @@ func (params computePerimeterHandler) Run() error {
 		return fmt.Errorf("failed to write perimeter to database: %w", err)
 	}
 
+	slog.Info("refreshing materialized view", "view", db.ViewSirenBlacklist)
+	_, err = db.DB.Exec(context.Background(), fmt.Sprintf("REFRESH MATERIALIZED VIEW %s", db.ViewSirenBlacklist))
+	if err != nil {
+		return fmt.Errorf("failed to refresh materialized view %s: %w", db.ViewSirenBlacklist, err)
+	}
+
 	slog.Info("perimeter computed and saved successfully", "n_sirens", len(sirenFilter.All()))
+	return nil
+}
+
+// assertSireneDataPresent fails if stg_sirene or stg_sirene_ul is empty.
+// siren_blacklist filters the perimeter on attributes (juridic category, NAF
+// activity, domiciliation) that come from these tables; without them,
+// clean_filter cannot be computed correctly.
+func assertSireneDataPresent(ctx context.Context, pool db.Pool) error {
+	for _, table := range []string{db.TableStgSirene, db.TableStgSireneUl} {
+		var hasRow bool
+		err := pool.QueryRow(ctx, fmt.Sprintf("SELECT EXISTS (SELECT 1 FROM %s)", table)).Scan(&hasRow)
+		if err != nil {
+			return fmt.Errorf("failed to check %s: %w", table, err)
+		}
+		if !hasRow {
+			return fmt.Errorf("%s is empty: SIRENE data is required to compute the perimeter. Run `sfdata import --parsers sirene,sirene_ul` first", table)
+		}
+	}
 	return nil
 }
