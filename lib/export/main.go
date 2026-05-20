@@ -37,8 +37,9 @@ var viewsToExport = []string{
 }
 
 type Exporter struct {
-	path string
-	conn db.Pool
+	path  string
+	conn  db.Pool
+	views []string
 }
 
 // NewExporter initialise la fonctionnalité d'export de la base de donnée
@@ -46,7 +47,13 @@ type Exporter struct {
 // conteneur de base de données* `path`.
 // Il est supposé que le répertoire existe, sans vérification.
 func NewExporter(path string, conn db.Pool) *Exporter {
-	return &Exporter{path, conn}
+	return &Exporter{path: path, conn: conn, views: viewsToExport}
+}
+
+// WithViews returns the Exporter restricted to the given views.
+func (exp *Exporter) WithViews(views []string) *Exporter {
+	exp.views = views
+	return exp
 }
 
 // CleanViews exports all clean views
@@ -62,7 +69,7 @@ func (exp *Exporter) CleanViews() error {
 		return err
 	}
 
-	for _, view := range viewsToExport {
+	for _, view := range exp.views {
 		// run export in parallel
 		g.Go(func() error {
 			fileAbsPath := filepath.Join(dirAbsPath, view+".parquet")
