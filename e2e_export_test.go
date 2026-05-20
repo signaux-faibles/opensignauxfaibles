@@ -12,6 +12,7 @@ import (
 
 	"opensignauxfaibles/lib/export"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 )
@@ -59,6 +60,45 @@ func verifyExportedParquetFilesExist(t *testing.T) {
 		info, err := os.Stat(file)
 		assert.NoError(t, err)
 		assert.Greater(t, info.Size(), int64(0), "Parquet file %s should not be empty", file)
+	}
+}
+
+// TestExportSucceedsOnFreshSchema reproduces the bug where a `WITH NO DATA`
+// materialized view (e.g. clean_procol_at_date) makes `COPY ... TO STDOUT`
+// fail with SQLSTATE 55000, which used to cascade through errgroup and leave
+// most parquet files at 0 bytes.
+//
+// We run export on a fresh schema (only migrations, no import) and check that
+// every parquet file got fully written by pg_parquet (non-zero size — even an
+// empty result set produces the parquet header/footer).
+func TestExportSucceedsOnFreshSchema(t *testing.T) {
+	const schema = "export_fresh_schema_test"
+
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, suite.PostgresURI)
+	if err != nil {
+		t.Fatalf("Unable to connect to test database: %s", err)
+	}
+	_, err = conn.Exec(ctx, fmt.Sprintf("DROP SCHEMA IF EXISTS %s CASCADE", schema))
+	assert.NoError(t, err)
+	conn.Close(ctx)
+
+	freshExportDir := filepath.Join(suite.TmpDir, "export-fresh")
+	os.RemoveAll(freshExportDir)
+	os.MkdirAll(freshExportDir, 0755)
+	defer os.RemoveAll(freshExportDir)
+
+	exitCode := runCLI("sfdata", "export", "--schema", schema, "--path", freshExportDir)
+	assert.Equal(t, 0, exitCode, "sfdata export should succeed on a fresh schema")
+
+	files, err := filepath.Glob(filepath.Join(freshExportDir, "*.parquet"))
+	assert.NoError(t, err)
+	assert.NotEmpty(t, files, "Expected parquet files on a fresh schema")
+	for _, file := range files {
+		info, err := os.Stat(file)
+		assert.NoError(t, err)
+		assert.Greater(t, info.Size(), int64(0),
+			"Parquet file %s is empty — unpopulated MV likely cascaded through errgroup", file)
 	}
 }
 

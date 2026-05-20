@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -39,6 +40,10 @@ func (params exportHandler) Run() error {
 	err := db.Init(params.Schema, shouldMigrate)
 	if err != nil {
 		return fmt.Errorf("error while connecting to db: %w", err)
+	}
+
+	if err := db.RefreshUnpopulatedMatviews(context.Background(), db.DB); err != nil {
+		return fmt.Errorf("failed to refresh unpopulated materialized views: %w", err)
 	}
 
 	exporter := export.NewExporter(params.Path, db.DB)
