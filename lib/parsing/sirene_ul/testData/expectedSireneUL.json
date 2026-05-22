@@ -7,6 +7,7 @@
       "nom_unite_legale": "jjqcmkg",
       "categorie_juridique": "5465",
       "ape": "41.19A",
+      "ape_naf25": "01.11A",
       "est_actif": true
     },
     {
@@ -16,6 +17,7 @@
       "nom_unite_legale": "fvxmjl",
       "categorie_juridique": "5258",
       "ape": "71.06B",
+      "ape_naf25": "71.06B",
       "est_actif": false
     },
     {
@@ -24,6 +26,7 @@
       "categorie_juridique": "5422",
       "date_creation": "1967-01-01T00:00:00Z",
       "ape": "68.01Z",
+      "ape_naf25": "68.01Z",
       "est_actif": false
     }
   ],

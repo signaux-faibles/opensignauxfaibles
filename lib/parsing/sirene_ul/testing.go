@@ -45,6 +45,7 @@ var sireneULColumns = []string{
 	"categorieJuridiqueUniteLegale",
 	"activitePrincipaleUniteLegale",
 	"nomenclatureActivitePrincipaleUniteLegale",
+	"activitePrincipaleNAF25UniteLegale",
 	"nicSiegeUniteLegale",
 	"economieSocialeSolidaireUniteLegale",
 	"caractereEmployeurUniteLegale",
