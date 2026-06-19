@@ -1,67 +1,67 @@
 niv5                	niv4                	niv3                	niv2                	niv1                	niv1_libelle        	niv5_libelle        
-01.11Y              	01.11               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de céréales,
+01.11Y              	01.11               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de céréale
 01.12Y              	01.12               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture du riz      
-01.13Y              	01.13               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de légumes, 
+01.13Y              	01.13               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de légumes,
 01.14Y              	01.14               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de la canne 
 01.15Y              	01.15               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture du tabac    
-01.16Y              	01.16               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de plantes à
+01.16Y              	01.16               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de plantes �
 01.19Y              	01.19               	01.1                	01                  	A                   	AGRICULTURE, SYLVICU	Autres cultures non 
 01.21Y              	01.21               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de la vigne 
 01.22Y              	01.22               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de fruits tr
 01.23Y              	01.23               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture d'agrumes   
-01.24Y              	01.24               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de fruits à 
+01.24Y              	01.24               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de fruits à
 01.25Y              	01.25               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture d'autres fru
 01.26Y              	01.26               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de fruits ol
-01.27Y              	01.27               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de plantes à
-01.28Y              	01.28               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de plantes à
+01.27Y              	01.27               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de plantes �
+01.28Y              	01.28               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Culture de plantes �
 01.29Y              	01.29               	01.2                	01                  	A                   	AGRICULTURE, SYLVICU	Autres cultures perm
 01.30Y              	01.30               	01.3                	01                  	A                   	AGRICULTURE, SYLVICU	Reproduction de plan
-01.41Y              	01.41               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de vaches la
-01.42Y              	01.42               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'autres bov
-01.43Y              	01.43               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de chevaux e
-01.44Y              	01.44               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de chameaux 
-01.45Y              	01.45               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'ovins et d
-01.46Y              	01.46               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de porcins  
-01.47Y              	01.47               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de volailles
+01.41Y              	01.41               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de vaches l
+01.42Y              	01.42               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'autres bo
+01.43Y              	01.43               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de chevaux 
+01.44Y              	01.44               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de chameaux
+01.45Y              	01.45               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'ovins et 
+01.46Y              	01.46               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de porcins 
+01.47Y              	01.47               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage de volaille
 01.48G              	01.48               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Apiculture          
-01.48H              	01.48               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'autres ani
-01.48J              	01.48               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'animaux de
-01.50Y              	01.50               	01.5                	01                  	A                   	AGRICULTURE, SYLVICU	Culture et élevage a
-01.61Y              	01.61               	01.6                	01                  	A                   	AGRICULTURE, SYLVICU	Activités de soutien
-01.62Y              	01.62               	01.6                	01                  	A                   	AGRICULTURE, SYLVICU	Activités de soutien
+01.48H              	01.48               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'autres an
+01.48J              	01.48               	01.4                	01                  	A                   	AGRICULTURE, SYLVICU	Élevage d'animaux d
+01.50Y              	01.50               	01.5                	01                  	A                   	AGRICULTURE, SYLVICU	Culture et élevage 
+01.61Y              	01.61               	01.6                	01                  	A                   	AGRICULTURE, SYLVICU	Activités de soutie
+01.62Y              	01.62               	01.6                	01                  	A                   	AGRICULTURE, SYLVICU	Activités de soutie
 01.63Y              	01.63               	01.6                	01                  	A                   	AGRICULTURE, SYLVICU	Traitement primaire 
-01.70Y              	01.70               	01.7                	01                  	A                   	AGRICULTURE, SYLVICU	Chasse, piégeage et 
+01.70Y              	01.70               	01.7                	01                  	A                   	AGRICULTURE, SYLVICU	Chasse, piégeage et
 02.10Y              	02.10               	02.1                	02                  	A                   	AGRICULTURE, SYLVICU	Sylviculture et autr
 02.20Y              	02.20               	02.2                	02                  	A                   	AGRICULTURE, SYLVICU	Exploitation foresti
-02.30Y              	02.30               	02.3                	02                  	A                   	AGRICULTURE, SYLVICU	Récolte de produits 
-02.40Y              	02.40               	02.4                	02                  	A                   	AGRICULTURE, SYLVICU	Activités de soutien
-03.11Y              	03.11               	03.1                	03                  	A                   	AGRICULTURE, SYLVICU	Pêche en mer        
-03.12Y              	03.12               	03.1                	03                  	A                   	AGRICULTURE, SYLVICU	Pêche en eau douce  
+02.30Y              	02.30               	02.3                	02                  	A                   	AGRICULTURE, SYLVICU	Récolte de produits
+02.40Y              	02.40               	02.4                	02                  	A                   	AGRICULTURE, SYLVICU	Activités de soutie
+03.11Y              	03.11               	03.1                	03                  	A                   	AGRICULTURE, SYLVICU	Pêche en mer       
+03.12Y              	03.12               	03.1                	03                  	A                   	AGRICULTURE, SYLVICU	Pêche en eau douce 
 03.21Y              	03.21               	03.2                	03                  	A                   	AGRICULTURE, SYLVICU	Aquaculture en mer  
 03.22Y              	03.22               	03.2                	03                  	A                   	AGRICULTURE, SYLVICU	Aquaculture en eau d
-03.30Y              	03.30               	03.3                	03                  	A                   	AGRICULTURE, SYLVICU	Activités de soutien
+03.30Y              	03.30               	03.3                	03                  	A                   	AGRICULTURE, SYLVICU	Activités de soutie
 05.10Y              	05.10               	05.1                	05                  	B                   	INDUSTRIES EXTRACTIV	Extraction de houill
 05.20Y              	05.20               	05.2                	05                  	B                   	INDUSTRIES EXTRACTIV	Extraction de lignit
-06.10Y              	06.10               	06.1                	06                  	B                   	INDUSTRIES EXTRACTIV	Extraction de pétrol
+06.10Y              	06.10               	06.1                	06                  	B                   	INDUSTRIES EXTRACTIV	Extraction de pétro
 06.20Y              	06.20               	06.2                	06                  	B                   	INDUSTRIES EXTRACTIV	Extraction de gaz na
 07.10Y              	07.10               	07.1                	07                  	B                   	INDUSTRIES EXTRACTIV	Extraction de minera
 07.21Y              	07.21               	07.2                	07                  	B                   	INDUSTRIES EXTRACTIV	Extraction de minera
 07.29Y              	07.29               	07.2                	07                  	B                   	INDUSTRIES EXTRACTIV	Extraction d'autres 
 08.11Y              	08.11               	08.1                	08                  	B                   	INDUSTRIES EXTRACTIV	Extraction de pierre
 08.12Y              	08.12               	08.1                	08                  	B                   	INDUSTRIES EXTRACTIV	Exploitation de grav
-08.91Y              	08.91               	08.9                	08                  	B                   	INDUSTRIES EXTRACTIV	Extraction de minéra
+08.91Y              	08.91               	08.9                	08                  	B                   	INDUSTRIES EXTRACTIV	Extraction de minér
 08.92Y              	08.92               	08.9                	08                  	B                   	INDUSTRIES EXTRACTIV	Extraction de tourbe
 08.93Y              	08.93               	08.9                	08                  	B                   	INDUSTRIES EXTRACTIV	Production de sel   
-08.99Y              	08.99               	08.9                	08                  	B                   	INDUSTRIES EXTRACTIV	Autres activités ext
-09.10Y              	09.10               	09.1                	09                  	B                   	INDUSTRIES EXTRACTIV	Activités de soutien
-09.90Y              	09.90               	09.9                	09                  	B                   	INDUSTRIES EXTRACTIV	Activités de soutien
+08.99Y              	08.99               	08.9                	08                  	B                   	INDUSTRIES EXTRACTIV	Autres activités ex
+09.10Y              	09.10               	09.1                	09                  	B                   	INDUSTRIES EXTRACTIV	Activités de soutie
+09.90Y              	09.90               	09.9                	09                  	B                   	INDUSTRIES EXTRACTIV	Activités de soutie
 10.11Y              	10.11               	10.1                	10                  	C                   	INDUSTRIE MANUFACTUR	Transformation et co
 10.12Y              	10.12               	10.1                	10                  	C                   	INDUSTRIE MANUFACTUR	Transformation et co
-10.13G              	10.13               	10.1                	10                  	C                   	INDUSTRIE MANUFACTUR	Préparation industri
-10.13H              	10.13               	10.1                	10                  	C                   	INDUSTRIE MANUFACTUR	Préparation de produ
+10.13G              	10.13               	10.1                	10                  	C                   	INDUSTRIE MANUFACTUR	Préparation industr
+10.13H              	10.13               	10.1                	10                  	C                   	INDUSTRIE MANUFACTUR	Préparation de prod
 10.20Y              	10.20               	10.2                	10                  	C                   	INDUSTRIE MANUFACTUR	Transformation et co
 10.31Y              	10.31               	10.3                	10                  	C                   	INDUSTRIE MANUFACTUR	Transformation et co
-10.32Y              	10.32               	10.3                	10                  	C                   	INDUSTRIE MANUFACTUR	Préparation de jus d
+10.32Y              	10.32               	10.3                	10                  	C                   	INDUSTRIE MANUFACTUR	Préparation de jus 
 10.39G              	10.39               	10.3                	10                  	C                   	INDUSTRIE MANUFACTUR	Autre transformation
 10.39H              	10.39               	10.3                	10                  	C                   	INDUSTRIE MANUFACTUR	Autre transformation
 10.41Y              	10.41               	10.4                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'huiles
@@ -69,15 +69,15 @@ niv5                	niv4                	niv3                	niv2             
 10.51G              	10.51               	10.5                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de lait 
 10.51H              	10.51               	10.5                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de froma
 10.51J              	10.51               	10.5                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de beurr
-10.52Y              	10.52               	10.5                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de crème
+10.52Y              	10.52               	10.5                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de crèm
 10.61G              	10.61               	10.6                	10                  	C                   	INDUSTRIE MANUFACTUR	Meunerie            
-10.61H              	10.61               	10.6                	10                  	C                   	INDUSTRIE MANUFACTUR	Autres activités du 
+10.61H              	10.61               	10.6                	10                  	C                   	INDUSTRIE MANUFACTUR	Autres activités du
 10.62Y              	10.62               	10.6                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de produ
 10.71G              	10.71               	10.7                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication industri
 10.71H              	10.71               	10.7                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pain 
-10.71J              	10.71               	10.7                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pâtis
+10.71J              	10.71               	10.7                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pâti
 10.72Y              	10.72               	10.7                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de biscu
-10.73Y              	10.73               	10.7                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pâtes
+10.73Y              	10.73               	10.7                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pâte
 10.81Y              	10.81               	10.8                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de sucre
 10.82Y              	10.82               	10.8                	10                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de cacao
 10.83Y              	10.83               	10.8                	10                  	C                   	INDUSTRIE MANUFACTUR	Transformation du th
@@ -92,15 +92,15 @@ niv5                	niv4                	niv3                	niv2             
 11.02H              	11.02               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vins 
 11.03Y              	11.03               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de cidre
 11.04Y              	11.04               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Production d'autres 
-11.05Y              	11.05               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de bière
+11.05Y              	11.05               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de bièr
 11.06Y              	11.06               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de malt 
 11.07G              	11.07               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Industrie des eaux d
 11.07H              	11.07               	11.0                	11                  	C                   	INDUSTRIE MANUFACTUR	Production d'autres 
 12.00Y              	12.00               	12.0                	12                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de produ
-13.10Y              	13.10               	13.1                	13                  	C                   	INDUSTRIE MANUFACTUR	Préparation de fibre
+13.10Y              	13.10               	13.1                	13                  	C                   	INDUSTRIE MANUFACTUR	Préparation de fibr
 13.20Y              	13.20               	13.2                	13                  	C                   	INDUSTRIE MANUFACTUR	Tissage             
 13.30Y              	13.30               	13.3                	13                  	C                   	INDUSTRIE MANUFACTUR	Ennoblissement texti
-13.91Y              	13.91               	13.9                	13                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'étoffe
+13.91Y              	13.91               	13.9                	13                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'étoff
 13.92Y              	13.92               	13.9                	13                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de texti
 13.93Y              	13.93               	13.9                	13                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de tapis
 13.94Y              	13.94               	13.9                	13                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de ficel
@@ -108,16 +108,16 @@ niv5                	niv4                	niv3                	niv2             
 13.96Y              	13.96               	13.9                	13                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 13.99Y              	13.99               	13.9                	13                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 14.10Y              	14.10               	14.1                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'articl
-14.21Y              	14.21               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vêtem
-14.22Y              	14.22               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vêtem
-14.23Y              	14.23               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vêtem
-14.24Y              	14.24               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vêtem
+14.21Y              	14.21               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vête
+14.22Y              	14.22               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vête
+14.23Y              	14.23               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vête
+14.24Y              	14.24               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vête
 14.29Y              	14.29               	14.2                	14                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
-15.11Y              	15.11               	15.1                	15                  	C                   	INDUSTRIE MANUFACTUR	Tannage, apprêt et t
+15.11Y              	15.11               	15.1                	15                  	C                   	INDUSTRIE MANUFACTUR	Tannage, apprêt et 
 15.12Y              	15.12               	15.1                	15                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de bagag
 15.20Y              	15.20               	15.2                	15                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de chaus
 16.11Y              	16.11               	16.1                	16                  	C                   	INDUSTRIE MANUFACTUR	Sciage et rabotage d
-16.12Y              	16.12               	16.1                	16                  	C                   	INDUSTRIE MANUFACTUR	Façonnage et finitio
+16.12Y              	16.12               	16.1                	16                  	C                   	INDUSTRIE MANUFACTUR	Façonnage et finiti
 16.21Y              	16.21               	16.2                	16                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de placa
 16.22Y              	16.22               	16.2                	16                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de parqu
 16.23Y              	16.23               	16.2                	16                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de charp
@@ -126,7 +126,7 @@ niv5                	niv4                	niv3                	niv2             
 16.26Y              	16.26               	16.2                	16                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de combu
 16.27Y              	16.27               	16.2                	16                  	C                   	INDUSTRIE MANUFACTUR	Finition de produits
 16.28Y              	16.28               	16.2                	16                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'objets
-17.11Y              	17.11               	17.1                	17                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pâte 
+17.11Y              	17.11               	17.1                	17                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pâte
 17.12Y              	17.12               	17.1                	17                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de papie
 17.21Y              	17.21               	17.2                	17                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de papie
 17.22Y              	17.22               	17.2                	17                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'articl
@@ -134,18 +134,18 @@ niv5                	niv4                	niv3                	niv2             
 17.24Y              	17.24               	17.2                	17                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de papie
 17.25Y              	17.25               	17.2                	17                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 18.11Y              	18.11               	18.1                	18                  	C                   	INDUSTRIE MANUFACTUR	Imprimerie de journa
-18.12Y              	18.12               	18.1                	18                  	C                   	INDUSTRIE MANUFACTUR	Autres activités d'i
-18.13Y              	18.13               	18.1                	18                  	C                   	INDUSTRIE MANUFACTUR	Activités de pré-pre
-18.14Y              	18.14               	18.1                	18                  	C                   	INDUSTRIE MANUFACTUR	Reliure et activités
+18.12Y              	18.12               	18.1                	18                  	C                   	INDUSTRIE MANUFACTUR	Autres activités d'
+18.13Y              	18.13               	18.1                	18                  	C                   	INDUSTRIE MANUFACTUR	Activités de pré-p
+18.14Y              	18.14               	18.1                	18                  	C                   	INDUSTRIE MANUFACTUR	Reliure et activité
 18.20Y              	18.20               	18.2                	18                  	C                   	INDUSTRIE MANUFACTUR	Reproduction d'enreg
-19.10Y              	19.10               	19.1                	19                  	C                   	INDUSTRIE MANUFACTUR	Cokéfaction         
-19.20Y              	19.20               	19.2                	19                  	C                   	INDUSTRIE MANUFACTUR	Raffinage du pétrole
+19.10Y              	19.10               	19.1                	19                  	C                   	INDUSTRIE MANUFACTUR	Cokéfaction        
+19.20Y              	19.20               	19.2                	19                  	C                   	INDUSTRIE MANUFACTUR	Raffinage du pétrol
 20.11Y              	20.11               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de gaz i
 20.12Y              	20.12               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de color
 20.13Y              	20.13               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 20.14Y              	20.14               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 20.15Y              	20.15               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de produ
-20.16Y              	20.16               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de matiè
+20.16Y              	20.16               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de mati�
 20.17Y              	20.17               	20.1                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de caout
 20.20Y              	20.20               	20.2                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de pesti
 20.30Y              	20.30               	20.3                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de peint
@@ -155,20 +155,20 @@ niv5                	niv4                	niv3                	niv2             
 20.59Y              	20.59               	20.5                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 20.60Y              	20.60               	20.6                	20                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de fibre
 21.10Y              	21.10               	21.1                	21                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de produ
-21.20Y              	21.20               	21.2                	21                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de prépa
+21.20Y              	21.20               	21.2                	21                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de prép
 22.11Y              	22.11               	22.1                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication et recha
 22.12Y              	22.12               	22.1                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 22.21Y              	22.21               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de plaqu
 22.22Y              	22.22               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'emball
 22.23Y              	22.23               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de porte
-22.24Y              	22.24               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'élémen
-22.25Y              	22.25               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Façonnage et finitio
+22.24Y              	22.24               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'élém
+22.25Y              	22.25               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Façonnage et finiti
 22.26Y              	22.26               	22.2                	22                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 23.11Y              	23.11               	23.1                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de verre
-23.12Y              	23.12               	23.1                	23                  	C                   	INDUSTRIE MANUFACTUR	Façonnage et transfo
+23.12Y              	23.12               	23.1                	23                  	C                   	INDUSTRIE MANUFACTUR	Façonnage et transf
 23.13Y              	23.13               	23.1                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de verre
 23.14Y              	23.14               	23.1                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de fibre
-23.15Y              	23.15               	23.1                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication et façon
+23.15Y              	23.15               	23.1                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication et faço
 23.20Y              	23.20               	23.2                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de produ
 23.31Y              	23.31               	23.3                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de carre
 23.32Y              	23.32               	23.3                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de briqu
@@ -179,44 +179,44 @@ niv5                	niv4                	niv3                	niv2             
 23.45Y              	23.45               	23.4                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 23.51Y              	23.51               	23.5                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de cimen
 23.52Y              	23.52               	23.5                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de chaux
-23.61Y              	23.61               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'élémen
-23.62Y              	23.62               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'élémen
-23.63Y              	23.63               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de béton
+23.61Y              	23.61               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'élém
+23.62Y              	23.62               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'élém
+23.63Y              	23.63               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de béto
 23.64Y              	23.64               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de morti
 23.65Y              	23.65               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'ouvrag
 23.66Y              	23.66               	23.6                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
-23.70Y              	23.70               	23.7                	23                  	C                   	INDUSTRIE MANUFACTUR	Taille, façonnage et
+23.70Y              	23.70               	23.7                	23                  	C                   	INDUSTRIE MANUFACTUR	Taille, façonnage e
 23.91Y              	23.91               	23.9                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de produ
 23.99Y              	23.99               	23.9                	23                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
-24.10Y              	24.10               	24.1                	24                  	C                   	INDUSTRIE MANUFACTUR	Sidérurgie          
+24.10Y              	24.10               	24.1                	24                  	C                   	INDUSTRIE MANUFACTUR	Sidérurgie         
 24.20Y              	24.20               	24.2                	24                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de tubes
-24.31Y              	24.31               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Étirage à froid de b
-24.32Y              	24.32               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Laminage à froid de 
-24.33Y              	24.33               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Profilage à froid pa
-24.34Y              	24.34               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Tréfilage à froid   
-24.41Y              	24.41               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Production de métaux
-24.42Y              	24.42               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie de l'alu
-24.43Y              	24.43               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie du plomb
-24.44Y              	24.44               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie du cuivr
-24.45Y              	24.45               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie des autr
-24.46Y              	24.46               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Élaboration et trans
+24.31Y              	24.31               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Étirage à froid de
+24.32Y              	24.32               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Laminage à froid de
+24.33Y              	24.33               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Profilage à froid p
+24.34Y              	24.34               	24.3                	24                  	C                   	INDUSTRIE MANUFACTUR	Tréfilage à froid 
+24.41Y              	24.41               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Production de métau
+24.42Y              	24.42               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie de l'al
+24.43Y              	24.43               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie du plom
+24.44Y              	24.44               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie du cuiv
+24.45Y              	24.45               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Métallurgie des aut
+24.46Y              	24.46               	24.4                	24                  	C                   	INDUSTRIE MANUFACTUR	Élaboration et tran
 24.51Y              	24.51               	24.5                	24                  	C                   	INDUSTRIE MANUFACTUR	Fonderie de fonte   
 24.52Y              	24.52               	24.5                	24                  	C                   	INDUSTRIE MANUFACTUR	Fonderie d'acier    
-24.53Y              	24.53               	24.5                	24                  	C                   	INDUSTRIE MANUFACTUR	Fonderie de métaux l
-24.54Y              	24.54               	24.5                	24                  	C                   	INDUSTRIE MANUFACTUR	Fonderie d'autres mé
+24.53Y              	24.53               	24.5                	24                  	C                   	INDUSTRIE MANUFACTUR	Fonderie de métaux 
+24.54Y              	24.54               	24.5                	24                  	C                   	INDUSTRIE MANUFACTUR	Fonderie d'autres m�
 25.11Y              	25.11               	25.1                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de struc
 25.12Y              	25.12               	25.1                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de porte
 25.21Y              	25.21               	25.2                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de radia
 25.22Y              	25.22               	25.2                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 25.30Y              	25.30               	25.3                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'armes 
-25.40Y              	25.40               	25.4                	25                  	C                   	INDUSTRIE MANUFACTUR	Forgeage et façonnag
-25.51Y              	25.51               	25.5                	25                  	C                   	INDUSTRIE MANUFACTUR	Revêtement des métau
+25.40Y              	25.40               	25.4                	25                  	C                   	INDUSTRIE MANUFACTUR	Forgeage et façonna
+25.51Y              	25.51               	25.5                	25                  	C                   	INDUSTRIE MANUFACTUR	Revêtement des mét
 25.52Y              	25.52               	25.5                	25                  	C                   	INDUSTRIE MANUFACTUR	Traitement thermique
-25.53Y              	25.53               	25.5                	25                  	C                   	INDUSTRIE MANUFACTUR	Usinage des métaux  
+25.53Y              	25.53               	25.5                	25                  	C                   	INDUSTRIE MANUFACTUR	Usinage des métaux 
 25.61Y              	25.61               	25.6                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de coute
 25.62Y              	25.62               	25.6                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de serru
 25.63Y              	25.63               	25.6                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'outill
-25.91Y              	25.91               	25.9                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de fûts 
+25.91Y              	25.91               	25.9                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de fûts
 25.92Y              	25.92               	25.9                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'emball
 25.93Y              	25.93               	25.9                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'articl
 25.94Y              	25.94               	25.9                	25                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de vis e
@@ -224,33 +224,33 @@ niv5                	niv4                	niv3                	niv2             
 26.11Y              	26.11               	26.1                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de compo
 26.12Y              	26.12               	26.1                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de carte
 26.20Y              	26.20               	26.2                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'ordina
-26.30Y              	26.30               	26.3                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équipe
+26.30Y              	26.30               	26.3                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équip
 26.40Y              	26.40               	26.4                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de produ
 26.51Y              	26.51               	26.5                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'instru
 26.52Y              	26.52               	26.5                	26                  	C                   	INDUSTRIE MANUFACTUR	Horlogerie          
-26.60Y              	26.60               	26.6                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équipe
-26.70Y              	26.70               	26.7                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de matér
+26.60Y              	26.60               	26.6                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équip
+26.70Y              	26.70               	26.7                	26                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de maté
 27.11Y              	27.11               	27.1                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de moteu
-27.12Y              	27.12               	27.1                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de matér
+27.12Y              	27.12               	27.1                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de maté
 27.20Y              	27.20               	27.2                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de piles
-27.31Y              	27.31               	27.3                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de câble
+27.31Y              	27.31               	27.3                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de câbl
 27.32Y              	27.32               	27.3                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
-27.33Y              	27.33               	27.3                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de matér
+27.33Y              	27.33               	27.3                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de maté
 27.40Y              	27.40               	27.4                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'appare
 27.51Y              	27.51               	27.5                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'appare
 27.52Y              	27.52               	27.5                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'appare
 27.90Y              	27.90               	27.9                	27                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 28.11Y              	28.11               	28.1                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de moteu
-28.12Y              	28.12               	28.1                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équipe
+28.12Y              	28.12               	28.1                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équip
 28.13G              	28.13               	28.1                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 28.13H              	28.13               	28.1                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 28.14Y              	28.14               	28.1                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 28.15Y              	28.15               	28.1                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de roule
 28.21Y              	28.21               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de fours
-28.22Y              	28.22               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de matér
+28.22Y              	28.22               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de maté
 28.23Y              	28.23               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de machi
 28.24Y              	28.24               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'outill
-28.25Y              	28.25               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équipe
+28.25Y              	28.25               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équip
 28.29Y              	28.29               	28.2                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de machi
 28.30Y              	28.30               	28.3                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de machi
 28.41Y              	28.41               	28.4                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de machi
@@ -263,17 +263,17 @@ niv5                	niv4                	niv3                	niv2             
 28.96Y              	28.96               	28.9                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de machi
 28.97Y              	28.97               	28.9                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de machi
 28.99Y              	28.99               	28.9                	28                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
-29.10Y              	29.10               	29.1                	29                  	C                   	INDUSTRIE MANUFACTUR	Construction de véhi
+29.10Y              	29.10               	29.1                	29                  	C                   	INDUSTRIE MANUFACTUR	Construction de véh
 29.20Y              	29.20               	29.2                	29                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de carro
-29.31Y              	29.31               	29.3                	29                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équipe
+29.31Y              	29.31               	29.3                	29                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'équip
 29.32Y              	29.32               	29.3                	29                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
 30.11Y              	30.11               	30.1                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction de navi
 30.12Y              	30.12               	30.1                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction de bate
 30.13Y              	30.13               	30.1                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction de bate
 30.20Y              	30.20               	30.2                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction de loco
-30.31Y              	30.31               	30.3                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction aéronau
-30.32Y              	30.32               	30.3                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction aéronau
-30.40Y              	30.40               	30.4                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction de véhi
+30.31Y              	30.31               	30.3                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction aérona
+30.32Y              	30.32               	30.3                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction aérona
+30.40Y              	30.40               	30.4                	30                  	C                   	INDUSTRIE MANUFACTUR	Construction de véh
 30.91Y              	30.91               	30.9                	30                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de motoc
 30.92Y              	30.92               	30.9                	30                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de bicyc
 30.99Y              	30.99               	30.9                	30                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'autres
@@ -288,53 +288,53 @@ niv5                	niv4                	niv3                	niv2             
 32.40Y              	32.40               	32.4                	32                  	C                   	INDUSTRIE MANUFACTUR	Fabrication de jeux 
 32.50Y              	32.50               	32.5                	32                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'instru
 32.91Y              	32.91               	32.9                	32                  	C                   	INDUSTRIE MANUFACTUR	Fabrication d'articl
-32.99Y              	32.99               	32.9                	32                  	C                   	INDUSTRIE MANUFACTUR	Autres activités man
-33.11Y              	33.11               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.12Y              	33.12               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.13Y              	33.13               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.14Y              	33.14               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.15Y              	33.15               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.16Y              	33.16               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.17Y              	33.17               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.18G              	33.18               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.18H              	33.18               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
-33.19Y              	33.19               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entret
+32.99Y              	32.99               	32.9                	32                  	C                   	INDUSTRIE MANUFACTUR	Autres activités ma
+33.11Y              	33.11               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.12Y              	33.12               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.13Y              	33.13               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.14Y              	33.14               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.15Y              	33.15               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.16Y              	33.16               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.17Y              	33.17               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.18G              	33.18               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.18H              	33.18               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
+33.19Y              	33.19               	33.1                	33                  	C                   	INDUSTRIE MANUFACTUR	Réparation et entre
 33.20Y              	33.20               	33.2                	33                  	C                   	INDUSTRIE MANUFACTUR	Installation de mach
-35.11Y              	35.11               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Production d'électri
-35.12Y              	35.12               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Production d'électri
-35.13Y              	35.13               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Transport d'électric
-35.14Y              	35.14               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Distribution d'élect
+35.11Y              	35.11               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Production d'électr
+35.12Y              	35.12               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Production d'électr
+35.13Y              	35.13               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Transport d'électri
+35.14Y              	35.14               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Distribution d'élec
 35.15G              	35.15               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Exploitation d'insta
-35.15H              	35.15               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Autre commerce d'éle
-35.16Y              	35.16               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Stockage de l'électr
+35.15H              	35.15               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Autre commerce d'él
+35.16Y              	35.16               	35.1                	35                  	D                   	PRODUCTION ET DISTRI	Stockage de l'élect
 35.21Y              	35.21               	35.2                	35                  	D                   	PRODUCTION ET DISTRI	Production de gaz   
 35.22Y              	35.22               	35.2                	35                  	D                   	PRODUCTION ET DISTRI	Distribution de comb
 35.23Y              	35.23               	35.2                	35                  	D                   	PRODUCTION ET DISTRI	Commerce de combusti
 35.24Y              	35.24               	35.2                	35                  	D                   	PRODUCTION ET DISTRI	Stockage de gaz dans
 35.30Y              	35.30               	35.3                	35                  	D                   	PRODUCTION ET DISTRI	Production et distri
-35.40Y              	35.40               	35.4                	35                  	D                   	PRODUCTION ET DISTRI	Activités des courti
+35.40Y              	35.40               	35.4                	35                  	D                   	PRODUCTION ET DISTRI	Activités des court
 36.00Y              	36.00               	36.0                	36                  	E                   	PRODUCTION ET DISTRI	Captage, traitement 
 37.00Y              	37.00               	37.0                	37                  	E                   	PRODUCTION ET DISTRI	Collecte et traiteme
-38.11Y              	38.11               	38.1                	38                  	E                   	PRODUCTION ET DISTRI	Collecte des déchets
-38.12Y              	38.12               	38.1                	38                  	E                   	PRODUCTION ET DISTRI	Collecte des déchets
-38.21Y              	38.21               	38.2                	38                  	E                   	PRODUCTION ET DISTRI	Récupération de maté
-38.22Y              	38.22               	38.2                	38                  	E                   	PRODUCTION ET DISTRI	Valorisation énergét
+38.11Y              	38.11               	38.1                	38                  	E                   	PRODUCTION ET DISTRI	Collecte des déchet
+38.12Y              	38.12               	38.1                	38                  	E                   	PRODUCTION ET DISTRI	Collecte des déchet
+38.21Y              	38.21               	38.2                	38                  	E                   	PRODUCTION ET DISTRI	Récupération de ma
+38.22Y              	38.22               	38.2                	38                  	E                   	PRODUCTION ET DISTRI	Valorisation énerg�
 38.23Y              	38.23               	38.2                	38                  	E                   	PRODUCTION ET DISTRI	Autre valorisation d
-38.31Y              	38.31               	38.3                	38                  	E                   	PRODUCTION ET DISTRI	Incinération sans ré
-38.32Y              	38.32               	38.3                	38                  	E                   	PRODUCTION ET DISTRI	Mise en décharge ou 
-38.33Y              	38.33               	38.3                	38                  	E                   	PRODUCTION ET DISTRI	Autre élimination de
-39.00Y              	39.00               	39.0                	39                  	E                   	PRODUCTION ET DISTRI	Activités de dépollu
+38.31Y              	38.31               	38.3                	38                  	E                   	PRODUCTION ET DISTRI	Incinération sans r
+38.32Y              	38.32               	38.3                	38                  	E                   	PRODUCTION ET DISTRI	Mise en décharge ou
+38.33Y              	38.33               	38.3                	38                  	E                   	PRODUCTION ET DISTRI	Autre élimination d
+39.00Y              	39.00               	39.0                	39                  	E                   	PRODUCTION ET DISTRI	Activités de dépol
 41.00G              	41.00               	41.0                	41                  	F                   	CONSTRUCTION        	Construction de mais
 41.00H              	41.00               	41.0                	41                  	F                   	CONSTRUCTION        	Construction d'autre
 42.11Y              	42.11               	42.1                	42                  	F                   	CONSTRUCTION        	Construction de rout
 42.12Y              	42.12               	42.1                	42                  	F                   	CONSTRUCTION        	Construction de voie
 42.13G              	42.13               	42.1                	42                  	F                   	CONSTRUCTION        	Construction de pont
 42.13H              	42.13               	42.1                	42                  	F                   	CONSTRUCTION        	Construction de tunn
-42.21Y              	42.21               	42.2                	42                  	F                   	CONSTRUCTION        	Construction de rése
-42.22Y              	42.22               	42.2                	42                  	F                   	CONSTRUCTION        	Construction de rése
+42.21Y              	42.21               	42.2                	42                  	F                   	CONSTRUCTION        	Construction de rés
+42.22Y              	42.22               	42.2                	42                  	F                   	CONSTRUCTION        	Construction de rés
 42.91Y              	42.91               	42.9                	42                  	F                   	CONSTRUCTION        	Construction d'ouvra
 42.99Y              	42.99               	42.9                	42                  	F                   	CONSTRUCTION        	Construction d'autre
-43.11Y              	43.11               	43.1                	43                  	F                   	CONSTRUCTION        	Démolition          
+43.11Y              	43.11               	43.1                	43                  	F                   	CONSTRUCTION        	Démolition         
 43.12G              	43.12               	43.1                	43                  	F                   	CONSTRUCTION        	Travaux de terrassem
 43.12H              	43.12               	43.1                	43                  	F                   	CONSTRUCTION        	Travaux de terrassem
 43.13Y              	43.13               	43.1                	43                  	F                   	CONSTRUCTION        	Forages et sondages 
@@ -344,35 +344,35 @@ niv5                	niv4                	niv3                	niv2             
 43.22H              	43.22               	43.2                	43                  	F                   	CONSTRUCTION        	Travaux d'installati
 43.23Y              	43.23               	43.2                	43                  	F                   	CONSTRUCTION        	Mise en place de l'i
 43.24Y              	43.24               	43.2                	43                  	F                   	CONSTRUCTION        	Autres travaux d'ins
-43.31Y              	43.31               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de plâtrerie
+43.31Y              	43.31               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de plâtreri
 43.32G              	43.32               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de menuiseri
 43.32H              	43.32               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de menuiseri
-43.33Y              	43.33               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de revêtemen
+43.33Y              	43.33               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de revêteme
 43.34G              	43.34               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de peinture 
 43.34H              	43.34               	43.3                	43                  	F                   	CONSTRUCTION        	Travaux de vitrerie 
 43.35Y              	43.35               	43.3                	43                  	F                   	CONSTRUCTION        	Autres travaux de fi
 43.41G              	43.41               	43.4                	43                  	F                   	CONSTRUCTION        	Travaux de charpente
 43.41H              	43.41               	43.4                	43                  	F                   	CONSTRUCTION        	Travaux de couvertur
-43.41J              	43.41               	43.4                	43                  	F                   	CONSTRUCTION        	Travaux d'étanchéifi
+43.41J              	43.41               	43.4                	43                  	F                   	CONSTRUCTION        	Travaux d'étanchéi
 43.42G              	43.42               	43.4                	43                  	F                   	CONSTRUCTION        	Travaux de montage d
 43.42H              	43.42               	43.4                	43                  	F                   	CONSTRUCTION        	Travaux de montage d
 43.42J              	43.42               	43.4                	43                  	F                   	CONSTRUCTION        	Autres travaux de co
 43.50Y              	43.50               	43.5                	43                  	F                   	CONSTRUCTION        	Travaux de construct
-43.60Y              	43.60               	43.6                	43                  	F                   	CONSTRUCTION        	Activités de service
-43.91Y              	43.91               	43.9                	43                  	F                   	CONSTRUCTION        	Travaux de maçonneri
-43.99G              	43.99               	43.9                	43                  	F                   	CONSTRUCTION        	Location avec opérat
+43.60Y              	43.60               	43.6                	43                  	F                   	CONSTRUCTION        	Activités de servic
+43.91Y              	43.91               	43.9                	43                  	F                   	CONSTRUCTION        	Travaux de maçonner
+43.99G              	43.99               	43.9                	43                  	F                   	CONSTRUCTION        	Location avec opéra
 43.99H              	43.99               	43.9                	43                  	F                   	CONSTRUCTION        	Tous les autres trav
-46.11Y              	46.11               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.12Y              	46.12               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.13Y              	46.13               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.14Y              	46.14               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.15Y              	46.15               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.16Y              	46.16               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.17G              	46.17               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.17H              	46.17               	46.1                	46                  	G                   	COMMERCE            	Autres activités d'i
-46.18Y              	46.18               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.19G              	46.19               	46.1                	46                  	G                   	COMMERCE            	Activités d'interméd
-46.19H              	46.19               	46.1                	46                  	G                   	COMMERCE            	Autres activités d'i
+46.11Y              	46.11               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.12Y              	46.12               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.13Y              	46.13               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.14Y              	46.14               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.15Y              	46.15               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.16Y              	46.16               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.17G              	46.17               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.17H              	46.17               	46.1                	46                  	G                   	COMMERCE            	Autres activités d'
+46.18Y              	46.18               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.19G              	46.19               	46.1                	46                  	G                   	COMMERCE            	Activités d'interm�
+46.19H              	46.19               	46.1                	46                  	G                   	COMMERCE            	Autres activités d'
 46.21Y              	46.21               	46.2                	46                  	G                   	COMMERCE            	Commerce de gros de 
 46.22Y              	46.22               	46.2                	46                  	G                   	COMMERCE            	Commerce de gros de 
 46.23Y              	46.23               	46.2                	46                  	G                   	COMMERCE            	Commerce de gros d'a
@@ -397,7 +397,7 @@ niv5                	niv4                	niv3                	niv2             
 46.47Y              	46.47               	46.4                	46                  	G                   	COMMERCE            	Commerce de gros de 
 46.48Y              	46.48               	46.4                	46                  	G                   	COMMERCE            	Commerce de gros d'a
 46.49Y              	46.49               	46.4                	46                  	G                   	COMMERCE            	Commerce de gros d'a
-46.50Y              	46.50               	46.5                	46                  	G                   	COMMERCE            	Commerce de gros d'é
+46.50Y              	46.50               	46.5                	46                  	G                   	COMMERCE            	Commerce de gros d'�
 46.61Y              	46.61               	46.6                	46                  	G                   	COMMERCE            	Commerce de gros de 
 46.62Y              	46.62               	46.6                	46                  	G                   	COMMERCE            	Commerce de gros de 
 46.63Y              	46.63               	46.6                	46                  	G                   	COMMERCE            	Commerce de gros de 
@@ -421,61 +421,61 @@ niv5                	niv4                	niv3                	niv2             
 46.87Y              	46.87               	46.8                	46                  	G                   	COMMERCE            	Commerce de gros de 
 46.89Y              	46.89               	46.8                	46                  	G                   	COMMERCE            	Autre commerce de gr
 46.90Y              	46.90               	46.9                	46                  	G                   	COMMERCE            	Commerce de gros non
-47.11G              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail n
-47.11H              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail n
-47.11J              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail n
-47.11K              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail n
-47.11L              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail n
-47.12G              	47.12               	47.1                	47                  	G                   	COMMERCE            	Autre commerce de dé
-47.12H              	47.12               	47.1                	47                  	G                   	COMMERCE            	Autre commerce de dé
-47.21Y              	47.21               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.22Y              	47.22               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.23Y              	47.23               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.24Y              	47.24               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.25Y              	47.25               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.26Y              	47.26               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.27G              	47.27               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.27H              	47.27               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail s
-47.30Y              	47.30               	47.3                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.40Y              	47.40               	47.4                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.51Y              	47.51               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.52G              	47.52               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.52H              	47.52               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.53Y              	47.53               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.54Y              	47.54               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.55G              	47.55               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.55H              	47.55               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.61Y              	47.61               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.62Y              	47.62               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.63Y              	47.63               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.64Y              	47.64               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.69Y              	47.69               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.71Y              	47.71               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.72G              	47.72               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.72H              	47.72               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.73Y              	47.73               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.74G              	47.74               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.74H              	47.74               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.75Y              	47.75               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.76Y              	47.76               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.77Y              	47.77               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.78G              	47.78               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.78H              	47.78               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail s
-47.79G              	47.79               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.79H              	47.79               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.81Y              	47.81               	47.8                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.82Y              	47.82               	47.8                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.83Y              	47.83               	47.8                	47                  	G                   	COMMERCE            	Commerce de détail d
-47.91Y              	47.91               	47.9                	47                  	G                   	COMMERCE            	Activités de service
-47.92G              	47.92               	47.9                	47                  	G                   	COMMERCE            	Activités de service
-47.92H              	47.92               	47.9                	47                  	G                   	COMMERCE            	Activités de service
-47.92J              	47.92               	47.9                	47                  	G                   	COMMERCE            	Activités de service
+47.11G              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.11H              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.11J              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.11K              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.11L              	47.11               	47.1                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.12G              	47.12               	47.1                	47                  	G                   	COMMERCE            	Autre commerce de d�
+47.12H              	47.12               	47.1                	47                  	G                   	COMMERCE            	Autre commerce de d�
+47.21Y              	47.21               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.22Y              	47.22               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.23Y              	47.23               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.24Y              	47.24               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.25Y              	47.25               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.26Y              	47.26               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.27G              	47.27               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.27H              	47.27               	47.2                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.30Y              	47.30               	47.3                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.40Y              	47.40               	47.4                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.51Y              	47.51               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.52G              	47.52               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.52H              	47.52               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.53Y              	47.53               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.54Y              	47.54               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.55G              	47.55               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.55H              	47.55               	47.5                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.61Y              	47.61               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.62Y              	47.62               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.63Y              	47.63               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.64Y              	47.64               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.69Y              	47.69               	47.6                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.71Y              	47.71               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.72G              	47.72               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.72H              	47.72               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.73Y              	47.73               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.74G              	47.74               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.74H              	47.74               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.75Y              	47.75               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.76Y              	47.76               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.77Y              	47.77               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.78G              	47.78               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.78H              	47.78               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.79G              	47.79               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.79H              	47.79               	47.7                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.81Y              	47.81               	47.8                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.82Y              	47.82               	47.8                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.83Y              	47.83               	47.8                	47                  	G                   	COMMERCE            	Commerce de détail 
+47.91Y              	47.91               	47.9                	47                  	G                   	COMMERCE            	Activités de servic
+47.92G              	47.92               	47.9                	47                  	G                   	COMMERCE            	Activités de servic
+47.92H              	47.92               	47.9                	47                  	G                   	COMMERCE            	Activités de servic
+47.92J              	47.92               	47.9                	47                  	G                   	COMMERCE            	Activités de servic
 49.11Y              	49.11               	49.1                	49                  	H                   	TRANSPORTS ET ENTREP	Transport ferroviair
 49.12Y              	49.12               	49.1                	49                  	H                   	TRANSPORTS ET ENTREP	Autre transport ferr
 49.20Y              	49.20               	49.2                	49                  	H                   	TRANSPORTS ET ENTREP	Transport ferroviair
-49.31G              	49.31               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Transport régulier u
-49.31H              	49.31               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Autre transport régu
-49.32Y              	49.32               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Transport non réguli
+49.31G              	49.31               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Transport régulier 
+49.31H              	49.31               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Autre transport rég
+49.32Y              	49.32               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Transport non régul
 49.33G              	49.33               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Transport de personn
 49.33H              	49.33               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Autre transport de p
 49.34Y              	49.34               	49.3                	49                  	H                   	TRANSPORTS ET ENTREP	Transport de voyageu
@@ -483,14 +483,14 @@ niv5                	niv4                	niv3                	niv2             
 49.41G              	49.41               	49.4                	49                  	H                   	TRANSPORTS ET ENTREP	Transport routier de
 49.41H              	49.41               	49.4                	49                  	H                   	TRANSPORTS ET ENTREP	Transport routier de
 49.41J              	49.41               	49.4                	49                  	H                   	TRANSPORTS ET ENTREP	Location de camions 
-49.42Y              	49.42               	49.4                	49                  	H                   	TRANSPORTS ET ENTREP	Services de déménage
+49.42Y              	49.42               	49.4                	49                  	H                   	TRANSPORTS ET ENTREP	Services de déména
 49.50Y              	49.50               	49.5                	49                  	H                   	TRANSPORTS ET ENTREP	Transport par condui
 50.10Y              	50.10               	50.1                	50                  	H                   	TRANSPORTS ET ENTREP	Transports maritimes
 50.20Y              	50.20               	50.2                	50                  	H                   	TRANSPORTS ET ENTREP	Transports maritimes
 50.30Y              	50.30               	50.3                	50                  	H                   	TRANSPORTS ET ENTREP	Transports fluviaux 
 50.40Y              	50.40               	50.4                	50                  	H                   	TRANSPORTS ET ENTREP	Transports fluviaux 
-51.10Y              	51.10               	51.1                	51                  	H                   	TRANSPORTS ET ENTREP	Transports aériens d
-51.21Y              	51.21               	51.2                	51                  	H                   	TRANSPORTS ET ENTREP	Transports aériens d
+51.10Y              	51.10               	51.1                	51                  	H                   	TRANSPORTS ET ENTREP	Transports aériens 
+51.21Y              	51.21               	51.2                	51                  	H                   	TRANSPORTS ET ENTREP	Transports aériens 
 51.22Y              	51.22               	51.2                	51                  	H                   	TRANSPORTS ET ENTREP	Transports spatiaux 
 52.10G              	52.10               	52.1                	52                  	H                   	TRANSPORTS ET ENTREP	Entreposage et stock
 52.10H              	52.10               	52.1                	52                  	H                   	TRANSPORTS ET ENTREP	Entreposage et stock
@@ -499,250 +499,250 @@ niv5                	niv4                	niv3                	niv2             
 52.23Y              	52.23               	52.2                	52                  	H                   	TRANSPORTS ET ENTREP	Services auxiliaires
 52.24G              	52.24               	52.2                	52                  	H                   	TRANSPORTS ET ENTREP	Manutention portuair
 52.24H              	52.24               	52.2                	52                  	H                   	TRANSPORTS ET ENTREP	Manutention non port
-52.25Y              	52.25               	52.2                	52                  	H                   	TRANSPORTS ET ENTREP	Activités de service
-52.26Y              	52.26               	52.2                	52                  	H                   	TRANSPORTS ET ENTREP	Autres activités de 
-52.31Y              	52.31               	52.3                	52                  	H                   	TRANSPORTS ET ENTREP	Activités de service
-52.32Y              	52.32               	52.3                	52                  	H                   	TRANSPORTS ET ENTREP	Activités de service
-53.10Y              	53.10               	53.1                	53                  	H                   	TRANSPORTS ET ENTREP	Activités de poste d
+52.25Y              	52.25               	52.2                	52                  	H                   	TRANSPORTS ET ENTREP	Activités de servic
+52.26Y              	52.26               	52.2                	52                  	H                   	TRANSPORTS ET ENTREP	Autres activités de
+52.31Y              	52.31               	52.3                	52                  	H                   	TRANSPORTS ET ENTREP	Activités de servic
+52.32Y              	52.32               	52.3                	52                  	H                   	TRANSPORTS ET ENTREP	Activités de servic
+53.10Y              	53.10               	53.1                	53                  	H                   	TRANSPORTS ET ENTREP	Activités de poste 
 53.20G              	53.20               	53.2                	53                  	H                   	TRANSPORTS ET ENTREP	Livraison de colis  
-53.20H              	53.20               	53.2                	53                  	H                   	TRANSPORTS ET ENTREP	Livraison à domicile
-53.30Y              	53.30               	53.3                	53                  	H                   	TRANSPORTS ET ENTREP	Activités de service
-55.10Y              	55.10               	55.1                	55                  	I                   	HÉBERGEMENT ET RESTA	Hôtels et hébergemen
-55.20Y              	55.20               	55.2                	55                  	I                   	HÉBERGEMENT ET RESTA	Hébergement touristi
-55.30Y              	55.30               	55.3                	55                  	I                   	HÉBERGEMENT ET RESTA	Terrains de camping 
-55.40Y              	55.40               	55.4                	55                  	I                   	HÉBERGEMENT ET RESTA	Activités de service
-55.90Y              	55.90               	55.9                	55                  	I                   	HÉBERGEMENT ET RESTA	Autres hébergements 
-56.11G              	56.11               	56.1                	56                  	I                   	HÉBERGEMENT ET RESTA	Restauration traditi
-56.11H              	56.11               	56.1                	56                  	I                   	HÉBERGEMENT ET RESTA	Cafétérias et autres
-56.11J              	56.11               	56.1                	56                  	I                   	HÉBERGEMENT ET RESTA	Restauration de type
-56.12Y              	56.12               	56.1                	56                  	I                   	HÉBERGEMENT ET RESTA	Activités de service
-56.21Y              	56.21               	56.2                	56                  	I                   	HÉBERGEMENT ET RESTA	Activités de traiteu
-56.22Y              	56.22               	56.2                	56                  	I                   	HÉBERGEMENT ET RESTA	Activités de service
-56.30Y              	56.30               	56.3                	56                  	I                   	HÉBERGEMENT ET RESTA	Activités de débit d
-56.40Y              	56.40               	56.4                	56                  	I                   	HÉBERGEMENT ET RESTA	Activités de service
-58.11Y              	58.11               	58.1                	58                  	J                   	ÉDITION, DIFFUSION E	Édition de livres   
-58.12Y              	58.12               	58.1                	58                  	J                   	ÉDITION, DIFFUSION E	Édition de journaux 
-58.13Y              	58.13               	58.1                	58                  	J                   	ÉDITION, DIFFUSION E	Édition de revues et
-58.19Y              	58.19               	58.1                	58                  	J                   	ÉDITION, DIFFUSION E	Autres activités d'é
-58.21Y              	58.21               	58.2                	58                  	J                   	ÉDITION, DIFFUSION E	Édition de jeux vidé
-58.29Y              	58.29               	58.2                	58                  	J                   	ÉDITION, DIFFUSION E	Édition d'autres log
-59.11G              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION E	Production de films 
-59.11H              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION E	Production de films 
-59.11J              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION E	Production de films 
-59.11K              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION E	Production de films 
-59.12Y              	59.12               	59.1                	59                  	J                   	ÉDITION, DIFFUSION E	Post-production de f
-59.13Y              	59.13               	59.1                	59                  	J                   	ÉDITION, DIFFUSION E	Distribution de film
-59.14Y              	59.14               	59.1                	59                  	J                   	ÉDITION, DIFFUSION E	Projection de films 
-59.20Y              	59.20               	59.2                	59                  	J                   	ÉDITION, DIFFUSION E	Enregistrement sonor
-60.10Y              	60.10               	60.1                	60                  	J                   	ÉDITION, DIFFUSION E	Radiodiffusion et ac
-60.20G              	60.20               	60.2                	60                  	J                   	ÉDITION, DIFFUSION E	Programmation de tél
-60.20H              	60.20               	60.2                	60                  	J                   	ÉDITION, DIFFUSION E	Édition de services 
-60.31Y              	60.31               	60.3                	60                  	J                   	ÉDITION, DIFFUSION E	Activités d'agence d
-60.39Y              	60.39               	60.3                	60                  	J                   	ÉDITION, DIFFUSION E	Autres activités de 
-61.10Y              	61.10               	61.1                	61                  	K                   	TÉLÉCOMMUNICATIONS, 	Activités de télécom
-61.20Y              	61.20               	61.2                	61                  	K                   	TÉLÉCOMMUNICATIONS, 	Activités de revente
-61.90Y              	61.90               	61.9                	61                  	K                   	TÉLÉCOMMUNICATIONS, 	Autres activités de 
-62.10Y              	62.10               	62.1                	62                  	K                   	TÉLÉCOMMUNICATIONS, 	Activités de program
-62.20G              	62.20               	62.2                	62                  	K                   	TÉLÉCOMMUNICATIONS, 	Conseil en systèmes 
-62.20H              	62.20               	62.2                	62                  	K                   	TÉLÉCOMMUNICATIONS, 	Gestion d'installati
-62.90Y              	62.90               	62.9                	62                  	K                   	TÉLÉCOMMUNICATIONS, 	Autres activités de 
-63.10Y              	63.10               	63.1                	63                  	K                   	TÉLÉCOMMUNICATIONS, 	Infrastructure infor
-63.91Y              	63.91               	63.9                	63                  	K                   	TÉLÉCOMMUNICATIONS, 	Activités de portail
-63.92Y              	63.92               	63.9                	63                  	K                   	TÉLÉCOMMUNICATIONS, 	Autres activités de 
-64.11Y              	64.11               	64.1                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Activités de banque 
-64.19Y              	64.19               	64.1                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Autre intermédiation
-64.21Y              	64.21               	64.2                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Activités de société
-64.22Y              	64.22               	64.2                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Activités de conduit
-64.31Y              	64.31               	64.3                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Activités de fonds d
-64.32Y              	64.32               	64.3                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Activités de fiducie
-64.91Y              	64.91               	64.9                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Crédit-bail         
-64.92Y              	64.92               	64.9                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Autre distribution d
-64.99Y              	64.99               	64.9                	64                  	L                   	ACTIVITÉS FINANCIÈRE	Autres activités des
-65.11Y              	65.11               	65.1                	65                  	L                   	ACTIVITÉS FINANCIÈRE	Assurance vie       
-65.12Y              	65.12               	65.1                	65                  	L                   	ACTIVITÉS FINANCIÈRE	Assurances non-vie  
-65.20Y              	65.20               	65.2                	65                  	L                   	ACTIVITÉS FINANCIÈRE	Réassurance         
-65.30Y              	65.30               	65.3                	65                  	L                   	ACTIVITÉS FINANCIÈRE	Fonds de pension    
-66.11Y              	66.11               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Administration de ma
-66.12Y              	66.12               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Courtage de valeurs 
-66.19G              	66.19               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Activités des unités
-66.19H              	66.19               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Autres activités aux
-66.21Y              	66.21               	66.2                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Évaluation des risqu
-66.22Y              	66.22               	66.2                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Activités des agents
-66.29Y              	66.29               	66.2                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Activités auxiliaire
-66.30Y              	66.30               	66.3                	66                  	L                   	ACTIVITÉS FINANCIÈRE	Activités de gestion
-68.11Y              	68.11               	68.1                	68                  	M                   	ACTIVITÉS IMMOBILIÈR	Achat et vente de bi
-68.12Y              	68.12               	68.1                	68                  	M                   	ACTIVITÉS IMMOBILIÈR	Promotion immobilièr
-68.20G              	68.20               	68.2                	68                  	M                   	ACTIVITÉS IMMOBILIÈR	Location de logement
-68.20H              	68.20               	68.2                	68                  	M                   	ACTIVITÉS IMMOBILIÈR	Location et exploita
-68.31Y              	68.31               	68.3                	68                  	M                   	ACTIVITÉS IMMOBILIÈR	Activités de service
-68.32G              	68.32               	68.3                	68                  	M                   	ACTIVITÉS IMMOBILIÈR	Activités des unités
-68.32H              	68.32               	68.3                	68                  	M                   	ACTIVITÉS IMMOBILIÈR	Autres activités imm
-69.10Y              	69.10               	69.1                	69                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités juridiques
-69.20Y              	69.20               	69.2                	69                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de comptab
-70.10Y              	70.10               	70.1                	70                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités des sièges
-70.20Y              	70.20               	70.2                	70                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de conseil
-71.11Y              	71.11               	71.1                	71                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités d'architec
-71.12Y              	71.12               	71.1                	71                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités d'ingénier
-71.20G              	71.20               	71.2                	71                  	N                   	ACTIVITÉS SPÉCIALISÉ	Contrôle technique d
-71.20H              	71.20               	71.2                	71                  	N                   	ACTIVITÉS SPÉCIALISÉ	Analyses, essais et 
-72.10G              	72.10               	72.1                	72                  	N                   	ACTIVITÉS SPÉCIALISÉ	Recherche et dévelop
-72.10H              	72.10               	72.1                	72                  	N                   	ACTIVITÉS SPÉCIALISÉ	Recherche et dévelop
-72.20Y              	72.20               	72.2                	72                  	N                   	ACTIVITÉS SPÉCIALISÉ	Recherche et dévelop
-73.11Y              	73.11               	73.1                	73                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités d'agence d
-73.12Y              	73.12               	73.1                	73                  	N                   	ACTIVITÉS SPÉCIALISÉ	Régie publicitaire d
-73.20Y              	73.20               	73.2                	73                  	N                   	ACTIVITÉS SPÉCIALISÉ	Études de marché et 
-73.30Y              	73.30               	73.3                	73                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de relatio
-74.11Y              	74.11               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de design 
-74.12Y              	74.12               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de design 
-74.13Y              	74.13               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de design 
-74.14Y              	74.14               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Autres activités spé
-74.20Y              	74.20               	74.2                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités photograph
-74.30Y              	74.30               	74.3                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de traduct
-74.91Y              	74.91               	74.9                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités de courtag
-74.99Y              	74.99               	74.9                	74                  	N                   	ACTIVITÉS SPÉCIALISÉ	Toutes les autres ac
-75.00Y              	75.00               	75.0                	75                  	N                   	ACTIVITÉS SPÉCIALISÉ	Activités vétérinair
-77.11Y              	77.11               	77.1                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.12Y              	77.12               	77.1                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.21Y              	77.21               	77.2                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.22Y              	77.22               	77.2                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.31Y              	77.31               	77.3                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.32Y              	77.32               	77.3                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.33Y              	77.33               	77.3                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.34Y              	77.34               	77.3                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.35Y              	77.35               	77.3                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.39Y              	77.39               	77.3                	77                  	O                   	ACTIVITÉS DE SERVICE	Location et location
-77.40G              	77.40               	77.4                	77                  	O                   	ACTIVITÉS DE SERVICE	Services de franchis
-77.40H              	77.40               	77.4                	77                  	O                   	ACTIVITÉS DE SERVICE	Autre location-bail 
-77.51Y              	77.51               	77.5                	77                  	O                   	ACTIVITÉS DE SERVICE	Activités de service
-77.52Y              	77.52               	77.5                	77                  	O                   	ACTIVITÉS DE SERVICE	Activités de service
-78.10Y              	78.10               	78.1                	78                  	O                   	ACTIVITÉS DE SERVICE	Activités des agence
-78.20G              	78.20               	78.2                	78                  	O                   	ACTIVITÉS DE SERVICE	Activités d'agence d
-78.20H              	78.20               	78.2                	78                  	O                   	ACTIVITÉS DE SERVICE	Autre mise à disposi
-79.11Y              	79.11               	79.1                	79                  	O                   	ACTIVITÉS DE SERVICE	Activités d'agence d
-79.12Y              	79.12               	79.1                	79                  	O                   	ACTIVITÉS DE SERVICE	Activités de voyagis
-79.90Y              	79.90               	79.9                	79                  	O                   	ACTIVITÉS DE SERVICE	Autres activités de 
-80.01Y              	80.01               	80.0                	80                  	O                   	ACTIVITÉS DE SERVICE	Activités d'investig
-80.09Y              	80.09               	80.0                	80                  	O                   	ACTIVITÉS DE SERVICE	Activités de sécurit
-81.10Y              	81.10               	81.1                	81                  	O                   	ACTIVITÉS DE SERVICE	Activités de soutien
-81.21Y              	81.21               	81.2                	81                  	O                   	ACTIVITÉS DE SERVICE	Nettoyage courant de
-81.22Y              	81.22               	81.2                	81                  	O                   	ACTIVITÉS DE SERVICE	Autres activités de 
-81.23G              	81.23               	81.2                	81                  	O                   	ACTIVITÉS DE SERVICE	Désinfection, désins
-81.23H              	81.23               	81.2                	81                  	O                   	ACTIVITÉS DE SERVICE	Autres activités de 
-81.30Y              	81.30               	81.3                	81                  	O                   	ACTIVITÉS DE SERVICE	Activités de service
-82.10Y              	82.10               	82.1                	82                  	O                   	ACTIVITÉS DE SERVICE	Activités de service
-82.20Y              	82.20               	82.2                	82                  	O                   	ACTIVITÉS DE SERVICE	Activités de centre 
-82.30Y              	82.30               	82.3                	82                  	O                   	ACTIVITÉS DE SERVICE	Organisation de salo
-82.40Y              	82.40               	82.4                	82                  	O                   	ACTIVITÉS DE SERVICE	Activités de service
-82.91Y              	82.91               	82.9                	82                  	O                   	ACTIVITÉS DE SERVICE	Activités d'agence d
-82.92Y              	82.92               	82.9                	82                  	O                   	ACTIVITÉS DE SERVICE	Activités de conditi
-82.99Y              	82.99               	82.9                	82                  	O                   	ACTIVITÉS DE SERVICE	Autres activités de 
-84.11Y              	84.11               	84.1                	84                  	P                   	ADMINISTRATION PUBLI	Activités d'administ
-84.12Y              	84.12               	84.1                	84                  	P                   	ADMINISTRATION PUBLI	Réglementation des s
-84.13Y              	84.13               	84.1                	84                  	P                   	ADMINISTRATION PUBLI	Réglementation et co
-84.21Y              	84.21               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Affaires étrangères 
-84.22Y              	84.22               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Défense             
+53.20H              	53.20               	53.2                	53                  	H                   	TRANSPORTS ET ENTREP	Livraison à domicil
+53.30Y              	53.30               	53.3                	53                  	H                   	TRANSPORTS ET ENTREP	Activités de servic
+55.10Y              	55.10               	55.1                	55                  	I                   	HÉBERGEMENT ET REST	Hôtels et hébergem
+55.20Y              	55.20               	55.2                	55                  	I                   	HÉBERGEMENT ET REST	Hébergement tourist
+55.30Y              	55.30               	55.3                	55                  	I                   	HÉBERGEMENT ET REST	Terrains de camping 
+55.40Y              	55.40               	55.4                	55                  	I                   	HÉBERGEMENT ET REST	Activités de servic
+55.90Y              	55.90               	55.9                	55                  	I                   	HÉBERGEMENT ET REST	Autres hébergements
+56.11G              	56.11               	56.1                	56                  	I                   	HÉBERGEMENT ET REST	Restauration traditi
+56.11H              	56.11               	56.1                	56                  	I                   	HÉBERGEMENT ET REST	Cafétérias et autr
+56.11J              	56.11               	56.1                	56                  	I                   	HÉBERGEMENT ET REST	Restauration de type
+56.12Y              	56.12               	56.1                	56                  	I                   	HÉBERGEMENT ET REST	Activités de servic
+56.21Y              	56.21               	56.2                	56                  	I                   	HÉBERGEMENT ET REST	Activités de traite
+56.22Y              	56.22               	56.2                	56                  	I                   	HÉBERGEMENT ET REST	Activités de servic
+56.30Y              	56.30               	56.3                	56                  	I                   	HÉBERGEMENT ET REST	Activités de débit
+56.40Y              	56.40               	56.4                	56                  	I                   	HÉBERGEMENT ET REST	Activités de servic
+58.11Y              	58.11               	58.1                	58                  	J                   	ÉDITION, DIFFUSION 	Édition de livres  
+58.12Y              	58.12               	58.1                	58                  	J                   	ÉDITION, DIFFUSION 	Édition de journaux
+58.13Y              	58.13               	58.1                	58                  	J                   	ÉDITION, DIFFUSION 	Édition de revues e
+58.19Y              	58.19               	58.1                	58                  	J                   	ÉDITION, DIFFUSION 	Autres activités d'
+58.21Y              	58.21               	58.2                	58                  	J                   	ÉDITION, DIFFUSION 	Édition de jeux vid
+58.29Y              	58.29               	58.2                	58                  	J                   	ÉDITION, DIFFUSION 	Édition d'autres lo
+59.11G              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION 	Production de films 
+59.11H              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION 	Production de films 
+59.11J              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION 	Production de films 
+59.11K              	59.11               	59.1                	59                  	J                   	ÉDITION, DIFFUSION 	Production de films 
+59.12Y              	59.12               	59.1                	59                  	J                   	ÉDITION, DIFFUSION 	Post-production de f
+59.13Y              	59.13               	59.1                	59                  	J                   	ÉDITION, DIFFUSION 	Distribution de film
+59.14Y              	59.14               	59.1                	59                  	J                   	ÉDITION, DIFFUSION 	Projection de films 
+59.20Y              	59.20               	59.2                	59                  	J                   	ÉDITION, DIFFUSION 	Enregistrement sonor
+60.10Y              	60.10               	60.1                	60                  	J                   	ÉDITION, DIFFUSION 	Radiodiffusion et ac
+60.20G              	60.20               	60.2                	60                  	J                   	ÉDITION, DIFFUSION 	Programmation de té
+60.20H              	60.20               	60.2                	60                  	J                   	ÉDITION, DIFFUSION 	Édition de services
+60.31Y              	60.31               	60.3                	60                  	J                   	ÉDITION, DIFFUSION 	Activités d'agence 
+60.39Y              	60.39               	60.3                	60                  	J                   	ÉDITION, DIFFUSION 	Autres activités de
+61.10Y              	61.10               	61.1                	61                  	K                   	TÉLÉCOMMUNICATIONS	Activités de télé
+61.20Y              	61.20               	61.2                	61                  	K                   	TÉLÉCOMMUNICATIONS	Activités de revent
+61.90Y              	61.90               	61.9                	61                  	K                   	TÉLÉCOMMUNICATIONS	Autres activités de
+62.10Y              	62.10               	62.1                	62                  	K                   	TÉLÉCOMMUNICATIONS	Activités de progra
+62.20G              	62.20               	62.2                	62                  	K                   	TÉLÉCOMMUNICATIONS	Conseil en systèmes
+62.20H              	62.20               	62.2                	62                  	K                   	TÉLÉCOMMUNICATIONS	Gestion d'installati
+62.90Y              	62.90               	62.9                	62                  	K                   	TÉLÉCOMMUNICATIONS	Autres activités de
+63.10Y              	63.10               	63.1                	63                  	K                   	TÉLÉCOMMUNICATIONS	Infrastructure infor
+63.91Y              	63.91               	63.9                	63                  	K                   	TÉLÉCOMMUNICATIONS	Activités de portai
+63.92Y              	63.92               	63.9                	63                  	K                   	TÉLÉCOMMUNICATIONS	Autres activités de
+64.11Y              	64.11               	64.1                	64                  	L                   	ACTIVITÉS FINANCIÈ	Activités de banque
+64.19Y              	64.19               	64.1                	64                  	L                   	ACTIVITÉS FINANCIÈ	Autre intermédiatio
+64.21Y              	64.21               	64.2                	64                  	L                   	ACTIVITÉS FINANCIÈ	Activités de socié
+64.22Y              	64.22               	64.2                	64                  	L                   	ACTIVITÉS FINANCIÈ	Activités de condui
+64.31Y              	64.31               	64.3                	64                  	L                   	ACTIVITÉS FINANCIÈ	Activités de fonds 
+64.32Y              	64.32               	64.3                	64                  	L                   	ACTIVITÉS FINANCIÈ	Activités de fiduci
+64.91Y              	64.91               	64.9                	64                  	L                   	ACTIVITÉS FINANCIÈ	Crédit-bail        
+64.92Y              	64.92               	64.9                	64                  	L                   	ACTIVITÉS FINANCIÈ	Autre distribution d
+64.99Y              	64.99               	64.9                	64                  	L                   	ACTIVITÉS FINANCIÈ	Autres activités de
+65.11Y              	65.11               	65.1                	65                  	L                   	ACTIVITÉS FINANCIÈ	Assurance vie       
+65.12Y              	65.12               	65.1                	65                  	L                   	ACTIVITÉS FINANCIÈ	Assurances non-vie  
+65.20Y              	65.20               	65.2                	65                  	L                   	ACTIVITÉS FINANCIÈ	Réassurance        
+65.30Y              	65.30               	65.3                	65                  	L                   	ACTIVITÉS FINANCIÈ	Fonds de pension    
+66.11Y              	66.11               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈ	Administration de ma
+66.12Y              	66.12               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈ	Courtage de valeurs 
+66.19G              	66.19               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈ	Activités des unit�
+66.19H              	66.19               	66.1                	66                  	L                   	ACTIVITÉS FINANCIÈ	Autres activités au
+66.21Y              	66.21               	66.2                	66                  	L                   	ACTIVITÉS FINANCIÈ	Évaluation des risq
+66.22Y              	66.22               	66.2                	66                  	L                   	ACTIVITÉS FINANCIÈ	Activités des agent
+66.29Y              	66.29               	66.2                	66                  	L                   	ACTIVITÉS FINANCIÈ	Activités auxiliair
+66.30Y              	66.30               	66.3                	66                  	L                   	ACTIVITÉS FINANCIÈ	Activités de gestio
+68.11Y              	68.11               	68.1                	68                  	M                   	ACTIVITÉS IMMOBILI�	Achat et vente de bi
+68.12Y              	68.12               	68.1                	68                  	M                   	ACTIVITÉS IMMOBILI�	Promotion immobiliè
+68.20G              	68.20               	68.2                	68                  	M                   	ACTIVITÉS IMMOBILI�	Location de logement
+68.20H              	68.20               	68.2                	68                  	M                   	ACTIVITÉS IMMOBILI�	Location et exploita
+68.31Y              	68.31               	68.3                	68                  	M                   	ACTIVITÉS IMMOBILI�	Activités de servic
+68.32G              	68.32               	68.3                	68                  	M                   	ACTIVITÉS IMMOBILI�	Activités des unit�
+68.32H              	68.32               	68.3                	68                  	M                   	ACTIVITÉS IMMOBILI�	Autres activités im
+69.10Y              	69.10               	69.1                	69                  	N                   	ACTIVITÉS SPÉCIALI	Activités juridique
+69.20Y              	69.20               	69.2                	69                  	N                   	ACTIVITÉS SPÉCIALI	Activités de compta
+70.10Y              	70.10               	70.1                	70                  	N                   	ACTIVITÉS SPÉCIALI	Activités des sièg
+70.20Y              	70.20               	70.2                	70                  	N                   	ACTIVITÉS SPÉCIALI	Activités de consei
+71.11Y              	71.11               	71.1                	71                  	N                   	ACTIVITÉS SPÉCIALI	Activités d'archite
+71.12Y              	71.12               	71.1                	71                  	N                   	ACTIVITÉS SPÉCIALI	Activités d'ingéni
+71.20G              	71.20               	71.2                	71                  	N                   	ACTIVITÉS SPÉCIALI	Contrôle technique 
+71.20H              	71.20               	71.2                	71                  	N                   	ACTIVITÉS SPÉCIALI	Analyses, essais et 
+72.10G              	72.10               	72.1                	72                  	N                   	ACTIVITÉS SPÉCIALI	Recherche et dévelo
+72.10H              	72.10               	72.1                	72                  	N                   	ACTIVITÉS SPÉCIALI	Recherche et dévelo
+72.20Y              	72.20               	72.2                	72                  	N                   	ACTIVITÉS SPÉCIALI	Recherche et dévelo
+73.11Y              	73.11               	73.1                	73                  	N                   	ACTIVITÉS SPÉCIALI	Activités d'agence 
+73.12Y              	73.12               	73.1                	73                  	N                   	ACTIVITÉS SPÉCIALI	Régie publicitaire 
+73.20Y              	73.20               	73.2                	73                  	N                   	ACTIVITÉS SPÉCIALI	Études de marché e
+73.30Y              	73.30               	73.3                	73                  	N                   	ACTIVITÉS SPÉCIALI	Activités de relati
+74.11Y              	74.11               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALI	Activités de design
+74.12Y              	74.12               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALI	Activités de design
+74.13Y              	74.13               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALI	Activités de design
+74.14Y              	74.14               	74.1                	74                  	N                   	ACTIVITÉS SPÉCIALI	Autres activités sp
+74.20Y              	74.20               	74.2                	74                  	N                   	ACTIVITÉS SPÉCIALI	Activités photograp
+74.30Y              	74.30               	74.3                	74                  	N                   	ACTIVITÉS SPÉCIALI	Activités de traduc
+74.91Y              	74.91               	74.9                	74                  	N                   	ACTIVITÉS SPÉCIALI	Activités de courta
+74.99Y              	74.99               	74.9                	74                  	N                   	ACTIVITÉS SPÉCIALI	Toutes les autres ac
+75.00Y              	75.00               	75.0                	75                  	N                   	ACTIVITÉS SPÉCIALI	Activités vétérin
+77.11Y              	77.11               	77.1                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.12Y              	77.12               	77.1                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.21Y              	77.21               	77.2                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.22Y              	77.22               	77.2                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.31Y              	77.31               	77.3                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.32Y              	77.32               	77.3                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.33Y              	77.33               	77.3                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.34Y              	77.34               	77.3                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.35Y              	77.35               	77.3                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.39Y              	77.39               	77.3                	77                  	O                   	ACTIVITÉS DE SERVIC	Location et location
+77.40G              	77.40               	77.4                	77                  	O                   	ACTIVITÉS DE SERVIC	Services de franchis
+77.40H              	77.40               	77.4                	77                  	O                   	ACTIVITÉS DE SERVIC	Autre location-bail 
+77.51Y              	77.51               	77.5                	77                  	O                   	ACTIVITÉS DE SERVIC	Activités de servic
+77.52Y              	77.52               	77.5                	77                  	O                   	ACTIVITÉS DE SERVIC	Activités de servic
+78.10Y              	78.10               	78.1                	78                  	O                   	ACTIVITÉS DE SERVIC	Activités des agenc
+78.20G              	78.20               	78.2                	78                  	O                   	ACTIVITÉS DE SERVIC	Activités d'agence 
+78.20H              	78.20               	78.2                	78                  	O                   	ACTIVITÉS DE SERVIC	Autre mise à dispos
+79.11Y              	79.11               	79.1                	79                  	O                   	ACTIVITÉS DE SERVIC	Activités d'agence 
+79.12Y              	79.12               	79.1                	79                  	O                   	ACTIVITÉS DE SERVIC	Activités de voyagi
+79.90Y              	79.90               	79.9                	79                  	O                   	ACTIVITÉS DE SERVIC	Autres activités de
+80.01Y              	80.01               	80.0                	80                  	O                   	ACTIVITÉS DE SERVIC	Activités d'investi
+80.09Y              	80.09               	80.0                	80                  	O                   	ACTIVITÉS DE SERVIC	Activités de sécur
+81.10Y              	81.10               	81.1                	81                  	O                   	ACTIVITÉS DE SERVIC	Activités de soutie
+81.21Y              	81.21               	81.2                	81                  	O                   	ACTIVITÉS DE SERVIC	Nettoyage courant de
+81.22Y              	81.22               	81.2                	81                  	O                   	ACTIVITÉS DE SERVIC	Autres activités de
+81.23G              	81.23               	81.2                	81                  	O                   	ACTIVITÉS DE SERVIC	Désinfection, dési
+81.23H              	81.23               	81.2                	81                  	O                   	ACTIVITÉS DE SERVIC	Autres activités de
+81.30Y              	81.30               	81.3                	81                  	O                   	ACTIVITÉS DE SERVIC	Activités de servic
+82.10Y              	82.10               	82.1                	82                  	O                   	ACTIVITÉS DE SERVIC	Activités de servic
+82.20Y              	82.20               	82.2                	82                  	O                   	ACTIVITÉS DE SERVIC	Activités de centre
+82.30Y              	82.30               	82.3                	82                  	O                   	ACTIVITÉS DE SERVIC	Organisation de salo
+82.40Y              	82.40               	82.4                	82                  	O                   	ACTIVITÉS DE SERVIC	Activités de servic
+82.91Y              	82.91               	82.9                	82                  	O                   	ACTIVITÉS DE SERVIC	Activités d'agence 
+82.92Y              	82.92               	82.9                	82                  	O                   	ACTIVITÉS DE SERVIC	Activités de condit
+82.99Y              	82.99               	82.9                	82                  	O                   	ACTIVITÉS DE SERVIC	Autres activités de
+84.11Y              	84.11               	84.1                	84                  	P                   	ADMINISTRATION PUBLI	Activités d'adminis
+84.12Y              	84.12               	84.1                	84                  	P                   	ADMINISTRATION PUBLI	Réglementation des 
+84.13Y              	84.13               	84.1                	84                  	P                   	ADMINISTRATION PUBLI	Réglementation et c
+84.21Y              	84.21               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Affaires étrangère
+84.22Y              	84.22               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Défense            
 84.23Y              	84.23               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Justice             
-84.24Y              	84.24               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Activités d'ordre pu
-84.25Y              	84.25               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Activités de service
-84.30G              	84.30               	84.3                	84                  	P                   	ADMINISTRATION PUBLI	Activités générales 
+84.24Y              	84.24               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Activités d'ordre p
+84.25Y              	84.25               	84.2                	84                  	P                   	ADMINISTRATION PUBLI	Activités de servic
+84.30G              	84.30               	84.3                	84                  	P                   	ADMINISTRATION PUBLI	Activités général
 84.30H              	84.30               	84.3                	84                  	P                   	ADMINISTRATION PUBLI	Gestion des retraite
 84.30J              	84.30               	84.3                	84                  	P                   	ADMINISTRATION PUBLI	Distribution sociale
-85.10Y              	85.10               	85.1                	85                  	Q                   	ENSEIGNEMENT        	Enseignement pré-pri
+85.10Y              	85.10               	85.1                	85                  	Q                   	ENSEIGNEMENT        	Enseignement pré-pr
 85.20Y              	85.20               	85.2                	85                  	Q                   	ENSEIGNEMENT        	Enseignement primair
 85.31Y              	85.31               	85.3                	85                  	Q                   	ENSEIGNEMENT        	Enseignement seconda
 85.32Y              	85.32               	85.3                	85                  	Q                   	ENSEIGNEMENT        	Enseignement seconda
 85.33Y              	85.33               	85.3                	85                  	Q                   	ENSEIGNEMENT        	Enseignement post-se
-85.40Y              	85.40               	85.4                	85                  	Q                   	ENSEIGNEMENT        	Enseignement supérie
+85.40Y              	85.40               	85.4                	85                  	Q                   	ENSEIGNEMENT        	Enseignement supéri
 85.51Y              	85.51               	85.5                	85                  	Q                   	ENSEIGNEMENT        	Enseignement de disc
 85.52Y              	85.52               	85.5                	85                  	Q                   	ENSEIGNEMENT        	Enseignement culture
 85.53Y              	85.53               	85.5                	85                  	Q                   	ENSEIGNEMENT        	Enseignement de la c
 85.59G              	85.59               	85.5                	85                  	Q                   	ENSEIGNEMENT        	Formation continue d
 85.59H              	85.59               	85.5                	85                  	Q                   	ENSEIGNEMENT        	Tous les autres ense
-85.61Y              	85.61               	85.6                	85                  	Q                   	ENSEIGNEMENT        	Activités de service
-85.69Y              	85.69               	85.6                	85                  	Q                   	ENSEIGNEMENT        	Activités de soutien
-86.10Y              	86.10               	86.1                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités hospitaliè
-86.21Y              	86.21               	86.2                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de médecin
-86.22Y              	86.22               	86.2                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de médecin
-86.23Y              	86.23               	86.2                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de soins d
-86.91Y              	86.91               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'imagerie
-86.92Y              	86.92               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Transport de patient
-86.93Y              	86.93               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités des psycho
-86.94G              	86.94               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de soins i
-86.94H              	86.94               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de maïeuti
-86.95Y              	86.95               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de physiot
-86.96Y              	86.96               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de médecin
-86.97Y              	86.97               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Activités de service
-86.99Y              	86.99               	86.9                	86                  	R                   	SANTÉ HUMAINE ET ACT	Autres activités pou
-87.10G              	87.10               	87.1                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.10H              	87.10               	87.1                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.10J              	87.10               	87.1                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.20G              	87.20               	87.2                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.20H              	87.20               	87.2                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.30G              	87.30               	87.3                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.30H              	87.30               	87.3                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.91Y              	87.91               	87.9                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités de service
-87.99G              	87.99               	87.9                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-87.99H              	87.99               	87.9                	87                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'hébergem
-88.10G              	88.10               	88.1                	88                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'action s
-88.10H              	88.10               	88.1                	88                  	R                   	SANTÉ HUMAINE ET ACT	Activités d'accueil 
-88.10J              	88.10               	88.1                	88                  	R                   	SANTÉ HUMAINE ET ACT	Activités de réadapt
-88.91G              	88.91               	88.9                	88                  	R                   	SANTÉ HUMAINE ET ACT	Accueil de jeunes en
-88.91H              	88.91               	88.9                	88                  	R                   	SANTÉ HUMAINE ET ACT	Accueil de jeunes en
-88.91J              	88.91               	88.9                	88                  	R                   	SANTÉ HUMAINE ET ACT	Accueil ou accompagn
-88.99G              	88.99               	88.9                	88                  	R                   	SANTÉ HUMAINE ET ACT	Autre accueil ou acc
-88.99H              	88.99               	88.9                	88                  	R                   	SANTÉ HUMAINE ET ACT	Toutes les autres ac
-90.11Y              	90.11               	90.1                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de créatio
-90.12Y              	90.12               	90.1                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de créatio
-90.13Y              	90.13               	90.1                	90                  	S                   	ARTS, SPORTS ET ACTI	Autres activités de 
-90.20Y              	90.20               	90.2                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de spectac
+85.61Y              	85.61               	85.6                	85                  	Q                   	ENSEIGNEMENT        	Activités de servic
+85.69Y              	85.69               	85.6                	85                  	Q                   	ENSEIGNEMENT        	Activités de soutie
+86.10Y              	86.10               	86.1                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités hospitali
+86.21Y              	86.21               	86.2                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de médec
+86.22Y              	86.22               	86.2                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de médec
+86.23Y              	86.23               	86.2                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de soins 
+86.91Y              	86.91               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités d'imageri
+86.92Y              	86.92               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Transport de patient
+86.93Y              	86.93               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités des psych
+86.94G              	86.94               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de soins 
+86.94H              	86.94               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de maïeu
+86.95Y              	86.95               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de physio
+86.96Y              	86.96               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de médec
+86.97Y              	86.97               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Activités de servic
+86.99Y              	86.99               	86.9                	86                  	R                   	SANTÉ HUMAINE ET AC	Autres activités po
+87.10G              	87.10               	87.1                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.10H              	87.10               	87.1                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.10J              	87.10               	87.1                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.20G              	87.20               	87.2                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.20H              	87.20               	87.2                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.30G              	87.30               	87.3                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.30H              	87.30               	87.3                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.91Y              	87.91               	87.9                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités de servic
+87.99G              	87.99               	87.9                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+87.99H              	87.99               	87.9                	87                  	R                   	SANTÉ HUMAINE ET AC	Activités d'héberg
+88.10G              	88.10               	88.1                	88                  	R                   	SANTÉ HUMAINE ET AC	Activités d'action 
+88.10H              	88.10               	88.1                	88                  	R                   	SANTÉ HUMAINE ET AC	Activités d'accueil
+88.10J              	88.10               	88.1                	88                  	R                   	SANTÉ HUMAINE ET AC	Activités de réada
+88.91G              	88.91               	88.9                	88                  	R                   	SANTÉ HUMAINE ET AC	Accueil de jeunes en
+88.91H              	88.91               	88.9                	88                  	R                   	SANTÉ HUMAINE ET AC	Accueil de jeunes en
+88.91J              	88.91               	88.9                	88                  	R                   	SANTÉ HUMAINE ET AC	Accueil ou accompagn
+88.99G              	88.99               	88.9                	88                  	R                   	SANTÉ HUMAINE ET AC	Autre accueil ou acc
+88.99H              	88.99               	88.9                	88                  	R                   	SANTÉ HUMAINE ET AC	Toutes les autres ac
+90.11Y              	90.11               	90.1                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de créat
+90.12Y              	90.12               	90.1                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de créat
+90.13Y              	90.13               	90.1                	90                  	S                   	ARTS, SPORTS ET ACTI	Autres activités de
+90.20Y              	90.20               	90.2                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de specta
 90.31G              	90.31               	90.3                	90                  	S                   	ARTS, SPORTS ET ACTI	Gestion d'installati
 90.31H              	90.31               	90.3                	90                  	S                   	ARTS, SPORTS ET ACTI	Gestion de salles de
-90.39G              	90.39               	90.3                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de product
-90.39H              	90.39               	90.3                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de soutien
-91.11Y              	91.11               	91.1                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités des biblio
-91.12Y              	91.12               	91.1                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités des centre
-91.21Y              	91.21               	91.2                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités des musées
-91.22Y              	91.22               	91.2                	91                  	S                   	ARTS, SPORTS ET ACTI	Activité des monumen
+90.39G              	90.39               	90.3                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de produc
+90.39H              	90.39               	90.3                	90                  	S                   	ARTS, SPORTS ET ACTI	Activités de soutie
+91.11Y              	91.11               	91.1                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités des bibli
+91.12Y              	91.12               	91.1                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités des centr
+91.21Y              	91.21               	91.2                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités des musé
+91.22Y              	91.22               	91.2                	91                  	S                   	ARTS, SPORTS ET ACTI	Activité des monume
 91.30Y              	91.30               	91.3                	91                  	S                   	ARTS, SPORTS ET ACTI	Conservation, restau
-91.41Y              	91.41               	91.4                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités de gestion
-91.42Y              	91.42               	91.4                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités de gestion
-92.00Y              	92.00               	92.0                	92                  	S                   	ARTS, SPORTS ET ACTI	Activités de jeux d'
+91.41Y              	91.41               	91.4                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités de gestio
+91.42Y              	91.42               	91.4                	91                  	S                   	ARTS, SPORTS ET ACTI	Activités de gestio
+92.00Y              	92.00               	92.0                	92                  	S                   	ARTS, SPORTS ET ACTI	Activités de jeux d
 93.11Y              	93.11               	93.1                	93                  	S                   	ARTS, SPORTS ET ACTI	Gestion d'installati
-93.12Y              	93.12               	93.1                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités des clubs 
-93.13Y              	93.13               	93.1                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités des centre
-93.19Y              	93.19               	93.1                	93                  	S                   	ARTS, SPORTS ET ACTI	Autres activités spo
-93.21Y              	93.21               	93.2                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités des parcs 
-93.29Y              	93.29               	93.2                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités récréative
-94.11Y              	94.11               	94.1                	94                  	T                   	AUTRES ACTIVITÉS DE 	Activités des organi
-94.12Y              	94.12               	94.1                	94                  	T                   	AUTRES ACTIVITÉS DE 	Activités des organi
-94.20Y              	94.20               	94.2                	94                  	T                   	AUTRES ACTIVITÉS DE 	Activités des syndic
-94.91Y              	94.91               	94.9                	94                  	T                   	AUTRES ACTIVITÉS DE 	Activités des organi
-94.92Y              	94.92               	94.9                	94                  	T                   	AUTRES ACTIVITÉS DE 	Activités des organi
-94.99Y              	94.99               	94.9                	94                  	T                   	AUTRES ACTIVITÉS DE 	Activités des organi
-95.10Y              	95.10               	95.1                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.21Y              	95.21               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.22Y              	95.22               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.23Y              	95.23               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.24Y              	95.24               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.25Y              	95.25               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.29G              	95.29               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.29H              	95.29               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.31G              	95.31               	95.3                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.31H              	95.31               	95.3                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.32Y              	95.32               	95.3                	95                  	T                   	AUTRES ACTIVITÉS DE 	Réparation et entret
-95.40Y              	95.40               	95.4                	95                  	T                   	AUTRES ACTIVITÉS DE 	Activités de service
-96.10G              	96.10               	96.1                	96                  	T                   	AUTRES ACTIVITÉS DE 	Blanchisserie-teintu
-96.10H              	96.10               	96.1                	96                  	T                   	AUTRES ACTIVITÉS DE 	Blanchisserie-teintu
-96.21G              	96.21               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE 	Coiffure et activité
-96.21H              	96.21               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE 	Coiffure et activité
-96.22Y              	96.22               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE 	Soins de beauté et a
-96.23Y              	96.23               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE 	Activités de spa, de
-96.30Y              	96.30               	96.3                	96                  	T                   	AUTRES ACTIVITÉS DE 	Services funéraires 
-96.40Y              	96.40               	96.4                	96                  	T                   	AUTRES ACTIVITÉS DE 	Activités de service
-96.91Y              	96.91               	96.9                	96                  	T                   	AUTRES ACTIVITÉS DE 	Activités d'offre de
-96.99G              	96.99               	96.9                	96                  	T                   	AUTRES ACTIVITÉS DE 	Services pour animau
-96.99H              	96.99               	96.9                	96                  	T                   	AUTRES ACTIVITÉS DE 	Toutes les autres ac
-97.00Y              	97.00               	97.0                	97                  	U                   	ACTIVITÉS DES MÉNAGE	Activités des ménage
-98.10Y              	98.10               	98.1                	98                  	U                   	ACTIVITÉS DES MÉNAGE	Activités indifféren
-98.20Y              	98.20               	98.2                	98                  	U                   	ACTIVITÉS DES MÉNAGE	Activités indifféren
-99.00Y              	99.00               	99.0                	99                  	V                   	ACTIVITÉS DES ORGANI	Activités des organi
+93.12Y              	93.12               	93.1                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités des clubs
+93.13Y              	93.13               	93.1                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités des centr
+93.19Y              	93.19               	93.1                	93                  	S                   	ARTS, SPORTS ET ACTI	Autres activités sp
+93.21Y              	93.21               	93.2                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités des parcs
+93.29Y              	93.29               	93.2                	93                  	S                   	ARTS, SPORTS ET ACTI	Activités récréat
+94.11Y              	94.11               	94.1                	94                  	T                   	AUTRES ACTIVITÉS DE	Activités des organ
+94.12Y              	94.12               	94.1                	94                  	T                   	AUTRES ACTIVITÉS DE	Activités des organ
+94.20Y              	94.20               	94.2                	94                  	T                   	AUTRES ACTIVITÉS DE	Activités des syndi
+94.91Y              	94.91               	94.9                	94                  	T                   	AUTRES ACTIVITÉS DE	Activités des organ
+94.92Y              	94.92               	94.9                	94                  	T                   	AUTRES ACTIVITÉS DE	Activités des organ
+94.99Y              	94.99               	94.9                	94                  	T                   	AUTRES ACTIVITÉS DE	Activités des organ
+95.10Y              	95.10               	95.1                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.21Y              	95.21               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.22Y              	95.22               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.23Y              	95.23               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.24Y              	95.24               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.25Y              	95.25               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.29G              	95.29               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.29H              	95.29               	95.2                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.31G              	95.31               	95.3                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.31H              	95.31               	95.3                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.32Y              	95.32               	95.3                	95                  	T                   	AUTRES ACTIVITÉS DE	Réparation et entre
+95.40Y              	95.40               	95.4                	95                  	T                   	AUTRES ACTIVITÉS DE	Activités de servic
+96.10G              	96.10               	96.1                	96                  	T                   	AUTRES ACTIVITÉS DE	Blanchisserie-teintu
+96.10H              	96.10               	96.1                	96                  	T                   	AUTRES ACTIVITÉS DE	Blanchisserie-teintu
+96.21G              	96.21               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE	Coiffure et activit�
+96.21H              	96.21               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE	Coiffure et activit�
+96.22Y              	96.22               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE	Soins de beauté et 
+96.23Y              	96.23               	96.2                	96                  	T                   	AUTRES ACTIVITÉS DE	Activités de spa, d
+96.30Y              	96.30               	96.3                	96                  	T                   	AUTRES ACTIVITÉS DE	Services funéraires
+96.40Y              	96.40               	96.4                	96                  	T                   	AUTRES ACTIVITÉS DE	Activités de servic
+96.91Y              	96.91               	96.9                	96                  	T                   	AUTRES ACTIVITÉS DE	Activités d'offre d
+96.99G              	96.99               	96.9                	96                  	T                   	AUTRES ACTIVITÉS DE	Services pour animau
+96.99H              	96.99               	96.9                	96                  	T                   	AUTRES ACTIVITÉS DE	Toutes les autres ac
+97.00Y              	97.00               	97.0                	97                  	U                   	ACTIVITÉS DES MÉNA	Activités des ména
+98.10Y              	98.10               	98.1                	98                  	U                   	ACTIVITÉS DES MÉNA	Activités indiffér
+98.20Y              	98.20               	98.2                	98                  	U                   	ACTIVITÉS DES MÉNA	Activités indiffér
+99.00Y              	99.00               	99.0                	99                  	V                   	ACTIVITÉS DES ORGAN	Activités des organ
