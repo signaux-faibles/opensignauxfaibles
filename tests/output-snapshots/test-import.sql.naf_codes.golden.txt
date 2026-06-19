@@ -153,7 +153,6 @@ niv5                	niv4                	niv3                	niv2             
 20.20Z              	20.20               	20.2                	20                  	C                   	Industrie manufactur	Fabrication de pesti
 20.30Z              	20.30               	20.3                	20                  	C                   	Industrie manufactur	Fabrication de peint
 20.41Z              	20.41               	20.4                	20                  	C                   	Industrie manufactur	Fabrication de savon
-25.62A              	25.62               	25.6                	25                  	C                   	Industrie manufactur	Décolletage        
 20.42Z              	20.42               	20.4                	20                  	C                   	Industrie manufactur	Fabrication de parfu
 20.51Z              	20.51               	20.5                	20                  	C                   	Industrie manufactur	Fabrication de produ
 20.52Z              	20.52               	20.5                	20                  	C                   	Industrie manufactur	Fabrication de colle
@@ -218,6 +217,7 @@ niv5                	niv4                	niv3                	niv2             
 25.50A              	25.50               	25.5                	25                  	C                   	Industrie manufactur	Forge, estampage, ma
 25.50B              	25.50               	25.5                	25                  	C                   	Industrie manufactur	Découpage, emboutis
 25.61Z              	25.61               	25.6                	25                  	C                   	Industrie manufactur	Traitement et revêt
+25.62A              	25.62               	25.6                	25                  	C                   	Industrie manufactur	Décolletage        
 25.62B              	25.62               	25.6                	25                  	C                   	Industrie manufactur	Mécanique industrie
 25.71Z              	25.71               	25.7                	25                  	C                   	Industrie manufactur	Fabrication de coute
 25.72Z              	25.72               	25.7                	25                  	C                   	Industrie manufactur	Fabrication de serru
@@ -291,7 +291,6 @@ niv5                	niv4                	niv3                	niv2             
 31.09A              	31.09               	31.0                	31                  	C                   	Industrie manufactur	Fabrication de sièg
 31.09B              	31.09               	31.0                	31                  	C                   	Industrie manufactur	Fabrication d'autres
 32.11Z              	32.11               	32.1                	32                  	C                   	Industrie manufactur	Frappe de monnaie   
-43.39Z              	43.39               	43.3                	43                  	F                   	Construction        	Autres travaux de fi
 32.12Z              	32.12               	32.1                	32                  	C                   	Industrie manufactur	Fabrication d'articl
 32.13Z              	32.13               	32.1                	32                  	C                   	Industrie manufactur	Fabrication d'articl
 32.20Z              	32.20               	32.2                	32                  	C                   	Industrie manufactur	Fabrication d'instru
@@ -360,6 +359,7 @@ niv5                	niv4                	niv3                	niv2             
 43.32C              	43.32               	43.3                	43                  	F                   	Construction        	Agencement de lieux 
 43.33Z              	43.33               	43.3                	43                  	F                   	Construction        	Travaux de revêteme
 43.34Z              	43.34               	43.3                	43                  	F                   	Construction        	Travaux de peinture 
+43.39Z              	43.39               	43.3                	43                  	F                   	Construction        	Autres travaux de fi
 43.91A              	43.91               	43.9                	43                  	F                   	Construction        	Travaux de charpente
 43.91B              	43.91               	43.9                	43                  	F                   	Construction        	Travaux de couvertur
 43.99A              	43.99               	43.9                	43                  	F                   	Construction        	Travaux d'étanchéi

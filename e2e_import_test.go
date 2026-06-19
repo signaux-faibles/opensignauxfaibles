@@ -158,7 +158,7 @@ func verifyPostgresExport(t *testing.T) {
 			continue
 		}
 
-		query := fmt.Sprintf("SELECT * FROM %s ORDER BY 1", table)
+		query := selectStarOrderedQuery(conn, table)
 		output := getTableContents(t, conn, query)
 		goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
 		tmpOutputFile := fmt.Sprintf("test-import.sql.%s.output.txt", table)
@@ -166,6 +166,26 @@ func verifyPostgresExport(t *testing.T) {
 	}
 	assert.True(t, hasMigrationTable, "Expecting the migration table to be present")
 	assert.True(t, hasEventTable, "Expecting the event table to be present")
+}
+
+func selectStarOrderedQuery(conn *pgxpool.Pool, relation string) string {
+	var columnCount int
+	err := conn.QueryRow(context.Background(), `
+		SELECT count(*)
+		FROM information_schema.columns
+		WHERE table_schema = current_schema()
+		  AND table_name = $1
+	`, relation).Scan(&columnCount)
+	if err != nil || columnCount == 0 {
+		return fmt.Sprintf("SELECT * FROM %s ORDER BY 1", relation)
+	}
+
+	orderParts := make([]string, columnCount)
+	for i := range orderParts {
+		orderParts[i] = fmt.Sprintf("%d", i+1)
+	}
+
+	return fmt.Sprintf("SELECT * FROM %s ORDER BY %s", relation, strings.Join(orderParts, ", "))
 }
 
 func getTableContents(t *testing.T, conn *pgxpool.Pool, query string) string {
