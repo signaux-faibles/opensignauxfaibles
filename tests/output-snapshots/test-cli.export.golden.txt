@@ -7,9 +7,11 @@ Description:
     Exports all cleaned views to files.
 
 Flags:
-    --path          (type: string; env: EXPORT_DIR)
-                Directory to export to
-    --schema        (type: string)
-                PostgreSQL schema to use (allows running multiple pipelines in parallel on different schemas)
+    --path                  (type: string; env: EXPORT_DIR)
+                        Directory to export to
+    --schema                (type: string)
+                        PostgreSQL schema to use (allows running multiple pipelines in parallel on different schemas)
+    --perimeter-only        (type: bool)
+                        Export only clean_filter (the perimeter). The detail-filtres.md report written by computePerimeter lives in the same directory.
 
 ---
