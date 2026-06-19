@@ -158,7 +158,7 @@ func verifyPostgresExport(t *testing.T) {
 			continue
 		}
 
-		query := fmt.Sprintf("SELECT * FROM %s", table)
+		query := fmt.Sprintf("SELECT * FROM %s ORDER BY 1", table)
 		output := getTableContents(t, conn, query)
 		goldenFile := fmt.Sprintf("test-import.sql.%s.golden.txt", table)
 		tmpOutputFile := fmt.Sprintf("test-import.sql.%s.output.txt", table)
