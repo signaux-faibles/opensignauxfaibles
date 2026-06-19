@@ -99,8 +99,8 @@ departement         	libelle_departement 	region              	libelle_region
 972                 	Martinique          	02                  	Martinique          
 973                 	Guyane              	03                  	Guyane              
 974                 	La Réunion         	04                  	La Réunion         
-976                 	Mayotte             	06                  	Mayotte             
 975                 	Saint-Pierre-et-Miqu	00                  	Collectivité d'outr
+976                 	Mayotte             	06                  	Mayotte             
 977                 	Saint-Barthélemy   	00                  	Collectivité d'outr
 978                 	Saint-Martin        	00                  	Collectivité d'outr
 981                 	Île des Faisans    	00                  	Collectivité d'outr
