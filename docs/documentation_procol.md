@@ -55,13 +55,18 @@ SELECT *
 FROM procol_at_date('2026-01-01'::date);
 `
 
-La logique derrière : 
+La logique derrière : 
 
 - pour chaque action de procédure collective, regarder le dernier état connu
-- filtrer les actions terminées, y compris le plan de continuation de plus de 
+- filtrer les actions terminées (`stade_procol` = `fin_procedure` ou 
+  `inclusion_autre_procedure`), y compris le plan de continuation de plus de 
   10 ans. 
 - en présence de plusieurs procédures, ne conserver que la plus critique 
   (liquidation > redressement > sauvegarde)
+
+Note : le parser URSSAF range ces évènements de clôture dans `stade_procol`, 
+pas dans `action_procol` (qui vaut toujours `liquidation`, `redressement` ou 
+`sauvegarde`).
 
 L'absence de retour de cette fonction pour une entreprise donnée signifie que 
 l'entreprise est (par défaut) "In bonis" à la date donnée.
