@@ -117,7 +117,7 @@ func verifyExportedViewContents(t *testing.T) {
 	sort.Strings(views)
 
 	for _, view := range views {
-		query := fmt.Sprintf("SELECT * FROM %s", view)
+		query := fmt.Sprintf("SELECT * FROM %s ORDER BY 1", view)
 		output := getTableContents(t, conn, query)
 		goldenFile := fmt.Sprintf("test-export.%s.golden.txt", view)
 		tmpOutputFile := fmt.Sprintf("test-export.%s.output.txt", view)
