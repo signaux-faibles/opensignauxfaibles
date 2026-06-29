@@ -102,9 +102,10 @@ type commandHandler interface {
 // Each entry will be populated with parameters parsed from command line arguments.
 // Each entry must implement the commandHandler interface.
 type cliCommands struct {
-	ParseFile parseFileHandler
-	Import    importBatchHandler
-	Export    exportHandler
+	ParseFile        parseFileHandler
+	Import           importBatchHandler
+	Export           exportHandler
+	ComputePerimeter computePerimeterHandler
 }
 
 func (cmds *cliCommands) populateFromArgs(args []string) {

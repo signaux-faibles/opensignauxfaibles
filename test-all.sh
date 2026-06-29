@@ -26,10 +26,19 @@ heading "make build"
 if [[ "$*" == *--update* ]]
 then
     heading "Update tests"
-    (go test ./... -test.count=1 -update) 2>&1 | indent
+    (go test ./... -test.count=1) 2>&1 | indent
+
+    heading "Update golden files"
+    (go test -test.count=1 \
+      ./lib/filter \
+      ./lib/parsing/sirene \
+      ./lib/parsing/sirene_ul \
+      ./lib/parsing/sirene_histo \
+      ./lib/parsing/urssaf \
+      -update) 2>&1 | indent
 
     heading "Update e2e tests"
-    (go test ./... -tags=e2e -test.count=1 -update) 2>&1 | indent
+    (go test -tags=e2e -test.count=1 . -update) 2>&1 | indent
 else
     heading "go test"
     (go test ./... -test.count=1) 2>&1 | indent

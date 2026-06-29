@@ -7,4 +7,5 @@ Flags:
     --parser        (type: string)
                 Parser to use (ex: cotisation)
     --file          (type: string)
+
 ---

@@ -20,6 +20,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var period, _ = time.Parse("2006-01-02", "2025-01-01")
@@ -40,6 +41,17 @@ var (
 	Debit    = engine.NewBatchFile("lib/parsing/urssaf/testData/debitTestData.csv")
 	Effectif = engine.NewBatchFile("tests/testData/effectifEntTestData.csv")
 )
+
+// computePerimeter is a test helper that computes and saves the perimeter from effectif_ent data.
+func computePerimeter(t *testing.T, batch engine.AdminBatch) {
+	t.Helper()
+	effectifFile := batch.Files.GetEffectifEntFile()
+	require.NotNil(t, effectifFile, "batch must contain an effectif_ent file to compute perimeter")
+	sirenFilter, err := filter.CreateFilter(effectifFile, filter.DefaultNbMois, filter.DefaultMinEffectif)
+	require.NoError(t, err)
+	writer := &filter.DBWriter{DB: db.DB}
+	require.NoError(t, writer.Write(sirenFilter))
+}
 
 // importWithDiscardData is a test helper that executes an import with default
 // test behaviors for a given batch
@@ -74,9 +86,8 @@ func TestImportFilter(t *testing.T) {
 	t.Run(`Import without filter should fail when
      1. filter tables are empty,
      2. no explicit filter is provided and
-     3. no "effectif_ent" file is provided`, func(t *testing.T) {
+     3. no perimeter has been computed`, func(t *testing.T) {
 
-		// Create a batch with only Debit file, no explicitely filter provided
 		defer cleanDB()
 		batch := engine.AdminBatch{
 			Key: "1902",
@@ -91,7 +102,6 @@ func TestImportFilter(t *testing.T) {
 	})
 
 	t.Run("Import with explicit filter file should succeed", func(t *testing.T) {
-		// Create a batch with Debit file and an explicit filter file
 		defer cleanDB()
 		batch := engine.AdminBatch{
 			Key: "1902",
@@ -101,16 +111,14 @@ func TestImportFilter(t *testing.T) {
 			},
 		}
 
-		// Run import with the filter
 		err := importWithDiscardData(t, batch)
 
 		assert.NoError(t, err)
 	})
 
-	t.Run("Import with \"effectif_ent\" file should succeed", func(t *testing.T) {
+	t.Run("Import after computePerimeter should succeed", func(t *testing.T) {
 		defer cleanDB()
 
-		// Create a batch with Debit file and an explicit filter file
 		batch := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
@@ -118,21 +126,38 @@ func TestImportFilter(t *testing.T) {
 			},
 		}
 
+		// Compute perimeter first, then import
+		computePerimeter(t, batch)
 		err := importWithDiscardData(t, batch)
 
-		assert.NoError(t, err, "should succeed to import when an \"effectif_ent\" file is provided")
+		assert.NoError(t, err, "should succeed to import after perimeter has been computed")
 
-		// Check that the filter has been properly updated
-		filter, err := readFilter(batch)
+		// Check that the filter is correctly stored
+		f, err := readFilter(batch)
 		assert.NoError(t, err)
-		assert.True(t, filter.ShouldSkip(sirenOut))
-		assert.False(t, filter.ShouldSkip(sirenIn))
+		assert.True(t, f.ShouldSkip(sirenOut))
+		assert.False(t, f.ShouldSkip(sirenIn))
 	})
 
-	t.Run("When filter exists, new import with effectif updates the filter", func(t *testing.T) {
+	t.Run("Import with effectif_ent but without prior computePerimeter should fail", func(t *testing.T) {
 		defer cleanDB()
 
-		// Create a batch with Debit file and an explicit filter file
+		batch := engine.AdminBatch{
+			Key: "1902",
+			Files: map[engine.ParserType][]engine.BatchFile{
+				engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
+			},
+		}
+
+		// Import without computing perimeter first should fail
+		err := importWithDiscardData(t, batch)
+
+		assert.Error(t, err, "import should fail when no perimeter has been computed")
+	})
+
+	t.Run("Recomputing perimeter updates the filter", func(t *testing.T) {
+		defer cleanDB()
+
 		batch1 := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
@@ -153,50 +178,49 @@ func TestImportFilter(t *testing.T) {
 			},
 		}
 
-		err := importWithDiscardData(t, batch1)
-		assert.NoError(t, err, "should succeed to import when an effectif file is provided")
+		// Compute perimeter with first effectif
+		computePerimeter(t, batch1)
 
-		err = importWithDiscardData(t, batch2)
-		assert.NoError(t, err, "should succeed to import again when filter exists")
+		// Recompute perimeter with updated effectif
+		computePerimeter(t, batch2)
 
 		// Check that the filter has been properly updated
-		filter, err := readFilter(batch2)
+		f, err := readFilter(batch2)
 		assert.NoError(t, err)
 		// The new effectif should include former "sirenOut" inside the perimeter.
-		assert.False(t, filter.ShouldSkip(sirenOut))
-		assert.False(t, filter.ShouldSkip(sirenIn))
+		assert.False(t, f.ShouldSkip(sirenOut))
+		assert.False(t, f.ShouldSkip(sirenIn))
 	})
 
-	t.Run("Filter created in first import is saved to be reused in subsequent imports", func(t *testing.T) {
+	t.Run("Perimeter computed once is reused in subsequent imports", func(t *testing.T) {
 		defer cleanDB()
 
-		// A first batch creates the filter
+		// Compute perimeter from effectif
 		batch1 := engine.AdminBatch{
 			Key: "1902",
 			Files: map[engine.ParserType][]engine.BatchFile{
 				engine.EffectifEnt: {engine.NewMockBatchFile(effectifContent)},
 			},
 		}
-
-		err := importWithDiscardData(t, batch1)
-		assert.NoError(t, err) // tested in test above already
+		computePerimeter(t, batch1)
 
 		// A second batch has no effectif or filter file, but should reuse
 		// existing filter in DB
-
 		batch2 := engine.AdminBatch{
 			Key: "1903",
 			Files: map[engine.ParserType][]engine.BatchFile{
 				engine.Debit: {Debit},
 			},
 		}
-		assert.NoError(t, err, "should succeed to import when a filter has been created in DB")
 
-		// Check that the filter has been left unchanged
-		filter, err := readFilter(batch2)
+		err := importWithDiscardData(t, batch2)
+		assert.NoError(t, err, "should succeed to import when perimeter has been previously computed")
+
+		// Check that the filter is still available
+		f, err := readFilter(batch2)
 		assert.NoError(t, err)
-		assert.True(t, filter.ShouldSkip("000000000"))
-		assert.False(t, filter.ShouldSkip("111111111"))
+		assert.True(t, f.ShouldSkip("000000000"))
+		assert.False(t, f.ShouldSkip("111111111"))
 	})
 }
 
@@ -204,7 +228,6 @@ func TestImportFilter(t *testing.T) {
 func defaultFilterResolver(batch engine.AdminBatch) engine.FilterResolver {
 	return &filter.StandardFilterResolver{
 		Reader: &filter.StandardReader{Batch: &batch, DB: db.DB},
-		Writer: &filter.DBWriter{DB: db.DB},
 	}
 }
 
@@ -309,7 +332,7 @@ func TestCleanFilter(t *testing.T) {
 				expectedPerimeter: []string{siren3},
 			},
 			{
-				name: "new company appears in effectif : as sirene is not filtered, company is included right away",
+				name: "new company appears in effectif : as sirene is not filtered, company is included right away",
 				batches: []engine.AdminBatch{
 					{
 						Key: "1902",
@@ -341,6 +364,10 @@ func TestCleanFilter(t *testing.T) {
 				defer cleanDB()
 
 				for _, batch := range tc.batches {
+					// Compute perimeter if effectif_ent is present
+					if batch.Files.GetEffectifEntFile() != nil {
+						computePerimeter(t, batch)
+					}
 					err := importWithDB(t, batch)
 					assert.NoError(t, err)
 				}

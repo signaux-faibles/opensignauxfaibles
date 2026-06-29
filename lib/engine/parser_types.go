@@ -23,6 +23,14 @@ const (
 	SireneHisto ParserType = "sirene_histo"
 )
 
+// BypassesFilter indique que les données du parser sont importées sans
+// application du filtre SIREN (toutes les lignes sont conservées).
+// Ces parsers alimentent des tables qui doivent contenir l'ensemble du
+// référentiel pour le front-end, indépendamment du périmètre métier.
+func BypassesFilter(p ParserType) bool {
+	return p == Sirene || p == SireneUl
+}
+
 // Scope represents the type of entity: company (entreprise) or establishment (etablissement)
 type Scope string
 

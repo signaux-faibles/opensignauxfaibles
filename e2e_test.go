@@ -34,7 +34,7 @@ type TestSuite struct {
 var suite *TestSuite
 
 const (
-	pgImage     = "postgres:17.5@sha256:30fa5c5e240b7b2ff2c31adf5a4c5ccacf22dae1d7760fea39061eb8af475854"
+	pgImage     = "ghcr.io/signaux-faibles/conteneurs/postgresql-pgparquet:v17"
 	pgContainer = "test-postgres"
 	pgPort      = 5432
 	pgDatabase  = "testdb"
@@ -71,13 +71,18 @@ func setupSuite() (*TestSuite, error) {
 	log.Println("  Setting up Postgresql")
 	startPostgresContainer()
 
-	postgresURI := fmt.Sprintf(
+	const schema = "sfdata"
+
+	postgresBaseURI := fmt.Sprintf(
 		"postgres://%s:%s@localhost:%v/%s?sslmode=disable",
 		pgUser,
 		pgPassword,
 		pgPort,
 		pgDatabase,
 	)
+
+	// URI with search_path for direct test connections (assertions, cleanup)
+	postgresURI := postgresBaseURI + "&search_path=" + schema
 
 	log.Println("  Setting up configuration")
 
@@ -86,7 +91,7 @@ func setupSuite() (*TestSuite, error) {
 	os.Setenv("APP_DATA", ".")
 	os.Setenv("BATCH_CONFIG_FILE", path.Join(tmpDir, "batch.json"))
 	os.Setenv("EXPORT_PATH", tmpDir)
-	os.Setenv("POSTGRES_DB_URL", postgresURI)
+	os.Setenv("POSTGRES_DB_URL", postgresBaseURI)
 
 	// Allow to set a different log level with LOG_LEVEL environment variable
 	// This may break the tests, which expect an "error" log level,
@@ -111,6 +116,7 @@ func setupSuite() (*TestSuite, error) {
 	}
 
 	time.Sleep(3 * time.Second)
+
 	return &TestSuite{
 		TmpDir:         tmpDir,
 		PostgresURI:    postgresURI,
@@ -123,11 +129,10 @@ func setupSuite() (*TestSuite, error) {
 func setupDBTest(t *testing.T) func() {
 	t.Helper()
 
-	// Initialize db.DB if not already done, with migrations
-	if db.DB == nil {
-		err := db.Init(true)
-		assert.NoError(t, err)
-	}
+	// Initialize db.DB with migrations.
+	// Always reinitialize because a previous runCLI call may have closed the pool.
+	err := db.Init("sfdata", true)
+	assert.NoError(t, err)
 
 	postgresURI := suite.PostgresURI
 

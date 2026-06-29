@@ -48,6 +48,18 @@ func TestCLI(t *testing.T) {
 			"test-cli.parseFile.golden.txt",
 			"test-cli.parseFile.output.txt",
 		},
+		{
+			"sfdata computePerimeter --help",
+			[]string{"computePerimeter", "--help"},
+			"test-cli.computePerimeter.golden.txt",
+			"test-cli.computePerimeter.output.txt",
+		},
+		{
+			"sfdata export --help",
+			[]string{"export", "--help"},
+			"test-cli.export.golden.txt",
+			"test-cli.export.output.txt",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -69,8 +81,11 @@ func TestCLI(t *testing.T) {
 			var output bytes.Buffer
 			output.WriteString(fmt.Sprintf("$ %s\n", cmdStr))
 
-			if stdout.Len() > 0 {
-				output.WriteString(stdout.String())
+			// Filter out log lines (containing timestamps) for reproducible output
+			for _, line := range strings.Split(stdout.String(), "\n") {
+				if !strings.HasPrefix(line, "time=") {
+					output.WriteString(line + "\n")
+				}
 			}
 
 			output.WriteString("---\n")
