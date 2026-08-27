@@ -1,0 +1,81 @@
+# Chaîne d'intégration d'opensignauxfaibles.
+#
+# Portée depuis `.github/workflows/ci.yml` le 27 août 2026, lors de la
+# migration du dépôt. La chaîne GitHub reste en place : tant que les deux
+# dépôts vivent, les deux tournent.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# CE QUI N'EST PAS PORTÉ, ET POURQUOI
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Le job `e2e-tests` de GitHub n'a pas d'équivalent ici, et ce n'est pas un
+# oubli.
+#
+# `e2e_test.go` démarre lui-même son PostgreSQL, en appelant `docker run` par
+# `exec.Command` (voir `startPostgresContainer`). Cela suppose que le conteneur
+# du job puisse piloter le moteur de conteneurs de l'hôte.
+#
+# Or l'exécuteur de vm_forge ne monte PAS le socket podman dans les jobs, et
+# c'est délibéré : son `config.toml` le dit, un job capable de piloter podman
+# pourrait démarrer un conteneur privilégié et obtenir un accès équivalent à
+# celui de la machine hôte. Porter le job tel quel reviendrait à défaire cette
+# décision pour faire tourner des tests.
+#
+# La bonne correction n'est pas dans ce fichier, elle est dans le code : que
+# `setupSuite()` honore un `POSTGRES_DB_URL` déjà fourni au lieu de démarrer
+# systématiquement un conteneur. Une base fournie par le mot-clé `services:` de
+# GitLab suffirait alors, sans aucun privilège. C'est quelques lignes de Go, et
+# c'est une décision d'équipe, pas d'exploitation.
+#
+# Second obstacle, qui tombera avec le choix d'un registre : l'image de test
+# est tirée de `ghcr.io/signaux-faibles/conteneurs/postgresql-pgparquet:v17`.
+
+stages:
+  - controle
+
+default:
+  # `go.mod` déclare `go 1.24.0`. À faire suivre ensemble : une image plus
+  # récente compile quand même, mais ne teste plus ce que la production
+  # exécute.
+  image: golang:1.24
+
+  # Étiquettes de l'exécuteur de vm_forge. Le runner est enregistré avec
+  # --run-untagged=false : sans elles, aucun job n'est pris et le pipeline
+  # reste en attente indéfiniment, SANS message d'erreur.
+  tags:
+    - vpc
+    - docker
+
+variables:
+  GOPATH: "$CI_PROJECT_DIR/.go"
+  GOMODCACHE: "$CI_PROJECT_DIR/.go/pkg/mod"
+  # `make build` incorpore l'empreinte du commit par `git rev-parse HEAD`. Le
+  # clone superficiel de GitLab la fournit, mais autant être explicite.
+  GIT_DEPTH: "20"
+
+cache:
+  key:
+    files:
+      - go.sum
+  paths:
+    - .go/pkg/mod/
+
+tests-go:
+  stage: controle
+  rules:
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+  script:
+    - go version
+    - make build
+    - go test -v -coverprofile=go-coverage.out -covermode=atomic -coverpkg=./... ./...
+    - go tool cover -func=go-coverage.out
+  coverage: '/^total:\s+\(statements\)\s+(\d+\.\d+)%/'
+  artifacts:
+    # Conserve le relevé de couverture pour pouvoir comparer d'une exécution à
+    # l'autre, ce que la version GitHub ne faisait pas.
+    paths:
+      - go-coverage.out
+    expire_in: 30 days
