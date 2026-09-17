@@ -98,6 +98,32 @@ func TestOutputPerimeter(t *testing.T) {
 		// assert
 		assert.Equal(t, expectedSirens, actualSirens)
 	})
+
+	t.Run("une entreprise sans effectif sur les 3 derniers mois est exclue du périmètre", func(t *testing.T) {
+		// setup conditions and expectations
+		minEffectif := 10
+		expectedSirens := []string{"222222222", "333333333"}
+
+		var periods []time.Time
+		for m := 1; m <= 5; m++ {
+			periods = append(periods, time.Date(2010, time.Month(m), 1, 0, 0, 0, 0, time.UTC))
+		}
+		n := func(v int) *int { return &v }
+
+		csvLines := effectif.MakeEffectifEntCSVWithMissing(
+			periods,
+			map[string][]*int{
+				"111111111": {n(14), n(14), nil, nil, nil},       // ❌ exclu : aucun effectif sur les 3 derniers mois
+				"222222222": {n(14), n(14), nil, nil, n(5)},      // ✅ retenu : effectif présent le dernier mois
+				"333333333": {n(14), n(14), n(14), n(14), n(14)}, // ✅ retenu
+			})
+		// test: run outputPerimeter() on csv lines
+		actualSirens := getOutputPerimeter(csvLines, DefaultNbMois, minEffectif)
+		sort.Strings(actualSirens)
+
+		// assert
+		assert.Equal(t, expectedSirens, actualSirens)
+	})
 }
 
 // wrapper to run outputPerimeter() on a csv string

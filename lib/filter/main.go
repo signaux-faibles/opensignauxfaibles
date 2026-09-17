@@ -292,14 +292,11 @@ func getImportPerimeter(effectifEntFile engine.BatchFile, nbMois, minEffectif in
 		}
 		stats.AfterEffectifFilter++
 
-		// Filter 2: Recent data availability — TEMPORAIREMENT DÉSACTIVÉ.
-		// On conserve dans le périmètre les entreprises même sans données
-		// d'effectif sur les derniers mois.
-		// TODO: réactiver en décommentant le bloc ci-dessous.
-		// if !hasRecentEffectifData(effData, DefaultNbMoisRecentData) {
-		// 	stats.ExcludedByRecentDataFilter++
-		// 	continue
-		// }
+		// Filter 2: Recent data availability
+		if !hasRecentEffectifData(effData, DefaultNbMoisRecentData) {
+			stats.ExcludedByRecentDataFilter++
+			continue
+		}
 		stats.AfterRecentDataFilter++
 
 		detectedSirens[siren] = struct{}{}
